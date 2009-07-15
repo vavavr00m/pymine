@@ -11,3 +11,12 @@ server:
 clean:
 	-rm *~ */*~
 	-rm *.pyc */*.pyc
+
+sync:
+	python manage.py validate 
+	python manage.py sqlall web
+	python manage.py syncdb
+
+shell:
+	python manage.py shell
+
