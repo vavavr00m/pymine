@@ -19,7 +19,7 @@ test:
 	python manage.py validate 
 	python manage.py sqlall frontend
 
-syncdb:
+sync:
 	python manage.py syncdb
 
 shell:
