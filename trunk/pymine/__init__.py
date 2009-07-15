@@ -14,3 +14,19 @@
 ## implied. See the License for the specific language governing
 ## permissions and limitations under the License.
 ##
+__all__ = [
+    "cache.py",
+    "comment.py",
+    "config.py",
+    "crypto.py",
+    "exception.py",
+    "item.py",
+    "meta.py",
+    "mine.py",
+    "regex.py",
+    "relation.py",
+    "request.py",
+    "search.py",
+    "tag.py",
+    "thing.py",
+    ]
