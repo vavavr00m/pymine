@@ -19,8 +19,11 @@ test:
 	python manage.py validate 
 	python manage.py sqlall frontend
 
-sync:
+sync: test
 	python manage.py syncdb
+
+clobber:
+	rm database/sqlite3.db
 
 shell:
 	python manage.py shell
