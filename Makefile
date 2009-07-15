@@ -8,14 +8,19 @@ client:
 server:
 	python manage.py runserver $(IP_TUPLE)
 
+start:
+	python manage.py startapp frontend
+
 clean:
 	-rm *~ */*~
 	-rm *.pyc */*.pyc
 
-sync:
+test:
 	python manage.py validate 
+	python manage.py sqlall frontend
+
+syncdb:
 	python manage.py syncdb
-	python manage.py sqlall web
 
 shell:
 	python manage.py shell
