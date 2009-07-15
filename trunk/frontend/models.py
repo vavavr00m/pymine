@@ -10,8 +10,8 @@ class Tag(models.Model):
     description = models.TextField(blank=True)
     implies = models.ManyToManyField('self', symmetrical=False, related_name='x_implies', null=True, blank=True)
     cached_implications = models.ManyToManyField('self', symmetrical=False, related_name='x_cached_implications', null=True, blank=True, editable=EDIT_BACKDOOR)
-    date_created = models.DateTimeField(auto_now_add=True, editable=EDIT_BACKDOOR)
-    date_last_modified = models.DateTimeField(auto_now=True)
+    created = models.DateTimeField(auto_now_add=True, editable=EDIT_BACKDOOR)
+    last_modified = models.DateTimeField(auto_now=True)
     def __unicode__(self): return self.name
 
 
@@ -29,8 +29,8 @@ class Relation(models.Model):
     url_callback = models.URLField(max_length=MINE_STRING, blank=True)
     url_homepage = models.URLField(max_length=MINE_STRING, blank=True)
     url_image = models.URLField(max_length=MINE_STRING, blank=True)
-    date_created = models.DateTimeField(auto_now_add=True, editable=EDIT_BACKDOOR)
-    date_last_modified = models.DateTimeField(auto_now=True)
+    created = models.DateTimeField(auto_now_add=True, editable=EDIT_BACKDOOR)
+    last_modified = models.DateTimeField(auto_now=True)
     def __unicode__(self): return self.name
 
 class Item(models.Model):
@@ -49,8 +49,8 @@ class Item(models.Model):
     content_type = models.CharField(max_length=MINE_STRING)
     hide_after = models.DateTimeField(null=True, blank=True)
     hide_before = models.DateTimeField(null=True, blank=True)
-    date_created = models.DateTimeField(auto_now_add=True, editable=EDIT_BACKDOOR)
-    date_last_modified = models.DateTimeField(auto_now=True)
+    created = models.DateTimeField(auto_now_add=True, editable=EDIT_BACKDOOR)
+    last_modified = models.DateTimeField(auto_now=True)
     def __unicode__(self): return self.name
 
 class Comment(models.Model):
@@ -59,6 +59,6 @@ class Comment(models.Model):
     likes_this = models.BooleanField(default=False)
     item = models.ForeignKey(Item, editable=EDIT_BACKDOOR)
     relation = models.ForeignKey(Relation, editable=EDIT_BACKDOOR)
-    date_created = models.DateTimeField(auto_now_add=True, editable=EDIT_BACKDOOR)
-    date_last_modified = models.DateTimeField(auto_now=True)
+    created = models.DateTimeField(auto_now_add=True, editable=EDIT_BACKDOOR)
+    last_modified = models.DateTimeField(auto_now=True)
     def __unicode__(self): return self.title
