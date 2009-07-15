@@ -14,8 +14,8 @@ clean:
 
 sync:
 	python manage.py validate 
-	python manage.py sqlall web
 	python manage.py syncdb
+	python manage.py sqlall web
 
 shell:
 	python manage.py shell
