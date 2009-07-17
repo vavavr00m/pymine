@@ -62,3 +62,7 @@ class Comment(models.Model):
     created = models.DateTimeField(auto_now_add=True, editable=EDIT_BACKDOOR)
     last_modified = models.DateTimeField(auto_now=True)
     def __unicode__(self): return self.title
+
+class VanityURL(models.Model):
+    name = models.CharField(max_length=MINE_STRING, unique=True)
+    link = models.TextField(blank=True)
