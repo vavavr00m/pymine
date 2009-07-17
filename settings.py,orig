@@ -81,4 +81,5 @@ INSTALLED_APPS = (
     'django.contrib.sites',
     'pymine.frontend',
     'django.contrib.admin',
+    'django.contrib.admindocs',
 )
