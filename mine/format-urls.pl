@@ -12,11 +12,11 @@
     );
 
 %rest_lookup = (
-    'DUMMY', 'dummy', 
-    'GET', 'read', 
-    'POST', 'create', 
-    'PUT', 'update', 
-    'DELETE', 'delete', 
+    'DUMMY', 'dummy',
+    'GET', 'read',
+    'POST', 'create',
+    'PUT', 'update',
+    'DELETE', 'delete',
 );
 
 $module = "views";
@@ -25,6 +25,8 @@ while (<DATA>) {
     next if /^\s*(\#.*)?$/o;	# skip comments and blank lines
 
     ($url, $http_method, $suffix) = split;
+
+    $suffix =~ tr!-!_!;
 
     $pymethod = $rest_lookup{$http_method} . "_" . $suffix;
     $callback = "$module.$pymethod";
@@ -50,7 +52,7 @@ print @view_output;
 print "-" x 66, "\n";
 
 foreach $pattern (sort keys %patterns) {
-    $foo = join(", ", @{$patterns{$pattern}}); 
+    $foo = join(", ", @{$patterns{$pattern}});
     print "    ", "(r'^$pattern\$', views.rest, {$foo}),\n";
 }
 
@@ -103,47 +105,35 @@ __END__;
 #api/share/url/RID.FMT           GET     x
 #api/share/url/RID/IID.FMT       GET     x
 #                               GET     x
-doc                            GET     doc
-doc/SUFFIX                     GET     doc
-get                            GET     get
-get                            POST    get
-pub                            GET     pub
-pub/SUFFIX                     GET     pub
+#doc                            GET     doc
+#doc/SUFFIX                     GET     doc
+#get                            GET     get
+#get                            POST    get
+#pub                            GET     pub
+#pub/SUFFIX                     GET     pub
 #ui                             GET     x
-#ui/SUFFIX                      GET     x
-#ui/bulk-tags.html              POST    x
-#ui/clone-item/IID.html         DUMMY   x
-#ui/create-item.html            GET     x
-#ui/create-item.html            POST    x
-#ui/create-relation.html        DUMMY   x
-#ui/create-relation.html        POST    x
-#ui/create-tag.html             DUMMY   x
-#ui/create-tag.html             POST    x
-#ui/delete-item/IID.html        DUMMY   x
-#ui/delete-relation/RID.html    GET     x
-#ui/delete-tag/TID.html         GET     x
-#ui/get-item/IID.html           GET     x
-#ui/get-relation/RID.html       GET     x
-#ui/get-tag/TID.html            GET     x
-#ui/list-clones/IID.html        GET     x
-#ui/list-items.html             GET     x
-#ui/list-relations.html         GET     x
-#ui/list-tags.html              GET     x
-#ui/select/item.html            GET     x
-#ui/select/relation.html        GET     x
-#ui/select/tag.html             GET     x
-#ui/share/raw/RID/RVSN/IID      GET     x
-#ui/share/redirect/RID          GET     x
-#ui/share/redirect/RID/IID      GET     x
-#ui/share/url/RID.html          GET     x
-#ui/share/url/RID/IID.html      GET     x
-#ui/show-config.html            GET     x
-#ui/update-config.html          GET     x
-#ui/update-data/IID.html        GET     x
-#ui/update-item/IID.html        GET     x
-#ui/update-item/IID.html        POST    x
-#ui/update-relation/RID.html    DUMMY   x
-#ui/update-relation/RID.html    POST    x
-#ui/update-tag/TID.html         DUMMY   x
-#ui/update-tag/TID.html         POST    x
-#ui/version.html                GET     x
+
+ui/create-comment/IID.html      GET  create-comment
+ui/create-item.html             GET  create-item
+ui/create-relation.html         GET  create-relation
+ui/create-tag.html              GET  create-tag
+ui/delete-comment/IID/CID.html  GET  delete-comment
+ui/delete-item/IID.html         GET  delete-item
+ui/delete-relation/RID.html     GET  delete-relation
+ui/delete-tag/TID.html          GET  delete-tag
+ui/data/IID                     GET  data/IID
+ui/list-comments/IID.html       GET  list-comments
+ui/list-items.html              GET  list-items
+ui/list-relations.html          GET  list-relations
+ui/list-tags.html               GET  list-tags
+ui/read-comment/IID/CID.html    GET  read-comment
+ui/read-config.html             GET  read-config
+ui/read-item/IID.html           GET  read-item
+ui/read-relation/RID.html       GET  read-relation
+ui/read-tag/TID.html            GET  read-tag
+ui/update-comment/IID/CID.html  GET  update-comment
+ui/update-config.html           GET  update-config
+ui/update-item/IID.html         GET  update-item
+ui/update-relation/RID.html     GET  update-relation
+ui/update-tag/TID.html          GET  update-tag
+ui/version.html                 GET  version.html
