@@ -1,3 +1,36 @@
+#!/usr/bin/perl
+
+%lookup = (
+    'CID', '\d+',
+    'FMT', 'xml|json',
+    'IID', '\d+',
+    'RID', '\d+',
+    'RVSN', '\d+',
+    'SUFFIX', '.+',
+    'TID', '\d+',
+    );
+
+
+while (<DATA>) {
+    ($url, $method, @crap) = split;
+    push(@{$foo{$url}}, $method);
+}
+
+END {
+    foreach $url (sort keys %foo) {
+
+	@bar = sort @{$foo{$url}};
+	@bar = map { "'$_': None" } @bar;
+	$baz = join(', ', @bar);
+	$indent = "    ";
+
+	1 while ($url =~ s/([A-Z]+)/"(".($lookup{$1} || "-----------------").")"/goe);
+
+	print "$indent(r'^$url\$', views.rest, {$baz})\n";
+    }
+}
+
+__END__;
 / GET 
 /api/config.FMT POST 
 /api/config.json GET 

@@ -56,7 +56,7 @@ class Item(models.Model):
 class Comment(models.Model):
     title = models.CharField(max_length=MINE_STRING)
     body = models.TextField(blank=True)
-    likes_this = models.BooleanField(default=False)
+    likes = models.BooleanField(default=False)
     item = models.ForeignKey(Item, editable=EDIT_BACKDOOR)
     relation = models.ForeignKey(Relation, editable=EDIT_BACKDOOR)
     created = models.DateTimeField(auto_now_add=True, editable=EDIT_BACKDOOR)
