@@ -16,13 +16,13 @@
 
 from django.conf.urls.defaults import *
 from django.contrib import admin
-import mine
+import views as mine
 
 admin.autodiscover()
 
 urlpatterns = patterns('',
-    (r'^get/', views.rest, {'GET': views.read_get, 'POST': views.create_get}),
+    (r'^get/', mine.REST, {'GET': mine.read_get, 'POST': mine.create_get}),
     (r'^api/', include('mine.api.urls')),
     (r'^ui/', include('mine.ui.urls')),
-    (r'^$', views.mineroot),
+    (r'^$', mine.mineroot),
 )
