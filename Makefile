@@ -22,7 +22,7 @@ test:
 sync: test
 	python manage.py syncdb
 
-clobber:
+clobber: clean
 	rm database/sqlite3.db
 
 shell:
