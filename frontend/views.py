@@ -25,7 +25,7 @@ def root(request):
     html = "<html><body>It is now %s.</body></html>" % now
     return HttpResponse(html)
 
-def rest():
+def rest(request, *args, **kwargs):
     get_view = kwargs.pop('GET', None)
     post_view = kwargs.pop('POST', None)
     put_view = kwargs.pop('PUT', None)
@@ -33,14 +33,14 @@ def rest():
 
     if request.method == 'GET' and get_view is not None:
         return get_view(request, *args, **kwargs)
-
     elif request.method == 'POST' and post_view is not None:
         return post_view(request, *args, **kwargs)
-
     elif request.method == 'PUT' and put_view is not None:
         return put_view(request, *args, **kwargs)
-
     elif request.method == 'DELETE' and delete_view is not None:
         return delete_view(request, *args, **kwargs)
 
     raise Http404
+
+def read_version(request):
+    return render_to_response('nyi.html', {'method': 'read_version'})

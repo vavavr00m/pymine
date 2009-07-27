@@ -24,4 +24,5 @@ urlpatterns = patterns('',
     (r'^$', views.root),
     (r'^admin/doc/', include('django.contrib.admindocs.urls')),
     (r'^admin/(.*)', admin.site.root),
+    (r'^api/version.(?P<fmt>(xml|json))$', views.rest, {'GET': views.read_version}),
 )

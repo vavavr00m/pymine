@@ -29,5 +29,5 @@ shell:
 	python manage.py shell
 
 perms:
-	chmod 755 `find . -type d`
 	chmod 644 `find . -type f`
+	chmod 755 `find . -type d` *.py */*.py *.pl 

@@ -1,8 +1,8 @@
 #!/usr/bin/perl
 
-%lookup = (
+%re_lookup = (
     'CID', '?P<cid>\d+',
-    'FMT', '?P<format>xml|json',
+    'FMT', '?P<fmt>(xml|json|html|txt)',
     'IID', '?P<iid>\d+',
     'KEY', '?P<key>\w+',
     'RID', '?P<rid>\d+',
@@ -11,117 +11,133 @@
     'TID', '?P<tid>\d+',
     );
 
+%prefix_lookup = (
+    'DUMMY', 'dummy', 
+    'GET', 'read', 
+    'POST', 'create', 
+    'PUT', 'update', 
+    'DELETE', 'delete', 
+);
+
 
 while (<DATA>) {
     next if /^\s*(\#.*)?$/o;
-    ($url, $method, @crap) = split;
-    push(@{$foo{$url}}, $method);
+    ($url, $http_method, $func_suffix) = split;
+    $xxx = $prefix_lookup{$http_method} . "_" . $func_suffix;
+    $foo{$url}{$http_method} = "views." . $xxx;
+
+    print "def $xxx(request):\n";
+    print "    return render_to_response('nyi.html', {'method': '$xxx'})\n";
+    print "\n";
 }
 
 END {
     foreach $url (sort keys %foo) {
 
-	@bar = sort @{$foo{$url}};
-	@bar = map { "'$_': None" } @bar;
+	@bar = sort (keys %{$foo{$url}});
+	@bar = map { "'$_': " . $foo{$url}{$_}} @bar;
 	$baz = join(', ', @bar);
 	$indent = "    ";
 
-	$url =~ s/([A-Z]+)/"(".($lookup{$1}||"--------$1--------").")"/goe;
+	$url =~ s/([A-Z]+)/"(".($re_lookup{$1}||"--------$1--------").")"/goe;
 
-	print "$indent(r'^$url\$', views.rest, {$baz}),\n";
+	print "${indent}(r'^$url\$', views.rest, {$baz}),\n";
     }
+
+
 }
 
 __END__;
-/ GET
-/api/config.FMT POST
-/api/config.json GET
-/api/item.FMT GET
-/api/item.FMT POST
-/api/item/IID GET
-/api/item/IID PUT
-/api/item/IID.FMT DELETE
-/api/item/IID.FMT GET
-/api/item/IID/CID.FMT DELETE
-/api/item/IID/CID.FMT GET
-/api/item/IID/CID/key.FMT POST
-/api/item/IID/CID/key/KEY.FMT DELETE
-/api/item/IID/CID/key/KEY.FMT GET
-/api/item/IID/CID/key/KEY.FMT PUT
-/api/item/IID/clone.FMT GET
-/api/item/IID/clone.FMT POST
-/api/item/IID/comment.FMT GET
-/api/item/IID/comment.FMT POST
-/api/item/IID/key.FMT POST
-/api/item/IID/key/KEY.FMT DELETE
-/api/item/IID/key/KEY.FMT GET
-/api/item/IID/key/KEY.FMT PUT
-/api/relation.FMT GET
-/api/relation.FMT POST
-/api/relation/RID.FMT DELETE
-/api/relation/RID.FMT GET
-/api/relation/RID/key.FMT POST
-/api/relation/RID/key/KEY.FMT DELETE
-/api/relation/RID/key/KEY.FMT GET
-/api/relation/RID/key/KEY.FMT PUT
-/api/select/item.FMT GET
-/api/select/relation.FMT GET
-/api/select/tag.FMT GET
-/api/share/raw/RID/RVSN/IID.FMT GET
-/api/share/redirect/RID.FMT GET
-/api/share/redirect/RID/IID.FMT GET
-/api/share/url/RID.FMT GET
-/api/share/url/RID/IID.FMT GET
-/api/tag.FMT GET
-/api/tag.FMT POST
-/api/tag/TID.FMT DELETE
-/api/tag/TID.FMT GET
-/api/tag/TID/key.FMT POST
-/api/tag/TID/key/KEY.FMT DELETE
-/api/tag/TID/key/KEY.FMT GET
-/api/tag/TID/key/KEY.FMT PUT
-/api/version.FMT GET
-/doc GET
-/doc/SUFFIX GET
-/get GET
-/get POST
-/pub GET
-/pub/SUFFIX GET
-/ui GET
-/ui/SUFFIX GET
-/ui/bulk-tags.html POST
-/ui/clone-item/IID.html DUMMY
-/ui/create-item.html GET
-/ui/create-item.html POST
-/ui/create-relation.html DUMMY
-/ui/create-relation.html POST
-/ui/create-tag.html DUMMY
-/ui/create-tag.html POST
-/ui/delete-item/IID.html DUMMY
-/ui/delete-relation/RID.html GET
-/ui/delete-tag/TID.html GET
-/ui/get-item/IID.html GET
-/ui/get-relation/RID.html GET
-/ui/get-tag/TID.html GET
-/ui/list-clones/IID.html GET
-/ui/list-items.html GET
-/ui/list-relations.html GET
-/ui/list-tags.html GET
-/ui/select/item.html GET
-/ui/select/relation.html GET
-/ui/select/tag.html GET
-/ui/share/raw/RID/RVSN/IID GET
-/ui/share/redirect/RID GET
-/ui/share/redirect/RID/IID GET
-/ui/share/url/RID.html GET
-/ui/share/url/RID/IID.html GET
-/ui/show-config.html GET
-/ui/update-config.html GET
-/ui/update-data/IID.html GET
-/ui/update-item/IID.html GET
-/ui/update-item/IID.html POST
-/ui/update-relation/RID.html DUMMY
-/ui/update-relation/RID.html POST
-/ui/update-tag/TID.html DUMMY
-/ui/update-tag/TID.html POST
-/ui/version.html GET
+api/config.FMT                GET     config
+api/config.FMT                POST    config
+api/item.FMT                  GET     item_list
+api/item.FMT                  POST    item
+api/item/IID                  GET     item_data
+api/item/IID                  PUT     item_data
+api/item/IID.FMT              DELETE  item
+api/item/IID.FMT              GET     item
+api/item/IID/CID.FMT          DELETE  comment
+api/item/IID/CID.FMT          GET     comment
+api/item/IID/CID/key.FMT      POST    comment_key
+api/item/IID/CID/key/KEY.FMT  DELETE  comment_key
+api/item/IID/CID/key/KEY.FMT  GET     comment_key
+api/item/IID/CID/key/KEY.FMT  PUT     comment_key
+api/item/IID/clone.FMT        GET     clone_list
+api/item/IID/clone.FMT        POST    clone
+api/item/IID/comment.FMT      GET     comment_list
+api/item/IID/comment.FMT      POST    comment
+api/item/IID/key.FMT          POST    item_key
+api/item/IID/key/KEY.FMT      DELETE  item_key
+api/item/IID/key/KEY.FMT      GET     item_key
+api/item/IID/key/KEY.FMT      PUT     item_key
+api/relation.FMT              GET     relation_list
+api/relation.FMT              POST    relation
+api/relation/RID.FMT          DELETE  relation
+api/relation/RID.FMT          GET     relation
+api/relation/RID/key.FMT      POST    relation_key
+api/relation/RID/key/KEY.FMT  DELETE  relation_key
+api/relation/RID/key/KEY.FMT  GET     relation_key
+api/relation/RID/key/KEY.FMT  PUT     relation_key
+api/tag.FMT                   GET     tag_list
+api/tag.FMT                   POST    tag
+api/tag/TID.FMT               DELETE  tag
+api/tag/TID.FMT               GET     tag
+api/tag/TID/key.FMT           POST    tag_key
+api/tag/TID/key/KEY.FMT       DELETE  tag_key
+api/tag/TID/key/KEY.FMT       GET     tag_key
+api/tag/TID/key/KEY.FMT       PUT     tag_key
+api/version.FMT               GET     version
+
+#api/select/item.FMT             GET     x
+#api/select/relation.FMT         GET     x
+#api/select/tag.FMT              GET     x
+#api/share/raw/RID/RVSN/IID.FMT  GET     x
+#api/share/redirect/RID.FMT      GET     x
+#api/share/redirect/RID/IID.FMT  GET     x
+#api/share/url/RID.FMT           GET     x
+#api/share/url/RID/IID.FMT       GET     x
+#                               GET     x
+#doc                            GET     x
+#doc/SUFFIX                     GET     x
+#get                            GET     x
+#get                            POST    x
+#pub                            GET     x
+#pub/SUFFIX                     GET     x
+#ui                             GET     x
+#ui/SUFFIX                      GET     x
+#ui/bulk-tags.html              POST    x
+#ui/clone-item/IID.html         DUMMY   x
+#ui/create-item.html            GET     x
+#ui/create-item.html            POST    x
+#ui/create-relation.html        DUMMY   x
+#ui/create-relation.html        POST    x
+#ui/create-tag.html             DUMMY   x
+#ui/create-tag.html             POST    x
+#ui/delete-item/IID.html        DUMMY   x
+#ui/delete-relation/RID.html    GET     x
+#ui/delete-tag/TID.html         GET     x
+#ui/get-item/IID.html           GET     x
+#ui/get-relation/RID.html       GET     x
+#ui/get-tag/TID.html            GET     x
+#ui/list-clones/IID.html        GET     x
+#ui/list-items.html             GET     x
+#ui/list-relations.html         GET     x
+#ui/list-tags.html              GET     x
+#ui/select/item.html            GET     x
+#ui/select/relation.html        GET     x
+#ui/select/tag.html             GET     x
+#ui/share/raw/RID/RVSN/IID      GET     x
+#ui/share/redirect/RID          GET     x
+#ui/share/redirect/RID/IID      GET     x
+#ui/share/url/RID.html          GET     x
+#ui/share/url/RID/IID.html      GET     x
+#ui/show-config.html            GET     x
+#ui/update-config.html          GET     x
+#ui/update-data/IID.html        GET     x
+#ui/update-item/IID.html        GET     x
+#ui/update-item/IID.html        POST    x
+#ui/update-relation/RID.html    DUMMY   x
+#ui/update-relation/RID.html    POST    x
+#ui/update-tag/TID.html         DUMMY   x
+#ui/update-tag/TID.html         POST    x
+#ui/version.html                GET     x
