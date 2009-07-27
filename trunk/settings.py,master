@@ -1,10 +1,27 @@
+##
+## Copyright 2009 Adriana Lukas & Alec Muffett
+##
+## Licensed under the Apache License, Version 2.0 (the "License"); you
+## may not use this file except in compliance with the License. You
+## may obtain a copy of the License at
+##
+## http://www.apache.org/licenses/LICENSE-2.0
+##
+## Unless required by applicable law or agreed to in writing, software
+## distributed under the License is distributed on an "AS IS" BASIS,
+## WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or
+## implied. See the License for the specific language governing
+## permissions and limitations under the License.
+##
+
+import os
+
 # Django settings for pymine project.
 
 DEBUG = True
 TEMPLATE_DEBUG = DEBUG
-
-MINE_PATH = "/Users/alecm/projects/pymine/"
-
+MINE_PATH = os.path.dirname(__file__)
+MINE_USER = "alecm"
 ADMINS = (
     ('Alec Muffett', 'alec.muffett@gmail.com'),
 )
@@ -12,7 +29,7 @@ ADMINS = (
 MANAGERS = ADMINS
 
 DATABASE_ENGINE = 'sqlite3'
-DATABASE_NAME = MINE_PATH + 'database/sqlite3.db'
+DATABASE_NAME = os.path.join(MINE_PATH, 'database', MINE_USER + '.sqlite3.db')
 DATABASE_USER = ''             # Not used with sqlite3.
 DATABASE_PASSWORD = ''         # Not used with sqlite3.
 DATABASE_HOST = ''             # Set to empty string for localhost. Not used with sqlite3.
@@ -28,7 +45,6 @@ TIME_ZONE = 'Europe/London'
 # Language code for this installation. All choices can be found here:
 # http://www.i18nguy.com/unicode/language-identifiers.html
 LANGUAGE_CODE = 'en-gb'
-
 SITE_ID = 1
 
 # If you set this to False, Django will make some optimizations so as not
@@ -37,17 +53,17 @@ USE_I18N = True
 
 # Absolute path to the directory that holds media.
 # Example: "/home/media/media.lawrence.com/"
-MEDIA_ROOT = MINE_PATH + 'media'
+MEDIA_ROOT = os.path.join(MINE_PATH, 'static', 'public')
 
 # URL that handles the media served from MEDIA_ROOT. Make sure to use a
 # trailing slash if there is a path component (optional in other cases).
 # Examples: "http://media.lawrence.com", "http://example.com/media/"
-MEDIA_URL = ''
+MEDIA_URL = '/MEDIA_URL/'
 
 # URL prefix for admin media -- CSS, JavaScript and images. Make sure to use a
 # trailing slash.
 # Examples: "http://foo.com/media/", "/media/".
-ADMIN_MEDIA_PREFIX = '/media/'
+ADMIN_MEDIA_PREFIX = '/ADMIN_MEDIA_PREFIX/'
 
 # Make this unique, and don't share it with anybody.
 SECRET_KEY = 'v8j0vzjit1v6n$0z*d31$s0tx4#_($+0(9&kte5+=#^+brybv+'
@@ -71,7 +87,7 @@ TEMPLATE_DIRS = (
     # Put strings here, like "/home/html/django_templates" or "C:/www/django/templates".
     # Always use forward slashes, even on Windows.
     # Don't forget to use absolute paths, not relative paths.
-    MINE_PATH + 'templates'
+    os.path.join(MINE_PATH, 'static', 'templates')
 )
 
 INSTALLED_APPS = (
