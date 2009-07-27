@@ -14,6 +14,7 @@ start:
 clean:
 	-rm `find . -name "*~"`
 	-rm `find . -name "*.pyc"`
+	-rm `find . -name "*.tmp"`
 
 test:
 	python manage.py validate 
