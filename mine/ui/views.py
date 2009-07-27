@@ -20,6 +20,12 @@ from django.shortcuts import render_to_response, get_object_or_404
 
 ##################################################################
 
+#### method: read_data url: ui/data/IID <-------------------- SPECIAL CASE
+def read_data(request, iid, *args, **kwargs):
+    raise Http404('method read_data for url ui/data/IID is not yet implemented')
+
+##################################################################
+
 #### method: read_create_comment url: ui/create-comment/IID.html
 def read_create_comment(request, iid, *args, **kwargs):
     raise Http404('method read_create_comment for url ui/create-comment/IID.html is not yet implemented')
@@ -51,10 +57,6 @@ def read_delete_relation(request, rid, *args, **kwargs):
 #### method: read_delete_tag url: ui/delete-tag/TID.html
 def read_delete_tag(request, tid, *args, **kwargs):
     raise Http404('method read_delete_tag for url ui/delete-tag/TID.html is not yet implemented')
-
-#### method: read_data/IID url: ui/data/IID
-def read_data/IID(request, iid, *args, **kwargs):
-    raise Http404('method read_data/IID for url ui/data/IID is not yet implemented')
 
 #### method: read_list_comments url: ui/list-comments/IID.html
 def read_list_comments(request, iid, *args, **kwargs):
