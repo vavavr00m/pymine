@@ -9,7 +9,7 @@ server:
 	python manage.py runserver $(IP_TUPLE)
 
 start:
-	python manage.py startapp frontend
+	python manage.py startapp mine
 
 clean:
 	-rm `find . -name "*~"`
@@ -17,7 +17,7 @@ clean:
 
 test:
 	python manage.py validate 
-	python manage.py sqlall frontend
+	python manage.py sqlall mine
 
 sync: test
 	python manage.py syncdb

@@ -95,7 +95,7 @@ INSTALLED_APPS = (
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.sites',
-    'pymine.frontend',
+    'pymine.mine',
     'django.contrib.admin',
     'django.contrib.admindocs',
 )
