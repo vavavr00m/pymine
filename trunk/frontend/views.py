@@ -1,32 +1,18 @@
-# Create your views here.
-#
-#from django.http import HttpResponse
-#
-#def index(request):
-#    return HttpResponse("Hello, world. This is the frontend index.")
-#
-#def detail(request, poll_id):
-#    return HttpResponse("You're looking at poll %s." % poll_id)
-#------------------------------------------------------------------
-#
-#from django.template import Context, loader
-#from mysite.polls.models import Poll
-#from django.http import HttpResponse
-#
-#def index(request):
-#    latest_poll_list = Poll.objects.all().order_by('-pub_date')[:5]
-#    t = loader.get_template('polls/index.html')
-#    c = Context({
-#        'latest_poll_list': latest_poll_list,
-#    })
-#    return HttpResponse(t.render(c))
-#
-#
-#------------------------------------------------------------------
-#def index(request):
-#    latest_poll_list = Poll.objects.all().order_by('-pub_date')[:5]
-#    return render_to_response('polls/index.html', {'latest_poll_list': latest_poll_list})
-
+##
+## Copyright 2009 Adriana Lukas & Alec Muffett
+##
+## Licensed under the Apache License, Version 2.0 (the "License"); you
+## may not use this file except in compliance with the License. You
+## may obtain a copy of the License at
+##
+## http://www.apache.org/licenses/LICENSE-2.0
+##
+## Unless required by applicable law or agreed to in writing, software
+## distributed under the License is distributed on an "AS IS" BASIS,
+## WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or
+## implied. See the License for the specific language governing
+## permissions and limitations under the License.
+##
 
 from django.core.urlresolvers import reverse
 from django.http import Http404, HttpResponse, HttpResponseRedirect
