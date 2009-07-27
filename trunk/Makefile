@@ -12,8 +12,8 @@ start:
 	python manage.py startapp frontend
 
 clean:
-	-rm *~ */*~
-	-rm *.pyc */*.pyc
+	-rm `find . -name "*~"`
+	-rm `find . -name "*.pyc"`
 
 test:
 	python manage.py validate 
@@ -30,4 +30,5 @@ shell:
 
 perms:
 	chmod 644 `find . -type f`
-	chmod 755 `find . -type d` *.py */*.py *.pl 
+	chmod 755 `find . -type d`
+	chmod 755 `find . -name "*.p[yl]"`

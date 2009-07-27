@@ -197,6 +197,7 @@ def update_tag_key(request, tid, key, *args, **kwargs):
 
 #### method: read_version url: api/version.FMT
 def read_version(request, *args, **kwargs):
-    raise Http404('method read_version for url api/version.FMT is not yet implemented')
+    return HttpResponse("hello world, from pymine\n")
+
 
 #------------------------------------------------------------------
