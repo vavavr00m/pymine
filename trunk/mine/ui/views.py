@@ -18,23 +18,6 @@ from django.core.urlresolvers import reverse
 from django.http import Http404, HttpResponse, HttpResponseRedirect
 from django.shortcuts import render_to_response, get_object_or_404
 
-def rest(request, *args, **kwargs):
-    get_view = kwargs.pop('GET', None)
-    post_view = kwargs.pop('POST', None)
-    put_view = kwargs.pop('PUT', None)
-    delete_view = kwargs.pop('DELETE', None)
-
-    if request.method == 'GET' and get_view is not None:
-        return get_view(request, *args, **kwargs)
-    elif request.method == 'POST' and post_view is not None:
-        return post_view(request, *args, **kwargs)
-    elif request.method == 'PUT' and put_view is not None:
-        return put_view(request, *args, **kwargs)
-    elif request.method == 'DELETE' and delete_view is not None:
-        return delete_view(request, *args, **kwargs)
-
-    raise Http404
-
 ##################################################################
 
 #### method: read_create_comment url: ui/create-comment/IID.html
