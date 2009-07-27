@@ -1,6 +1,6 @@
 #!/usr/bin/perl
 
-%re_lookup = (
+%regexp_lookup = ( # $value text in <anglebrackets> must be same as lcase($key)
     'CID', '?P<cid>\d+',
     'FMT', '?P<fmt>(xml|json|html|txt)',
     'IID', '?P<iid>\d+',
@@ -11,7 +11,7 @@
     'TID', '?P<tid>\d+',
     );
 
-%prefix_lookup = (
+%rest_lookup = (
     'DUMMY', 'dummy', 
     'GET', 'read', 
     'POST', 'create', 
@@ -19,32 +19,39 @@
     'DELETE', 'delete', 
 );
 
+$module = "views";
 
 while (<DATA>) {
-    next if /^\s*(\#.*)?$/o;
-    ($url, $http_method, $func_suffix) = split;
-    $xxx = $prefix_lookup{$http_method} . "_" . $func_suffix;
-    $foo{$url}{$http_method} = "views." . $xxx;
+    next if /^\s*(\#.*)?$/o;	# skip comments and blank lines
 
-    print "def $xxx(request):\n";
-    print "    return render_to_response('nyi.html', {'method': '$xxx'})\n";
-    print "\n";
+    ($url, $http_method, $suffix) = split;
+
+    $pymethod = $rest_lookup{$http_method} . "_" . $suffix;
+    $callback = "$module.$pymethod";
+
+    $pattern = $url;
+    $pattern =~ s/([A-Z]+)/"(" . ($regexp_lookup{$1}||"--------$1--------") . ")"/goe;
+
+    @kwds = grep(/^[A-Z]+$/o, split(/\b/o, $url));
+    @kwds = map { lc($_) } grep(!/^(FMT)$/o, @kwds);
+    $aaa = join(", ", 'request', @kwds, '*args', '**kwargs');
+
+    push(@view_output, "#### method: $pymethod url: $url\n");
+    push(@view_output, "def $pymethod($aaa):\n");
+    push(@view_output, "    raise Http404('method $pymethod for url $url is not yet implemented')\n");
+    push(@view_output, "\n");
+
+    push(@{$patterns{$pattern}}, "'$http_method': $callback");
+
 }
 
-END {
-    foreach $url (sort keys %foo) {
+print @view_output;
 
-	@bar = sort (keys %{$foo{$url}});
-	@bar = map { "'$_': " . $foo{$url}{$_}} @bar;
-	$baz = join(', ', @bar);
-	$indent = "    ";
+print "-" x 66, "\n";
 
-	$url =~ s/([A-Z]+)/"(".($re_lookup{$1}||"--------$1--------").")"/goe;
-
-	print "${indent}(r'^$url\$', views.rest, {$baz}),\n";
-    }
-
-
+foreach $pattern (sort keys %patterns) {
+    $foo = join(", ", @{$patterns{$pattern}}); 
+    print "    ", "(r'^$pattern\$', views.rest, {$foo}),\n";
 }
 
 __END__;
