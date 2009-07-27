@@ -14,15 +14,9 @@
 ## permissions and limitations under the License.
 ##
 
-from django.conf.urls.defaults import *
-from django.contrib import admin
-import mine
+from django.core.urlresolvers import reverse
+from django.http import Http404, HttpResponse, HttpResponseRedirect
+from django.shortcuts import render_to_response, get_object_or_404
 
-admin.autodiscover()
-
-urlpatterns = patterns('',
-    (r'^get/', views.rest, {'GET': views.read_get, 'POST': views.create_get}),
-    (r'^api/', include('mine.api.urls')),
-    (r'^ui/', include('mine.ui.urls')),
-    (r'^$', views.mineroot),
-)
+def mineroot(request):
+    return render_to_response('root-mine.html')
