@@ -209,7 +209,7 @@ def delete_relation(request, rid, *args, **kwargs):
 def read_relation(request, rid, *args, **kwargs):
     id = int(rid)
     model = Relation.objects.get(id=id)
-    return model.outbound()
+    return model.structure()
 
 ## url: /api/relation/RID/key.FMT
 ## method: create_relation_key
@@ -277,7 +277,7 @@ def delete_tag(request, tid, *args, **kwargs):
 def read_tag(request, tid, *args, **kwargs):
     id = int(tid)
     model = Tag.objects.get(id=id)
-    return model.outbound()
+    return model.structure()
 
 ## url: /api/tag/TID/key.FMT
 ## method: create_tag_key
