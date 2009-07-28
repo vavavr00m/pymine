@@ -20,100 +20,151 @@ from django.shortcuts import render_to_response, get_object_or_404
 
 ##################################################################
 
-#### method: read_data url: ui/data/IID <-------------------- SPECIAL CASE
+# *** SPECIAL CASE ***
+
+## url: /ui/data/IID
+## method: read_data
+## args: iid
 def read_data(request, iid, *args, **kwargs):
-    raise Http404('method read_data for url ui/data/IID is not yet implemented')
+    raise Http404('method read_data for url /ui/data/IID is not yet implemented')
 
 ##################################################################
 
-#### method: read_create_comment url: ui/create-comment/IID.html
+## url: /ui/create-comment/IID.html
+## method: read_create_comment
+## args: iid
 def read_create_comment(request, iid, *args, **kwargs):
-    raise Http404('method read_create_comment for url ui/create-comment/IID.html is not yet implemented')
+    raise Http404('method read_create_comment for url /ui/create-comment/IID.html is not yet implemented')
 
-#### method: read_create_item url: ui/create-item.html
+## url: /ui/create-item.html
+## method: read_create_item
+## args: 
 def read_create_item(request, *args, **kwargs):
-    raise Http404('method read_create_item for url ui/create-item.html is not yet implemented')
+    raise Http404('method read_create_item for url /ui/create-item.html is not yet implemented')
 
-#### method: read_create_relation url: ui/create-relation.html
+## url: /ui/create-relation.html
+## method: read_create_relation
+## args: 
 def read_create_relation(request, *args, **kwargs):
-    raise Http404('method read_create_relation for url ui/create-relation.html is not yet implemented')
+    raise Http404('method read_create_relation for url /ui/create-relation.html is not yet implemented')
 
-#### method: read_create_tag url: ui/create-tag.html
+## url: /ui/create-tag.html
+## method: read_create_tag
+## args: 
 def read_create_tag(request, *args, **kwargs):
-    raise Http404('method read_create_tag for url ui/create-tag.html is not yet implemented')
+    raise Http404('method read_create_tag for url /ui/create-tag.html is not yet implemented')
 
-#### method: read_delete_comment url: ui/delete-comment/IID/CID.html
+## url: /ui/delete-comment/IID/CID.html
+## method: read_delete_comment
+## args: iid cid
 def read_delete_comment(request, iid, cid, *args, **kwargs):
-    raise Http404('method read_delete_comment for url ui/delete-comment/IID/CID.html is not yet implemented')
+    raise Http404('method read_delete_comment for url /ui/delete-comment/IID/CID.html is not yet implemented')
 
-#### method: read_delete_item url: ui/delete-item/IID.html
+## url: /ui/delete-item/IID.html
+## method: read_delete_item
+## args: iid
 def read_delete_item(request, iid, *args, **kwargs):
-    raise Http404('method read_delete_item for url ui/delete-item/IID.html is not yet implemented')
+    raise Http404('method read_delete_item for url /ui/delete-item/IID.html is not yet implemented')
 
-#### method: read_delete_relation url: ui/delete-relation/RID.html
+## url: /ui/delete-relation/RID.html
+## method: read_delete_relation
+## args: rid
 def read_delete_relation(request, rid, *args, **kwargs):
-    raise Http404('method read_delete_relation for url ui/delete-relation/RID.html is not yet implemented')
+    raise Http404('method read_delete_relation for url /ui/delete-relation/RID.html is not yet implemented')
 
-#### method: read_delete_tag url: ui/delete-tag/TID.html
+## url: /ui/delete-tag/TID.html
+## method: read_delete_tag
+## args: tid
 def read_delete_tag(request, tid, *args, **kwargs):
-    raise Http404('method read_delete_tag for url ui/delete-tag/TID.html is not yet implemented')
+    raise Http404('method read_delete_tag for url /ui/delete-tag/TID.html is not yet implemented')
 
-#### method: read_list_comments url: ui/list-comments/IID.html
+## url: /ui/list-comments/IID.html
+## method: read_list_comments
+## args: iid
 def read_list_comments(request, iid, *args, **kwargs):
-    raise Http404('method read_list_comments for url ui/list-comments/IID.html is not yet implemented')
+    raise Http404('method read_list_comments for url /ui/list-comments/IID.html is not yet implemented')
 
-#### method: read_list_items url: ui/list-items.html
+## url: /ui/list-items.html
+## method: read_list_items
+## args: 
 def read_list_items(request, *args, **kwargs):
-    raise Http404('method read_list_items for url ui/list-items.html is not yet implemented')
+    raise Http404('method read_list_items for url /ui/list-items.html is not yet implemented')
 
-#### method: read_list_relations url: ui/list-relations.html
+## url: /ui/list-relations.html
+## method: read_list_relations
+## args: 
 def read_list_relations(request, *args, **kwargs):
-    raise Http404('method read_list_relations for url ui/list-relations.html is not yet implemented')
+    raise Http404('method read_list_relations for url /ui/list-relations.html is not yet implemented')
 
-#### method: read_list_tags url: ui/list-tags.html
+## url: /ui/list-tags.html
+## method: read_list_tags
+## args: 
 def read_list_tags(request, *args, **kwargs):
-    raise Http404('method read_list_tags for url ui/list-tags.html is not yet implemented')
+    raise Http404('method read_list_tags for url /ui/list-tags.html is not yet implemented')
 
-#### method: read_read_comment url: ui/read-comment/IID/CID.html
+## url: /ui/read-comment/IID/CID.html
+## method: read_read_comment
+## args: iid cid
 def read_read_comment(request, iid, cid, *args, **kwargs):
-    raise Http404('method read_read_comment for url ui/read-comment/IID/CID.html is not yet implemented')
+    raise Http404('method read_read_comment for url /ui/read-comment/IID/CID.html is not yet implemented')
 
-#### method: read_read_config url: ui/read-config.html
+## url: /ui/read-config.html
+## method: read_read_config
+## args: 
 def read_read_config(request, *args, **kwargs):
-    raise Http404('method read_read_config for url ui/read-config.html is not yet implemented')
+    raise Http404('method read_read_config for url /ui/read-config.html is not yet implemented')
 
-#### method: read_read_item url: ui/read-item/IID.html
+## url: /ui/read-item/IID.html
+## method: read_read_item
+## args: iid
 def read_read_item(request, iid, *args, **kwargs):
-    raise Http404('method read_read_item for url ui/read-item/IID.html is not yet implemented')
+    raise Http404('method read_read_item for url /ui/read-item/IID.html is not yet implemented')
 
-#### method: read_read_relation url: ui/read-relation/RID.html
+## url: /ui/read-relation/RID.html
+## method: read_read_relation
+## args: rid
 def read_read_relation(request, rid, *args, **kwargs):
-    raise Http404('method read_read_relation for url ui/read-relation/RID.html is not yet implemented')
+    raise Http404('method read_read_relation for url /ui/read-relation/RID.html is not yet implemented')
 
-#### method: read_read_tag url: ui/read-tag/TID.html
+## url: /ui/read-tag/TID.html
+## method: read_read_tag
+## args: tid
 def read_read_tag(request, tid, *args, **kwargs):
-    raise Http404('method read_read_tag for url ui/read-tag/TID.html is not yet implemented')
+    raise Http404('method read_read_tag for url /ui/read-tag/TID.html is not yet implemented')
 
-#### method: read_update_comment url: ui/update-comment/IID/CID.html
+## url: /ui/update-comment/IID/CID.html
+## method: read_update_comment
+## args: iid cid
 def read_update_comment(request, iid, cid, *args, **kwargs):
-    raise Http404('method read_update_comment for url ui/update-comment/IID/CID.html is not yet implemented')
+    raise Http404('method read_update_comment for url /ui/update-comment/IID/CID.html is not yet implemented')
 
-#### method: read_update_config url: ui/update-config.html
+## url: /ui/update-config.html
+## method: read_update_config
+## args: 
 def read_update_config(request, *args, **kwargs):
-    raise Http404('method read_update_config for url ui/update-config.html is not yet implemented')
+    raise Http404('method read_update_config for url /ui/update-config.html is not yet implemented')
 
-#### method: read_update_item url: ui/update-item/IID.html
+## url: /ui/update-item/IID.html
+## method: read_update_item
+## args: iid
 def read_update_item(request, iid, *args, **kwargs):
-    raise Http404('method read_update_item for url ui/update-item/IID.html is not yet implemented')
+    raise Http404('method read_update_item for url /ui/update-item/IID.html is not yet implemented')
 
-#### method: read_update_relation url: ui/update-relation/RID.html
+## url: /ui/update-relation/RID.html
+## method: read_update_relation
+## args: rid
 def read_update_relation(request, rid, *args, **kwargs):
-    raise Http404('method read_update_relation for url ui/update-relation/RID.html is not yet implemented')
+    raise Http404('method read_update_relation for url /ui/update-relation/RID.html is not yet implemented')
 
-#### method: read_update_tag url: ui/update-tag/TID.html
+## url: /ui/update-tag/TID.html
+## method: read_update_tag
+## args: tid
 def read_update_tag(request, tid, *args, **kwargs):
-    raise Http404('method read_update_tag for url ui/update-tag/TID.html is not yet implemented')
+    raise Http404('method read_update_tag for url /ui/update-tag/TID.html is not yet implemented')
 
-#### method: read_version.html url: ui/version.html
+## url: /ui/version.html
+## method: read_version.html
+## args: 
 def read_version.html(request, *args, **kwargs):
-    raise Http404('method read_version.html for url ui/version.html is not yet implemented')
+    raise Http404('method read_version.html for url /ui/version.html is not yet implemented')
+

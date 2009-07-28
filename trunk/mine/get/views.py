@@ -14,17 +14,20 @@
 ## permissions and limitations under the License.
 ##
 
-from django.conf.urls.defaults import *
-from django.contrib import admin
-import views as mine
+from django.core.urlresolvers import reverse
+from django.http import Http404, HttpResponse, HttpResponseRedirect
+from django.shortcuts import render_to_response, get_object_or_404
 
-admin.autodiscover()
+##################################################################
 
-urlpatterns = patterns('',
-		       (r'^/api/', include('mine.api.urls')),
-		       (r'^/get/', include('mine.get.urls')),
-		       (r'^/ui/', include('mine.ui.urls')),
-		       (r'^/pub/', mine.REST, {'GET': mine.read_pub}),
-		       (r'^/doc/', mine.REST, {'GET': mine.read_doc}),
-		       (r'^$', mine.REST, {'GET': mine.read_mine_root}),
-		       )
+## url: /get
+## method: read_minekey
+## args: 
+def read_minekey(request, *args, **kwargs):
+    raise Http404('method read_minekey for url /get is not yet implemented')
+
+## url: /get
+## method: create_minekey
+## args: 
+def create_minekey(request, *args, **kwargs):
+    raise Http404('method create_minekey for url /get is not yet implemented')

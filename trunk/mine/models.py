@@ -22,6 +22,15 @@ MINE_STRING=1024
 EDIT_BACKDOOR=True
 
 class Tag(models.Model):
+    def outbound():
+        return {
+            'tagName': self.name,
+            'tagDescription': self.description,
+            'tagCreated': self.created,
+            'tagLastModified': self.last_modified,
+            }
+    def inbound():
+        pass
     name = models.CharField(max_length=MINE_STRING, unique=True)
     description = models.TextField(blank=True)
     implies = models.ManyToManyField('self', symmetrical=False, related_name='x_implies', null=True, blank=True)
@@ -32,6 +41,10 @@ class Tag(models.Model):
 
 
 class Relation(models.Model):
+    def outbound():
+        return { }
+    def inbound():
+        pass
     name = models.CharField(max_length=MINE_STRING, unique=True)
     description = models.TextField(blank=True)
     tags = models.ManyToManyField(Tag, related_name='relations_with_tag', null=True, blank=True)
@@ -56,6 +69,10 @@ class Item(models.Model):
 	( 'PUB', 'Public' ),
 	( 'ARQ', 'Authentication Required' ),
 	)
+    def outbound():
+        return { }
+    def inbound():
+        pass
     name = models.CharField(max_length=MINE_STRING)
     description = models.TextField(blank=True)
     tags = models.ManyToManyField(Tag, related_name='items_tagged', null=True, blank=True)
@@ -70,6 +87,10 @@ class Item(models.Model):
     def __unicode__(self): return self.name
 
 class Comment(models.Model):
+    def outbound():
+        return { }
+    def inbound():
+        pass
     title = models.CharField(max_length=MINE_STRING)
     body = models.TextField(blank=True)
     likes = models.BooleanField(default=False)
@@ -80,5 +101,9 @@ class Comment(models.Model):
     def __unicode__(self): return self.title
 
 class VanityURL(models.Model):
+    def outbound():
+        return { }
+    def inbound():
+        pass
     name = models.CharField(max_length=MINE_STRING, unique=True)
     link = models.TextField(blank=True)
