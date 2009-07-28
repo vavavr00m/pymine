@@ -2,7 +2,7 @@
 
 %regexp_lookup = ( # $value text in <anglebrackets> must be same as lcase($key)
     'CID', '?P<cid>\d+',
-    'FMT', '?P<fmt>(xml|json|py|txt)',
+    'FMT', '?P<fmt>(xml|json|py)',
     'IID', '?P<iid>\d+',
     'KEY', '?P<key>\w+',
     'RID', '?P<rid>\d+',

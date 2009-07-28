@@ -22,29 +22,35 @@ MINE_STRING=1024
 EDIT_BACKDOOR=True
 
 class Tag(models.Model):
-    def outbound():
-        return {
-            'tagName': self.name,
-            'tagDescription': self.description,
-            'tagCreated': self.created,
-            'tagLastModified': self.last_modified,
-            }
-    def inbound():
-        pass
     name = models.CharField(max_length=MINE_STRING, unique=True)
     description = models.TextField(blank=True)
     implies = models.ManyToManyField('self', symmetrical=False, related_name='x_implies', null=True, blank=True)
-    cached_implications = models.ManyToManyField('self', symmetrical=False, related_name='x_cached_implications', null=True, blank=True, editable=EDIT_BACKDOOR)
+    cached_implications = models.ManyToManyField('self', 
+                                                 symmetrical=False, 
+                                                 related_name='x_cached_implications', 
+                                                 null=True, 
+                                                 blank=True, 
+                                                 editable=EDIT_BACKDOOR)
     created = models.DateTimeField(auto_now_add=True, editable=EDIT_BACKDOOR)
     last_modified = models.DateTimeField(auto_now=True)
-    def __unicode__(self): return self.name
+
+    class Meta: ordering = ['id']
+
+    def outbound(self):
+        return {
+            'tagId': self.id,
+            'tagName': self.name,
+            'tagDescription': self.description,
+            'tagCreated': self.created.isoformat(),
+            'tagLastModified': self.last_modified.isoformat(),
+            }
+    def inbound(self):
+        pass
+    def __unicode__(self): 
+        return self.name
 
 
 class Relation(models.Model):
-    def outbound():
-        return { }
-    def inbound():
-        pass
     name = models.CharField(max_length=MINE_STRING, unique=True)
     description = models.TextField(blank=True)
     tags = models.ManyToManyField(Tag, related_name='relations_with_tag', null=True, blank=True)
@@ -60,7 +66,15 @@ class Relation(models.Model):
     url_image = models.URLField(max_length=MINE_STRING, blank=True)
     created = models.DateTimeField(auto_now_add=True, editable=EDIT_BACKDOOR)
     last_modified = models.DateTimeField(auto_now=True)
-    def __unicode__(self): return self.name
+
+    class Meta: ordering = ['name']
+
+    def outbound(self):
+        return { }
+    def inbound(self):
+        pass
+    def __unicode__(self): 
+        return self.name
 
 class Item(models.Model):
     ITEM_STATUSES=(
@@ -69,10 +83,6 @@ class Item(models.Model):
 	( 'PUB', 'Public' ),
 	( 'ARQ', 'Authentication Required' ),
 	)
-    def outbound():
-        return { }
-    def inbound():
-        pass
     name = models.CharField(max_length=MINE_STRING)
     description = models.TextField(blank=True)
     tags = models.ManyToManyField(Tag, related_name='items_tagged', null=True, blank=True)
@@ -84,13 +94,17 @@ class Item(models.Model):
     hide_before = models.DateTimeField(null=True, blank=True)
     created = models.DateTimeField(auto_now_add=True, editable=EDIT_BACKDOOR)
     last_modified = models.DateTimeField(auto_now=True)
-    def __unicode__(self): return self.name
+
+    class Meta: ordering = ['-last_modified']
+
+    def outbound(self):
+        return { }
+    def inbound(self):
+        pass
+    def __unicode__(self): 
+        return self.name
 
 class Comment(models.Model):
-    def outbound():
-        return { }
-    def inbound():
-        pass
     title = models.CharField(max_length=MINE_STRING)
     body = models.TextField(blank=True)
     likes = models.BooleanField(default=False)
@@ -98,12 +112,27 @@ class Comment(models.Model):
     relation = models.ForeignKey(Relation, editable=EDIT_BACKDOOR)
     created = models.DateTimeField(auto_now_add=True, editable=EDIT_BACKDOOR)
     last_modified = models.DateTimeField(auto_now=True)
-    def __unicode__(self): return self.title
+
+    class Meta: ordering = ['-id']
+
+    def outbound(self):
+        return { }
+    def inbound(self):
+        pass
+    def __unicode__(self): 
+        return self.title
 
 class VanityURL(models.Model):
-    def outbound():
-        return { }
-    def inbound():
-        pass
     name = models.CharField(max_length=MINE_STRING, unique=True)
     link = models.TextField(blank=True)
+    created = models.DateTimeField(auto_now_add=True, editable=EDIT_BACKDOOR)
+    last_modified = models.DateTimeField(auto_now=True)
+
+    class Meta: ordering = ['-id']
+
+    def outbound(self):
+        return { }
+    def inbound(self):
+        pass
+    def __unicode__(self): 
+        return self.name
