@@ -14,9 +14,14 @@
 ## permissions and limitations under the License.
 ##
 
+from django.core import serializers
 from django.core.urlresolvers import reverse
 from django.http import Http404, HttpResponse, HttpResponseRedirect
 from django.shortcuts import render_to_response, get_object_or_404
+import django.utils.simplejson as json
+import pickle
+
+from mine.models import Tag, Item, Relation, Comment
 
 def DISPATCH(request, *args, **kwargs):
     get_view = kwargs.pop('GET', None)
@@ -34,13 +39,15 @@ def DISPATCH(request, *args, **kwargs):
 
     if retval:
         if desired_format == 'py':
-            return HttpResponse(str(retval),mimetype="text/plain")
-        elif desired_format == 'txt':
-            return HttpResponse(str(retval), mimetype="text/plain")
+            data = pickle.dumps(retval)
+            return HttpResponse(data, mimetype="text/plain")
         elif desired_format == 'json':
-            return HttpResponse()
+            data = json.dumps(retval)
+            return HttpResponse(data, mimetype="text/plain")
         elif desired_format == 'xml':
-            return HttpResponse()
+            raise Http404("XML serialization disabled temporarily due to lack of 'lxml' on OSX")
+            data = json.dumps(retval)
+            return HttpResponse(data, mimetype="text/plain")
 
     raise Http404
 
@@ -266,7 +273,9 @@ def delete_tag(request, tid, *args, **kwargs):
 ## method: read_tag
 ## args: tid
 def read_tag(request, tid, *args, **kwargs):
-    return { 'status': 'not yet implemented' }
+    tid = int(tid)
+    t = Tag.objects.get(id=tid)
+    return t.outbound()
 
 ## url: /api/tag/TID/key.FMT
 ## method: create_tag_key

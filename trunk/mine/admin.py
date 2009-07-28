@@ -14,18 +14,18 @@
 ## permissions and limitations under the License.
 ##
 
-from pymine.mine.models import Tag, Relation, Item, Comment
+from pymine.mine.models import Tag, Relation, Item, Comment, VanityURL
 from django.contrib import admin
 
 class TagAdmin(admin.ModelAdmin):
     list_display = ('name', 'last_modified', 'created')
-    search_fields = ['name']
+    search_fields = ['name', 'description']
     list_filter = ['created']
     date_hierarchy = 'created'
     fieldsets = [
         (None, {'fields': ['name']}), 
-        ('Implying Tags', {'fields': ['implies'], 'classes': ['collapse']}), 
-        ('Advanced', {'fields': ['cached_implications'], 'classes': ['collapse']}), 
+        ('Advanced', {'fields': ['description', 'implies'], 'classes': ['collapse']}), 
+        ('Debugging', {'fields': ['cached_implications'], 'classes': ['collapse']}), 
         ]
 
 class RelationAdmin(admin.ModelAdmin):
@@ -61,7 +61,17 @@ class CommentAdmin(admin.ModelAdmin):
         ('Advanced', {'fields': ['item', 'relation']}), 
         ]
 
+class VanityURLAdmin(admin.ModelAdmin):
+    list_display = ('name', 'link', 'last_modified', 'created')
+    search_fields = ['name']
+    list_filter = ['created']
+    date_hierarchy = 'created'
+    fieldsets = [
+        (None, {'fields': ['name', 'link']}), 
+        ]
+
 admin.site.register(Tag, TagAdmin)
 admin.site.register(Relation, RelationAdmin)
 admin.site.register(Item, ItemAdmin)
 admin.site.register(Comment, CommentAdmin)
+admin.site.register(VanityURL, VanityURLAdmin)
