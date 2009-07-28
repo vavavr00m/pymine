@@ -22,18 +22,25 @@ def DISPATCH(request, *args, **kwargs):
     get_view = kwargs.pop('GET', None)
     post_view = kwargs.pop('POST', None)
     delete_view = kwargs.pop('DELETE', None)
-    response = None
+    desired_format = kwargs.pop('fmt', None)
+    retval = None
 
     if request.method == 'GET' and get_view is not None:
-        response = get_view(request, *args, **kwargs)
+        retval = get_view(request, *args, **kwargs)
     elif request.method == 'POST' and post_view is not None:
-        response = post_view(request, *args, **kwargs)
+        retval = post_view(request, *args, **kwargs)
     elif request.method == 'DELETE' and delete_view is not None:
-        response = delete_view(request, *args, **kwargs)
+        retval = delete_view(request, *args, **kwargs)
 
-    if response:
-        return HttpResponse(str(response))
-
+    if retval:
+        if desired_format == 'py':
+            return HttpResponse(str(retval),mimetype="text/plain")
+        elif desired_format == 'txt':
+            return HttpResponse(str(retval), mimetype="text/plain")
+        elif desired_format == 'json':
+            return HttpResponse()
+        elif desired_format == 'xml':
+            return HttpResponse()
 
     raise Http404
 
