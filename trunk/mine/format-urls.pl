@@ -142,16 +142,15 @@ __END__;
 /api/tag/TID/key/KEY.FMT         DELETE  tag-key
 /api/tag/TID/key/KEY.FMT         GET     tag-key
 /api/tag/TID/key/KEY.FMT         POST    tag-key
-/api/url/RID.FMT                 GET     encode-minekey
-/api/url/RID/IID.FMT             GET     encode-minekey
-/api/url/RID/RVSN/IID.FMT        GET     encode-minekey
+/api/url/RID.FMT                 GET     encode-minekey1
+/api/url/RID/IID.FMT             GET     encode-minekey2
+/api/url/RID/RVSN/IID.FMT        GET     encode-minekey3
 /api/version.FMT                 GET     version
 
 /ui/create-comment/IID.html      GET     create-comment
 /ui/create-item.html             GET     create-item
 /ui/create-relation.html         GET     create-relation
 /ui/create-tag.html              GET     create-tag
-/ui/data/IID                     GET     data/IID
 /ui/delete-comment/IID/CID.html  GET     delete-comment
 /ui/delete-item/IID.html         GET     delete-item
 /ui/delete-relation/RID.html     GET     delete-relation
@@ -170,4 +169,4 @@ __END__;
 /ui/update-item/IID.html         GET     update-item
 /ui/update-relation/RID.html     GET     update-relation
 /ui/update-tag/TID.html          GET     update-tag
-/ui/version.html                 GET     version.html
+/ui/version.html                 GET     version
