@@ -20,16 +20,6 @@ from django.shortcuts import render_to_response, get_object_or_404
 
 ##################################################################
 
-# *** SPECIAL CASE ***
-
-## url: /ui/data/IID
-## method: read_data
-## args: iid
-def read_data(request, iid, *args, **kwargs):
-    raise Http404('method read_data for url /ui/data/IID is not yet implemented')
-
-##################################################################
-
 ## url: /ui/create-comment/IID.html
 ## method: read_create_comment
 ## args: iid
@@ -165,6 +155,6 @@ def read_update_tag(request, tid, *args, **kwargs):
 ## url: /ui/version.html
 ## method: read_version.html
 ## args: 
-def read_version.html(request, *args, **kwargs):
+def read_version(request, *args, **kwargs):
     raise Http404('method read_version.html for url /ui/version.html is not yet implemented')
 
