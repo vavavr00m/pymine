@@ -207,7 +207,9 @@ def delete_relation(request, rid, *args, **kwargs):
 ## method: read_relation
 ## args: rid
 def read_relation(request, rid, *args, **kwargs):
-    return { 'status': 'not yet implemented' }
+    id = int(rid)
+    model = Relation.objects.get(id=id)
+    return model.outbound()
 
 ## url: /api/relation/RID/key.FMT
 ## method: create_relation_key
@@ -273,9 +275,9 @@ def delete_tag(request, tid, *args, **kwargs):
 ## method: read_tag
 ## args: tid
 def read_tag(request, tid, *args, **kwargs):
-    tid = int(tid)
-    t = Tag.objects.get(id=tid)
-    return t.outbound()
+    id = int(tid)
+    model = Tag.objects.get(id=id)
+    return model.outbound()
 
 ## url: /api/tag/TID/key.FMT
 ## method: create_tag_key
