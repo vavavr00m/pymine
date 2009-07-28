@@ -24,7 +24,7 @@ class TagAdmin(admin.ModelAdmin):
     date_hierarchy = 'created'
     fieldsets = [
         (None, {'fields': ['name']}), 
-        ('Advanced', {'fields': ['description', 'implies'], 'classes': ['collapse']}), 
+        ('Advanced', {'fields': ['description', 'implies']}), 
         ('Debugging', {'fields': ['cached_implications'], 'classes': ['collapse']}), 
         ]
 
@@ -35,7 +35,7 @@ class RelationAdmin(admin.ModelAdmin):
     date_hierarchy = 'created'
     fieldsets = [
         (None, {'fields': ['name', 'version', 'description', 'tags']}), 
-        ('Advanced Tags', {'fields': ['tags_excluded', 'tags_required'], 'classes': ['collapse']}), 
+        ('Advanced Tags', {'fields': ['tags_required', 'tags_excluded'], 'classes': ['collapse']}), 
         ('Contact Information', {'fields': ['email_address', 'url_homepage', 'url_image', 'url_callback']}), 
         ('Access Control', {'fields': ['embargo_before', 'embargo_after', 'network_pattern'], 'classes': ['collapse']}), 
         ]

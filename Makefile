@@ -46,3 +46,6 @@ dbclean:
 	python manage.py cleanup
 
 ##################################################################
+
+syntax:
+	find mine -name "*.py" | while read f ; do echo $$f ; python $$f ; echo "" ; done
