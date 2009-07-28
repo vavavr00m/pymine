@@ -38,40 +38,18 @@ def REST(request, *args, **kwargs):
 ## method: read_mine_root
 ## args:
 def read_mine_root(request, *args, **kwargs):
-    raise Http404('method read_mine_root for url / is not yet implemented')
+    return render_to_response('root-mine.html')
 
-## url: /api
-## method: read_api_root
-## args:
-def read_api_root(request, *args, **kwargs):
-    raise Http404('method read_api_root for url /api is not yet implemented')
 
 ## url: /doc
-## method: read_doc
+## method: read_doc_root
 ## args:
-def read_doc(request, *args, **kwargs):
-    raise Http404('method read_doc for url /doc is not yet implemented')
-
-## url: /get
-## method: read_minekey
-## args:
-def read_minekey(request, *args, **kwargs):
-    raise Http404('method read_minekey for url /get is not yet implemented')
-
-## url: /get
-## method: create_minekey
-## args:
-def create_minekey(request, *args, **kwargs):
-    raise Http404('method create_minekey for url /get is not yet implemented')
+def read_doc_root(request, *args, **kwargs):
+    return render_to_response('root-doc.html')
 
 ## url: /pub
-## method: read_pub
+## method: read_pub_root
 ## args:
-def read_pub(request, *args, **kwargs):
-    raise Http404('method read_pub for url /pub is not yet implemented')
+def read_pub_root(request, *args, **kwargs):
+    return render_to_response('root-pub.html')
 
-## url: /ui
-## method: read_ui_root
-## args:
-def read_ui_root(request, *args, **kwargs):
-    raise Http404('method read_ui_root for url /ui is not yet implemented')

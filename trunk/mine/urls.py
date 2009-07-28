@@ -24,7 +24,7 @@ urlpatterns = patterns('',
 		       (r'^/api/', include('mine.api.urls')),
 		       (r'^/get/', include('mine.get.urls')),
 		       (r'^/ui/', include('mine.ui.urls')),
-		       (r'^/pub/', mine.REST, {'GET': mine.read_pub}),
-		       (r'^/doc/', mine.REST, {'GET': mine.read_doc}),
+		       (r'^/pub/', mine.REST, {'GET': mine.read_pub_root}),
+		       (r'^/doc/', mine.REST, {'GET': mine.read_doc_root}),
 		       (r'^$', mine.REST, {'GET': mine.read_mine_root}),
-		       )
+		 )
