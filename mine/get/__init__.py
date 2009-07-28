@@ -13,18 +13,3 @@
 ## implied. See the License for the specific language governing
 ## permissions and limitations under the License.
 ##
-
-from django.conf.urls.defaults import *
-from django.contrib import admin
-import views as mine
-
-admin.autodiscover()
-
-urlpatterns = patterns('',
-		       (r'^/api/', include('mine.api.urls')),
-		       (r'^/get/', include('mine.get.urls')),
-		       (r'^/ui/', include('mine.ui.urls')),
-		       (r'^/pub/', mine.REST, {'GET': mine.read_pub}),
-		       (r'^/doc/', mine.REST, {'GET': mine.read_doc}),
-		       (r'^$', mine.REST, {'GET': mine.read_mine_root}),
-		       )

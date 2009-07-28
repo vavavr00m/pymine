@@ -17,15 +17,29 @@
 import os
 
 # Django settings for pymine project.
-
 DEBUG = True
 TEMPLATE_DEBUG = DEBUG
+
+# where we are
 MINE_PATH = os.path.dirname(__file__)
+
+# whose database shall we use (needs to be selectable)
 MINE_USER = "alecm"
+
+# A tuple that lists people who get code error notifications. When
+# DEBUG=False and a view raises an exception, Django will e-mail these
+# people with the full exception information. Each member of the tuple
+# should be a tuple of (Full name, e-mail address).
 ADMINS = (
     ('Alec Muffett', 'alec.muffett@gmail.com'),
 )
 
+##################################################################
+##################################################################
+##################################################################
+
+# A tuple in the same format as ADMINS that specifies who should get
+# broken-link notifications when SEND_BROKEN_LINK_EMAILS=True
 MANAGERS = ADMINS
 
 DATABASE_ENGINE = 'sqlite3'
