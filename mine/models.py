@@ -18,7 +18,7 @@ from django.db import models
 import itertools
 
 MINE_STRING=1024
-EDIT_BACKDOOR=True
+EDIT_BACKDOOR=False
 
 ##################################################################
 
@@ -29,22 +29,8 @@ class Tag(models.Model):
     created = models.DateTimeField(auto_now_add=True, editable=EDIT_BACKDOOR)
     last_modified = models.DateTimeField(auto_now=True)
 
-    class Meta: ordering = ['id']
-
-    def structure(self):
-	s = {}
-	s['tagId'] = int(self.id)
-	x = self.name
-        if x: s['tagName'] = x
-	x = self.description
-	if x: s['tagDescription'] = x
-	x = ' '.join([ x.name for x in self.implies.all() ])
-	if x: s['tagImplies'] = x
-	x = self.created
-	if x: s['tagCreated'] = x.isoformat()
-	x = self.last_modified
-	if x: s['tagLastModified'] = x.isoformat()
-	return s
+    class Meta:
+        ordering = ['id']
 
     def __unicode__(self):
 	return self.name
@@ -68,40 +54,8 @@ class Relation(models.Model):
     created = models.DateTimeField(auto_now_add=True, editable=EDIT_BACKDOOR)
     last_modified = models.DateTimeField(auto_now=True)
 
-    class Meta: ordering = ['name']
-
-    def structure(self):
-	s = {}
-	s['relationId'] = int(self.id)
-	x = self.name
-        if x: s['relationName'] = x
-	x = self.description
-        if x: s['relationDescription'] = x
-	x = self.version
-        if x: s['relationVersion'] = x
-	x = self.embargo_before
-        if x: s['relationEmbargoBefore'] = x.isoformat()
-	x = self.embargo_after
-        if x: s['relationEmbargoAfter'] = x.isoformat()
-	x = self.network_pattern
-        if x: s['relationNetworkPattern'] = x
-	x = self.email_address
-        if x: s['relationEmailAddress'] = x
-	x = self.url_callback
-        if x: s['relationCallbackURL'] = x
-	x = self.url_homepage
-        if x: s['relationHomepageURL'] = x
-	x = self.url_image
-        if x: s['relationImageURL'] = x
-	x = self.created
-        if x: s['relationCreated'] = x.isoformat()
-	x = self.last_modified
-        if x: s['relationLastModified'] = x.isoformat()
-	x = " ".join(x for x in itertools.chain( [ i.name for i in self.tags.all() ], 
-                                                 [ "require:%s" % i.name for i in self.tags_required.all() ], 
-                                                 [ "exclude:%s" % i.name for i in self.tags_excluded.all() ]))
-        if x: s['relationInterests'] = x
-	return s
+    class Meta:
+        ordering = ['name']
 
     def __unicode__(self):
 	return self.name
@@ -128,33 +82,8 @@ class Item(models.Model):
     created = models.DateTimeField(auto_now_add=True, editable=EDIT_BACKDOOR)
     last_modified = models.DateTimeField(auto_now=True)
 
-    class Meta: ordering = ['-last_modified']
-
-    def structure(self):
-	s = {}
-	s['itemId'] = int(self.id)
-        x = self.name
-        if x: s['itemName'] = x
-        x = self.description
-        if x: s['itemDescription'] = x
-        x = self.status
-        if x: s['itemStatus'] = x
-        x = self.content_type
-        if x: s['itemType'] = x
-        x = self.hide_after.isoformat()
-        if x: s['itemHideAfter'] = x
-        x = self.hide_before.isoformat()
-        if x: s['itemHideBefore'] = x
-        x = self.created.isoformat()
-        if x: s['itemCreated'] = x
-        x = self.last_modified.isoformat()
-        if x: s['itemLastModified'] = x
-	x = " ".join(x for x in itertools.chain( [ i.name for i in self.tags.all() ], 
-                                                 [ "for:%s" % i.name for i in self.item_for_relations.all() ], 
-                                                 [ "not:%s" % i.name for i in self.item_not_relations.all() ]))
-        if x: s['itemTags'] = x
-        return s
-
+    class Meta:
+        ordering = ['-last_modified']
 
     def __unicode__(self):
 	return self.name
@@ -170,26 +99,8 @@ class Comment(models.Model):
     created = models.DateTimeField(auto_now_add=True, editable=EDIT_BACKDOOR)
     last_modified = models.DateTimeField(auto_now=True)
 
-    class Meta: ordering = ['-id']
-
-    def structure(self):
-	s = {}
-	s['commentId'] = int(self.id)
-        x = self.title
-        if x: s['commentTitle'] = x
-        x = self.body
-        if x: s['commentBody'] = x
-        x = self.likes
-        if x: s['commentLikes'] = x
-        x = self.item
-        if x: s['commentItem'] = x.id
-        x = self.relation
-        if x: s['commentRelation'] = x.name
-        x = self.created
-        if x: s['commentCreated'] = x.isoformat()
-        x = self.last_modified
-        if x: s['commentLastModified'] = x.isoformat()
-        return s
+    class Meta:
+        ordering = ['-id']
 
     def __unicode__(self):
 	return self.title
@@ -202,9 +113,103 @@ class VanityURL(models.Model):
     created = models.DateTimeField(auto_now_add=True, editable=EDIT_BACKDOOR)
     last_modified = models.DateTimeField(auto_now=True)
 
-    class Meta: ordering = ['-id']
+    class Meta:
+        ordering = ['-id']
 
     def __unicode__(self):
 	return self.name
 
 ##################################################################
+##################################################################
+##################################################################
+
+# x = ' '.join([ x.name for x in self.implies.all() ])
+
+# x = " ".join(x for x in itertools.chain( [ i.name for i in self.tags.all() ], 
+# [ "require:%s" % i.name for i in self.tags_required.all() ], 
+# [ "exclude:%s" % i.name for i in self.tags_excluded.all() ]))
+
+# x = " ".join(x for x in itertools.chain( [ i.name for i in self.tags.all() ], 
+# [ "for:%s" % i.name for i in self.item_for_relations.all() ], 
+# [ "not:%s" % i.name for i in self.item_not_relations.all() ]))
+
+
+class Transcoder():
+    def s2m_date():
+        pass
+
+    def m2s_date():
+        pass
+
+    def s2m_int():
+        pass
+
+    def m2s_int():
+        pass
+
+    def s2m_string():
+        pass
+
+    def m2s_string():
+        pass
+
+    def s2m_NYI():
+        pass
+
+    def m2s_NYI():
+        pass
+
+    # ( structureName, 'model_attribute', s2m_func, m2s_func ),
+    xtable = (
+        ('commentBody',             'body',             s2m_string,  m2s_string  ),
+        ('commentCreated',          'created',          None,        m2s_date    ),
+        ('commentId',               'id',               None,        m2s_int     ),
+        ('commentItem',             'item',             s2m_NYI,     m2s_NYI     ),
+        ('commentLastModified',     'last_modified',    None,        m2s_date    ),
+        ('commentLikes',            'likes',            s2m_int,     m2s_int     ),
+        ('commentRelation',         'relation',         s2m_NYI,     m2s_NYI     ),
+        ('commentTitle',            'title',            s2m_string,  m2s_string  ),
+        ('itemCreated',             'created',          None,        m2s_date    ),
+        ('itemDescription',         'description',      s2m_string,  m2s_string  ),
+        ('itemHideAfter',           'hide_after',       s2m_date,    m2s_date    ),
+        ('itemHideBefore',          'hide_before',      s2m_date,    m2s_date    ),
+        ('itemId',                  'id',               None,        m2s_int     ),
+        ('itemLastModified',        'last_modified',    None,        m2s_date    ),
+        ('itemName',                'name',             s2m_string,  m2s_string  ),
+        ('itemStatus',              'status',           s2m_string,  m2s_string  ),
+        ('itemTags',                'tags',             s2m_NYI,     m2s_NYI     ),
+        ('itemType',                'content_type',     s2m_string,  m2s_string  ),
+        ('relationCallbackURL',     'url_callback',     s2m_string,  m2s_string  ),
+        ('relationCreated',         'created',          None,        m2s_date    ),
+        ('relationDescription',     'description',      s2m_string,  m2s_string  ),
+        ('relationEmailAddress',    'email_address',    s2m_string,  m2s_string  ),
+        ('relationEmbargoAfter',    'embargo_after',    s2m_date,    m2s_date    ),
+        ('relationEmbargoBefore',   'embargo_before',   s2m_date,    m2s_date    ),
+        ('relationHomepageURL',     'url_homepage',     s2m_string,  m2s_string  ),
+        ('relationId',              'id',               None,        m2s_int     ),
+        ('relationImageURL',        'url_image',        s2m_string,  m2s_string  ),
+        ('relationInterests',       'interests',        s2m_NYI,     m2s_NYI     ),
+        ('relationLastModified',    'last_modified',    None,        m2s_date    ),
+        ('relationName',            'name',             s2m_string,  m2s_string  ),
+        ('relationNetworkPattern',  'network_pattern',  s2m_string,  m2s_string  ),
+        ('relationVersion',         'version',          s2m_int,     m2s_int     ),
+        ('tagCreated',              'created',          None,        m2s_date    ),
+        ('tagDescription',          'description',      s2m_string,  m2s_string  ),
+        ('tagId',                   'id',               None,        m2s_int     ),
+        ('tagImplies',              'implies',          s2m_NYI,     m2s_NYI     ),
+        ('tagLastModified',         'last_modified',    None,        m2s_date    ),
+        ('tagName',                 'name',             s2m_string,  m2s_string  ),
+        )
+
+    def model_to_structure():
+        pass
+
+    def structure_to_model():
+        pass
+
+    def request_to_structure():
+        pass
+
+    def request_to_model():
+        pass
+
