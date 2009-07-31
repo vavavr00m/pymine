@@ -204,12 +204,12 @@ class Transcoder():
     def model_to_structure():
         pass
 
-    def structure_to_model():
+    def structure_to_model(id=0):
         pass
 
     def request_to_structure():
         pass
 
-    def request_to_model():
+    def request_to_model(id=0):
         pass
 
