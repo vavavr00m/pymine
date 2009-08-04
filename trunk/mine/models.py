@@ -211,60 +211,74 @@ def m2s_string(m, mname, s, sname):
 # date type conversion
 
 def s2m_date(s, sname, m, mname):
-    raise Exception, "---- NYI ----"
+    if sname in s: raise Exception, "---- NYI ----" # ---------------------------------  needs work
 
 def m2s_date(m, mname, s, sname):
     x = getattr(m, mname)
     if x: s[sname] = x.isoformat()
 
+# request conversion # --------------------------------- MAY NEED TO BE HACKED LATER, SOMETIMES EMPTY VALUE IS LEGIT FOR UPDATE, ETC
+def r2s_get(r, rname):
+    if rname in r.GET: return r.GET[rname]
+    elif rname in r.POST: return r.POST[rname]
+    else: return None
+
+def r2s_string(r, rname, s, sname):
+    x = r2s_get(r, rname)
+    if x: s[sname] = x
+
+def r2s_int(r, rname, s, sname):
+    x = r2s_get(r, rname)
+    if x: s[sname] = int(x)
+
 # translation table
 
 xtable = (
-    #('structureName',          'model_attribute',  s2m_func,    m2s_func               ),
-    ('commentBody',             'body',             s2m_string,  m2s_string             ),
-    ('commentCreated',          'created',          s2m_date,    m2s_date               ),
-    ('commentId',               'id',               s2m_int,     m2s_int                ),
-    ('commentItem',             'item',             None,        None                   ),  #ForeignKey(Item)
-    ('commentLastModified',     'last_modified',    s2m_date,    m2s_date               ),
-    ('commentLikes',            'likes',            s2m_int,     m2s_int                ),
-    ('commentRelation',         'relation',         None,        None                   ),  #ForeignKey(Relation)
-    ('commentTitle',            'title',            s2m_string,  m2s_string             ),
-    ('itemCreated',             'created',          s2m_date,    m2s_date               ),
-    ('itemDescription',         'description',      s2m_string,  m2s_string             ),
-    ('itemHideAfter',           'hide_after',       s2m_date,    m2s_date               ),
-    ('itemHideBefore',          'hide_before',      s2m_date,    m2s_date               ),
-    ('itemId',                  'id',               s2m_int,     m2s_int                ),
-    ('itemLastModified',        'last_modified',    s2m_date,    m2s_date               ),
-    ('itemName',                'name',             s2m_string,  m2s_string             ),
-    ('itemStatus',              'status',           s2m_string,  m2s_string             ),
-    ('itemTags',                'tags',             None,        m2s_itemtags           ),  #ManyToMany(Special)
-    ('itemType',                'content_type',     s2m_string,  m2s_string             ),
-    ('relationCallbackURL',     'url_callback',     s2m_string,  m2s_string             ),
-    ('relationCreated',         'created',          s2m_date,    m2s_date               ),
-    ('relationDescription',     'description',      s2m_string,  m2s_string             ),
-    ('relationEmailAddress',    'email_address',    s2m_string,  m2s_string             ),
-    ('relationEmbargoAfter',    'embargo_after',    s2m_date,    m2s_date               ),
-    ('relationEmbargoBefore',   'embargo_before',   s2m_date,    m2s_date               ),
-    ('relationHomepageURL',     'url_homepage',     s2m_string,  m2s_string             ),
-    ('relationId',              'id',               s2m_int,     m2s_int                ),
-    ('relationImageURL',        'url_image',        s2m_string,  m2s_string             ),
-    ('relationInterests',       'interests',        None,        m2s_relationinterests  ),  #ManyToMany(Special)
-    ('relationLastModified',    'last_modified',    s2m_date,    m2s_date               ),
-    ('relationName',            'name',             s2m_string,  m2s_string             ),
-    ('relationNetworkPattern',  'network_pattern',  s2m_string,  m2s_string             ),
-    ('relationVersion',         'version',          s2m_int,     m2s_int                ),
-    ('tagCreated',              'created',          s2m_date,    m2s_date               ),
-    ('tagDescription',          'description',      s2m_string,  m2s_string             ),
-    ('tagId',                   'id',               s2m_int,     m2s_int                ),
-    ('tagImplies',              'implies',          None,        m2s_tagimplies         ),  #ManyToMany(Tag)
-    ('tagLastModified',         'last_modified',    s2m_date,    m2s_date               ),
-    ('tagName',                 'name',             s2m_string,  m2s_string             ),
-    ('vurlCreated',             'created',          s2m_date,    m2s_date               ),
-    ('vurlId',                  'id',               s2m_int,     m2s_int                ),
-    ('vurlLastModified',        'last_modified',    s2m_date,    m2s_date               ),
-    ('vurlLink',                'link',             s2m_string,  m2s_string             ),
-    ('vurlName',                'name',             s2m_string,  m2s_string             ),
-    ('vurlTags',                'tags',             None,        m2s_vurltags           ),  #ManyToMany(Tag)
+#(  'structureName',           'model_attribute',  s2m_func,    m2s_func,               r2s_func    ),
+(   'commentBody',             'body',             s2m_string,  m2s_string,             r2s_string  ),
+(   'commentCreated',          'created',          s2m_date,    m2s_date,               r2s_string  ),
+(   'commentId',               'id',               s2m_int,     m2s_int,                r2s_int     ),
+(   'commentItem',             'item',             None,        None,                   r2s_string  ),
+(   'commentLastModified',     'last_modified',    s2m_date,    m2s_date,               r2s_string  ),
+(   'commentLikes',            'likes',            s2m_int,     m2s_int,                r2s_string  ),
+(   'commentRelation',         'relation',         None,        None,                   r2s_string  ),
+(   'commentTitle',            'title',            s2m_string,  m2s_string,             r2s_string  ),
+(   'itemCreated',             'created',          s2m_date,    m2s_date,               r2s_string  ),
+(   'itemDescription',         'description',      s2m_string,  m2s_string,             r2s_string  ),
+(   'itemHideAfter',           'hide_after',       s2m_date,    m2s_date,               r2s_string  ),
+(   'itemHideBefore',          'hide_before',      s2m_date,    m2s_date,               r2s_string  ),
+(   'itemId',                  'id',               s2m_int,     m2s_int,                r2s_int     ),
+(   'itemLastModified',        'last_modified',    s2m_date,    m2s_date,               r2s_string  ),
+(   'itemName',                'name',             s2m_string,  m2s_string,             r2s_string  ),
+(   'itemStatus',              'status',           s2m_string,  m2s_string,             r2s_string  ),
+(   'itemTags',                'tags',             None,        m2s_itemtags,           r2s_string  ),
+(   'itemType',                'content_type',     s2m_string,  m2s_string,             r2s_string  ),
+(   'relationCallbackURL',     'url_callback',     s2m_string,  m2s_string,             r2s_string  ),
+(   'relationCreated',         'created',          s2m_date,    m2s_date,               r2s_string  ),
+(   'relationDescription',     'description',      s2m_string,  m2s_string,             r2s_string  ),
+(   'relationEmailAddress',    'email_address',    s2m_string,  m2s_string,             r2s_string  ),
+(   'relationEmbargoAfter',    'embargo_after',    s2m_date,    m2s_date,               r2s_string  ),
+(   'relationEmbargoBefore',   'embargo_before',   s2m_date,    m2s_date,               r2s_string  ),
+(   'relationHomepageURL',     'url_homepage',     s2m_string,  m2s_string,             r2s_string  ),
+(   'relationId',              'id',               s2m_int,     m2s_int,                r2s_int     ),
+(   'relationImageURL',        'url_image',        s2m_string,  m2s_string,             r2s_string  ),
+(   'relationInterests',       'interests',        None,        m2s_relationinterests,  r2s_string  ),
+(   'relationLastModified',    'last_modified',    s2m_date,    m2s_date,               r2s_string  ),
+(   'relationName',            'name',             s2m_string,  m2s_string,             r2s_string  ),
+(   'relationNetworkPattern',  'network_pattern',  s2m_string,  m2s_string,             r2s_string  ),
+(   'relationVersion',         'version',          s2m_int,     m2s_int,                r2s_string  ),
+(   'tagCreated',              'created',          s2m_date,    m2s_date,               r2s_string  ),
+(   'tagDescription',          'description',      s2m_string,  m2s_string,             r2s_string  ),
+(   'tagId',                   'id',               s2m_int,     m2s_int,                r2s_int     ),
+(   'tagImplies',              'implies',          None,        m2s_tagimplies,         r2s_string  ),
+(   'tagLastModified',         'last_modified',    s2m_date,    m2s_date,               r2s_string  ),
+(   'tagName',                 'name',             s2m_string,  m2s_string,             r2s_string  ),
+(   'vurlCreated',             'created',          s2m_date,    m2s_date,               r2s_string  ),
+(   'vurlId',                  'id',               s2m_int,     m2s_int,                r2s_int     ),
+(   'vurlLastModified',        'last_modified',    s2m_date,    m2s_date,               r2s_string  ),
+(   'vurlLink',                'link',             s2m_string,  m2s_string,             r2s_string  ),
+(   'vurlName',                'name',             s2m_string,  m2s_string,             r2s_string  ),
+(   'vurlTags',                'tags',             None,        m2s_vurltags,           r2s_string  ),
     )
 
 # table of s-space attribute prefixes and what models they map to
@@ -281,18 +295,24 @@ class_prefixes = {
 
 m2s_table = {}
 s2m_table = {}
+r2s_table = {}
+
 for prefix in class_prefixes.iterkeys():
     m2s_table[prefix] = {}
     s2m_table[prefix] = {}
+    r2s_table[prefix] = {}
 
 # populate the runtime tables
 
-for (sname, mname, s2mfunc, m2sfunc) in xtable:
+for (sname, mname, s2mfunc, m2sfunc, r2sfunc) in xtable:
     for prefix in class_prefixes.iterkeys():
         if sname.startswith(prefix):
             matched = True
             if m2sfunc: m2s_table[prefix][mname] = (m2sfunc, sname)
             if s2mfunc: s2m_table[prefix][sname] = (s2mfunc, mname)
+
+            # ignore for the moment, sname replication (key/value) here
+            if r2sfunc: r2s_table[prefix][sname] = (r2sfunc, sname) 
             break
     else:
         raise Exception, "unrecognised prefix in xtable: " + sname
@@ -315,7 +335,9 @@ def structure_to_model(kind, s, id=0):
 # convert a request to a structure
 
 def request_to_structure(kind, r):
-    raise Exception, "---- NYI ----"
+    s = {}
+    for rname, (r2sfunc, sname) in r2s_table[kind].iteritems(): r2sfunc(r, rname, s, sname)
+    return s
 
 # convert a request to a model
 
