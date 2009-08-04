@@ -25,7 +25,6 @@ class TagAdmin(admin.ModelAdmin):
     fieldsets = [
         (None, {'fields': ['name']}), 
         ('Advanced', {'fields': ['description', 'implies']}), 
-        ('Debugging', {'fields': ['cached_implications'], 'classes': ['collapse']}), 
         ]
 
 class RelationAdmin(admin.ModelAdmin):
@@ -52,7 +51,7 @@ class ItemAdmin(admin.ModelAdmin):
         ]
 
 class CommentAdmin(admin.ModelAdmin):
-    list_display = ('title', 'relation', 'item', 'likes', 'last_modified', 'created')
+    list_display = ('title', 'relation',  'item', 'likes', 'last_modified', 'created')
     search_fields = ['title', 'body']
     list_filter = ['created']
     date_hierarchy = 'created'
@@ -62,12 +61,12 @@ class CommentAdmin(admin.ModelAdmin):
         ]
 
 class VanityURLAdmin(admin.ModelAdmin):
-    list_display = ('name', 'link', 'last_modified', 'created')
+    list_display = ('name', 'link', 'tags', 'last_modified', 'created')
     search_fields = ['name']
     list_filter = ['created']
     date_hierarchy = 'created'
     fieldsets = [
-        (None, {'fields': ['name', 'link']}), 
+        (None, {'fields': ['name', 'link', 'tags']}), 
         ]
 
 admin.site.register(Tag, TagAdmin)
@@ -75,3 +74,4 @@ admin.site.register(Relation, RelationAdmin)
 admin.site.register(Item, ItemAdmin)
 admin.site.register(Comment, CommentAdmin)
 admin.site.register(VanityURL, VanityURLAdmin)
+
