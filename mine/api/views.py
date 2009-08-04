@@ -268,8 +268,11 @@ def read_tag_list(request, *args, **kwargs):
 ## method: create_tag
 ## args: 
 def create_tag(request, *args, **kwargs):
+    # s = request_to_structure('tag', request)
+    # m = structure_to_model('tag', s)
     m = request_to_model('tag', request)
     m.save()
+    return m.structure()
 
 ## url: /api/tag/TID.FMT
 ## method: delete_tag
