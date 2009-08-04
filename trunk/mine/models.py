@@ -179,15 +179,15 @@ def m2s_vurltags(m, mname, s, sname):
     if x: s[sname] = x
 
 def m2s_itemtags(m, mname, s, sname):
-    x = " ".join(x for x in itertools.chain([ i.name for i in self.tags.all() ],
-                                            [ "for:%s" % i.name for i in self.item_for_relations.all() ],
-                                            [ "not:%s" % i.name for i in self.item_not_relations.all() ]))
+    x = " ".join(x for x in itertools.chain([ i.name for i in m.tags.all() ],
+                                            [ "for:%s" % i.name for i in m.item_for_relations.all() ],
+                                            [ "not:%s" % i.name for i in m.item_not_relations.all() ]))
     if x: s[sname] = x
 
 def m2s_relationinterests(m, mname, s, sname):
-    x = " ".join(x for x in itertools.chain([ i.name for i in self.tags.all() ],
-                                            [ "require:%s" % i.name for i in self.tags_required.all() ],
-                                            [ "exclude:%s" % i.name for i in self.tags_excluded.all() ]))
+    x = " ".join(x for x in itertools.chain([ i.name for i in m.tags.all() ],
+                                            [ "require:%s" % i.name for i in m.tags_required.all() ],
+                                            [ "exclude:%s" % i.name for i in m.tags_excluded.all() ]))
     if x: s[sname] = x
 
 # int type conversion
