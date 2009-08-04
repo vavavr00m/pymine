@@ -18,10 +18,13 @@ from django.core import serializers
 from django.core.urlresolvers import reverse
 from django.http import Http404, HttpResponse, HttpResponseRedirect
 from django.shortcuts import render_to_response, get_object_or_404
+
 import django.utils.simplejson as json
 import pickle
 
 from mine.models import Tag, Item, Relation, Comment
+
+from mine.models import request_to_model
 
 def DISPATCH(request, *args, **kwargs):
     get_view = kwargs.pop('GET', None)
@@ -265,7 +268,8 @@ def read_tag_list(request, *args, **kwargs):
 ## method: create_tag
 ## args: 
 def create_tag(request, *args, **kwargs):
-    raise Exception, "---- NYI ----"
+    m = request_to_model('tag', request)
+    m.save()
 
 ## url: /api/tag/TID.FMT
 ## method: delete_tag
