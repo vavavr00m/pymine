@@ -57,272 +57,274 @@ def DISPATCH(request, *args, **kwargs):
 ## method: read_config
 ## args: 
 def read_config(request, *args, **kwargs):
-    return { 'status': 'not yet implemented' }
+    raise Exception, "---- NYI ----"
 
 ## url: /api/config.FMT
 ## method: create_config
 ## args: 
 def create_config(request, *args, **kwargs):
-    return { 'status': 'not yet implemented' }
+    raise Exception, "---- NYI ----"
 
 ## url: /api/item.FMT
 ## method: read_item_list
 ## args: 
 def read_item_list(request, *args, **kwargs):
-    return { 'status': 'not yet implemented' }
+    raise Exception, "---- NYI ----"
 
 ## url: /api/item.FMT
 ## method: create_item
 ## args: 
 def create_item(request, *args, **kwargs):
-    return { 'status': 'not yet implemented' }
+    raise Exception, "---- NYI ----"
 
 ## url: /api/item/IID
 ## method: read_item_data
 ## args: iid
 def read_item_data(request, iid, *args, **kwargs):
-    return { 'status': 'not yet implemented' }
+    raise Exception, "---- NYI ----"
 
 ## url: /api/item/IID
 ## method: create_item_data
 ## args: iid
 def create_item_data(request, iid, *args, **kwargs):
-    return { 'status': 'not yet implemented' }
+    raise Exception, "---- NYI ----"
 
 ## url: /api/item/IID.FMT
 ## method: delete_item
 ## args: iid
 def delete_item(request, iid, *args, **kwargs):
-    return { 'status': 'not yet implemented' }
+    raise Exception, "---- NYI ----"
 
 ## url: /api/item/IID.FMT
 ## method: read_item
 ## args: iid
 def read_item(request, iid, *args, **kwargs):
-    return { 'status': 'not yet implemented' }
+    id = int(iid)
+    m = Item.objects.get(id=id)
+    return m.structure()
 
 ## url: /api/item/IID/CID.FMT
 ## method: delete_comment
 ## args: iid cid
 def delete_comment(request, iid, cid, *args, **kwargs):
-    return { 'status': 'not yet implemented' }
+    raise Exception, "---- NYI ----"
 
 ## url: /api/item/IID/CID.FMT
 ## method: read_comment
 ## args: iid cid
 def read_comment(request, iid, cid, *args, **kwargs):
-    return { 'status': 'not yet implemented' }
+    raise Exception, "---- NYI ----"
 
 ## url: /api/item/IID/CID/key.FMT
 ## method: create_comment_key
 ## args: iid cid
 def create_comment_key(request, iid, cid, *args, **kwargs):
-    return { 'status': 'not yet implemented' }
+    raise Exception, "---- NYI ----"
 
 ## url: /api/item/IID/CID/key/KEY.FMT
 ## method: delete_comment_key
 ## args: iid cid key
 def delete_comment_key(request, iid, cid, key, *args, **kwargs):
-    return { 'status': 'not yet implemented' }
+    raise Exception, "---- NYI ----"
 
 ## url: /api/item/IID/CID/key/KEY.FMT
 ## method: read_comment_key
 ## args: iid cid key
 def read_comment_key(request, iid, cid, key, *args, **kwargs):
-    return { 'status': 'not yet implemented' }
+    raise Exception, "---- NYI ----"
 
 ## url: /api/item/IID/CID/key/KEY.FMT
 ## method: create_comment_key
 ## args: iid cid key
 def create_comment_key(request, iid, cid, key, *args, **kwargs):
-    return { 'status': 'not yet implemented' }
+    raise Exception, "---- NYI ----"
 
 ## url: /api/item/IID/clone.FMT
 ## method: read_clone_list
 ## args: iid
 def read_clone_list(request, iid, *args, **kwargs):
-    return { 'status': 'not yet implemented' }
+    raise Exception, "---- NYI ----"
 
 ## url: /api/item/IID/clone.FMT
 ## method: create_clone
 ## args: iid
 def create_clone(request, iid, *args, **kwargs):
-    return { 'status': 'not yet implemented' }
+    raise Exception, "---- NYI ----"
 
 ## url: /api/item/IID/comment.FMT
 ## method: read_comment_list
 ## args: iid
 def read_comment_list(request, iid, *args, **kwargs):
-    return { 'status': 'not yet implemented' }
+    raise Exception, "---- NYI ----"
 
 ## url: /api/item/IID/comment.FMT
 ## method: create_comment
 ## args: iid
 def create_comment(request, iid, *args, **kwargs):
-    return { 'status': 'not yet implemented' }
+    raise Exception, "---- NYI ----"
 
 ## url: /api/item/IID/key.FMT
 ## method: create_item_key
 ## args: iid
 def create_item_key(request, iid, *args, **kwargs):
-    return { 'status': 'not yet implemented' }
+    raise Exception, "---- NYI ----"
 
 ## url: /api/item/IID/key/KEY.FMT
 ## method: delete_item_key
 ## args: iid key
 def delete_item_key(request, iid, key, *args, **kwargs):
-    return { 'status': 'not yet implemented' }
+    raise Exception, "---- NYI ----"
 
 ## url: /api/item/IID/key/KEY.FMT
 ## method: read_item_key
 ## args: iid key
 def read_item_key(request, iid, key, *args, **kwargs):
-    return { 'status': 'not yet implemented' }
+    raise Exception, "---- NYI ----"
 
 ## url: /api/item/IID/key/KEY.FMT
 ## method: create_item_key
 ## args: iid key
 def create_item_key(request, iid, key, *args, **kwargs):
-    return { 'status': 'not yet implemented' }
+    raise Exception, "---- NYI ----"
 
 ## url: /api/relation.FMT
 ## method: read_relation_list
 ## args: 
 def read_relation_list(request, *args, **kwargs):
-    return { 'status': 'not yet implemented' }
+    raise Exception, "---- NYI ----"
 
 ## url: /api/relation.FMT
 ## method: create_relation
 ## args: 
 def create_relation(request, *args, **kwargs):
-    return { 'status': 'not yet implemented' }
+    raise Exception, "---- NYI ----"
 
 ## url: /api/relation/RID.FMT
 ## method: delete_relation
 ## args: rid
 def delete_relation(request, rid, *args, **kwargs):
-    return { 'status': 'not yet implemented' }
+    raise Exception, "---- NYI ----"
 
 ## url: /api/relation/RID.FMT
 ## method: read_relation
 ## args: rid
 def read_relation(request, rid, *args, **kwargs):
     id = int(rid)
-    model = Relation.objects.get(id=id)
-    return model.structure()
+    m = Relation.objects.get(id=id)
+    return m.structure()
 
 ## url: /api/relation/RID/key.FMT
 ## method: create_relation_key
 ## args: rid
 def create_relation_key(request, rid, *args, **kwargs):
-    return { 'status': 'not yet implemented' }
+    raise Exception, "---- NYI ----"
 
 ## url: /api/relation/RID/key/KEY.FMT
 ## method: delete_relation_key
 ## args: rid key
 def delete_relation_key(request, rid, key, *args, **kwargs):
-    return { 'status': 'not yet implemented' }
+    raise Exception, "---- NYI ----"
 
 ## url: /api/relation/RID/key/KEY.FMT
 ## method: read_relation_key
 ## args: rid key
 def read_relation_key(request, rid, key, *args, **kwargs):
-    return { 'status': 'not yet implemented' }
+    raise Exception, "---- NYI ----"
 
 ## url: /api/relation/RID/key/KEY.FMT
 ## method: create_relation_key
 ## args: rid key
 def create_relation_key(request, rid, key, *args, **kwargs):
-    return { 'status': 'not yet implemented' }
+    raise Exception, "---- NYI ----"
 
 ## url: /api/select/item.FMT
 ## method: read_select_item
 ## args: 
 def read_select_item(request, *args, **kwargs):
-    return { 'status': 'not yet implemented' }
+    raise Exception, "---- NYI ----"
 
 ## url: /api/select/relation.FMT
 ## method: read_select_relation
 ## args: 
 def read_select_relation(request, *args, **kwargs):
-    return { 'status': 'not yet implemented' }
+    raise Exception, "---- NYI ----"
 
 ## url: /api/select/tag.FMT
 ## method: read_select_tag
 ## args: 
 def read_select_tag(request, *args, **kwargs):
-    return { 'status': 'not yet implemented' }
+    raise Exception, "---- NYI ----"
 
 ## url: /api/tag.FMT
 ## method: read_tag_list
 ## args: 
 def read_tag_list(request, *args, **kwargs):
-    return { 'status': 'not yet implemented' }
+    raise Exception, "---- NYI ----"
 
 ## url: /api/tag.FMT
 ## method: create_tag
 ## args: 
 def create_tag(request, *args, **kwargs):
-    return { 'status': 'not yet implemented' }
+    raise Exception, "---- NYI ----"
 
 ## url: /api/tag/TID.FMT
 ## method: delete_tag
 ## args: tid
 def delete_tag(request, tid, *args, **kwargs):
-    return { 'status': 'not yet implemented' }
+    raise Exception, "---- NYI ----"
 
 ## url: /api/tag/TID.FMT
 ## method: read_tag
 ## args: tid
 def read_tag(request, tid, *args, **kwargs):
     id = int(tid)
-    model = Tag.objects.get(id=id)
-    return model.structure()
+    m = Tag.objects.get(id=id)
+    return m.structure()
 
 ## url: /api/tag/TID/key.FMT
 ## method: create_tag_key
 ## args: tid
 def create_tag_key(request, tid, *args, **kwargs):
-    return { 'status': 'not yet implemented' }
+    raise Exception, "---- NYI ----"
 
 ## url: /api/tag/TID/key/KEY.FMT
 ## method: delete_tag_key
 ## args: tid key
 def delete_tag_key(request, tid, key, *args, **kwargs):
-    return { 'status': 'not yet implemented' }
+    raise Exception, "---- NYI ----"
 
 ## url: /api/tag/TID/key/KEY.FMT
 ## method: read_tag_key
 ## args: tid key
 def read_tag_key(request, tid, key, *args, **kwargs):
-    return { 'status': 'not yet implemented' }
+    raise Exception, "---- NYI ----"
 
 ## url: /api/tag/TID/key/KEY.FMT
 ## method: create_tag_key
 ## args: tid key
 def create_tag_key(request, tid, key, *args, **kwargs):
-    return { 'status': 'not yet implemented' }
+    raise Exception, "---- NYI ----"
 
 ## url: /api/url/RID.FMT
 ## method: read_encode_minekey
 ## args: rid
 def read_encode_minekey1(request, rid, *args, **kwargs):
-    return { 'status': 'not yet implemented' }
+    raise Exception, "---- NYI ----"
 
 ## url: /api/url/RID/IID.FMT
 ## method: read_encode_minekey
 ## args: rid iid
 def read_encode_minekey2(request, rid, iid, *args, **kwargs):
-    return { 'status': 'not yet implemented' }
+    raise Exception, "---- NYI ----"
 
 ## url: /api/url/RID/RVSN/IID.FMT
 ## method: read_encode_minekey
 ## args: rid rvsn iid
 def read_encode_minekey3(request, rid, rvsn, iid, *args, **kwargs):
-    return { 'status': 'not yet implemented' }
+    raise Exception, "---- NYI ----"
 
 ## url: /api/version.FMT
 ## method: read_version
 ## args: 
 def read_version(request, *args, **kwargs):
-    return { 'status': 'not yet implemented' }
+    return {1,2,3,4,5,6,7,8}
