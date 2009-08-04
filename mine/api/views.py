@@ -327,4 +327,8 @@ def read_encode_minekey3(request, rid, rvsn, iid, *args, **kwargs):
 ## method: read_version
 ## args: 
 def read_version(request, *args, **kwargs):
-    return {1,2,3,4,5,6,7,8}
+    return { 
+        'softwareName': 'pymine',
+        'softwareRevision': '1.0-alpha',
+        'mineAPIVersion': 1,
+        }
