@@ -14,7 +14,7 @@
 ## permissions and limitations under the License.
 ##
 
-#from pymine.mine.models import Item, Relation, Tag, Comment
+from pymine.mine.models import Item, Relation, Tag, Comment
 
 # Transcoder provides a lot of the security for pymine; it convert
 # between 'client-space' structural s-representations of data as
@@ -124,23 +124,23 @@ xtable = (
     ('vurlTags',                'tags',             None,        m2s_vurltags           ),  #ManyToMany(Tag)
     )
 
-m2s_table = {}
-m2s_table['comment'] = {}
-m2s_table['item'] = {}
-m2s_table['relation'] = {}
-m2s_table['tag'] = {}
-m2s_table['vurl'] = {}
+class_prefixes = {
+    'comment':   Comment,
+    'item':      Item,
+    'relation':  Relation,
+    'tag':       Tag,
+    'vurl':      VanityURL,
+    }
 
+m2s_table = {}
 s2m_table = {}
-s2m_table['comment'] = {}
-s2m_table['item'] = {}
-s2m_table['relation'] = {}
-s2m_table['tag'] = {}
-s2m_table['vurl'] = {}
+
+for prefix in class_prefixes.iterkeys():
+    m2s_table[prefix] = {}
+    s2m_table[prefix] = {}
 
 for (sname, mname, s2mfunc, m2sfunc) in xtable:
-
-    for prefix in ('comment', 'item', 'relation', 'tag', 'vurl'):
+    for prefix in class_prefixes.iterkeys():
         if sname.startswith(prefix):
             matched = True
             if m2sfunc: m2s_table[prefix][mname] = (m2sfunc, sname)
@@ -151,30 +151,19 @@ for (sname, mname, s2mfunc, m2sfunc) in xtable:
 
 def model_to_structure(kind, m):
     s = {}
-
-    print m2s_table[kind]
-
     for mname, (m2sfunc, sname) in m2s_table[kind].iteritems():
         m2sfunc(m, mname, s, sname)
-
     return s
 
 def structure_to_model(kind, s, id=0):
     m = {}
 
-    for sname, (s2mfunc, mname) in s2m_table[kind]:
+    for sname, (s2mfunc, mname) in s2m_table[kind].iteritems():
         s2mfunc(s, sname, m, mname)
 
-    if kind == 'item':
-        return Item(**m)
-    elif kind == 'tag':
-        return Tag(**m)
-    elif kind == 'relation':
-        return Relation(**m)
-    elif kind == 'comment':
-        return Comment(**m)
-    else:
-        raise Exception, "unrecognised 'kind' in structure_to_model()"
+    instantiator = class_prefixes[kind]
+
+    return instantiator(**m)
 
 def request_to_structure(kind, r):
     raise Exception, "---- NYI ----"
