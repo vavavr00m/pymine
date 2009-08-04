@@ -156,16 +156,19 @@ class VanityURL(models.Model):
 ##################################################################
 ##################################################################
 
-# Transcoder methods provide a lot of the security for pymine; it
-# convert between 'client-space' structural s-representations of data
-# as (approximately) specified in the protomine API, and the
-# Django-internal model-based m-representations; the reason for doing
-# this is partly philosophic - that there should be a clearly defined
-# breakpoint between the two worlds, and this is it; if we just
-# serialized models and slung them back and forth, the mine would be
-# wedded to Django evermore, which is not a good thing.
+# The transcoder methods below provide a lot of the security for
+# pymine; it convert between 'client-space' structural
+# s-representations of data as (approximately) specified in the
+# protomine API, and the Django-space model-based m-representations;
+# the reason for doing this is partly philosophic - that there should
+# be a clearly defined breakpoint between the two worlds, and this is
+# it; if we just serialized models and slung them back and forth, the
+# mine would be wedded to Django evermore, which is not a good thing.
+# Also certain s-space attributes (eg: 'relationInterests') map to
+# more than one m-space attributes, so these methods provide
+# translation.
 
-# specialist types
+# specialist type conversion
 
 def m2s_tagimplies(m, mname, s, sname):
     x = ' '.join([ x.name for x in m.implies.all() ])
@@ -187,7 +190,7 @@ def m2s_relationinterests(m, mname, s, sname):
                                             [ "exclude:%s" % i.name for i in self.tags_excluded.all() ]))
     if x: s[sname] = x
 
-# int types
+# int type conversion
 
 def s2m_int(s, sname, m, mname):
     if sname in s: m[mname] = s[sname]
@@ -196,7 +199,7 @@ def m2s_int(m, mname, s, sname):
     x = getattr(m, mname)
     if x: s[sname] = x
 
-# string types
+# string type conversion
 
 def s2m_string(s, sname, m, mname):
     if sname in s: m[mname] = s[sname]
@@ -205,7 +208,7 @@ def m2s_string(m, mname, s, sname):
     x = getattr(m, mname)
     if x: s[sname] = x
 
-# date types
+# date type conversion
 
 def s2m_date(s, sname, m, mname):
     raise Exception, "---- NYI ----"
@@ -264,6 +267,8 @@ xtable = (
     ('vurlTags',                'tags',             None,        m2s_vurltags           ),  #ManyToMany(Tag)
     )
 
+# table of s-space attribute prefixes and what models they map to
+
 class_prefixes = {
     'comment':   Comment,
     'item':      Item,
@@ -272,13 +277,15 @@ class_prefixes = {
     'vurl':      VanityURL,
     }
 
+# allocate the runtime tables
+
 m2s_table = {}
-
 s2m_table = {}
-
 for prefix in class_prefixes.iterkeys():
     m2s_table[prefix] = {}
     s2m_table[prefix] = {}
+
+# populate the runtime tables
 
 for (sname, mname, s2mfunc, m2sfunc) in xtable:
     for prefix in class_prefixes.iterkeys():
@@ -290,10 +297,14 @@ for (sname, mname, s2mfunc, m2sfunc) in xtable:
     else:
         raise Exception, "unrecognised prefix in xtable: " + sname
 
+# convert a model to a structure
+
 def model_to_structure(kind, m):
     s = {}
     for mname, (m2sfunc, sname) in m2s_table[kind].iteritems(): m2sfunc(m, mname, s, sname)
     return s
+
+# convert a structure to a model
 
 def structure_to_model(kind, s, id=0):
     m = {}
@@ -301,9 +312,17 @@ def structure_to_model(kind, s, id=0):
     instantiator = class_prefixes[kind]
     return instantiator(**m)
 
+# convert a request to a structure
+
 def request_to_structure(kind, r):
     raise Exception, "---- NYI ----"
+
+# convert a request to a model
 
 def request_to_model(kind, r, id=0):
     s = request_to_structure(kind, r)
     return structure_to_model(kind, s, id)
+
+##################################################################
+##################################################################
+##################################################################
