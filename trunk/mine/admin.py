@@ -61,7 +61,7 @@ class CommentAdmin(admin.ModelAdmin):
         ]
 
 class VanityURLAdmin(admin.ModelAdmin):
-    list_display = ('name', 'link', 'tags', 'last_modified', 'created')
+    list_display = ('name', 'link', 'last_modified', 'created')
     search_fields = ['name']
     list_filter = ['created']
     date_hierarchy = 'created'
