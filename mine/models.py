@@ -23,6 +23,9 @@ EDIT_BACKDOOR=False
 ##################################################################
 
 class Tag(models.Model):
+
+    """This is the modelspace representation of the Tag object"""
+
     name = models.SlugField(max_length=MINE_STRING, unique=True)
     description = models.TextField(blank=True)
     implies = models.ManyToManyField('self', symmetrical=False, related_name='x_implies', null=True, blank=True)
@@ -35,9 +38,15 @@ class Tag(models.Model):
     def __unicode__(self):
 	return self.name
 
+    def structure():
+        return Transcoder.model_to_structure('tag', self)
+
 ##################################################################
 
 class Relation(models.Model):
+
+    """This is the modelspace representation of the Relation object"""
+
     name = models.SlugField(max_length=MINE_STRING, unique=True)
     description = models.TextField(blank=True)
     tags = models.ManyToManyField(Tag, related_name='relations_with_tag', null=True, blank=True)
@@ -60,9 +69,15 @@ class Relation(models.Model):
     def __unicode__(self):
 	return self.name
 
+    def structure():
+        return Transcoder.model_to_structure('relation', self)
+
 ##################################################################
 
 class Item(models.Model):
+
+    """This is the modelspace representation of the Item object"""
+
     ITEM_STATUSES=(
 	( 'X', 'Private' ),
 	( 'S', 'Shared' ),
@@ -88,9 +103,15 @@ class Item(models.Model):
     def __unicode__(self):
 	return self.name
 
+    def structure():
+        return Transcoder.model_to_structure('item', self)
+
 ##################################################################
 
 class Comment(models.Model):
+
+    """This is the modelspace representation of the Comment object"""
+
     title = models.CharField(max_length=MINE_STRING)
     body = models.TextField(blank=True)
     likes = models.BooleanField(default=False)
@@ -105,11 +126,20 @@ class Comment(models.Model):
     def __unicode__(self):
 	return self.title
 
+    def structure():
+        return Transcoder.model_to_structure('comment', self)
+
 ##################################################################
 
 class VanityURL(models.Model):
+
+    """The VanityURL model implements a TinyURL-like concept, allowing
+    arbitrary cookies to map to much longer URLs, indexable either by
+    'name' or 'index' (suitably compressed)"""
+
     name = models.SlugField(max_length=MINE_STRING, unique=True)
     link = models.TextField(blank=True)
+    tags = models.ManyToManyField(Tag, related_name='vurls_tagged', null=True, blank=True)
     created = models.DateTimeField(auto_now_add=True, editable=EDIT_BACKDOOR)
     last_modified = models.DateTimeField(auto_now=True)
 
@@ -118,6 +148,9 @@ class VanityURL(models.Model):
 
     def __unicode__(self):
 	return self.name
+
+    def structure():
+        return Transcoder.model_to_structure('vurl', self)
 
 ##################################################################
 ##################################################################
@@ -135,52 +168,67 @@ class VanityURL(models.Model):
 
 
 class Transcoder():
-    def s2m_date():
-        pass
 
-    def m2s_date():
-        pass
+    """Transcoder provides a lot of the security for pymine; it converts
+    between 'client-space' structural s-representations of data as
+    (approximately) specified in the protomine API, and the
+    Django-internal model-based m-representations; the reason for
+    doing this is partly philosophic - that there should be a clearly
+    defined breakpoint between the two worlds, and this is it; if we
+    just serialized models and slung them back and forth, the mine
+    would be wedded to Django evermore, which is not a good thing."""
 
-    def s2m_int():
-        pass
+    def s2m_date(s, sname, m, mname):
+        raise Exception, "nyi"
 
-    def m2s_int():
-        pass
+    def m2s_date(m, mname, s, sname):
+        if mname in m:
+            s[sname] = m[mname].isoformat()
 
-    def s2m_string():
-        pass
+    def s2m_int(s, sname, m, mname):
+        if sname in s:
+            m[mname] = s[sname]
+        
+    def m2s_int(m, mname, s, sname):
+        if mname in m:
+            s[sname] = m[mname]
 
-    def m2s_string():
-        pass
+    def s2m_string(s, sname, m, mname):
+        if sname in s:
+            m[mname] = s[sname]
 
-    def s2m_NYI():
-        pass
+    def m2s_string(m, mname, s, sname):
+        if mname in m:
+            s[sname] = m[mname]
 
-    def m2s_NYI():
-        pass
+    def s2m_NYI(s, sname, m, mname):
+        raise Exception, "nyi"
+
+    def m2s_NYI(m, mname, s, sname):
+        raise Exception, "nyi"
 
     # ( structureName, 'model_attribute', s2m_func, m2s_func ),
     xtable = (
         ('commentBody',             'body',             s2m_string,  m2s_string  ),
-        ('commentCreated',          'created',          None,        m2s_date    ),
+        ('commentCreated',          'created',          s2m_date,    m2s_date    ),
         ('commentId',               'id',               None,        m2s_int     ),
         ('commentItem',             'item',             s2m_NYI,     m2s_NYI     ),
-        ('commentLastModified',     'last_modified',    None,        m2s_date    ),
+        ('commentLastModified',     'last_modified',    s2m_date,    m2s_date    ),
         ('commentLikes',            'likes',            s2m_int,     m2s_int     ),
         ('commentRelation',         'relation',         s2m_NYI,     m2s_NYI     ),
         ('commentTitle',            'title',            s2m_string,  m2s_string  ),
-        ('itemCreated',             'created',          None,        m2s_date    ),
+        ('itemCreated',             'created',          s2m_date,    m2s_date    ),
         ('itemDescription',         'description',      s2m_string,  m2s_string  ),
         ('itemHideAfter',           'hide_after',       s2m_date,    m2s_date    ),
         ('itemHideBefore',          'hide_before',      s2m_date,    m2s_date    ),
         ('itemId',                  'id',               None,        m2s_int     ),
-        ('itemLastModified',        'last_modified',    None,        m2s_date    ),
+        ('itemLastModified',        'last_modified',    s2m_date,    m2s_date    ),
         ('itemName',                'name',             s2m_string,  m2s_string  ),
         ('itemStatus',              'status',           s2m_string,  m2s_string  ),
         ('itemTags',                'tags',             s2m_NYI,     m2s_NYI     ),
         ('itemType',                'content_type',     s2m_string,  m2s_string  ),
         ('relationCallbackURL',     'url_callback',     s2m_string,  m2s_string  ),
-        ('relationCreated',         'created',          None,        m2s_date    ),
+        ('relationCreated',         'created',          s2m_date,    m2s_date    ),
         ('relationDescription',     'description',      s2m_string,  m2s_string  ),
         ('relationEmailAddress',    'email_address',    s2m_string,  m2s_string  ),
         ('relationEmbargoAfter',    'embargo_after',    s2m_date,    m2s_date    ),
@@ -189,27 +237,84 @@ class Transcoder():
         ('relationId',              'id',               None,        m2s_int     ),
         ('relationImageURL',        'url_image',        s2m_string,  m2s_string  ),
         ('relationInterests',       'interests',        s2m_NYI,     m2s_NYI     ),
-        ('relationLastModified',    'last_modified',    None,        m2s_date    ),
+        ('relationLastModified',    'last_modified',    s2m_date,    m2s_date    ),
         ('relationName',            'name',             s2m_string,  m2s_string  ),
         ('relationNetworkPattern',  'network_pattern',  s2m_string,  m2s_string  ),
         ('relationVersion',         'version',          s2m_int,     m2s_int     ),
-        ('tagCreated',              'created',          None,        m2s_date    ),
+        ('tagCreated',              'created',          s2m_date,    m2s_date    ),
         ('tagDescription',          'description',      s2m_string,  m2s_string  ),
         ('tagId',                   'id',               None,        m2s_int     ),
         ('tagImplies',              'implies',          s2m_NYI,     m2s_NYI     ),
-        ('tagLastModified',         'last_modified',    None,        m2s_date    ),
+        ('tagLastModified',         'last_modified',    s2m_date,    m2s_date    ),
         ('tagName',                 'name',             s2m_string,  m2s_string  ),
+        ('vurmCreated',             'created',          s2m_date,    m2s_date    ),
+        ('vurmId',                  'id',               None,        m2s_int     ),
+        ('vurmLastModified',        'last_modified',    s2m_date,    m2s_date    ),
+        ('vurmLink',                'link',             s2m_string,  m2s_string  ),
+        ('vurmName',                'name',             s2m_string,  m2s_string  ),
+        ('vurmTags',                'tags',             s2m_NYI,     m2s_NYI     ),
         )
 
-    def model_to_structure():
-        pass
+    m2s_table = {}
+    m2s_table['comment'] = {}
+    m2s_table['item'] = {}
+    m2s_table['relation'] = {}
+    m2s_table['tag'] = {}
 
-    def structure_to_model(id=0):
-        pass
+    s2m_table = {}
+    s2m_table['comment'] = {}
+    s2m_table['item'] = {}
+    s2m_table['relation'] = {}
+    s2m_table['tag'] = {}
 
-    def request_to_structure():
-        pass
+    for (sname, mname, s2mfunc, m2sfunc) in xtable:
+        if sname.startswith('comment'):
+            if m2sfunc: m2s_table['comment'][mname] = (m2sfunc, sname)
+            if s2mfunc: s2m_table['comment'][sname] = (s2mfunc, mname)
 
-    def request_to_model(id=0):
-        pass
+        elif sname.startswith('item'):
+            if m2sfunc: m2s_table['item'][mname] = (m2sfunc, sname)
+            if s2mfunc: s2m_table['item'][sname] = (s2mfunc, mname)
 
+        elif sname.startswith('relation'):
+            if m2sfunc: m2s_table['relation'][mname] = (m2sfunc, sname)
+            if s2mfunc: s2m_table['relation'][sname] = (s2mfunc, mname)
+
+        elif sname.startswith('tag'):
+            if m2sfunc: m2s_table['tag'][mname] = (m2sfunc, sname)
+            if s2mfunc: s2m_table['tag'][sname] = (s2mfunc, mname)
+
+        else:
+            raise Exception, "unrecognised prefix in xtable"
+
+    def model_to_structure(kind, m):
+        s = {}
+
+        for mname, (m2sfunc, sname) in m2s_table[kind]:
+            m2sfunc(m, mname, s, sname)
+
+        return s
+
+    def structure_to_model(kind, s, id=0):
+        m = {}
+
+        for sname, (s2mfunc, mname) in s2m_table[kind]:
+            s2mfunc(s, sname, m, mname)
+
+        if kind == 'item':
+            return Item(**m)
+        if kind == 'tag':
+            return Tag(**m)
+        if kind == 'relation':
+            return Relation(**m)
+        if kind == 'comment':
+            return Comment(**m)
+        else:
+            raise Exception, "unrecognised 'kind' in structure_to_model()"
+
+    def request_to_structure(kind, r):
+        raise Exception, "nyi"
+
+    def request_to_model(kind, r, id=0):
+        s = request_to_structure(kind, r)
+        return(structure_to_model(kind, s, id)
