@@ -78,7 +78,9 @@ def read_item_list(request, *args, **kwargs):
 ## method: create_item
 ## args: 
 def create_item(request, *args, **kwargs):
-    raise Exception, "---- NYI ----"
+    m = request_to_model('item', request)
+    m.save()
+    return m.structure() # returns more data than was supplied
 
 ## url: /api/item/IID
 ## method: read_item_data
@@ -200,7 +202,9 @@ def read_relation_list(request, *args, **kwargs):
 ## method: create_relation
 ## args: 
 def create_relation(request, *args, **kwargs):
-    raise Exception, "---- NYI ----"
+    m = request_to_model('relation', request)
+    m.save()
+    return m.structure() # returns more data than was supplied
 
 ## url: /api/relation/RID.FMT
 ## method: delete_relation
@@ -268,11 +272,9 @@ def read_tag_list(request, *args, **kwargs):
 ## method: create_tag
 ## args: 
 def create_tag(request, *args, **kwargs):
-    # s = request_to_structure('tag', request)
-    # m = structure_to_model('tag', s)
     m = request_to_model('tag', request)
     m.save()
-    return m.structure()
+    return m.structure() # returns more data than was supplied
 
 ## url: /api/tag/TID.FMT
 ## method: delete_tag
