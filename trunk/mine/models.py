@@ -27,7 +27,7 @@ class Tag(models.Model):
     """This is the modelspace representation of the Tag object"""
 
     name = models.SlugField(max_length=settings.MINE_STRINGSIZE, unique=True)
-    description = models.TextField(blank=True)
+    description = models.TextField(null=True, blank=True)
     implies = models.ManyToManyField('self', symmetrical=False, related_name='x_implies', null=True, blank=True)
     created = models.DateTimeField(auto_now_add=True)
     last_modified = models.DateTimeField(auto_now=True)
@@ -48,7 +48,7 @@ class Relation(models.Model):
     """This is the modelspace representation of the Relation object"""
 
     name = models.SlugField(max_length=settings.MINE_STRINGSIZE, unique=True)
-    description = models.TextField(blank=True)
+    description = models.TextField(null=True, blank=True)
     tags = models.ManyToManyField(Tag, related_name='relations_with_tag', null=True, blank=True)
     tags_required = models.ManyToManyField(Tag, related_name='relations_requiring', null=True, blank=True)
     tags_excluded = models.ManyToManyField(Tag, related_name='relations_excluding', null=True, blank=True)
@@ -88,7 +88,7 @@ class Item(models.Model):
     ITEM_FS = FileSystemStorage(location=settings.MINE_DBDIR_FILES)
 
     name = models.CharField(max_length=settings.MINE_STRINGSIZE)
-    description = models.TextField(blank=True)
+    description = models.TextField(null=True, blank=True)
     tags = models.ManyToManyField(Tag, related_name='items_tagged', null=True, blank=True)
     item_for_relations = models.ManyToManyField(Relation, related_name='items_explicitly_for', null=True, blank=True)
     item_not_relations = models.ManyToManyField(Relation, related_name='items_explicitly_not', null=True, blank=True)
@@ -116,7 +116,7 @@ class Comment(models.Model):
     """This is the modelspace representation of the Comment object"""
 
     title = models.CharField(max_length=settings.MINE_STRINGSIZE)
-    body = models.TextField(blank=True)
+    body = models.TextField(null=True, blank=True)
     likes = models.BooleanField(default=False)
     item = models.ForeignKey(Item)
     relation = models.ForeignKey(Relation)
@@ -141,7 +141,7 @@ class VanityURL(models.Model):
     'name' or 'index' (suitably compressed)"""
 
     name = models.SlugField(max_length=settings.MINE_STRINGSIZE, unique=True)
-    link = models.TextField(blank=True)
+    link = models.TextField(null=True, blank=True)
     tags = models.ManyToManyField(Tag, related_name='vurls_tagged', null=True, blank=True)
     created = models.DateTimeField(auto_now_add=True)
     last_modified = models.DateTimeField(auto_now=True)
@@ -334,7 +334,7 @@ xtable = (
 (   'tagCreated',              'created',          False,      r2s_str,   s2m_date,               m2s_date,               ),
 (   'tagDescription',          'description',      False,      r2s_str,   s2m_string,             m2s_string,             ),
 (   'tagId',                   'id',               False,      r2s_int,   s2m_int,                m2s_int,                ),
-(   'tagImplies',              'implies',          False,      r2s_str,   s2m_tagimplies,         m2s_tagimplies,         ),
+(   'tagImplies',              'implies',          True,       r2s_str,   s2m_tagimplies,         m2s_tagimplies,         ),
 (   'tagLastModified',         'last_modified',    False,      r2s_str,   s2m_date,               m2s_date,               ),
 (   'tagName',                 'name',             False,      r2s_str,   s2m_string,             m2s_string,             ),
 (   'vurlCreated',             'created',          False,      r2s_str,   s2m_date,               m2s_date,               ),
@@ -342,7 +342,7 @@ xtable = (
 (   'vurlLastModified',        'last_modified',    False,      r2s_str,   s2m_date,               m2s_date,               ),
 (   'vurlLink',                'link',             False,      r2s_str,   s2m_string,             m2s_string,             ),
 (   'vurlName',                'name',             False,      r2s_str,   s2m_string,             m2s_string,             ),
-(   'vurlTags',                'tags',             False,      r2s_str,   s2m_vurltags,           m2s_vurltags,           ),
+(   'vurlTags',                'tags',             True,       r2s_str,   s2m_vurltags,           m2s_vurltags,           ),
     )
 
 ###
@@ -405,7 +405,8 @@ def model_to_structure(kind, m):
 def request_to_save_model(kind, r):
     # create the model
     instantiator = class_prefixes[kind]
-    m = instantiator(**m)
+    margs = {}
+    m = instantiator(**margs)
 
     # build a shadow structure: useful for debug/clarity
     s = {}
@@ -414,7 +415,8 @@ def request_to_save_model(kind, r):
     for sattr, (r2s_func, s2m_func, mattr) in s2m_table[kind].iteritems():
 
         # rip the attribute out of the request and convert to python int/str
-        s[sattr] = r2s_func(r, sattr, s)
+        r2s_func(r, sattr, s)
+        print ">>", s
 
         # s2m the value into the appropriate attribute
         s2m_func(s, sattr, m, mattr)
@@ -426,10 +428,10 @@ def request_to_save_model(kind, r):
     needs_save = False
 
     # for each deferred target attribute
-    for sattr, (r2s_func, s2m_func, mattr) in defer[kind].iteritems():
+    for sattr, (r2s_func, s2m_func, mattr) in defer_table[kind].iteritems():
 
         # rip the attribute out of the request and convert to python int/str
-        s[sattr] = r2s_func(r, sattr, s)
+        r2s_func(r, sattr, s)
 
         # s2m the value into the appropriate attribute
         s2m_func(s, sattr, m, mattr)
