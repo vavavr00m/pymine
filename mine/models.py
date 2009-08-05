@@ -175,133 +175,174 @@ class VanityURL(models.Model):
 ###
 # specialist type conversion
 
-def m2s_tagimplies(m, mname, s, sname):
-    if mname != 'implies': raise Exception, "m2s_tagimplies is confused"
-    x = ' '.join([ x.name for x in m.implies.all() ])
-    if x: s[sname] = x
+def m2s_commentitem(m, mattr, s, sattr):
+    if mattr != 'item' or sattr != 'commentRelation': raise Exception, "m2s_commentitem is confused"
+    pass
 
-def s2m_tagimplies(s, sname, m, mname): ################################################################## <- issue is here, must save before setting relations
-    if sname != 'tagImplies': raise Exception, "s2m_tagimplies is confused"
-    if sname in s:
-	for x in s[sname].split():
-	    t = Tag.objects.get(name=x)
-	    m.implies.add(t)
-
-def m2s_vurltags(m, mname, s, sname):
-    if mname != '': raise Exception, "m2s_vurltags is confused"
-    x = ' '.join([ x.name for x in m.tags.all() ])
-    if x: s[sname] = x
+def s2m_commentitem(m, mattr, s, sattr):
+    if mattr != 'item' or sattr != 'commentRelation': raise Exception, "s2m_commentitem is confused"
+    pass
 
 ###
 
-def m2s_itemtags(m, mname, s, sname):
-    if mname != '': raise Exception, "m2s_itemtags is confused"
+def m2s_commentrelation(s, sattr, m, mattr):
+    if mattr != 'relation' or sattr != 'commentRelation': raise Exception, "m2s_commentrelation is confused"
+    pass
+
+def s2m_commentrelation(s, sattr, m, mattr):
+    if mattr != 'relation' or sattr != 'commentRelation': raise Exception, "s2m_commentrelation is confused"
+    pass
+
+###
+
+def m2s_tagimplies(m, mattr, s, sattr):
+    if mattr != 'implies' or sattr != 'tagImplies': raise Exception, "m2s_tagimplies is confused"
+    x = ' '.join([ x.name for x in m.implies.all() ])
+    if x: s[sattr] = x
+
+
+def s2m_tagimplies(s, sattr, m, mattr):
+    if mattr != 'implies' or sattr != 'tagImplies': raise Exception, "s2m_tagimplies is confused"
+    if sattr in s: 
+        for x in s[sattr].split(): m.implies.add(Tag.objects.get(name=x))
+
+###
+
+def m2s_vurltags(m, mattr, s, sattr):
+    if mattr != 'tags' or sattr != 'vurlTags': raise Exception, "m2s_vurltags is confused"
+    x = ' '.join([ x.name for x in m.tags.all() ])
+    if x: s[sattr] = x
+
+def s2m_vurltags(s, sattr, m, mattr):
+    if mattr != 'tags' or sattr != 'vurlTags': raise Exception, "s2m_vurltags is confused"
+    if sattr in s: 
+        for x in s[sattr].split(): m.implies.add(Tag.objects.get(name=x))
+
+###
+
+def m2s_itemtags(m, mattr, s, sattr):
+    if mattr != 'tags' or sattr != 'itemTags': raise Exception, "m2s_itemtags is confused"
+
     x = " ".join(x for x in itertools.chain([ i.name for i in m.tags.all() ],
 					    [ "for:%s" % i.name for i in m.item_for_relations.all() ],
 					    [ "not:%s" % i.name for i in m.item_not_relations.all() ]))
-    if x: s[sname] = x
+    if x: s[sattr] = x
+
+def s2m_itemtags(s, sattr, m, mattr):
+    if mattr != 'tags' or sattr != 'itemTags': raise Exception, "s2m_itemtags is confused"
+    pass
 
 ###
 
-def m2s_relationinterests(m, mname, s, sname):
-    if mname != '': raise Exception, "m2s_relationinterests is confused"
+def m2s_relationinterests(m, mattr, s, sattr):
+    if mattr != 'interests' or sattr != 'relationInterests': raise Exception, "m2s_relationinterests is confused"
+
     x = " ".join(x for x in itertools.chain([ i.name for i in m.tags.all() ],
 					    [ "require:%s" % i.name for i in m.tags_required.all() ],
 					    [ "exclude:%s" % i.name for i in m.tags_excluded.all() ]))
-    if x: s[sname] = x
+    if x: s[sattr] = x
+
+def s2m_relationinterests(s, sattr, m, mattr):
+    if mattr != 'interests' or sattr != 'relationInterests': raise Exception, "s2m_relationinterests is confused"
+    pass
 
 ###
 # int type conversion
 
-def s2m_int(s, sname, m, mname):
-    if sname in s: m[mname] = s[sname]
+def s2m_int(s, sattr, m, mattr):
+    if sattr in s: 
+        setattr(m, mattr, s[sattr])
 
-def m2s_int(m, mname, s, sname):
-    x = getattr(m, mname)
-    if x: s[sname] = x
+def m2s_int(m, mattr, s, sattr):
+    x = getattr(m, mattr)
+    if x is not None: s[sattr] = x
 
 ###
 # string type conversion
 
-def s2m_string(s, sname, m, mname):
-    if sname in s: m[mname] = s[sname]
+def s2m_string(s, sattr, m, mattr):
+    if sattr in s: 
+        setattr(m, mattr, s[sattr])
 
-def m2s_string(m, mname, s, sname):
-    x = getattr(m, mname)
-    if x: s[sname] = x
+def m2s_string(m, mattr, s, sattr):
+    x = getattr(m, mattr)
+    if x is not None: s[sattr] = x
 
 ###
 # date type conversion
 
-def s2m_date(s, sname, m, mname):
-    if sname in s: raise Exception, "---- NYI ----" # ---------------------------------  needs work
+def s2m_date(s, sattr, m, mattr):
+    if sattr in s: raise Exception, "---- NYI ----" # ---------------------------------  needs work, pyiso8601
 
-def m2s_date(m, mname, s, sname):
-    x = getattr(m, mname)
-    if x: s[sname] = x.isoformat()
+def m2s_date(m, mattr, s, sattr):
+    x = getattr(m, mattr)
+    if x: s[sattr] = x.isoformat()
 
 ###
-# request conversion # --------------------------------- MAY NEED TO BE HACKED LATER, SOMETIMES EMPTY VALUE IS LEGIT FOR UPDATE, ETC
+# request conversion
 
-def req_get_str(r, rname):
+def r2s_get(r, rname):
     if rname in r.GET: return r.GET[rname]
     elif rname in r.POST: return r.POST[rname]
     else: return None
 
-def req_get_int(r, rname):
-    x = req_get_str(r, rname)
-    if x: return int(x)
-    else: return None
+def r2s_str(r, rname, s):
+    x = r2s_get(r, rname)
+    if x is not None: s[rname] = x
+
+def r2s_int(r, rname, s):
+    x = r2s_get(r, rname)
+    if x is not None: s[rname] = int(x)
 
 ###
 # translation table
 
 xtable = (
-#(  'structureName',           'model_attr',       defer_s2m,  req_get_func,  s2m_func,        m2s_func,               ),
-(   'commentBody',             'body',             False,          req_get_str,   s2m_string,      m2s_string,             ),
-(   'commentCreated',          'created',          False,          req_get_str,   s2m_date,        m2s_date,               ),
-(   'commentId',               'id',               False,          req_get_int,   s2m_int,         m2s_int,                ),
-(   'commentItem',             'item',             True,           req_get_str,   None,                None,                       ),
-(   'commentLastModified',     'last_modified',    False,          req_get_str,   s2m_date,        m2s_date,               ),
-(   'commentLikes',            'likes',            False,          req_get_str,   s2m_int,         m2s_int,                ),
-(   'commentRelation',         'relation',         True,           req_get_str,   None,                None,                       ),
-(   'commentTitle',            'title',            False,          req_get_str,   s2m_string,      m2s_string,             ),
-(   'itemCreated',             'created',          False,          req_get_str,   s2m_date,        m2s_date,               ),
-(   'itemDescription',         'description',      False,          req_get_str,   s2m_string,      m2s_string,             ),
-(   'itemHideAfter',           'hide_after',       False,          req_get_str,   s2m_date,        m2s_date,               ),
-(   'itemHideBefore',          'hide_before',      False,          req_get_str,   s2m_date,        m2s_date,               ),
-(   'itemId',                  'id',               False,          req_get_int,   s2m_int,         m2s_int,                ),
-(   'itemLastModified',        'last_modified',    False,          req_get_str,   s2m_date,        m2s_date,               ),
-(   'itemName',                'name',             False,          req_get_str,   s2m_string,      m2s_string,             ),
-(   'itemStatus',              'status',           False,          req_get_str,   s2m_string,      m2s_string,             ),
-(   'itemTags',                'tags',             True,           req_get_str,   None,                m2s_itemtags,           ),
-(   'itemType',                'content_type',     False,          req_get_str,   s2m_string,      m2s_string,             ),
-(   'relationCallbackURL',     'url_callback',     False,          req_get_str,   s2m_string,      m2s_string,             ),
-(   'relationCreated',         'created',          False,          req_get_str,   s2m_date,        m2s_date,               ),
-(   'relationDescription',     'description',      False,          req_get_str,   s2m_string,      m2s_string,             ),
-(   'relationEmailAddress',    'email_address',    False,          req_get_str,   s2m_string,      m2s_string,             ),
-(   'relationEmbargoAfter',    'embargo_after',    False,          req_get_str,   s2m_date,        m2s_date,               ),
-(   'relationEmbargoBefore',   'embargo_before',   False,          req_get_str,   s2m_date,        m2s_date,               ),
-(   'relationHomepageURL',     'url_homepage',     False,          req_get_str,   s2m_string,      m2s_string,             ),
-(   'relationId',              'id',               False,          req_get_int,   s2m_int,         m2s_int,                ),
-(   'relationImageURL',        'url_image',        False,          req_get_str,   s2m_string,      m2s_string,             ),
-(   'relationInterests',       'interests',        True,           req_get_str,   None,                m2s_relationinterests,  ),
-(   'relationLastModified',    'last_modified',    False,          req_get_str,   s2m_date,        m2s_date,               ),
-(   'relationName',            'name',             False,          req_get_str,   s2m_string,      m2s_string,             ),
-(   'relationNetworkPattern',  'network_pattern',  False,          req_get_str,   s2m_string,      m2s_string,             ),
-(   'relationVersion',         'version',          False,          req_get_str,   s2m_int,         m2s_int,                ),
-(   'tagCreated',              'created',          False,          req_get_str,   s2m_date,        m2s_date,               ),
-(   'tagDescription',          'description',      False,          req_get_str,   s2m_string,      m2s_string,             ),
-(   'tagId',                   'id',               False,          req_get_int,   s2m_int,         m2s_int,                ),
-(   'tagImplies',              'implies',          False,          req_get_str,   s2m_tagimplies,  m2s_tagimplies,         ),
-(   'tagLastModified',         'last_modified',    False,          req_get_str,   s2m_date,        m2s_date,               ),
-(   'tagName',                 'name',             False,          req_get_str,   s2m_string,      m2s_string,             ),
-(   'vurlCreated',             'created',          False,          req_get_str,   s2m_date,        m2s_date,               ),
-(   'vurlId',                  'id',               False,          req_get_int,   s2m_int,         m2s_int,                ),
-(   'vurlLastModified',        'last_modified',    False,          req_get_str,   s2m_date,        m2s_date,               ),
-(   'vurlLink',                'link',             False,          req_get_str,   s2m_string,      m2s_string,             ),
-(   'vurlName',                'name',             False,          req_get_str,   s2m_string,      m2s_string,             ),
-(   'vurlTags',                'tags',             False,          req_get_str,   None,                m2s_vurltags,           ),
+#(  'STRUCTURE_NAME',          'MODEL_ATTR',       DEFER_S2M,  R2S_FUNC,  S2M_FUNC,               M2S_FUNC,               ),
+(   'commentBody',             'body',             False,      r2s_str,   s2m_string,             m2s_string,             ),
+(   'commentCreated',          'created',          False,      r2s_str,   s2m_date,               m2s_date,               ),
+(   'commentId',               'id',               False,      r2s_int,   s2m_int,                m2s_int,                ),
+(   'commentItem',             'item',             True,       r2s_str,   s2m_commentitem,        m2s_commentitem,        ),
+(   'commentLastModified',     'last_modified',    False,      r2s_str,   s2m_date,               m2s_date,               ),
+(   'commentLikes',            'likes',            False,      r2s_str,   s2m_int,                m2s_int,                ),
+(   'commentRelation',         'relation',         True,       r2s_str,   s2m_commentrelation,    m2s_commentrelation,    ),
+(   'commentTitle',            'title',            False,      r2s_str,   s2m_string,             m2s_string,             ),
+(   'itemCreated',             'created',          False,      r2s_str,   s2m_date,               m2s_date,               ),
+(   'itemDescription',         'description',      False,      r2s_str,   s2m_string,             m2s_string,             ),
+(   'itemHideAfter',           'hide_after',       False,      r2s_str,   s2m_date,               m2s_date,               ),
+(   'itemHideBefore',          'hide_before',      False,      r2s_str,   s2m_date,               m2s_date,               ),
+(   'itemId',                  'id',               False,      r2s_int,   s2m_int,                m2s_int,                ),
+(   'itemLastModified',        'last_modified',    False,      r2s_str,   s2m_date,               m2s_date,               ),
+(   'itemattr',                'name',             False,      r2s_str,   s2m_string,             m2s_string,             ),
+(   'itemStatus',              'status',           False,      r2s_str,   s2m_string,             m2s_string,             ),
+(   'itemTags',                'tags',             True,       r2s_str,   s2m_itemtags,           m2s_itemtags,           ),
+(   'itemType',                'content_type',     False,      r2s_str,   s2m_string,             m2s_string,             ),  # FIX/AUTOFILL
+(   'relationCallbackURL',     'url_callback',     False,      r2s_str,   s2m_string,             m2s_string,             ),
+(   'relationCreated',         'created',          False,      r2s_str,   s2m_date,               m2s_date,               ),
+(   'relationDescription',     'description',      False,      r2s_str,   s2m_string,             m2s_string,             ),
+(   'relationEmailAddress',    'email_address',    False,      r2s_str,   s2m_string,             m2s_string,             ),
+(   'relationEmbargoAfter',    'embargo_after',    False,      r2s_str,   s2m_date,               m2s_date,               ),
+(   'relationEmbargoBefore',   'embargo_before',   False,      r2s_str,   s2m_date,               m2s_date,               ),
+(   'relationHomepageURL',     'url_homepage',     False,      r2s_str,   s2m_string,             m2s_string,             ),
+(   'relationId',              'id',               False,      r2s_int,   s2m_int,                m2s_int,                ),
+(   'relationImageURL',        'url_image',        False,      r2s_str,   s2m_string,             m2s_string,             ),
+(   'relationInterests',       'interests',        True,       r2s_str,   s2m_relationinterests,  m2s_relationinterests,  ),
+(   'relationLastModified',    'last_modified',    False,      r2s_str,   s2m_date,               m2s_date,               ),
+(   'relationName',            'name',             False,      r2s_str,   s2m_string,             m2s_string,             ),
+(   'relationNetworkPattern',  'network_pattern',  False,      r2s_str,   s2m_string,             m2s_string,             ),
+(   'relationVersion',         'version',          False,      r2s_str,   s2m_int,                m2s_int,                ),
+(   'tagCreated',              'created',          False,      r2s_str,   s2m_date,               m2s_date,               ),
+(   'tagDescription',          'description',      False,      r2s_str,   s2m_string,             m2s_string,             ),
+(   'tagId',                   'id',               False,      r2s_int,   s2m_int,                m2s_int,                ),
+(   'tagImplies',              'implies',          False,      r2s_str,   s2m_tagimplies,         m2s_tagimplies,         ),
+(   'tagLastModified',         'last_modified',    False,      r2s_str,   s2m_date,               m2s_date,               ),
+(   'tagName',                 'name',             False,      r2s_str,   s2m_string,             m2s_string,             ),
+(   'vurlCreated',             'created',          False,      r2s_str,   s2m_date,               m2s_date,               ),
+(   'vurlId',                  'id',               False,      r2s_int,   s2m_int,                m2s_int,                ),
+(   'vurlLastModified',        'last_modified',    False,      r2s_str,   s2m_date,               m2s_date,               ),
+(   'vurlLink',                'link',             False,      r2s_str,   s2m_string,             m2s_string,             ),
+(   'vurlName',                'name',             False,      r2s_str,   s2m_string,             m2s_string,             ),
+(   'vurlTags',                'tags',             False,      r2s_str,   s2m_vurltags,           m2s_vurltags,           ),
     )
 
 ###
@@ -330,64 +371,74 @@ for prefix in class_prefixes.iterkeys():
 ###
 # populate the runtime tables
 
-for (sname, mname, defer, req_get_func, s2m_func, m2s_func) in xtable:
+for (sattr, mattr, defer, r2s_func, s2m_func, m2s_func) in xtable:
     for prefix in class_prefixes.iterkeys():
 
-	if sname.startswith(prefix):
+	if sattr.startswith(prefix):
 	    if m2s_func:
-		m2s_table[prefix][mname] = (m2s_func, sname)
+		m2s_table[prefix][mattr] = (m2s_func, sattr)
 
 	    if s2m_func:
-		t = (s2m_func, mname, req_get_func)
+		t = (r2s_func, s2m_func, mattr)
 
 		if defer:
-		    defer_table[prefix][sname] = t
+		    defer_table[prefix][sattr] = t
 		else:
-		    s2m_table[prefix][sname] = t
+		    s2m_table[prefix][sattr] = t
 
 	    break
     else:
-	raise Exception, "unrecognised prefix in xtable: " + sname
+	raise Exception, "unrecognised prefix in xtable: " + sattr
 
 ###
 # convert a model to a structure
 
 def model_to_structure(kind, m):
     s = {}
-    for mname, (m2s_func, sname) in m2s_table[kind].iteritems(): m2s_func(m, mname, s, sname)
+    for mattr, (m2s_func, sattr) in m2s_table[kind].iteritems(): m2s_func(m, mattr, s, sattr)
     return s
 
 ###
 # convert a request to a model
 
 @transaction.commit_on_success # ie: rollback if it raises an exception
-def request_to_saved_model(kind, r):
-    # create a blank kwargs
-    ma = {}
-    m = {}
+def request_to_save_model(kind, r):
+    # create the model
+    instantiator = class_prefixes[kind]
+    m = instantiator(**m)
 
-#NB: SEPARATE DEFERRED PROCESSING IS ONLY NEEDED IF THERE IS NO 'ID' SET FOR A FRESH SAVE
-#.....................................
-#    for sname, (mfunc, mname, req_get_func) in s2m_table[kind].iteritems():
-#	v = req_get_func(r, sname) # retreive the value from the request
-#	s2m_func(s, sname, ma, mname)
-#
-#    # work out what kind of model we are creating, and initialise one with the kwargs
-#    instantiator = class_prefixes[kind]
-#    m = instantiator(**ma)
-#
-#    # save it
-#    m.save()
-#
-#    # do deferred relationship initialisation
-#    poked = False
-#
-#    for sname, (mfunc, mname, req_get_func) in defer_table[kind].iteritems():
-#	poked = True
-#.................................
-#
-#
-#    if poked: m.save()
+    # build a shadow structure: useful for debug/clarity
+    s = {}
+
+    # for each target attribute
+    for sattr, (r2s_func, s2m_func, mattr) in s2m_table[kind].iteritems():
+
+        # rip the attribute out of the request and convert to python int/str
+        s[sattr] = r2s_func(r, sattr, s)
+
+        # s2m the value into the appropriate attribute
+        s2m_func(s, sattr, m, mattr)
+
+    # save the model
+    m.save()
+
+    # do the deferred (post-save) initialisation
+    needs_save = False
+
+    # for each deferred target attribute
+    for sattr, (r2s_func, s2m_func, mattr) in defer[kind].iteritems():
+
+        # rip the attribute out of the request and convert to python int/str
+        s[sattr] = r2s_func(r, sattr, s)
+
+        # s2m the value into the appropriate attribute
+        s2m_func(s, sattr, m, mattr)
+
+        # memento
+        needs_save = True
+
+    # update
+    if needs_save: m.save()
 
     # return it
     return m
