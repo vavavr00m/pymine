@@ -45,7 +45,7 @@ class ItemAdmin(admin.ModelAdmin):
     list_filter = ['created']
     date_hierarchy = 'created'
     fieldsets = [
-        (None, {'fields': ['name', 'status', 'content_type', 'description', 'tags']}), 
+        (None, {'fields': ['name', 'status', 'data', 'content_type', 'description', 'tags']}), 
         ('Advanced Tags', {'fields': ['item_for_relations', 'item_not_relations'], 'classes': ['collapse']}), 
         ('Access Control', {'fields': ['hide_before', 'hide_after'], 'classes': ['collapse']}), 
         ]

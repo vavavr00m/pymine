@@ -14,23 +14,22 @@
 ## permissions and limitations under the License.
 ##
 
-from django.db import models, transaction
-
 import itertools
 
-MINE_STRING=1024
-EDIT_BACKDOOR=False
+from django.db import models, transaction
+from django.core.files.storage import FileSystemStorage
+from django.conf import settings
 
 ##################################################################
 
 class Tag(models.Model):
 
-    #"""This is the modelspace representation of the Tag object"""
+    """This is the modelspace representation of the Tag object"""
 
-    name = models.SlugField(max_length=MINE_STRING, unique=True)
+    name = models.SlugField(max_length=settings.MINE_STRINGSIZE, unique=True)
     description = models.TextField(blank=True)
     implies = models.ManyToManyField('self', symmetrical=False, related_name='x_implies', null=True, blank=True)
-    created = models.DateTimeField(auto_now_add=True, editable=EDIT_BACKDOOR)
+    created = models.DateTimeField(auto_now_add=True)
     last_modified = models.DateTimeField(auto_now=True)
 
     class Meta:
@@ -46,9 +45,9 @@ class Tag(models.Model):
 
 class Relation(models.Model):
 
-    #"""This is the modelspace representation of the Relation object"""
+    """This is the modelspace representation of the Relation object"""
 
-    name = models.SlugField(max_length=MINE_STRING, unique=True)
+    name = models.SlugField(max_length=settings.MINE_STRINGSIZE, unique=True)
     description = models.TextField(blank=True)
     tags = models.ManyToManyField(Tag, related_name='relations_with_tag', null=True, blank=True)
     tags_required = models.ManyToManyField(Tag, related_name='relations_requiring', null=True, blank=True)
@@ -56,12 +55,12 @@ class Relation(models.Model):
     version = models.PositiveIntegerField(default=1)
     embargo_after = models.DateTimeField(null=True, blank=True)
     embargo_before = models.DateTimeField(null=True, blank=True)
-    network_pattern = models.CharField(max_length=MINE_STRING, blank=True)
-    email_address = models.EmailField(max_length=MINE_STRING, blank=True)
-    url_callback = models.URLField(max_length=MINE_STRING, blank=True)
-    url_homepage = models.URLField(max_length=MINE_STRING, blank=True)
-    url_image = models.URLField(max_length=MINE_STRING, blank=True)
-    created = models.DateTimeField(auto_now_add=True, editable=EDIT_BACKDOOR)
+    network_pattern = models.CharField(max_length=settings.MINE_STRINGSIZE, blank=True)
+    email_address = models.EmailField(max_length=settings.MINE_STRINGSIZE, blank=True)
+    url_callback = models.URLField(max_length=settings.MINE_STRINGSIZE, blank=True)
+    url_homepage = models.URLField(max_length=settings.MINE_STRINGSIZE, blank=True)
+    url_image = models.URLField(max_length=settings.MINE_STRINGSIZE, blank=True)
+    created = models.DateTimeField(auto_now_add=True)
     last_modified = models.DateTimeField(auto_now=True)
 
     class Meta:
@@ -77,25 +76,28 @@ class Relation(models.Model):
 
 class Item(models.Model):
 
-    #"""This is the modelspace representation of the Item object"""
+    """This is the modelspace representation of the Item object"""
 
     ITEM_STATUSES=(
 	( 'X', 'Private' ),
 	( 'S', 'Shared' ),
 	( 'P', 'Public' ),
-	( 'A', 'AuthRequired' ),
+	# ( 'A', 'AuthRequired' ),
 	)
 
-    name = models.CharField(max_length=MINE_STRING)
+    ITEM_FS = FileSystemStorage(location=settings.MINE_DBDIR_FILES)
+
+    name = models.CharField(max_length=settings.MINE_STRINGSIZE)
     description = models.TextField(blank=True)
     tags = models.ManyToManyField(Tag, related_name='items_tagged', null=True, blank=True)
     item_for_relations = models.ManyToManyField(Relation, related_name='items_explicitly_for', null=True, blank=True)
     item_not_relations = models.ManyToManyField(Relation, related_name='items_explicitly_not', null=True, blank=True)
     status = models.CharField(max_length=1, choices=ITEM_STATUSES)
-    content_type = models.CharField(max_length=MINE_STRING)
+    content_type = models.CharField(max_length=settings.MINE_STRINGSIZE)
+    data = models.FileField(storage=ITEM_FS, upload_to='%Y/%m/%d')
     hide_after = models.DateTimeField(null=True, blank=True)
     hide_before = models.DateTimeField(null=True, blank=True)
-    created = models.DateTimeField(auto_now_add=True, editable=EDIT_BACKDOOR)
+    created = models.DateTimeField(auto_now_add=True)
     last_modified = models.DateTimeField(auto_now=True)
 
     class Meta:
@@ -111,14 +113,14 @@ class Item(models.Model):
 
 class Comment(models.Model):
 
-    #"""This is the modelspace representation of the Comment object"""
+    """This is the modelspace representation of the Comment object"""
 
-    title = models.CharField(max_length=MINE_STRING)
+    title = models.CharField(max_length=settings.MINE_STRINGSIZE)
     body = models.TextField(blank=True)
     likes = models.BooleanField(default=False)
     item = models.ForeignKey(Item)
     relation = models.ForeignKey(Relation)
-    created = models.DateTimeField(auto_now_add=True, editable=EDIT_BACKDOOR)
+    created = models.DateTimeField(auto_now_add=True)
     last_modified = models.DateTimeField(auto_now=True)
 
     class Meta:
@@ -138,10 +140,10 @@ class VanityURL(models.Model):
     arbitrary cookies to map to much longer URLs, indexable either by
     'name' or 'index' (suitably compressed)"""
 
-    name = models.SlugField(max_length=MINE_STRING, unique=True)
+    name = models.SlugField(max_length=settings.MINE_STRINGSIZE, unique=True)
     link = models.TextField(blank=True)
     tags = models.ManyToManyField(Tag, related_name='vurls_tagged', null=True, blank=True)
-    created = models.DateTimeField(auto_now_add=True, editable=EDIT_BACKDOOR)
+    created = models.DateTimeField(auto_now_add=True)
     last_modified = models.DateTimeField(auto_now=True)
 
     class Meta:
@@ -362,28 +364,30 @@ def model_to_structure(kind, m):
 def request_to_saved_model(kind, r):
     # create a blank kwargs
     ma = {}
+    m = {}
 
-.....................................
-    for sname, (mfunc, mname, req_get_func) in s2m_table[kind].iteritems():
-	v = req_get_func(r, sname) # retreive the value from the request
-	s2m_func(s, sname, ma, mname)
-
-    # work out what kind of model we are creating, and initialise one with the kwargs
-    instantiator = class_prefixes[kind]
-    m = instantiator(**ma)
-
-    # save it
-    m.save()
-
-    # do deferred relationship initialisation
-    poked = False
-
-    for sname, (mfunc, mname, req_get_func) in defer_table[kind].iteritems():
-	poked = True
-.................................
-
-
-    if poked: m.save()
+#NB: SEPARATE DEFERRED PROCESSING IS ONLY NEEDED IF THERE IS NO 'ID' SET FOR A FRESH SAVE
+#.....................................
+#    for sname, (mfunc, mname, req_get_func) in s2m_table[kind].iteritems():
+#	v = req_get_func(r, sname) # retreive the value from the request
+#	s2m_func(s, sname, ma, mname)
+#
+#    # work out what kind of model we are creating, and initialise one with the kwargs
+#    instantiator = class_prefixes[kind]
+#    m = instantiator(**ma)
+#
+#    # save it
+#    m.save()
+#
+#    # do deferred relationship initialisation
+#    poked = False
+#
+#    for sname, (mfunc, mname, req_get_func) in defer_table[kind].iteritems():
+#	poked = True
+#.................................
+#
+#
+#    if poked: m.save()
 
     # return it
     return m
