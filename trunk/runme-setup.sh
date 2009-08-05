@@ -26,7 +26,7 @@ then
 fi
 
 
-DB=database/$MINEUSER.sqlite3.db
+DB=database/$MINEUSER/sqlite3.db
 
 if [ -f $DB ]
 then

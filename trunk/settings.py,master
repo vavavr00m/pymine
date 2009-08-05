@@ -16,23 +16,42 @@
 
 import os
 
+##################################################################
+##################################################################
+##################################################################
+
+# CONFIGURABLES GO HERE
+
 # Django settings for pymine project.
+
 DEBUG = True
 TEMPLATE_DEBUG = DEBUG
 
 # where we are
+
 MINE_PATH = os.path.dirname(__file__)
 
 # whose database shall we use (needs to be selectable)
+
 MINE_USER = "alecm"
 
 # A tuple that lists people who get code error notifications. When
 # DEBUG=False and a view raises an exception, Django will e-mail these
 # people with the full exception information. Each member of the tuple
 # should be a tuple of (Full name, e-mail address).
+
 ADMINS = (
     ('Alec Muffett', 'alec.muffett@gmail.com'),
 )
+
+##################################################################
+##################################################################
+##################################################################
+
+MINE_STRINGSIZE = 1024
+
+MINE_DBDIR = os.path.join(MINE_PATH, 'database', MINE_USER)
+MINE_DBDIR_FILES = os.path.join(MINE_DBDIR, 'files')
 
 ##################################################################
 ##################################################################
@@ -43,7 +62,7 @@ ADMINS = (
 MANAGERS = ADMINS
 
 DATABASE_ENGINE = 'sqlite3'
-DATABASE_NAME = os.path.join(MINE_PATH, 'database', MINE_USER + '.sqlite3.db')
+DATABASE_NAME = os.path.join(MINE_DBDIR, 'sqlite3.db')
 DATABASE_USER = ''             # Not used with sqlite3.
 DATABASE_PASSWORD = ''         # Not used with sqlite3.
 DATABASE_HOST = ''             # Set to empty string for localhost. Not used with sqlite3.
@@ -67,7 +86,7 @@ USE_I18N = True
 
 # Absolute path to the directory that holds media.
 # Example: "/home/media/media.lawrence.com/"
-MEDIA_ROOT = os.path.join(MINE_PATH, 'static', 'media')
+MEDIA_ROOT = os.path.join(MINE_PATH, 'static')
 
 # URL that handles the media served from MEDIA_ROOT. Make sure to use a
 # trailing slash if there is a path component (optional in other cases).
