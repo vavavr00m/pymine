@@ -33,8 +33,8 @@ class RelationAdmin(admin.ModelAdmin):
     list_filter = ['created']
     date_hierarchy = 'created'
     fieldsets = [
-        (None, {'fields': ['name', 'version', 'description', 'tags']}), 
-        ('Advanced Tags', {'fields': ['tags_required', 'tags_excluded'], 'classes': ['collapse']}), 
+        (None, {'fields': ['name', 'version', 'description']}), 
+        ('Tags', {'fields': ['tags', 'tags_required', 'tags_excluded']}), 
         ('Contact Information', {'fields': ['email_address', 'url_homepage', 'url_image', 'url_callback']}), 
         ('Access Control', {'fields': ['embargo_before', 'embargo_after', 'network_pattern'], 'classes': ['collapse']}), 
         ]
@@ -45,8 +45,8 @@ class ItemAdmin(admin.ModelAdmin):
     list_filter = ['created']
     date_hierarchy = 'created'
     fieldsets = [
-        (None, {'fields': ['name', 'status', 'data', 'content_type', 'description', 'tags']}), 
-        ('Advanced Tags', {'fields': ['item_for_relations', 'item_not_relations'], 'classes': ['collapse']}), 
+        (None, {'fields': ['name', 'status', 'data', 'content_type', 'description']}), 
+        ('Tags', {'fields': ['tags', 'item_for_relations', 'item_not_relations']}), 
         ('Access Control', {'fields': ['hide_before', 'hide_after'], 'classes': ['collapse']}), 
         ]
 
