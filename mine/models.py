@@ -157,6 +157,23 @@ class VanityURL(models.Model):
 	return model_to_structure('vurl', self)
 
 ##################################################################
+
+class MineConfig(models.Model):
+
+    """key/value pairs for Mine configuration"""
+
+    key = models.SlugField(max_length=settings.MINE_STRINGSIZE, unique=True)
+    value = models.TextField(null=True, blank=True)
+    created = models.DateTimeField(auto_now_add=True)
+    last_modified = models.DateTimeField(auto_now=True)
+
+    class Meta:
+	ordering = ['key']
+
+    def __unicode__(self):
+	return self.name
+
+##################################################################
 ##################################################################
 ##################################################################
 
