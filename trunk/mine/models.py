@@ -230,7 +230,12 @@ def m2s_itemtags(m, mattr, s, sattr):
 
 def s2m_itemtags(s, sattr, m, mattr):
     if mattr != 'tags' or sattr != 'itemTags': raise Exception, "s2m_itemtags is confused"
-    pass
+    if sattr in s: 
+        for x in s[sattr].split(): 
+            if x.startswith('for:'): m.item_for_relations.add(Tag.objects.get(name=x[4:]))
+            elif x.startswith('not:'): m.item_not_relations.add(Tag.objects.get(name=x[4:]))
+            else: m.tags.add(Tag.objects.get(name=x))
+
 
 ###
 
@@ -244,7 +249,12 @@ def m2s_relationinterests(m, mattr, s, sattr):
 
 def s2m_relationinterests(s, sattr, m, mattr):
     if mattr != 'interests' or sattr != 'relationInterests': raise Exception, "s2m_relationinterests is confused"
-    pass
+    if sattr in s: 
+        for x in s[sattr].split(): 
+            if x.startswith('require:'): m.tags_required.add(Tag.objects.get(name=x[8:]))
+            elif x.startswith('exclude:'): m.tags_excluded.add(Tag.objects.get(name=x[8:]))
+            elif x.startswith('except:'): m.tags_excluded.add(Tag.objects.get(name=x[7:])) # common typo
+            else: m.tags.add(Tag.objects.get(name=x))
 
 ###
 # int type conversion
