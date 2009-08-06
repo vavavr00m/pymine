@@ -14,7 +14,7 @@ YESNO() {
     done
 }
 
-MINEUSER=$USER
+MINE_USER=$USER
 
 if [ -f settings.py ]
 then
@@ -26,7 +26,7 @@ then
 fi
 
 
-DB=database/$MINEUSER/sqlite3.db
+DB=database/$MINE_USER/sqlite3.db
 
 if [ -f $DB ]
 then
@@ -40,19 +40,25 @@ fi
 while :
 do
     echo "Enter your e-mail address: \c"
-    read EMAIL 
+    read MINE_EMAIL 
 
-    YESNO "You entered $EMAIL ; is this OK" && break
+    YESNO "You entered $MINE_EMAIL ; is this OK" && break
 done
 
-test -f settings.py || cp settings.py,master settings.py
-test -d database/$MINEUSER || mkdir database/$MINEUSER || exit 1
+if [ ! -f settings.py ]
+then
+    cat settings.py,master |
+    sed -e "s/%%MINE_USER%%/$MINE_USER/g" |
+    sed -e "s/%%MINE_EMAIL%%/$MINE_EMAIL/g" > settings.py 
+fi
+
+test -d database/$MINE_USER || mkdir database/$MINE_USER || exit 1
 
 make clean
 make perms
 make dbsync
 
-echo "We shall use '$MINEUSER' as your mine database superuser login name."
-echo "You will now be asked to select a password for '$MINEUSER'"
-python manage.py createsuperuser --username $MINEUSER --email $EMAIL
+echo "We shall use '$MINE_USER' as your mine database superuser login name."
+echo "You will now be asked to select a password for '$MINE_USER'"
+python manage.py createsuperuser --username $MINE_USER --email $MINE_EMAIL
 

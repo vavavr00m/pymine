@@ -33,7 +33,7 @@ MINE_PATH = os.path.dirname(__file__)
 
 # whose database shall we use (needs to be selectable)
 
-MINE_USER = "alecm"
+MINE_USER = "%%MINE_USER%%"
 
 # A tuple that lists people who get code error notifications. When
 # DEBUG=False and a view raises an exception, Django will e-mail these
@@ -41,7 +41,7 @@ MINE_USER = "alecm"
 # should be a tuple of (Full name, e-mail address).
 
 ADMINS = (
-    ('Alec Muffett', 'alec.muffett@gmail.com'),
+    ('%%MINE_USER%% pymine administrator', '%%MINE_EMAIL%%'),
 )
 
 ##################################################################
