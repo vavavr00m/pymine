@@ -148,7 +148,7 @@ class VanityURL(models.Model):
 
     class Meta:
 	ordering = ['-id']
-	verbose_name = 'vanity URL'
+	verbose_name = 'Vanity URL'
 
     def __unicode__(self):
 	return self.name
@@ -158,7 +158,7 @@ class VanityURL(models.Model):
 
 ##################################################################
 
-class MineConfig(models.Model):
+class MineRegistry(models.Model):
 
     """key/value pairs for Mine configuration"""
 
@@ -169,6 +169,8 @@ class MineConfig(models.Model):
 
     class Meta:
 	ordering = ['key']
+	verbose_name = 'Registry'
+	verbose_name_plural = 'Registry'
 
     def __unicode__(self):
 	return self.name

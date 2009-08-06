@@ -14,7 +14,7 @@
 ## permissions and limitations under the License.
 ##
 
-from pymine.mine.models import Tag, Relation, Item, Comment, VanityURL
+from pymine.mine.models import Tag, Relation, Item, Comment, VanityURL, MineRegistry
 from django.contrib import admin
 
 class TagAdmin(admin.ModelAdmin):
@@ -69,9 +69,19 @@ class VanityURLAdmin(admin.ModelAdmin):
         (None, {'fields': ['name', 'link', 'tags']}), 
         ]
 
+class MineRegistryAdmin(admin.ModelAdmin):
+    list_display = ('key', 'value', 'last_modified', 'created')
+    search_fields = ['key']
+    list_filter = ['created']
+    date_hierarchy = 'created'
+    fieldsets = [
+        (None, {'fields': ['key', 'value']}), 
+        ]
+
 admin.site.register(Tag, TagAdmin)
 admin.site.register(Relation, RelationAdmin)
 admin.site.register(Item, ItemAdmin)
 admin.site.register(Comment, CommentAdmin)
 admin.site.register(VanityURL, VanityURLAdmin)
+admin.site.register(MineRegistry, MineRegistryAdmin)
 
