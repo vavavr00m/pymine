@@ -182,9 +182,7 @@ def m2s_commentitem(m, mattr, s, sattr):
 
 def s2m_commentitem(s, sattr, m, mattr):
     if mattr != 'item' or sattr != 'commentRelation': raise Exception, "s2m_commentitem is confused"
-    if sattr in s: 
-        m.item = Item.get(id=s[sattr])
-
+    if sattr in s: m.item = Item.get(id=s[sattr])
 
 ###
 
@@ -195,6 +193,7 @@ def m2s_commentrelation(m, mattr, s, sattr):
 
 def s2m_commentrelation(s, sattr, m, mattr):
     if mattr != 'relation' or sattr != 'commentRelation': raise Exception, "s2m_commentrelation is confused"
+    if sattr in s: m.relation = Relation.get(id=s[sattr])
 
 
 ###
