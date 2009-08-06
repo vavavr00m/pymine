@@ -164,6 +164,7 @@ class MineRegistry(models.Model):
 
     key = models.SlugField(max_length=settings.MINE_STRINGSIZE, unique=True)
     value = models.TextField(null=True, blank=True)
+    secret = models.BooleanField(default=False)
     created = models.DateTimeField(auto_now_add=True)
     last_modified = models.DateTimeField(auto_now=True)
 
@@ -173,7 +174,7 @@ class MineRegistry(models.Model):
 	verbose_name_plural = 'Registry'
 
     def __unicode__(self):
-	return self.name
+	return self.key
 
 ##################################################################
 ##################################################################

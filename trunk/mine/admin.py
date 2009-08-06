@@ -70,12 +70,12 @@ class VanityURLAdmin(admin.ModelAdmin):
         ]
 
 class MineRegistryAdmin(admin.ModelAdmin):
-    list_display = ('key', 'value', 'last_modified', 'created')
+    list_display = ('key', 'value', 'secret', 'last_modified', 'created')
     search_fields = ['key']
     list_filter = ['created']
     date_hierarchy = 'created'
     fieldsets = [
-        (None, {'fields': ['key', 'value']}), 
+        (None, {'fields': ['key', 'value', 'secret']}), 
         ]
 
 admin.site.register(Tag, TagAdmin)
