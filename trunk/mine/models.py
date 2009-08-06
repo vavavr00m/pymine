@@ -177,21 +177,25 @@ class VanityURL(models.Model):
 
 def m2s_commentitem(m, mattr, s, sattr):
     if mattr != 'item' or sattr != 'commentRelation': raise Exception, "m2s_commentitem is confused"
-    pass
+    x = m.item
+    if x: s[sattr] = x.id
 
-def s2m_commentitem(m, mattr, s, sattr):
+def s2m_commentitem(s, sattr, m, mattr):
     if mattr != 'item' or sattr != 'commentRelation': raise Exception, "s2m_commentitem is confused"
-    pass
+    if sattr in s: 
+        m.item = Item.get(id=s[sattr])
+
 
 ###
 
-def m2s_commentrelation(s, sattr, m, mattr):
+def m2s_commentrelation(m, mattr, s, sattr):
     if mattr != 'relation' or sattr != 'commentRelation': raise Exception, "m2s_commentrelation is confused"
-    pass
+    x = m.relation
+    if x: s[sattr] = x.name
 
 def s2m_commentrelation(s, sattr, m, mattr):
     if mattr != 'relation' or sattr != 'commentRelation': raise Exception, "s2m_commentrelation is confused"
-    pass
+
 
 ###
 
@@ -259,34 +263,34 @@ def s2m_relationinterests(s, sattr, m, mattr):
 ###
 # int type conversion
 
-def s2m_int(s, sattr, m, mattr):
-    if sattr in s: 
-        setattr(m, mattr, s[sattr])
-
 def m2s_int(m, mattr, s, sattr):
     x = getattr(m, mattr)
     if x is not None: s[sattr] = x
 
-###
-# string type conversion
-
-def s2m_string(s, sattr, m, mattr):
+def s2m_int(s, sattr, m, mattr):
     if sattr in s: 
         setattr(m, mattr, s[sattr])
+
+###
+# string type conversion
 
 def m2s_string(m, mattr, s, sattr):
     x = getattr(m, mattr)
     if x is not None: s[sattr] = x
 
+def s2m_string(s, sattr, m, mattr):
+    if sattr in s: 
+        setattr(m, mattr, s[sattr])
+
 ###
 # date type conversion
-
-def s2m_date(s, sattr, m, mattr):
-    if sattr in s: raise Exception, "---- NYI ----" # ---------------------------------  needs work, pyiso8601
 
 def m2s_date(m, mattr, s, sattr):
     x = getattr(m, mattr)
     if x: s[sattr] = x.isoformat()
+
+def s2m_date(s, sattr, m, mattr):
+    if sattr in s: raise Exception, "---- NYI ----" # ---------------------------------  needs work, pyiso8601
 
 ###
 # request conversion
@@ -312,7 +316,7 @@ xtable = (
 (   'commentBody',             'body',             False,      r2s_str,   s2m_string,             m2s_string,             ),
 (   'commentCreated',          'created',          False,      r2s_str,   s2m_date,               m2s_date,               ),
 (   'commentId',               'id',               False,      r2s_int,   s2m_int,                m2s_int,                ),
-(   'commentItem',             'item',             True,       r2s_str,   s2m_commentitem,        m2s_commentitem,        ),
+(   'commentItem',             'item',             True,       r2s_str,   s2m_commentitem,        m2s_commentitem,        ), # MAKE R2S_INT?
 (   'commentLastModified',     'last_modified',    False,      r2s_str,   s2m_date,               m2s_date,               ),
 (   'commentLikes',            'likes',            False,      r2s_str,   s2m_int,                m2s_int,                ),
 (   'commentRelation',         'relation',         True,       r2s_str,   s2m_commentrelation,    m2s_commentrelation,    ),
