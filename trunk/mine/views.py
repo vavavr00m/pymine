@@ -18,6 +18,9 @@ from django.core.urlresolvers import reverse
 from django.http import Http404, HttpResponse, HttpResponseRedirect
 from django.shortcuts import render_to_response, get_object_or_404
 
+import django.utils.simplejson as json
+import pickle
+
 def REST(request, *args, **kwargs):
     get_view = kwargs.pop('GET', None)
     post_view = kwargs.pop('POST', None)
@@ -30,26 +33,57 @@ def REST(request, *args, **kwargs):
     elif request.method == 'DELETE' and delete_view is not None:
         return delete_view(request, *args, **kwargs)
 
-    raise Http404
+    raise Http404, "fell off the end of REST"
+
+def API_CALL(request, *args, **kwargs):
+    get_view = kwargs.pop('GET', None)
+    post_view = kwargs.pop('POST', None)
+    delete_view = kwargs.pop('DELETE', None)
+    desired_format = kwargs.pop('fmt', None)
+
+    retval = None
+
+    if request.method == 'GET' and get_view is not None:
+        retval = get_view(request, *args, **kwargs)
+    elif request.method == 'POST' and post_view is not None:
+        retval = post_view(request, *args, **kwargs)
+    elif request.method == 'DELETE' and delete_view is not None:
+        retval = delete_view(request, *args, **kwargs)
+
+    if retval:
+        if desired_format == 'py':
+            data = pickle.dumps(retval)
+            return HttpResponse(data, mimetype="text/plain")
+        elif desired_format == 'json':
+            data = json.dumps(retval)
+            return HttpResponse(data, mimetype="application/json")
+        elif desired_format == 'xml':
+            raise Http404("XML serialization disabled temporarily due to lack of 'lxml' on OSX")
+            data = None
+            return HttpResponse(data, mimetype="application/xml")
+
+    raise Http404, "fell off the end of API_CALL"
 
 ##################################################################
 
-## url: /
-## method: read_mine_root
-## args:
+## rest: GET /
+## function: read_mine_root
+## declared args: 
 def read_mine_root(request, *args, **kwargs):
-    return render_to_response('root-mine.html')
+    raise Http404('backend read_mine_root for GET / is not yet implemented') # TO BE DONE
+    return render_to_response('read-mine-root.html')
 
-
-## url: /doc
-## method: read_doc_root
-## args:
+## rest: GET /doc
+## function: read_doc_root
+## declared args: 
 def read_doc_root(request, *args, **kwargs):
-    return render_to_response('root-doc.html')
+    raise Http404('backend read_doc_root for GET /doc is not yet implemented') # TO BE DONE
+    return render_to_response('read-doc-root.html')
 
-## url: /pub
-## method: read_pub_root
-## args:
+## rest: GET /pub
+## function: read_pub_root
+## declared args: 
 def read_pub_root(request, *args, **kwargs):
-    return render_to_response('root-pub.html')
+    raise Http404('backend read_pub_root for GET /pub is not yet implemented') # TO BE DONE
+    return render_to_response('read-pub-root.html')
 

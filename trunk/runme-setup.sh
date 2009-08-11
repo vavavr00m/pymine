@@ -47,7 +47,7 @@ done
 
 if [ ! -f settings.py ]
 then
-    cat settings.py,master |
+    cat settings.py.tmpl |
     sed -e "s/%%MINE_USER%%/$MINE_USER/g" |
     sed -e "s/%%MINE_EMAIL%%/$MINE_EMAIL/g" > settings.py 
 fi

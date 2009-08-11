@@ -19,4 +19,4 @@ from django.http import Http404, HttpResponse, HttpResponseRedirect
 from django.shortcuts import render_to_response, get_object_or_404
 
 def root(request):
-    return render_to_response('root-top.html')
+    return render_to_response('read-top-root.html')
