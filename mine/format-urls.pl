@@ -1,5 +1,7 @@
 #!/usr/bin/perl
 
+$indent = "    ";
+
 %regexp_lookup = ( # $value text in <anglebrackets> must be same as lcase($key)
     'CID', '?P<cid>\d+',
     'FMT', '?P<fmt>(xml|json|py)',
@@ -21,6 +23,8 @@ while (<DATA>) {
 
     $output = \@{$text{'views'}{$class}};
 
+    $template_prefix = $pymethod;
+
     $pymethod =~ tr!-!_!;
 
     $callback = "$class.$pymethod";
@@ -40,13 +44,13 @@ while (<DATA>) {
     push(@{$output}, "## declared args: @kwds\n");
     push(@{$output}, "def $pymethod($aaa):\n");
 
-    if ($class eq 'api') {
-        push(@{$output}, "    raise Http404('method $pymethod for url $url is not yet implemented') # TO BE DONE\n");
-        push(@{$output}, "    return { 'status': 'not yet implemented' }\n");
+    push(@{$output}, "${indent}raise Http404('backend $pymethod for $http_method $url is not yet implemented') # TO BE DONE\n");
+
+    if (($class eq 'api') and ($url ne '/api')) { # root
+        push(@{$output}, "${indent}return { 'status': 'not yet implemented' }\n");
     }
-    elsif ($class eq 'ui') {
-        push(@{$output}, "    raise Http404('method $pymethod for url $url is not yet implemented') # TO BE DONE\n");
-        push(@{$output}, "    return render_to_response('$suffix.html')\n");
+    else {
+        push(@{$output}, "${indent}return render_to_response('$template_prefix.html')\n");
     }
 
     push(@{$output}, "\n");
@@ -59,9 +63,7 @@ while (<DATA>) {
 
 ##################################################################
 
-$indent = "    ";
-
-foreach $pattern (sort keys %patterns) {
+foreach $pattern (sort {$b cmp $a} keys %patterns) {
 
     $class = $class_of{$pattern};
 
@@ -75,6 +77,11 @@ foreach $pattern (sort keys %patterns) {
     else {
         $dispatch = "REST";
     }
+
+    $pattern =~ s!^/(api|get|ui)!!o;
+    $pattern =~ s!^/!!o;
+
+    $dispatch = "REST" if ($pattern eq ''); # root
 
     push(@{$output}, $indent, "(r'^$pattern\$', $dispatch,\n$indent {$foo}),\n");
 }
@@ -101,6 +108,18 @@ __END__;
 # note: the /key/ thing is needed because of risk of /item/IID/KEY.FMT
 # clashing with the /item/IID/comment.FMT namespace, and any other
 # namespaces that may arise; and thus for orthogonality...
+
+mine  GET     /                                read-mine-root
+mine  GET     /doc                             read-doc-root
+mine  GET     /pub                             read-pub-root
+
+##################################################################
+
+api   GET     /api                             read-api-root
+get   GET     /get                             read-get-root
+ui    GET     /ui                              read-ui-root
+
+##################################################################
 
 api   GET     /api/item/IID                    read-item-data
 
@@ -174,17 +193,8 @@ api   GET     /api/version.FMT                 read-version
 
 ##################################################################
 
-get   GET     /get/SUFFIX                      read-minekey
-get   POST    /get/SUFFIX                      submit-minekey
-
-##################################################################
-
-mine  GET     /                                read-root-mine
-mine  GET     /api                             read-root-api
-mine  GET     /doc                             read-root-doc
-mine  GET     /get                             read-root-get
-mine  GET     /pub                             read-root-pub
-mine  GET     /ui                              read-root-ui
+get   GET     /get/KEY                         read-minekey
+get   POST    /get/KEY                         submit-minekey
 
 ##################################################################
 
