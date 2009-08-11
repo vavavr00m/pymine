@@ -49,8 +49,8 @@ def read_item_list(request, *args, **kwargs):
 ## function: create_item
 ## declared args: 
 def create_item(request, *args, **kwargs):
-    raise Http404('backend create_item for POST /api/item.FMT is not yet implemented') # TO BE DONE
-    return { 'status': 'not yet implemented' }
+    m = request_to_save_model('item', request)
+    return m.structure() # returns more data than was supplied
 
 ## rest: DELETE /api/item/IID.FMT
 ## function: delete_item
@@ -63,8 +63,9 @@ def delete_item(request, iid, *args, **kwargs):
 ## function: read_item
 ## declared args: iid
 def read_item(request, iid, *args, **kwargs):
-    raise Http404('backend read_item for GET /api/item/IID.FMT is not yet implemented') # TO BE DONE
-    return { 'status': 'not yet implemented' }
+    id = int(iid)
+    m = Item.objects.get(id=id)
+    return m.structure()
 
 ## rest: POST /api/item/IID.FMT
 ## function: update_item
@@ -98,8 +99,8 @@ def read_relation_list(request, *args, **kwargs):
 ## function: create_relation
 ## declared args: 
 def create_relation(request, *args, **kwargs):
-    raise Http404('backend create_relation for POST /api/relation.FMT is not yet implemented') # TO BE DONE
-    return { 'status': 'not yet implemented' }
+    m = request_to_save_model('relation', request)
+    return m.structure() # returns more data than was supplied
 
 ## rest: DELETE /api/relation/RID.FMT
 ## function: delete_relation
@@ -112,8 +113,9 @@ def delete_relation(request, rid, *args, **kwargs):
 ## function: read_relation
 ## declared args: rid
 def read_relation(request, rid, *args, **kwargs):
-    raise Http404('backend read_relation for GET /api/relation/RID.FMT is not yet implemented') # TO BE DONE
-    return { 'status': 'not yet implemented' }
+    id = int(rid)
+    m = Relation.objects.get(id=id)
+    return m.structure()
 
 ## rest: POST /api/relation/RID.FMT
 ## function: update_relation
@@ -147,8 +149,8 @@ def read_tag_list(request, *args, **kwargs):
 ## function: create_tag
 ## declared args: 
 def create_tag(request, *args, **kwargs):
-    raise Http404('backend create_tag for POST /api/tag.FMT is not yet implemented') # TO BE DONE
-    return { 'status': 'not yet implemented' }
+    m = request_to_save_model('tag', request)
+    return m.structure() # returns more data than was supplied
 
 ## rest: DELETE /api/tag/TID.FMT
 ## function: delete_tag
@@ -161,8 +163,9 @@ def delete_tag(request, tid, *args, **kwargs):
 ## function: read_tag
 ## declared args: tid
 def read_tag(request, tid, *args, **kwargs):
-    raise Http404('backend read_tag for GET /api/tag/TID.FMT is not yet implemented') # TO BE DONE
-    return { 'status': 'not yet implemented' }
+    id = int(tid)
+    m = Tag.objects.get(id=id)
+    return m.structure()
 
 ## rest: POST /api/tag/TID.FMT
 ## function: update_tag
@@ -322,6 +325,8 @@ def encode_minekey3(request, rid, rvsn, iid, *args, **kwargs):
 ## function: read_version
 ## declared args: 
 def read_version(request, *args, **kwargs):
-    raise Http404('backend read_version for GET /api/version.FMT is not yet implemented') # TO BE DONE
-    return { 'status': 'not yet implemented' }
-
+    return { 
+        'softwareName': 'pymine',
+        'softwareRevision': '1.0-alpha',
+        'mineAPIVersion': 2,
+        }
