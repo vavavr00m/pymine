@@ -11,165 +11,205 @@
     'TID', '?P<tid>\d+',
     );
 
-%rest_lookup = (
-    'DUMMY', 'dummy',
-    'GET', 'read',
-    'POST', 'create',
-    'PUT', 'update',
-    'DELETE', 'delete',
-);
-
 while (<DATA>) {
     if (/^\s*(\#.*)?$/o) {
-	# skip comments and blank lines
-#	push(@view_output, '#' x 66);
-#	push(@view_output, "\n");
-#	push(@view_output, "\n");
-	next;
+        # skip comments and blank lines
+        next;
     }
 
-    ($url, $http_method, $suffix) = split;
+    ($class, $http_method, $url, $pymethod) = split;
 
-    $suffix =~ tr!-!_!;
-    $pymethod = $rest_lookup{$http_method} . "_" . $suffix;
+    $output = \@{$text{'views'}{$class}};
 
-    if ($url =~ m!/api/!o) {
-	$module = "api";
-    }
-    elsif ($url =~ m!/ui/!o) {
-	$module = "ui";
-    }
-    else {
-	$module = "mine";
-    }
+    $pymethod =~ tr!-!_!;
 
-    $callback = "$module.$pymethod";
+    $callback = "$class.$pymethod";
 
     $pattern = $url;
-    $pattern =~ s/([A-Z]+)/"(" . ($regexp_lookup{$1}||"--------$1--------") . ")"/goe;
+
+    $pattern =~ s/([A-Z]+)/"(" . ($regexp_lookup{$1}||"&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&& $1 &&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&") . ")"/goe;
 
     @kwds = grep(/^[A-Z]+$/o, split(/\b/o, $url));
+
     @kwds = map { lc($_) } grep(!/^(FMT)$/o, @kwds);
+
     $aaa = join(", ", 'request', @kwds, '*args', '**kwargs');
 
-    push(@view_output, "## url: $url\n");
-    push(@view_output, "## method: $pymethod\n");
-    push(@view_output, "## args: @kwds\n");
-    push(@view_output, "def $pymethod($aaa):\n");
+    push(@{$output}, "## rest: $http_method $url\n");
+    push(@{$output}, "## function: $pymethod\n");
+    push(@{$output}, "## declared args: @kwds\n");
+    push(@{$output}, "def $pymethod($aaa):\n");
 
-    if ($url =~ m!^api/.!o) {
-	push(@view_output, "    return { 'status': 'not yet implemented' }\n");
-    } 
-    else {
-	push(@view_output, "    raise Http404('method $pymethod for url $url is not yet implemented')\n");
+    if ($class eq 'api') {
+        push(@{$output}, "    raise Http404('method $pymethod for url $url is not yet implemented') # TO BE DONE\n");
+        push(@{$output}, "    return { 'status': 'not yet implemented' }\n");
+    }
+    elsif ($class eq 'ui') {
+        push(@{$output}, "    raise Http404('method $pymethod for url $url is not yet implemented') # TO BE DONE\n");
+        push(@{$output}, "    return render_to_response('$suffix.html')\n");
     }
 
-    push(@view_output, "\n");
+    push(@{$output}, "\n");
 
     push(@{$patterns{$pattern}}, "'$http_method': $callback");
 
+    $class_of{$pattern} = $class;
+
 }
 
-print @view_output;
-
-print "#" x 66, "\n\n";
+##################################################################
 
 $indent = "    ";
 
 foreach $pattern (sort keys %patterns) {
+
+    $class = $class_of{$pattern};
+
+    $output = \@{$text{'urls'}{$class}};
+
     $foo = join(", ", @{$patterns{$pattern}});
 
-    if ($pattern =~ m!/api/!o) {
-	$dispatch = "api.DISPATCH";
-    }
-    elsif ($pattern =~ m!/ui/!o) {
-	$dispatch = "ui.RESPOND";
+    if ($class eq 'api') {
+        $dispatch = "API_CALL";
     }
     else {
-	$dispatch = "mine.REST";
+        $dispatch = "REST";
     }
 
-    print $indent, "(r'^$pattern\$',\n$indent $dispatch, {$foo}),\n";
+    push(@{$output}, $indent, "(r'^$pattern\$', $dispatch,\n$indent {$foo}),\n");
 }
 
-__END__;
-/                                GET     mine-root
-/api                             GET     api-root
-/doc                             GET     doc-root
-/get                             GET     get-root
-/pub                             GET     pub-root
-/ui                              GET     ui-root
 
-/get/SUFFIX                      GET     minekey
-/get/SUFFIX                      POST    minekey
-#
-#/api/config.FMT                  GET     config
-#/api/config.FMT                  POST    config
-#/api/item.FMT                    GET     item-list
-#/api/item.FMT                    POST    item
-#/api/item/IID                    GET     item-data
-#/api/item/IID                    POST    item-data
-#/api/item/IID.FMT                DELETE  item
-#/api/item/IID.FMT                GET     item
-#/api/item/IID/CID.FMT            DELETE  comment
-#/api/item/IID/CID.FMT            GET     comment
-#/api/item/IID/CID/key.FMT        POST    comment-key
-#/api/item/IID/CID/key/KEY.FMT    DELETE  comment-key
-#/api/item/IID/CID/key/KEY.FMT    GET     comment-key
-#/api/item/IID/CID/key/KEY.FMT    POST    comment-key
-#/api/item/IID/clone.FMT          GET     clone-list
-#/api/item/IID/clone.FMT          POST    clone
-#/api/item/IID/comment.FMT        GET     comment-list
-#/api/item/IID/comment.FMT        POST    comment
-#/api/item/IID/key.FMT            POST    item-key
-#/api/item/IID/key/KEY.FMT        DELETE  item-key
-#/api/item/IID/key/KEY.FMT        GET     item-key
-#/api/item/IID/key/KEY.FMT        POST    item-key
-#/api/relation.FMT                GET     relation-list
-#/api/relation.FMT                POST    relation
-#/api/relation/RID.FMT            DELETE  relation
-#/api/relation/RID.FMT            GET     relation
-#/api/relation/RID/key.FMT        POST    relation-key
-#/api/relation/RID/key/KEY.FMT    DELETE  relation-key
-#/api/relation/RID/key/KEY.FMT    GET     relation-key
-#/api/relation/RID/key/KEY.FMT    POST    relation-key
-#/api/select/item.FMT             GET     select-item
-#/api/select/relation.FMT         GET     select-relation
-#/api/select/tag.FMT              GET     select-tag
-#/api/tag.FMT                     GET     tag-list
-#/api/tag.FMT                     POST    tag
-#/api/tag/TID.FMT                 DELETE  tag
-#/api/tag/TID.FMT                 GET     tag
-#/api/tag/TID/key.FMT             POST    tag-key
-#/api/tag/TID/key/KEY.FMT         DELETE  tag-key
-#/api/tag/TID/key/KEY.FMT         GET     tag-key
-#/api/tag/TID/key/KEY.FMT         POST    tag-key
-#/api/url/RID.FMT                 GET     encode-minekey1
-#/api/url/RID/IID.FMT             GET     encode-minekey2
-#/api/url/RID/RVSN/IID.FMT        GET     encode-minekey3
-#/api/version.FMT                 GET     version
-#
-#/ui/create-comment/IID.html      GET     create-comment
-#/ui/create-item.html             GET     create-item
-#/ui/create-relation.html         GET     create-relation
-#/ui/create-tag.html              GET     create-tag
-#/ui/delete-comment/IID/CID.html  GET     delete-comment
-#/ui/delete-item/IID.html         GET     delete-item
-#/ui/delete-relation/RID.html     GET     delete-relation
-#/ui/delete-tag/TID.html          GET     delete-tag
-#/ui/list-comments/IID.html       GET     list-comments
-#/ui/list-items.html              GET     list-items
-#/ui/list-relations.html          GET     list-relations
-#/ui/list-tags.html               GET     list-tags
-#/ui/read-comment/IID/CID.html    GET     read-comment
-#/ui/read-config.html             GET     read-config
-#/ui/read-item/IID.html           GET     read-item
-#/ui/read-relation/RID.html       GET     read-relation
-#/ui/read-tag/TID.html            GET     read-tag
-#/ui/update-comment/IID/CID.html  GET     update-comment
-#/ui/update-config.html           GET     update-config
-#/ui/update-item/IID.html         GET     update-item
-#/ui/update-relation/RID.html     GET     update-relation
-#/ui/update-tag/TID.html          GET     update-tag
-#/ui/version.html                 GET     version
-#
+##################################################################
+
+@foo = keys %text;
+
+foreach $file (sort keys %text) {
+
+    foreach $class (sort keys %{ $text{$file}}) {
+        open(FOO, ">tmp.$class.$file.py");
+        print FOO @{$text{$file}{$class}};
+        close(FOO);
+    }
+}
+
+##################################################################
+##################################################################
+##################################################################
+__END__;
+
+# note: the /key/ thing is needed because of risk of /item/IID/KEY.FMT
+# clashing with the /item/IID/comment.FMT namespace, and any other
+# namespaces that may arise; and thus for orthogonality...
+
+api   GET     /api/item/IID                    read-item-data
+
+##################################################################
+
+api   GET     /api/item.FMT                    read-item-list
+api   POST    /api/item.FMT                    create-item
+api   DELETE  /api/item/IID.FMT                delete-item
+api   GET     /api/item/IID.FMT                read-item
+api   POST    /api/item/IID.FMT                update-item
+api   DELETE  /api/item/IID/key/KEY.FMT        delete-item-key
+api   GET     /api/item/IID/key/KEY.FMT        get-item-key
+
+##################################################################
+
+api   GET     /api/relation.FMT                read-relation-list
+api   POST    /api/relation.FMT                create-relation
+api   DELETE  /api/relation/RID.FMT            delete-relation
+api   GET     /api/relation/RID.FMT            read-relation
+api   POST    /api/relation/RID.FMT            update-relation
+api   DELETE  /api/relation/RID/key/KEY.FMT    delete-relation-key
+api   GET     /api/relation/RID/key/KEY.FMT    get-relation-key
+
+##################################################################
+
+api   GET     /api/tag.FMT                     read-tag-list
+api   POST    /api/tag.FMT                     create-tag
+api   DELETE  /api/tag/TID.FMT                 delete-tag
+api   GET     /api/tag/TID.FMT                 read-tag
+api   POST    /api/tag/TID.FMT                 update-tag
+api   DELETE  /api/tag/TID/key/KEY.FMT         delete-tag-key
+api   GET     /api/tag/TID/key/KEY.FMT         get-tag-key
+
+##################################################################
+
+api   GET     /api/item/IID/comment.FMT        read-comment-list
+api   POST    /api/item/IID/comment.FMT        create-comment
+api   DELETE  /api/item/IID/CID.FMT            delete-comment
+api   GET     /api/item/IID/CID.FMT            read-comment
+api   POST    /api/item/IID/CID.FMT            update-comment
+api   DELETE  /api/item/IID/CID/key/KEY.FMT    delete-comment-key
+api   GET     /api/item/IID/CID/key/KEY.FMT    get-comment-key
+
+##################################################################
+
+api   GET     /api/item/IID/clone.FMT          read-clone-list
+api   POST    /api/item/IID/clone.FMT          create-clone
+
+##################################################################
+
+api   GET     /api/registry.FMT                read-registry
+api   POST    /api/registry.FMT                update-registry
+api   DELETE  /api/registry/key/KEY.FMT        delete-registry-key
+api   GET     /api/registry/key/KEY.FMT        get-registry-key
+
+##################################################################
+
+api   GET     /api/select/item.FMT             read-select-item
+api   GET     /api/select/relation.FMT         read-select-relation
+api   GET     /api/select/tag.FMT              read-select-tag
+
+##################################################################
+
+api   GET     /api/url/RID.FMT                 encode-minekey1
+api   GET     /api/url/RID/IID.FMT             encode-minekey2
+api   GET     /api/url/RID/RVSN/IID.FMT        encode-minekey3
+
+##################################################################
+
+api   GET     /api/version.FMT                 read-version
+
+##################################################################
+
+get   GET     /get/SUFFIX                      read-minekey
+get   POST    /get/SUFFIX                      submit-minekey
+
+##################################################################
+
+mine  GET     /                                read-root-mine
+mine  GET     /api                             read-root-api
+mine  GET     /doc                             read-root-doc
+mine  GET     /get                             read-root-get
+mine  GET     /pub                             read-root-pub
+mine  GET     /ui                              read-root-ui
+
+##################################################################
+
+ui    GET     /ui/create-comment/IID.html      create-comment
+ui    GET     /ui/create-item.html             create-item
+ui    GET     /ui/create-relation.html         create-relation
+ui    GET     /ui/create-tag.html              create-tag
+ui    GET     /ui/delete-comment/IID/CID.html  delete-comment
+ui    GET     /ui/delete-item/IID.html         delete-item
+ui    GET     /ui/delete-relation/RID.html     delete-relation
+ui    GET     /ui/delete-tag/TID.html          delete-tag
+ui    GET     /ui/list-comments/IID.html       list-comments
+ui    GET     /ui/list-items.html              list-items
+ui    GET     /ui/list-relations.html          list-relations
+ui    GET     /ui/list-tags.html               list-tags
+ui    GET     /ui/read-comment/IID/CID.html    read-comment
+ui    GET     /ui/read-item/IID.html           read-item
+ui    GET     /ui/read-registry.html           read-registry
+ui    GET     /ui/read-relation/RID.html       read-relation
+ui    GET     /ui/read-tag/TID.html            read-tag
+ui    GET     /ui/update-comment/IID/CID.html  update-comment
+ui    GET     /ui/update-item/IID.html         update-item
+ui    GET     /ui/update-registry.html         update-registry
+ui    GET     /ui/update-relation/RID.html     update-relation
+ui    GET     /ui/update-tag/TID.html          update-tag
+ui    GET     /ui/version.html                 version
+
+##################################################################
