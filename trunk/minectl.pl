@@ -193,12 +193,12 @@ while (<DATA>) {
     }
 
     # SUB1PASS: strip the first arg and interpolate into API URL; pass
-    # all subsequent foo=bar keys to it ; THIS IS PROBABLY SAFEST CASE
+    # all subsequent foo=bar keys to it ; THIS IS PRIBABLY SAFEST CASE
     # FOR SINGLE-ARGUMENT COMMANDLINES.
 
     elsif ($call_how eq 'SUB1PASS') {
 	my $arg = shift;
-	$api =~ s!\b([ROTC]ID|KEY)\b!$arg!g;
+	$api =~ s!\b([RITC]ID|KEY)\b!$arg!g;
 	&Mine($method, $api, @ARGV);
     }
 
@@ -207,7 +207,7 @@ while (<DATA>) {
 
     elsif ($call_how eq 'SUB1ITER') {
 	my $id = shift;
-	$api =~ s![ROTC]ID!$id!g;
+	$api =~ s![RITC]ID!$id!g;
 	foreach my $arg (@ARGV) {
 	    &Mine($method, $api, $arg);
 	}
@@ -219,7 +219,7 @@ while (<DATA>) {
     elsif ($call_how eq 'SUBEVERY') {
 	foreach $arg (@ARGV) {
 	    my $api2 = $api;
-	    $api2 =~ s![ROTC]ID!$arg!g;
+	    $api2 =~ s![RITC]ID!$arg!g;
 	    &Mine($method, $api2);
 	}
     }
@@ -230,7 +230,7 @@ while (<DATA>) {
 
     elsif ($call_how eq 'SUB1EVERY') {
 	my $id = shift;
-	$api =~ s![ROTC]ID!$id!g;
+	$api =~ s![RITC]ID!$id!g;
 	foreach $arg (@ARGV) {
 	    my $api2 = $api;
 	    $api2 =~ s!KEY!$arg!g;
@@ -244,7 +244,7 @@ while (<DATA>) {
     elsif ($call_how eq 'SUB2PASS') {
 	my $arg = shift;
 	my $id = shift;
-	$api =~ s!\b([ROTC]ID)\b!$arg!g;
+	$api =~ s!\b([RITC]ID)\b!$arg!g;
 	$api =~ s!\b(KEY)\b!$id!g;
 	&Mine($method, $api, @ARGV);
     }
@@ -292,21 +292,21 @@ while (<DATA>) {
 	foreach my $filename (@ARGV) {
 	    my $filetype = &mime_type($filename);
 	    my @cmdargs = (
-		"data=\@$filename",
-		"objectName=$filename",
-		"objectType=$filetype",
-		"objectDescription=bulk-uploaded file, sourced from $filename"
+		"itemData=\@$filename",
+		"itemName=$filename",
+		"itemType=$filetype",
+		"itemDescription=bulk-uploaded file, sourced from $filename"
 		);
 
 	    if (defined($status)) {
-		push(@cmdargs, "objectStatus=$status");
+		push(@cmdargs, "itemStatus=$status");
 	    }
 	    else {
-		push(@cmdargs, "objectStatus=draft");
+		push(@cmdargs, "itemStatus=draft");
 	    }
 
 	    if (defined($tags)) {
-		push(@cmdargs, "objectTags=$tags");
+		push(@cmdargs, "itemTags=$tags");
 	    }
 
 	    &Mine($method, $api, @cmdargs);
@@ -435,7 +435,7 @@ __END__;
 mime-type MIMETYPE - - filename.ext ...
 
 # accelerated upload
-upload FUPLOAD create /api/object.json [-t "tag ..."] [-s status] object.jpg object.pdf ...
+upload FUPLOAD create /api/item.json [-t "tag ..."] [-s status] item.jpg item.pdf ...
 
 # accelerated tagging
 new-tags FTAGS create /api/tag.json tag1 tag2 tag3:implies1 tag4:implies1,implies2[,more...] ...
@@ -447,7 +447,7 @@ new-relation FRELATION create /api/relation.json name vers desc tag ...
 # raw API calls
 ###
 
-# calling the feed and object retreival
+# calling the feed and item retreival
 get SUB1PASS read /get?key=KEY minekey
 
 # the version command, effectively a no-op / test routine
@@ -455,7 +455,7 @@ version PASSARGS read /api/version.json
 
 # all instances of update-foo (except update-data) were more formally
 # "create-foo-key" method calls; this is because there is no API
-# interface to support modifying a Thing (Relation / Object / Tag /
+# interface to support modifying a Thing (Relation / Item / Tag /
 # Comment / Config) by means of replacing one binary blob with
 # another; thus the more refined create-foo-key routines were
 # hijacked to achieve the intended aim of update-foo...
@@ -463,17 +463,17 @@ version PASSARGS read /api/version.json
 get-config           PASSARGS   read    /api/config.json
 update-config        PASSARGS   create  /api/config.json                key=value ...
 
-list-objects         PASSARGS   read    /api/object.json
-create-object        PASSARGS   create  /api/object.json                data=@filename.txt objectKey=value ...
-get-data             SUB1PASS   read    /api/object/OID                42
-update-data          SUB1PASS   update  /api/object/OID                42 data=@filename.txt
-get-object           SUB1PASS   read    /api/object/OID.json            42
-delete-object        SUBEVERY   delete  /api/object/OID.json            42 17 23 ...
-clone-object         SUB1PASS   create  /api/object/OID/clone.json      42
-list-clones          SUB1PASS   read    /api/object/OID/clone.json      42
-update-object        SUB1PASS   create  /api/object/OID/key.json        42 objectKey=value ...
-get-object-key       SUB1EVERY  read    /api/object/OID/key/KEY.json    42 objectKey
-delete-object-key    SUB1EVERY  delete  /api/object/OID/key/KEY.json    42 objectKey ...
+list-items         PASSARGS   read    /api/item.json
+create-item        PASSARGS   create  /api/item.json                itemData=@filename.txt itemKey=value ...
+get-data             SUB1PASS   read    /api/item/IID                42
+update-data          SUB1PASS   update  /api/item/IID                42 itemData=@filename.txt
+get-item           SUB1PASS   read    /api/item/IID.json            42
+delete-item        SUBEVERY   delete  /api/item/IID.json            42 17 23 ...
+clone-item         SUB1PASS   create  /api/item/IID/clone.json      42
+list-clones          SUB1PASS   read    /api/item/IID/clone.json      42
+update-item        SUB1PASS   create  /api/item/IID/key.json        42 itemKey=value ...
+get-item-key       SUB1EVERY  read    /api/item/IID/key/KEY.json    42 itemKey
+delete-item-key    SUB1EVERY  delete  /api/item/IID/key/KEY.json    42 itemKey ...
 
 list-relations       PASSARGS   read    /api/relation.json
 create-relation      PASSARGS   create  /api/relation.json              relationKey=value ...
