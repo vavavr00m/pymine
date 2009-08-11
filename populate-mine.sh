@@ -20,8 +20,10 @@ Minectl() {
     ./minectl.pl -vve "$@"
 }
 
+SAMPLES=static/testdata
 
 exec 2>&1
+
 set -x
 
 ###
@@ -73,12 +75,6 @@ Minectl new-relation adriana 1 "Adriana Lukas" wine motorbikes themineproject
 Minectl new-relation carrie 1 "Carrie Bishop" sneakers trainers themineproject
 Minectl new-relation ben 1 "Ben Laurie" wine food motorbikes
 Minectl new-relation perry 1 "Perry de Havilland" food drink except:white-wine
-
-##################################################################
-##################################################################
-##################################################################
-
-exit 0
 
 ###
 # upload a batch of objects without individual tagging

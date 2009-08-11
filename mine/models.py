@@ -20,6 +20,8 @@ from django.db import models, transaction
 from django.core.files.storage import FileSystemStorage
 from django.conf import settings
 
+status_lookup = {}
+
 ##################################################################
 
 class Tag(models.Model):
@@ -79,11 +81,14 @@ class Item(models.Model):
     """This is the modelspace representation of the Item object"""
 
     ITEM_STATUSES=(
-	( 'X', 'Private' ),
-	( 'S', 'Shared' ),
-	( 'P', 'Public' ),
-	# ( 'A', 'AuthRequired' ),
-	)
+        ( 'X', 'private' ),
+        ( 'S', 'shared' ),
+        ( 'P', 'public' ),
+        #( 'A', 'authreqd' ),
+        )
+
+    for short, long in ITEM_STATUSES:
+       status_lookup[long] = short 
 
     ITEM_FS = FileSystemStorage(location=settings.MINE_DBDIR_FILES)
 
@@ -243,6 +248,18 @@ def s2m_vurltags(s, sattr, m, mattr):
 
 ###
 
+def m2s_itemstatus(m, mattr, s, sattr):
+    if mattr != 'status' or sattr != 'itemStatus': raise Exception, "s2m_itemtags is confused"
+    s[sattr] = m.get_status_display()
+
+def s2m_itemstatus(s, sattr, m, mattr):
+    if mattr != 'status' or sattr != 'itemStatus': raise Exception, "m2s_itemtags is confused"
+    x = s[sattr]
+    if x in status_lookup: 
+        setattr(m, mattr, status_lookup[x])
+    else:
+        raise Exception, "s2m_itemstatus cannot remap status: " + x
+
 def m2s_itemtags(m, mattr, s, sattr):
     if mattr != 'tags' or sattr != 'itemTags': raise Exception, "m2s_itemtags is confused"
 
@@ -346,8 +363,8 @@ xtable = (
 (   'itemHideBefore',          'hide_before',      False,      r2s_str,   s2m_date,               m2s_date,               ),
 (   'itemId',                  'id',               False,      r2s_int,   s2m_int,                m2s_int,                ),
 (   'itemLastModified',        'last_modified',    False,      r2s_str,   s2m_date,               m2s_date,               ),
-(   'itemattr',                'name',             False,      r2s_str,   s2m_string,             m2s_string,             ),
-(   'itemStatus',              'status',           False,      r2s_str,   s2m_string,             m2s_string,             ),
+(   'itemName',                'name',             False,      r2s_str,   s2m_string,             m2s_string,             ),
+(   'itemStatus',              'status',           False,      r2s_str,   s2m_itemstatus,         m2s_itemstatus,         ),
 (   'itemTags',                'tags',             True,       r2s_str,   s2m_itemtags,           m2s_itemtags,           ),
 (   'itemType',                'content_type',     False,      r2s_str,   s2m_string,             m2s_string,             ),  # FIX/AUTOFILL
 (   'relationCallbackURL',     'url_callback',     False,      r2s_str,   s2m_string,             m2s_string,             ),
@@ -449,7 +466,6 @@ def request_to_save_model(kind, r):
 
         # rip the attribute out of the request and convert to python int/str
         r2s_func(r, sattr, s)
-        print ">>", s
 
         # s2m the value into the appropriate attribute
         s2m_func(s, sattr, m, mattr)
