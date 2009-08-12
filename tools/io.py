@@ -1,3 +1,4 @@
+#!/usr/bin/python
 ##
 ## Copyright 2009 Adriana Lukas & Alec Muffett
 ##
@@ -14,11 +15,11 @@
 ## permissions and limitations under the License.
 ##
 
-class BlockFile(object):
+class FileBlockIterator(object):
     """returns an iterator to hack through a (read-binary) File object in blocks, default size 64k"""
 
-    def __init__(self, file, bsize=(64 * 1024)):
-        self._file = file
+    def __init__(self, filename, bsize=(64 * 1024)):
+        self._file = open(filename, "rb")
         self._bsize = bsize
 
     def __getattr__(self, name):
@@ -39,9 +40,5 @@ class BlockFile(object):
 import sys
 
 if __name__ == '__main__':
-    f = open("/etc/services", "rb")
-    bf = BlockFile(f, 64)
-    for block in bf:
-        sys.stdout.write("<<<")
+    for block in FileBlockIterator("/etc/services", 64):
         sys.stdout.write(block)
-        sys.stdout.write(">>>\n")
