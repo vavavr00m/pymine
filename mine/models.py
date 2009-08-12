@@ -118,7 +118,7 @@ class Item(models.Model):
     def save_upload_file(self, f):
         if not self.id:
             raise Exception, "save_upload_file trying to save a model which has no IID"
-        name = str(self.id) + ".data"
+        name = str(self.id) + '.' + f.name
         print ">> trying to save ", name
         self.data.save(name, f)
 
