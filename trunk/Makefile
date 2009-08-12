@@ -49,3 +49,7 @@ dbclean:
 
 syntax:
 	find mine -name "*.py" | while read f ; do echo $$f ; python $$f ; echo "" ; done
+
+# :-)
+alec:
+	env MINE_EMAIL=alec.muffett@gmail.com ./runme-setup.sh
