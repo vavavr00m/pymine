@@ -115,6 +115,13 @@ class Item(models.Model):
     def structure(self):
 	return model_to_structure('item', self)
 
+    def save_upload_file(self, f):
+        if not self.id:
+            raise Exception, "save_upload_file trying to save a model which has no IID"
+        name = str(self.id) + ".data"
+        print ">> trying to save ", name
+        self.data.save(name, f)
+
         
 
 ##################################################################
@@ -334,9 +341,19 @@ def s2m_date(s, sattr, m, mattr):
     if sattr in s: raise Exception, "---- NYI ----" # ---------------------------------  needs work, pyiso8601
 
 ###
+# dummy no-ops
+
+def m2s_dummy(m, mattr, s, sattr):
+    raise Exception, 'something invoked m2s_dummy'
+
+def s2m_dummy(s, sattr, m, mattr):
+    raise Exception, 'something invoked s2m_dummy'
+
+###
 # request conversion
 
 def r2s_get(r, rname):
+    # would use r.REQUEST but I want r.GET to take precedence
     if rname in r.GET: return r.GET[rname]
     elif rname in r.POST: return r.POST[rname]
     else: return None
@@ -360,9 +377,10 @@ xtable = (
 (   'commentItem',             'item',             True,       r2s_str,   s2m_commentitem,        m2s_commentitem,        ), # MAKE R2S_INT?
 (   'commentLastModified',     'last_modified',    False,      r2s_str,   s2m_date,               m2s_date,               ),
 (   'commentLikes',            'likes',            False,      r2s_str,   s2m_int,                m2s_int,                ),
-(   'commentRelation',         'relation',         True,       r2s_str,   s2m_commentrelation,    m2s_commentrelation,    ),
+(   'commentRelation',         'relation',         True,       r2s_str,   s2m_commentrelation,    m2s_commentrelation,    ), # ForeignKey
 (   'commentTitle',            'title',            False,      r2s_str,   s2m_string,             m2s_string,             ),
 (   'itemCreated',             'created',          False,      r2s_str,   s2m_date,               m2s_date,               ),
+(   'itemData',                'data',             True,       None,      s2m_dummy,              None,                   ), # FileField
 (   'itemDescription',         'description',      False,      r2s_str,   s2m_string,             m2s_string,             ),
 (   'itemHideAfter',           'hide_after',       False,      r2s_str,   s2m_date,               m2s_date,               ),
 (   'itemHideBefore',          'hide_before',      False,      r2s_str,   s2m_date,               m2s_date,               ),
@@ -370,8 +388,8 @@ xtable = (
 (   'itemLastModified',        'last_modified',    False,      r2s_str,   s2m_date,               m2s_date,               ),
 (   'itemName',                'name',             False,      r2s_str,   s2m_string,             m2s_string,             ),
 (   'itemStatus',              'status',           False,      r2s_str,   s2m_itemstatus,         m2s_itemstatus,         ),
-(   'itemTags',                'tags',             True,       r2s_str,   s2m_itemtags,           m2s_itemtags,           ),
-(   'itemType',                'content_type',     False,      r2s_str,   s2m_string,             m2s_string,             ),  # FIX/AUTOFILL
+(   'itemTags',                'tags',             True,       r2s_str,   s2m_itemtags,           m2s_itemtags,           ), # ManyToManyField
+(   'itemType',                'content_type',     False,      r2s_str,   s2m_string,             m2s_string,             ), # FIX/AUTOFILL
 (   'relationCallbackURL',     'url_callback',     False,      r2s_str,   s2m_string,             m2s_string,             ),
 (   'relationCreated',         'created',          False,      r2s_str,   s2m_date,               m2s_date,               ),
 (   'relationDescription',     'description',      False,      r2s_str,   s2m_string,             m2s_string,             ),
@@ -381,7 +399,7 @@ xtable = (
 (   'relationHomepageURL',     'url_homepage',     False,      r2s_str,   s2m_string,             m2s_string,             ),
 (   'relationId',              'id',               False,      r2s_int,   s2m_int,                m2s_int,                ),
 (   'relationImageURL',        'url_image',        False,      r2s_str,   s2m_string,             m2s_string,             ),
-(   'relationInterests',       'interests',        True,       r2s_str,   s2m_relationinterests,  m2s_relationinterests,  ),
+(   'relationInterests',       'interests',        True,       r2s_str,   s2m_relationinterests,  m2s_relationinterests,  ), # ManyToManyField
 (   'relationLastModified',    'last_modified',    False,      r2s_str,   s2m_date,               m2s_date,               ),
 (   'relationName',            'name',             False,      r2s_str,   s2m_string,             m2s_string,             ),
 (   'relationNetworkPattern',  'network_pattern',  False,      r2s_str,   s2m_string,             m2s_string,             ),
@@ -389,7 +407,7 @@ xtable = (
 (   'tagCreated',              'created',          False,      r2s_str,   s2m_date,               m2s_date,               ),
 (   'tagDescription',          'description',      False,      r2s_str,   s2m_string,             m2s_string,             ),
 (   'tagId',                   'id',               False,      r2s_int,   s2m_int,                m2s_int,                ),
-(   'tagImplies',              'implies',          True,       r2s_str,   s2m_tagimplies,         m2s_tagimplies,         ),
+(   'tagImplies',              'implies',          True,       r2s_str,   s2m_tagimplies,         m2s_tagimplies,         ), # ManyToManyField
 (   'tagLastModified',         'last_modified',    False,      r2s_str,   s2m_date,               m2s_date,               ),
 (   'tagName',                 'name',             False,      r2s_str,   s2m_string,             m2s_string,             ),
 (   'vurlCreated',             'created',          False,      r2s_str,   s2m_date,               m2s_date,               ),
@@ -397,7 +415,7 @@ xtable = (
 (   'vurlLastModified',        'last_modified',    False,      r2s_str,   s2m_date,               m2s_date,               ),
 (   'vurlLink',                'link',             False,      r2s_str,   s2m_string,             m2s_string,             ),
 (   'vurlName',                'name',             False,      r2s_str,   s2m_string,             m2s_string,             ),
-(   'vurlTags',                'tags',             True,       r2s_str,   s2m_vurltags,           m2s_vurltags,           ),
+(   'vurlTags',                'tags',             True,       r2s_str,   s2m_vurltags,           m2s_vurltags,           ), # ManyToManyField
     )
 
 ###
@@ -416,12 +434,12 @@ class_prefixes = {
 
 m2s_table = {}
 s2m_table = {}
-defer_table = {}
+defer_s2m_table = {}
 
 for prefix in class_prefixes.iterkeys():
     m2s_table[prefix] = {}
     s2m_table[prefix] = {}
-    defer_table[prefix] = {} # s2m stuff that requires a DB entry
+    defer_s2m_table[prefix] = {} # s2m stuff that requires a DB entry
 
 ###
 # populate the runtime tables
@@ -430,6 +448,7 @@ for (sattr, mattr, defer, r2s_func, s2m_func, m2s_func) in xtable:
     for prefix in class_prefixes.iterkeys():
 
 	if sattr.startswith(prefix):
+
 	    if m2s_func:
 		m2s_table[prefix][mattr] = (m2s_func, sattr)
 
@@ -437,7 +456,7 @@ for (sattr, mattr, defer, r2s_func, s2m_func, m2s_func) in xtable:
 		t = (r2s_func, s2m_func, mattr)
 
 		if defer:
-		    defer_table[prefix][sattr] = t
+		    defer_s2m_table[prefix][sattr] = t
 		else:
 		    s2m_table[prefix][sattr] = t
 
@@ -450,14 +469,15 @@ for (sattr, mattr, defer, r2s_func, s2m_func, m2s_func) in xtable:
 
 def model_to_structure(kind, m):
     s = {}
-    for mattr, (m2s_func, sattr) in m2s_table[kind].iteritems(): m2s_func(m, mattr, s, sattr)
+    for mattr, (m2s_func, sattr) in m2s_table[kind].iteritems(): 
+        m2s_func(m, mattr, s, sattr)
     return s
 
 ###
 # convert a request to a model
 
 @transaction.commit_on_success # ie: rollback if it raises an exception
-def request_to_save_model(kind, r):
+def request_to_model_and_save(kind, r):
     # create the model
     instantiator = class_prefixes[kind]
     margs = {}
@@ -482,19 +502,28 @@ def request_to_save_model(kind, r):
     needs_save = False
 
     # for each deferred target attribute
-    for sattr, (r2s_func, s2m_func, mattr) in defer_table[kind].iteritems():
+    for sattr, (r2s_func, s2m_func, mattr) in defer_s2m_table[kind].iteritems():
 
-        # rip the attribute out of the request and convert to python int/str
-        r2s_func(r, sattr, s)
+        # special case file-saving, assume <model>.save_uploaded_file() works
+        if sattr in ( 'itemData' ): # ...insert others here...
+            if sattr in r.FILES:
+                uf = r.FILES[sattr]
+                ct = uf.content_type
+                m.save_upload_file(uf)
 
-        # s2m the value into the appropriate attribute
-        s2m_func(s, sattr, m, mattr)
+        else:
+            # rip the attribute out of the request and convert to python int/str
+            r2s_func(r, sattr, s)
+
+            # s2m the value into the appropriate attribute
+            s2m_func(s, sattr, m, mattr)
 
         # memento
         needs_save = True
 
-    # update
-    if needs_save: m.save()
+    # update if we did anything
+    if needs_save: 
+        m.save()
 
     # return it
     return m
