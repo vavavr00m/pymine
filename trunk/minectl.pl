@@ -280,7 +280,7 @@ while (<DATA>) {
 	    elsif ($ARGV[0] eq '-s') {
 		shift(@ARGV);		# dump -s
 		$status = shift(@ARGV); # stash and dump the arg
-		unless ($status =~ /^(public|final|draft)$/o) {
+		unless ($status =~ /^(public|shared|private)$/o) {
 		    die "$0: upload: bad status $status (fatal)\n";
 		}
 	    }
@@ -302,7 +302,7 @@ while (<DATA>) {
 		push(@cmdargs, "itemStatus=$status");
 	    }
 	    else {
-		push(@cmdargs, "itemStatus=draft");
+		push(@cmdargs, "itemStatus=public");
 	    }
 
 	    if (defined($tags)) {

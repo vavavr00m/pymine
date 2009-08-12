@@ -21,7 +21,7 @@ from django.http import Http404, HttpResponse, HttpResponseRedirect
 from django.shortcuts import render_to_response, get_object_or_404
 
 from mine.models import Tag, Item, Relation, Comment
-from mine.models import request_to_save_model
+from mine.models import request_to_model_and_save
 
 ##################################################################
 
@@ -50,7 +50,7 @@ def read_item_list(request, *args, **kwargs):
 ## function: create_item
 ## declared args: 
 def create_item(request, *args, **kwargs):
-    m = request_to_save_model('item', request)
+    m = request_to_model_and_save('item', request)
     return m.structure() # returns more data than was supplied
 
 ## rest: DELETE /api/item/IID.FMT
@@ -100,7 +100,7 @@ def read_relation_list(request, *args, **kwargs):
 ## function: create_relation
 ## declared args: 
 def create_relation(request, *args, **kwargs):
-    m = request_to_save_model('relation', request)
+    m = request_to_model_and_save('relation', request)
     return m.structure() # returns more data than was supplied
 
 ## rest: DELETE /api/relation/RID.FMT
@@ -150,7 +150,7 @@ def read_tag_list(request, *args, **kwargs):
 ## function: create_tag
 ## declared args: 
 def create_tag(request, *args, **kwargs):
-    m = request_to_save_model('tag', request)
+    m = request_to_model_and_save('tag', request)
     return m.structure() # returns more data than was supplied
 
 ## rest: DELETE /api/tag/TID.FMT
