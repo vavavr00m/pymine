@@ -80,6 +80,8 @@ class Item(models.Model):
 
     """This is the modelspace representation of the Item object"""
 
+    ITEM_FSS = FileSystemStorage(location=settings.MINE_DBDIR_FILES)
+
     ITEM_STATUSES=(
         ( 'X', 'private' ),
         ( 'S', 'shared' ),
@@ -90,8 +92,6 @@ class Item(models.Model):
     for short, long in ITEM_STATUSES:
        status_lookup[long] = short 
 
-    ITEM_FS = FileSystemStorage(location=settings.MINE_DBDIR_FILES)
-
     name = models.CharField(max_length=settings.MINE_STRINGSIZE)
     description = models.TextField(null=True, blank=True)
     tags = models.ManyToManyField(Tag, related_name='items_tagged', null=True, blank=True)
@@ -99,7 +99,7 @@ class Item(models.Model):
     item_not_relations = models.ManyToManyField(Relation, related_name='items_explicitly_not', null=True, blank=True)
     status = models.CharField(max_length=1, choices=ITEM_STATUSES)
     content_type = models.CharField(max_length=settings.MINE_STRINGSIZE)
-    data = models.FileField(storage=ITEM_FS, upload_to='%Y/%m/%d')
+    data = models.FileField(storage=ITEM_FSS, upload_to='%Y/%m/%d')
     hide_after = models.DateTimeField(null=True, blank=True)
     hide_before = models.DateTimeField(null=True, blank=True)
     created = models.DateTimeField(auto_now_add=True)
@@ -113,6 +113,8 @@ class Item(models.Model):
 
     def structure(self):
 	return model_to_structure('item', self)
+
+        
 
 ##################################################################
 
@@ -259,6 +261,8 @@ def s2m_itemstatus(s, sattr, m, mattr):
         setattr(m, mattr, status_lookup[x])
     else:
         raise Exception, "s2m_itemstatus cannot remap status: " + x
+
+###
 
 def m2s_itemtags(m, mattr, s, sattr):
     if mattr != 'tags' or sattr != 'itemTags': raise Exception, "m2s_itemtags is confused"

@@ -17,7 +17,7 @@
 ##
 
 Minectl() {
-    ./minectl.pl -vve "$@"
+    ./minectl.pl -e "$@"
 }
 
 SAMPLES=static/testdata
