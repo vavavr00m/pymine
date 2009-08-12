@@ -1,3 +1,4 @@
+#!/usr/bin/python
 ##
 ## Copyright 2009 Adriana Lukas & Alec Muffett
 ##
