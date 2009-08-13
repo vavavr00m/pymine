@@ -101,6 +101,7 @@ class Item(models.Model):
     status = models.CharField(max_length=1, choices=ITEM_STATUSES)
     content_type = models.CharField(max_length=settings.MINE_STRINGSIZE)
     data = models.FileField(storage=ITEM_FSS, upload_to='%Y/%m/%d')
+    # thumbnail = models.FileField(storage=ITEM_FSS, upload_to='%Y/%m/%d', null=True, blank=True)
     hide_after = models.DateTimeField(null=True, blank=True)
     hide_before = models.DateTimeField(null=True, blank=True)
     created = models.DateTimeField(auto_now_add=True)
@@ -119,10 +120,7 @@ class Item(models.Model):
         if not self.id:
             raise Exception, "save_upload_file trying to save a model which has no IID"
         name = str(self.id) + '.' + f.name
-        print ">> trying to save ", name
         self.data.save(name, f)
-
-        
 
 ##################################################################
 
