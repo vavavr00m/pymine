@@ -2,13 +2,13 @@
 
 = Key =
 
-  IID = itemId, integer > 0
-  TID = tagId, integer > 0
-  RID = relationId, integer > 0
-  RVSN = relationVersion, integer > 0
-  CID = commentId, integer > 0
-  FMT = "xml" | "json"
-  KEY = structure element name, eg: "relationName", camelcase, case-sensitive
+  * IID = itemId, integer > 0
+  * TID = tagId, integer > 0
+  * RID = relationId, integer > 0
+  * RVSN = relationVersion, integer > 0
+  * CID = commentId, integer > 0
+  * FMT = "xml" | "json"
+  * KEY = structure element name, eg: "relationName", camelcase, case-sensitive
 
 || *VERB* || *URI* || *METHOD* ||
 || GET || /api/item/IID || read-item-data ||
