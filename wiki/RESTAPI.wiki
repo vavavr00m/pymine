@@ -2,88 +2,88 @@
 
 = Key =
 
-  * IID = itemId, integer > 0
+  * _iid_ = itemId, integer > 0
   * TID = tagId, integer > 0
-  * RID = relationId, integer > 0
-  * RVSN = relationVersion, integer > 0
-  * CID = commentId, integer > 0
-  * FMT = "xml" | "json"
-  * KEY = structure element name, eg: "relationName", camelcase, case-sensitive
+  * _rid_ = relationId, integer > 0
+  * _rvsn_ = relationVersion, integer > 0
+  * _cid_ = commentId, integer > 0
+  * _fmt_ = "xml" | "json"
+  * _key_ = structure element name, eg: "relationName", camelcase, case-sensitive
 
 
 = Item API =
 
-|| GET || /api/item/IID || read-item-data ||
-|| GET || /api/item.FMT || list-items ||
-|| POST || /api/item.FMT || create-item ||
-|| DELETE || /api/item/IID.FMT || delete-item ||
-|| GET || /api/item/IID.FMT || read-item ||
-|| POST || /api/item/IID.FMT || update-item ||
-|| DELETE || /api/item/IID/KEY.FMT || delete-item-key ||
-|| GET || /api/item/IID/KEY.FMT || get-item-key ||
+|| GET || /api/item/_iid_ || read-item-data ||
+|| GET || /api/item._fmt_ || list-items ||
+|| POST || /api/item._fmt_ || create-item ||
+|| DELETE || /api/item/_iid_._fmt_ || delete-item ||
+|| GET || /api/item/_iid_._fmt_ || read-item ||
+|| POST || /api/item/_iid_._fmt_ || update-item ||
+|| DELETE || /api/item/_iid_/_key_._fmt_ || delete-item-key ||
+|| GET || /api/item/_iid_/_key_._fmt_ || get-item-key ||
 
 
 = Relation API =
 
-|| GET || /api/relation.FMT || list-relations ||
-|| POST || /api/relation.FMT || create-relation ||
-|| DELETE || /api/relation/RID.FMT || delete-relation ||
-|| GET || /api/relation/RID.FMT || read-relation ||
-|| POST || /api/relation/RID.FMT || update-relation ||
-|| DELETE || /api/relation/RID/KEY.FMT || delete-relation-key ||
-|| GET || /api/relation/RID/KEY.FMT || get-relation-key ||
+|| GET || /api/relation._fmt_ || list-relations ||
+|| POST || /api/relation._fmt_ || create-relation ||
+|| DELETE || /api/relation/_rid_._fmt_ || delete-relation ||
+|| GET || /api/relation/_rid_._fmt_ || read-relation ||
+|| POST || /api/relation/_rid_._fmt_ || update-relation ||
+|| DELETE || /api/relation/_rid_/_key_._fmt_ || delete-relation-key ||
+|| GET || /api/relation/_rid_/_key_._fmt_ || get-relation-key ||
 
 
 = Tag API =
 
-|| GET || /api/tag.FMT || list-tags ||
-|| POST || /api/tag.FMT || create-tag ||
-|| DELETE || /api/tag/TID.FMT || delete-tag ||
-|| GET || /api/tag/TID.FMT || read-tag ||
-|| POST || /api/tag/TID.FMT || update-tag ||
-|| DELETE || /api/tag/TID/KEY.FMT || delete-tag-key ||
-|| GET || /api/tag/TID/KEY.FMT || get-tag-key ||
+|| GET || /api/tag._fmt_ || list-tags ||
+|| POST || /api/tag._fmt_ || create-tag ||
+|| DELETE || /api/tag/TID._fmt_ || delete-tag ||
+|| GET || /api/tag/TID._fmt_ || read-tag ||
+|| POST || /api/tag/TID._fmt_ || update-tag ||
+|| DELETE || /api/tag/TID/_key_._fmt_ || delete-tag-key ||
+|| GET || /api/tag/TID/_key_._fmt_ || get-tag-key ||
 
 
 = Commenting API =
 
-|| GET || /api/comment/item/IID.FMT || list-comments (IID=0 for wildcard) ||
-|| POST || /api/comment/item/IID.FMT || create-comment ||
-|| DELETE || /api/comment/CID.FMT || delete-comment ||
-|| GET || /api/comment/CID.FMT || read-comment ||
-|| POST || /api/comment/CID.FMT || update-comment ||
-|| DELETE || /api/comment/CID/KEY.FMT || delete-comment-key ||
-|| GET || /api/comment/CID/KEY.FMT || get-comment-key ||
+|| GET || /api/comment/item/_iid_._fmt_ || list-comments (_iid_=0 for wildcard) ||
+|| POST || /api/comment/item/_iid_._fmt_ || create-comment ||
+|| DELETE || /api/comment/_cid_._fmt_ || delete-comment ||
+|| GET || /api/comment/_cid_._fmt_ || read-comment ||
+|| POST || /api/comment/_cid_._fmt_ || update-comment ||
+|| DELETE || /api/comment/_cid_/_key_._fmt_ || delete-comment-key ||
+|| GET || /api/comment/_cid_/_key_._fmt_ || get-comment-key ||
 
 
 = Item Cloning API =
 
-|| GET || /api/clone/IID.FMT || list-clones (IID=0 for wildcard) ||
-|| POST || /api/clone/IID.FMT || create-clone ||
+|| GET || /api/clone/_iid_._fmt_ || list-clones (_iid_=0 for wildcard) ||
+|| POST || /api/clone/_iid_._fmt_ || create-clone ||
 
 
 = Registry API / Configuration Information = 
 
-|| GET || /api/registry.FMT || read-registry ||
-|| POST || /api/registry.FMT || update-registry ||
-|| DELETE || /api/registry/KEY.FMT || delete-registry-key ||
-|| GET || /api/registry/KEY.FMT || get-registry-key ||
+|| GET || /api/registry._fmt_ || read-registry ||
+|| POST || /api/registry._fmt_ || update-registry ||
+|| DELETE || /api/registry/_key_._fmt_ || delete-registry-key ||
+|| GET || /api/registry/_key_._fmt_ || get-registry-key ||
 
 
 = Selection API =
 
-|| GET || /api/select/item.FMT || read-select-item ||
-|| GET || /api/select/relation.FMT || read-select-relation ||
-|| GET || /api/select/tag.FMT || read-select-tag ||
+|| GET || /api/select/item._fmt_ || read-select-item ||
+|| GET || /api/select/relation._fmt_ || read-select-relation ||
+|| GET || /api/select/tag._fmt_ || read-select-tag ||
 
 
 = Minekey Generation =
 
-|| GET || /api/url/RID.FMT || encode-minekey1 ||
-|| GET || /api/url/RID/IID.FMT || encode-minekey2 ||
-|| GET || /api/url/RID/RVSN/IID.FMT || encode-minekey3 ||
+|| GET || /api/url/_rid_._fmt_ || encode-minekey1 ||
+|| GET || /api/url/_rid_/_iid_._fmt_ || encode-minekey2 ||
+|| GET || /api/url/_rid_/_rvsn_/_iid_._fmt_ || encode-minekey3 ||
 
 
 = Misc =
 
-|| GET || /api/version.FMT || read-version ||
+|| GET || /api/version._fmt_ || read-version ||
