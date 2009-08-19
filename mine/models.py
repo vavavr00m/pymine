@@ -475,17 +475,26 @@ def model_to_structure(kind, m):
 # convert a request to a model
 
 @transaction.commit_on_success # ie: rollback if it raises an exception
-def request_to_model_and_save(kind, r):
-    # create the model
-    instantiator = class_prefixes[kind]
-    margs = {}
-    m = instantiator(**margs)
+def request_to_model_and_save(kind, r, update_id=None):
+
+    instantiator = class_prefixes[kind] # create the model
+
+    # is this an update?
+    if update_id:
+        m = instantiator.objects.get(id=update_id)
+
+    else:
+        margs = {}
+        m = instantiator(**margs)
 
     # build a shadow structure: useful for debug/clarity
     s = {}
 
     # for each target attribute
     for sattr, (r2s_func, s2m_func, mattr) in s2m_table[kind].iteritems():
+
+        # is it there?
+        if not sattr in r.REQUEST: continue
 
         # rip the attribute out of the request and convert to python int/str
         r2s_func(r, sattr, s)
@@ -508,20 +517,17 @@ def request_to_model_and_save(kind, r):
                 uf = r.FILES[sattr]
                 ct = uf.content_type
                 m.save_upload_file(uf)
+                needs_save = True
 
         else:
-            # rip the attribute out of the request and convert to python int/str
+            # repeat the above logic
+            if not sattr in r.REQUEST: continue
             r2s_func(r, sattr, s)
-
-            # s2m the value into the appropriate attribute
             s2m_func(s, sattr, m, mattr)
-
-        # memento
-        needs_save = True
+            needs_save = True
 
     # update if we did anything
-    if needs_save: 
-        m.save()
+    if needs_save: m.save()
 
     # return it
     return m

@@ -71,7 +71,7 @@ foreach $pattern (sort {$b cmp $a} keys %patterns) {
 
     $foo = join(", ", @{$patterns{$pattern}});
 
-    if ($class eq 'api') { #### TODO: CHECK THE PATTERN DOES NOT CONTAIN 'FMT'
+    if (($class eq 'api') && ($pattern =~ /fmt/)) {
         $dispatch = "API_CALL";
     }
     else {
@@ -134,8 +134,8 @@ api   POST    /api/item.FMT                    create-item
 api   DELETE  /api/item/IID.FMT                delete-item
 api   GET     /api/item/IID.FMT                read-item
 api   POST    /api/item/IID.FMT                update-item
-api   DELETE  /api/item/IID/key/KEY.FMT        delete-item-key
-api   GET     /api/item/IID/key/KEY.FMT        get-item-key
+api   DELETE  /api/item/IID/KEY.FMT            delete-item-key
+api   GET     /api/item/IID/KEY.FMT            get-item-key
 
 ##################################################################
 
@@ -144,8 +144,8 @@ api   POST    /api/relation.FMT                create-relation
 api   DELETE  /api/relation/RID.FMT            delete-relation
 api   GET     /api/relation/RID.FMT            read-relation
 api   POST    /api/relation/RID.FMT            update-relation
-api   DELETE  /api/relation/RID/key/KEY.FMT    delete-relation-key
-api   GET     /api/relation/RID/key/KEY.FMT    get-relation-key
+api   DELETE  /api/relation/RID/KEY.FMT        delete-relation-key
+api   GET     /api/relation/RID/KEY.FMT        get-relation-key
 
 ##################################################################
 
@@ -154,18 +154,18 @@ api   POST    /api/tag.FMT                     create-tag
 api   DELETE  /api/tag/TID.FMT                 delete-tag
 api   GET     /api/tag/TID.FMT                 read-tag
 api   POST    /api/tag/TID.FMT                 update-tag
-api   DELETE  /api/tag/TID/key/KEY.FMT         delete-tag-key
-api   GET     /api/tag/TID/key/KEY.FMT         get-tag-key
+api   DELETE  /api/tag/TID/KEY.FMT             delete-tag-key
+api   GET     /api/tag/TID/KEY.FMT             get-tag-key
 
 ##################################################################
 
-api   GET     /api/item/IID/comment.FMT        read-comment-list
-api   POST    /api/item/IID/comment.FMT        create-comment
-api   DELETE  /api/item/IID/CID.FMT            delete-comment
-api   GET     /api/item/IID/CID.FMT            read-comment
-api   POST    /api/item/IID/CID.FMT            update-comment
-api   DELETE  /api/item/IID/CID/key/KEY.FMT    delete-comment-key
-api   GET     /api/item/IID/CID/key/KEY.FMT    get-comment-key
+api   GET     /api/comment/item/IID.FMT        read-comment-list
+api   POST    /api/comment/item/IID.FMT        create-comment
+api   DELETE  /api/comment/CID.FMT             delete-comment
+api   GET     /api/comment/CID.FMT             read-comment
+api   POST    /api/comment/CID.FMT             update-comment
+api   DELETE  /api/comment/CID/KEY.FMT         delete-comment-key
+api   GET     /api/comment/CID/KEY.FMT         get-comment-key
 
 ##################################################################
 
@@ -176,8 +176,8 @@ api   POST    /api/item/IID/clone.FMT          create-clone
 
 api   GET     /api/registry.FMT                read-registry
 api   POST    /api/registry.FMT                update-registry
-api   DELETE  /api/registry/key/KEY.FMT        delete-registry-key
-api   GET     /api/registry/key/KEY.FMT        get-registry-key
+api   DELETE  /api/registry/KEY.FMT            delete-registry-key
+api   GET     /api/registry/KEY.FMT            get-registry-key
 
 ##################################################################
 
