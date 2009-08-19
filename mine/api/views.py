@@ -28,20 +28,28 @@ from mine.models import request_to_model_and_save
 def api_retval(data=None, **kwargs):
     template = {}
     if data: template['data'] = data
-    template['exit'] = kwargs.get('exit', 0)
     template['status'] = kwargs.get('status', 'ok')
-    # ... prevpage, nextpage, thispage, callback, maxcount, watchdog...
+    template['exit'] = kwargs.get('exit', 0)
+
+    for k in ( 'prevpageurl', 'nextpageurl', 'thispageurl',
+               'pagenumber', 'pagespan',
+               'thispagesize', 'totalsize',
+               'callback',
+               'watch' ):
+        v = kwargs.get(k)
+        if v:
+            template[k] = v
     return template
 
 ##################################################################
 
-## rest: GET /api
+## rest: GET /api                                                                  *done*
 ## function: read_api_root
-## declared args: 
+## declared args:
 def read_api_root(request, *args, **kwargs):
     return render_to_response('read-api-root.html') ### THIS ROUTINE IS FILTERED THRU 'REST()' NOT 'API_CALL()'
 
-## rest: GET /api/item/IID
+## rest: GET /api/item/IID                                                                  *done*
 ## function: read_item_data
 ## declared args: iid
 def read_item_data(request, iid, *args, **kwargs):
@@ -51,31 +59,35 @@ def read_item_data(request, iid, *args, **kwargs):
     ct = m.content_type
     return HttpResponse(f, mimetype=ct) ### THIS ROUTINE IS FILTERED THRU 'REST()' NOT 'API_CALL()'
 
-## rest: GET /api/item.FMT
-## function: read_item_list
-## declared args: 
-def read_item_list(request, *args, **kwargs):
-    return api_retval()
+##################################################################
 
-## rest: POST /api/item.FMT
+## rest: GET /api/item.FMT                                                                  *done*
+## function: read_item_list
+## declared args:
+def read_item_list(request, *args, **kwargs):
+    data = [ m.structure() for m in Item.objects.all() ]
+    return api_retval(data, totalsize=len(data))
+
+## rest: POST /api/item.FMT                                                                  *done*
 ## function: create_item
-## declared args: 
+## declared args:
 def create_item(request, *args, **kwargs):
     m = request_to_model_and_save('item', request)
-    return api_retval(m.structure()) 
+    return api_retval(m.structure())
 
-## rest: DELETE /api/item/IID.FMT
+## rest: DELETE /api/item/IID.FMT                                                                  *done*
 ## function: delete_item
 ## declared args: iid
 def delete_item(request, iid, *args, **kwargs):
+    m = Item.objects.get(id=int(iid))
+    m.delete()
     return api_retval()
 
-## rest: GET /api/item/IID.FMT
+## rest: GET /api/item/IID.FMT                                                                  *done*
 ## function: read_item
 ## declared args: iid
 def read_item(request, iid, *args, **kwargs):
-    id = int(iid)
-    m = Item.objects.get(id=id)
+    m = Item.objects.get(id=int(iid))
     return api_retval(m.structure())
 
 ## rest: POST /api/item/IID.FMT
@@ -96,31 +108,35 @@ def delete_item_key(request, iid, key, *args, **kwargs):
 def get_item_key(request, iid, key, *args, **kwargs):
     return api_retval()
 
-## rest: GET /api/relation.FMT
-## function: read_relation_list
-## declared args: 
-def read_relation_list(request, *args, **kwargs):
-    return api_retval()
+##################################################################
 
-## rest: POST /api/relation.FMT
+## rest: GET /api/relation.FMT                                                                  *done*
+## function: read_relation_list
+## declared args:
+def read_relation_list(request, *args, **kwargs):
+    data = [ m.structure() for m in Relation.objects.all() ]
+    return api_retval(data)
+
+## rest: POST /api/relation.FMT                                                                  *done*
 ## function: create_relation
-## declared args: 
+## declared args:
 def create_relation(request, *args, **kwargs):
     m = request_to_model_and_save('relation', request)
-    return api_retval(m.structure()) 
+    return api_retval(m.structure())
 
-## rest: DELETE /api/relation/RID.FMT
+## rest: DELETE /api/relation/RID.FMT                                                                  *done*
 ## function: delete_relation
 ## declared args: rid
 def delete_relation(request, rid, *args, **kwargs):
+    m = Relation.objects.get(id=int(rid))
+    m.delete()
     return api_retval()
 
-## rest: GET /api/relation/RID.FMT
+## rest: GET /api/relation/RID.FMT                                                                  *done*
 ## function: read_relation
 ## declared args: rid
 def read_relation(request, rid, *args, **kwargs):
-    id = int(rid)
-    m = Relation.objects.get(id=id)
+    m = Relation.objects.get(id=int(rid))
     return api_retval(m.structure())
 
 ## rest: POST /api/relation/RID.FMT
@@ -141,31 +157,35 @@ def delete_relation_key(request, rid, key, *args, **kwargs):
 def get_relation_key(request, rid, key, *args, **kwargs):
     return api_retval()
 
-## rest: GET /api/tag.FMT
-## function: read_tag_list
-## declared args: 
-def read_tag_list(request, *args, **kwargs):
-    return api_retval()
+##################################################################
 
-## rest: POST /api/tag.FMT
+## rest: GET /api/tag.FMT                                                                  *done*
+## function: read_tag_list
+## declared args:
+def read_tag_list(request, *args, **kwargs):
+    data = [ m.structure() for m in Tag.objects.all() ]
+    return api_retval(data)
+
+## rest: POST /api/tag.FMT                                                                  *done*
 ## function: create_tag
-## declared args: 
+## declared args:
 def create_tag(request, *args, **kwargs):
     m = request_to_model_and_save('tag', request)
-    return api_retval(m.structure()) 
+    return api_retval(m.structure())
 
-## rest: DELETE /api/tag/TID.FMT
+## rest: DELETE /api/tag/TID.FMT                                                                  *done*
 ## function: delete_tag
 ## declared args: tid
 def delete_tag(request, tid, *args, **kwargs):
+    m = Tag.objects.get(id=int(tid))
+    m.delete()
     return api_retval()
 
-## rest: GET /api/tag/TID.FMT
+## rest: GET /api/tag/TID.FMT                                                                  *done*
 ## function: read_tag
 ## declared args: tid
 def read_tag(request, tid, *args, **kwargs):
-    id = int(tid)
-    m = Tag.objects.get(id=id)
+    m = Tag.objects.get(id=int(tid))
     return api_retval(m.structure())
 
 ## rest: POST /api/tag/TID.FMT
@@ -186,11 +206,14 @@ def delete_tag_key(request, tid, key, *args, **kwargs):
 def get_tag_key(request, tid, key, *args, **kwargs):
     return api_retval()
 
-## rest: GET /api/item/IID/comment.FMT
+##################################################################
+
+## rest: GET /api/item/IID/comment.FMT                                                                  *done*
 ## function: read_comment_list
 ## declared args: iid
 def read_comment_list(request, iid, *args, **kwargs):
-    return api_retval()
+    data = [ m.structure() for m in Comment.objects.filter(item=Item.objects.get(id=int(iid))) ]
+    return api_retval(data, totalsize=len(data))
 
 ## rest: POST /api/item/IID/comment.FMT
 ## function: create_comment
@@ -198,10 +221,13 @@ def read_comment_list(request, iid, *args, **kwargs):
 def create_comment(request, iid, *args, **kwargs):
     return api_retval()
 
-## rest: DELETE /api/item/IID/CID.FMT
+## rest: DELETE /api/item/IID/CID.FMT                                                                  *done*
 ## function: delete_comment
 ## declared args: iid cid
 def delete_comment(request, iid, cid, *args, **kwargs):
+    m = Comment.objects.get(id=int(cid))
+    if m.item.id != iid: raise Exception, "delete_comment: item id mismatch"
+    m.delete()
     return api_retval()
 
 ## rest: GET /api/item/IID/CID.FMT
@@ -228,6 +254,8 @@ def delete_comment_key(request, iid, cid, key, *args, **kwargs):
 def get_comment_key(request, iid, cid, key, *args, **kwargs):
     return api_retval()
 
+##################################################################
+
 ## rest: GET /api/item/IID/clone.FMT
 ## function: read_clone_list
 ## declared args: iid
@@ -240,15 +268,17 @@ def read_clone_list(request, iid, *args, **kwargs):
 def create_clone(request, iid, *args, **kwargs):
     return api_retval()
 
+##################################################################
+
 ## rest: GET /api/registry.FMT
 ## function: read_registry
-## declared args: 
+## declared args:
 def read_registry(request, *args, **kwargs):
     return api_retval()
 
 ## rest: POST /api/registry.FMT
 ## function: update_registry
-## declared args: 
+## declared args:
 def update_registry(request, *args, **kwargs):
     return api_retval()
 
@@ -264,23 +294,27 @@ def delete_registry_key(request, key, *args, **kwargs):
 def get_registry_key(request, key, *args, **kwargs):
     return api_retval()
 
+##################################################################
+
 ## rest: GET /api/select/item.FMT
 ## function: read_select_item
-## declared args: 
+## declared args:
 def read_select_item(request, *args, **kwargs):
     return api_retval()
 
 ## rest: GET /api/select/relation.FMT
 ## function: read_select_relation
-## declared args: 
+## declared args:
 def read_select_relation(request, *args, **kwargs):
     return api_retval()
 
 ## rest: GET /api/select/tag.FMT
 ## function: read_select_tag
-## declared args: 
+## declared args:
 def read_select_tag(request, *args, **kwargs):
     return api_retval()
+
+##################################################################
 
 ## rest: GET /api/url/RID.FMT
 ## function: encode_minekey1
@@ -302,13 +336,19 @@ def encode_minekey2(request, rid, iid, *args, **kwargs):
 def encode_minekey3(request, rid, rvsn, iid, *args, **kwargs):
     return api_retval()
 
-## rest: GET /api/version.FMT
+##################################################################
+
+## rest: GET /api/version.FMT                                                                  *done*
 ## function: read_version
-## declared args: 
+## declared args:
 def read_version(request, *args, **kwargs):
-    data = { 
+    data = {
         'softwareName': 'pymine',
         'softwareRevision': '1.0-alpha',
         'mineAPIVersion': 2,
         }
     return api_retval(data)
+
+##################################################################
+##################################################################
+##################################################################
