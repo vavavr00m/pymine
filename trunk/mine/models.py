@@ -366,9 +366,12 @@ def r2s_int(r, rname, s):
 
 ###
 # translation table
+# constraints: structure_name (aka: sattr) must be prefixed by the
+# name of the class, and therefore the niitial letter must be
+# alphabetic; this is necessary for the URL matching to go elegantly.
 
 xtable = (
-#(  'STRUCTURE_NAME',          'MODEL_ATTR',       DEFER_S2M,  R2S_FUNC,  S2M_FUNC,               M2S_FUNC,               ),
+#(  'structure_name',          'model_attr',       defer_s2m,  r2s_func,  s2m_func,               m2s_func,               ),
 (   'commentBody',             'body',             False,      r2s_str,   s2m_string,             m2s_string,             ),
 (   'commentCreated',          'created',          False,      r2s_str,   s2m_date,               m2s_date,               ),
 (   'commentId',               'id',               False,      r2s_int,   s2m_int,                m2s_int,                ),
@@ -473,6 +476,18 @@ def model_to_structure(kind, m):
 
 ###
 # convert a request to a model
+
+# one of these days i want to convert this to a @classmethod on a
+# subclass of Model which I can then use as a parent class of all the
+# Models in this file; it would be a lot neater and would bring the
+# logic much closer to the Model, ie: something like:
+#
+# m = Comment.saveRequest(r)
+# return foo(m.structure())
+#
+# ...the saveRequest() and structure() and some other shared methods
+# being held in the intermediate class; however that level of
+# complexity can wait a while longer -- alec
 
 @transaction.commit_on_success # ie: rollback if it raises an exception
 def request_to_model_and_save(kind, r, update_id=None):

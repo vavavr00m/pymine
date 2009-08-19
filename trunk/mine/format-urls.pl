@@ -128,8 +128,7 @@ ui    GET     /ui                              read-ui-root
 api   GET     /api/item/IID                    read-item-data
 
 ##################################################################
-
-api   GET     /api/item.FMT                    read-item-list
+api   GET     /api/item.FMT                    list-items
 api   POST    /api/item.FMT                    create-item
 api   DELETE  /api/item/IID.FMT                delete-item
 api   GET     /api/item/IID.FMT                read-item
@@ -139,7 +138,7 @@ api   GET     /api/item/IID/KEY.FMT            get-item-key
 
 ##################################################################
 
-api   GET     /api/relation.FMT                read-relation-list
+api   GET     /api/relation.FMT                list-relations
 api   POST    /api/relation.FMT                create-relation
 api   DELETE  /api/relation/RID.FMT            delete-relation
 api   GET     /api/relation/RID.FMT            read-relation
@@ -149,7 +148,7 @@ api   GET     /api/relation/RID/KEY.FMT        get-relation-key
 
 ##################################################################
 
-api   GET     /api/tag.FMT                     read-tag-list
+api   GET     /api/tag.FMT                     list-tags
 api   POST    /api/tag.FMT                     create-tag
 api   DELETE  /api/tag/TID.FMT                 delete-tag
 api   GET     /api/tag/TID.FMT                 read-tag
@@ -159,7 +158,7 @@ api   GET     /api/tag/TID/KEY.FMT             get-tag-key
 
 ##################################################################
 
-api   GET     /api/comment/item/IID.FMT        read-comment-list
+api   GET     /api/comment/item/IID.FMT        list-comments
 api   POST    /api/comment/item/IID.FMT        create-comment
 api   DELETE  /api/comment/CID.FMT             delete-comment
 api   GET     /api/comment/CID.FMT             read-comment
@@ -169,7 +168,7 @@ api   GET     /api/comment/CID/KEY.FMT         get-comment-key
 
 ##################################################################
 
-api   GET     /api/item/IID/clone.FMT          read-clone-list
+api   GET     /api/item/IID/clone.FMT          list-clones
 api   POST    /api/item/IID/clone.FMT          create-clone
 
 ##################################################################
