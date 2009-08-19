@@ -21,6 +21,9 @@ import views as api
 from mine.views import API_CALL, REST
 
 urlpatterns = patterns('',
+                       (r'^item/(?P<iid>\d+)$', REST, {'GET': api.read_item_data}), # SPECIAL/REST
+                       (r'^$', REST, {'GET': api.read_api_root}), # SPECIAL/REST
+
                        (r'^version.(?P<fmt>(xml|json|py))$', API_CALL,
                         {'GET': api.read_version}),
                        (r'^url/(?P<rid>\d+)/(?P<rvsn>\d+)/(?P<iid>\d+).(?P<fmt>(xml|json|py))$', API_CALL,
@@ -63,10 +66,6 @@ urlpatterns = patterns('',
                         {'DELETE': api.delete_comment, 'GET': api.read_comment, 'POST': api.update_comment}),
                        (r'^item/(?P<iid>\d+).(?P<fmt>(xml|json|py))$', API_CALL,
                         {'DELETE': api.delete_item, 'GET': api.read_item, 'POST': api.update_item}),
-                       (r'^item/(?P<iid>\d+)$', API_CALL,
-                        {'GET': api.read_item_data}),
                        (r'^item.(?P<fmt>(xml|json|py))$', API_CALL,
                         {'GET': api.read_item_list, 'POST': api.create_item}),
-                       (r'^$', REST,
-                        {'GET': api.read_api_root}),
                        )
