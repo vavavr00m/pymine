@@ -32,25 +32,61 @@ def api_retval(result=None, **kwargs):
     template['exit'] = kwargs.get('exit', 0)
 
     for k in ( 'prevpageurl', 'nextpageurl', 'thispageurl',
-               'pagenumber', 'pagespan',
-               'thispagesize', 'totalsize',
-               'callback',
-               'watch' ):
-        v = kwargs.get(k)
-        if v:
-            template[k] = v
+	       'pagenumber', 'pagespan',
+	       'thispagesize', 'totalsize',
+	       'callback',
+	       'watch' ):
+	v = kwargs.get(k)
+	if v:
+	    template[k] = v
     return template
 
+# see note in mine/model.py regards not yet doing something sensible
+# about having Modelname.saveRequest() and similar; it will happen...
+
+def list_foos(model):
+    result = [ m.structure() for m in model.objects.all() ]
+    return api_retval(result, totalsize=len(result))
+
+def create_foo(modelname, request):
+    m = request_to_model_and_save(modelname, request)
+    return api_retval(m.structure())
+
+def delete_foo(model, mid):
+    m = model.objects.get(id=int(mid))
+    m.delete()
+    return api_retval()
+
+def read_foo(model, mid):
+    m = model.objects.get(id=int(mid))
+    return api_retval(m.structure())
+
+def update_foo(modelname, request, mid):
+    m = request_to_model_and_save(modelname, request, int(mid))
+    return api_retval(m.structure())
+
+def delete_foo_key(model, id, key):
+    raise Exception, 'delete_foo_key not yet implemented'
+
+def get_foo_key(model, id, key):
+    m = model.objects.get(id=int(mid))
+    s = m.structure()
+    if not key in s:
+	raise Exception, "key not found: " + key
+    return api_retval(s[key])
+
+##################################################################
+##################################################################
 ##################################################################
 
-## rest: GET /api --------------------DONE--------------------
+## rest: GET /api
 ## function: read_api_root
 ## declared args:
 def read_api_root(request, *args, **kwargs):
     """REST function that handles the template for the root api directory"""
     return render_to_response('read-api-root.html')
 
-## rest: GET /api/item/IID --------------------DONE--------------------
+## rest: GET /api/item/IID
 ## function: read_item_data
 ## declared args: iid
 def read_item_data(request, iid, *args, **kwargs):
@@ -59,214 +95,196 @@ def read_item_data(request, iid, *args, **kwargs):
     m = Item.objects.get(id=id)
     f = m.data.chunks()
     ct = m.content_type
-    return HttpResponse(f, mimetype=ct) 
+    return HttpResponse(f, mimetype=ct)
 
 ##################################################################
 
-## rest: GET /api/item.FMT --------------------DONE--------------------
-## function: read_item_list
+## rest: GET /api/item.FMT
+## function: list_items
 ## declared args:
-def read_item_list(request, *args, **kwargs):
-    result = [ m.structure() for m in Item.objects.all() ]
-    return api_retval(result, totalsize=len(result))
+def list_items(request, *args, **kwargs):
+    return list_foos(Item)
 
-## rest: POST /api/item.FMT --------------------DONE--------------------
+## rest: POST /api/item.FMT
 ## function: create_item
 ## declared args:
 def create_item(request, *args, **kwargs):
-    m = request_to_model_and_save('item', request)
-    return api_retval(m.structure())
+    return create_foo('item', request)
 
-## rest: DELETE /api/item/IID.FMT --------------------DONE--------------------
+## rest: DELETE /api/item/IID.FMT
 ## function: delete_item
 ## declared args: iid
 def delete_item(request, iid, *args, **kwargs):
-    m = Item.objects.get(id=int(iid))
-    m.delete()
-    return api_retval()
+    return delete_foo(Item, iid)
 
-## rest: GET /api/item/IID.FMT --------------------DONE--------------------
+## rest: GET /api/item/IID.FMT
 ## function: read_item
 ## declared args: iid
 def read_item(request, iid, *args, **kwargs):
-    m = Item.objects.get(id=int(iid))
-    return api_retval(m.structure())
+    return read_foo(Item, iid)
 
-## rest: POST /api/item/IID.FMT --------------------DONE--------------------
+## rest: POST /api/item/IID.FMT
 ## function: update_item
 ## declared args: iid
 def update_item(request, iid, *args, **kwargs):
-    m = request_to_model_and_save('item', request, int(iid))
-    return api_retval(m.structure())
+    return update_foo('item', request, iid)
 
 ## rest: DELETE /api/item/IID/KEY.FMT
 ## function: delete_item_key
 ## declared args: iid key
 def delete_item_key(request, iid, key, *args, **kwargs):
-    return api_retval()
+    return delete_foo_key(Item, iid, key)
 
 ## rest: GET /api/item/IID/KEY.FMT
 ## function: get_item_key
 ## declared args: iid key
 def get_item_key(request, iid, key, *args, **kwargs):
-    return api_retval()
+    return get_foo_key(Item, iid, key)
 
 ##################################################################
 
-## rest: GET /api/relation.FMT --------------------DONE--------------------
-## function: read_relation_list
+## rest: GET /api/relation.FMT
+## function: list_relations
 ## declared args:
-def read_relation_list(request, *args, **kwargs):
-    result = [ m.structure() for m in Relation.objects.all() ]
-    return api_retval(result)
+def list_relations(request, *args, **kwargs):
+    return list_foos(Relation)
 
-## rest: POST /api/relation.FMT --------------------DONE--------------------
+## rest: POST /api/relation.FMT
 ## function: create_relation
 ## declared args:
 def create_relation(request, *args, **kwargs):
-    m = request_to_model_and_save('relation', request)
-    return api_retval(m.structure())
+    return create_foo('relation', request)
 
-## rest: DELETE /api/relation/RID.FMT --------------------DONE--------------------
+## rest: DELETE /api/relation/RID.FMT
 ## function: delete_relation
 ## declared args: rid
 def delete_relation(request, rid, *args, **kwargs):
-    m = Relation.objects.get(id=int(rid))
-    m.delete()
-    return api_retval()
+    return delete_foo(Relation, rid)
 
-## rest: GET /api/relation/RID.FMT --------------------DONE--------------------
+## rest: GET /api/relation/RID.FMT
 ## function: read_relation
 ## declared args: rid
 def read_relation(request, rid, *args, **kwargs):
-    m = Relation.objects.get(id=int(rid))
-    return api_retval(m.structure())
+    return read_foo(Relation, rid)
 
-## rest: POST /api/relation/RID.FMT --------------------DONE--------------------
+## rest: POST /api/relation/RID.FMT
 ## function: update_relation
 ## declared args: rid
 def update_relation(request, rid, *args, **kwargs):
-    m = request_to_model_and_save('relation', request, int(rid))
-    return api_retval(m.structure())
+    return update_foo('relation', request, rid)
 
 ## rest: DELETE /api/relation/RID/KEY.FMT
 ## function: delete_relation_key
 ## declared args: rid key
 def delete_relation_key(request, rid, key, *args, **kwargs):
-    return api_retval()
+    return delete_foo_key(Relation, rid, key)
 
 ## rest: GET /api/relation/RID/KEY.FMT
 ## function: get_relation_key
 ## declared args: rid key
 def get_relation_key(request, rid, key, *args, **kwargs):
-    return api_retval()
+    return get_foo_key(Relation, rid, key)
 
 ##################################################################
 
-## rest: GET /api/tag.FMT --------------------DONE--------------------
-## function: read_tag_list
+## rest: GET /api/tag.FMT
+## function: list_tags
 ## declared args:
-def read_tag_list(request, *args, **kwargs):
-    result = [ m.structure() for m in Tag.objects.all() ]
-    return api_retval(result)
+def list_tags(request, *args, **kwargs):
+    return list_foos(Tag)
 
-## rest: POST /api/tag.FMT --------------------DONE--------------------
+## rest: POST /api/tag.FMT
 ## function: create_tag
 ## declared args:
 def create_tag(request, *args, **kwargs):
-    m = request_to_model_and_save('tag', request)
-    return api_retval(m.structure())
+    return create_foo('tag', request)
 
-## rest: DELETE /api/tag/TID.FMT --------------------DONE--------------------
+## rest: DELETE /api/tag/TID.FMT
 ## function: delete_tag
 ## declared args: tid
 def delete_tag(request, tid, *args, **kwargs):
-    m = Tag.objects.get(id=int(tid))
-    m.delete()
-    return api_retval()
+    return delete_foo(Tag, tid)
 
-## rest: GET /api/tag/TID.FMT --------------------DONE--------------------
+## rest: GET /api/tag/TID.FMT
 ## function: read_tag
 ## declared args: tid
 def read_tag(request, tid, *args, **kwargs):
-    m = Tag.objects.get(id=int(tid))
-    return api_retval(m.structure())
+    return read_foo(Tag, tid)
 
-## rest: POST /api/tag/TID.FMT --------------------DONE--------------------
+## rest: POST /api/tag/TID.FMT
 ## function: update_tag
 ## declared args: tid
 def update_tag(request, tid, *args, **kwargs):
-    m = request_to_model_and_save('tag', request, int(tid))
-    return api_retval(m.structure())
+    return update_foo('tag', request, tid)
 
 ## rest: DELETE /api/tag/TID/KEY.FMT
 ## function: delete_tag_key
 ## declared args: tid key
 def delete_tag_key(request, tid, key, *args, **kwargs):
-    return api_retval()
+    return delete_foo_key(Tag, tid, key)
 
 ## rest: GET /api/tag/TID/KEY.FMT
 ## function: get_tag_key
 ## declared args: tid key
 def get_tag_key(request, tid, key, *args, **kwargs):
-    return api_retval()
+    return get_foo_key(Tag, tid, key)
 
 ##################################################################
 
-## rest: GET /api/comment/item/IID.FMT --------------------DONE--------------------
-## function: read_comment_list
+## rest: GET /api/comment/item/IID.FMT
+## function: list_comments
 ## declared args: iid
-def read_comment_list(request, iid, *args, **kwargs):
-    result = [ m.structure() for m in Comment.objects.filter(item=Item.objects.get(id=int(iid))) ]
+def list_comments(request, iid, *args, **kwargs):
+    item_id = int(iid)
+    if item_id == 0:
+        result = [ m.structure() for m in Comment.objects.all() ]
+    else:
+        result = [ m.structure() for m in Comment.objects.filter(item=Item.objects.get(id=item_id)) ]
     return api_retval(result, totalsize=len(result))
 
-## rest: POST /api/comment/item/IID.FMT --------------------DONE--------------------
+## rest: POST /api/comment/item/IID.FMT
 ## function: create_comment
 ## declared args: iid
 def create_comment(request, iid, *args, **kwargs):
     m = request_to_model_and_save('tag', request)
     return api_retval(m.structure())
 
-## rest: DELETE /api/comment/CID.FMT --------------------DONE--------------------
+## rest: DELETE /api/comment/CID.FMT
 ## function: delete_comment
 ## declared args: cid
 def delete_comment(request, cid, *args, **kwargs):
-    m = Comment.objects.get(id=int(cid))
-    m.delete()
-    return api_retval()
+    return delete_foo(Comment, cid)
 
-## rest: GET /api/comment/CID.FMT --------------------DONE--------------------
+## rest: GET /api/comment/CID.FMT
 ## function: read_comment
 ## declared args: cid
 def read_comment(request, cid, *args, **kwargs):
-    m = Comment.objects.get(id=int(cid))
-    return api_retval(m.structure())
+    return read_foo(Comment, cid)
 
-## rest: POST /api/comment/CID.FMT --------------------DONE--------------------
+## rest: POST /api/comment/CID.FMT
 ## function: update_comment
 ## declared args: cid
-def update_comment(request, cid, *args, **kwargs): 
-    m = request_to_model_and_save('comment', request, int(cid))
-    return api_retval(m.structure())
+def update_comment(request, cid, *args, **kwargs):
+    return update_foo('comment', request, cid)
 
 ## rest: DELETE /api/comment/CID/KEY.FMT
 ## function: delete_comment_key
 ## declared args: cid key
 def delete_comment_key(request, cid, key, *args, **kwargs):
-    pass
+    return delete_foo_key(Comment, cid, key)
 
 ## rest: GET /api/comment/CID/KEY.FMT
 ## function: get_comment_key
 ## declared args: cid key
 def get_comment_key(request, cid, key, *args, **kwargs):
-    pass
+    return get_foo_key(Comment, cid, key)
 
 ##################################################################
 
 ## rest: GET /api/item/IID/clone.FMT
-## function: read_clone_list
+## function: list_clones
 ## declared args: iid
-def read_clone_list(request, iid, *args, **kwargs):
+def list_clones(request, iid, *args, **kwargs):
     return api_retval()
 
 ## rest: POST /api/item/IID/clone.FMT
@@ -345,15 +363,15 @@ def encode_minekey3(request, rid, rvsn, iid, *args, **kwargs):
 
 ##################################################################
 
-## rest: GET /api/version.FMT --------------------DONE--------------------
+## rest: GET /api/version.FMT
 ## function: read_version
 ## declared args:
 def read_version(request, *args, **kwargs):
     result = {
-        'softwareName': 'pymine',
-        'softwareRevision': '1.0-alpha',
-        'mineAPIVersion': 2,
-        }
+	'softwareName': 'pymine',
+	'softwareRevision': '1.0-alpha',
+	'mineAPIVersion': 2,
+	}
     return api_retval(result)
 
 ##################################################################
