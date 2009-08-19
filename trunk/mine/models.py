@@ -209,7 +209,7 @@ class MineRegistry(models.Model):
 # specialist type conversion
 
 def m2s_commentitem(m, mattr, s, sattr):
-    if mattr != 'item' or sattr != 'commentRelation': raise Exception, "m2s_commentitem is confused"
+    if mattr != 'item' or sattr != 'commentItem': raise Exception, "m2s_commentitem is confused"
     x = m.item
     if x: s[sattr] = x.id
 
