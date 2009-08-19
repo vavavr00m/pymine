@@ -71,7 +71,7 @@ foreach $pattern (sort {$b cmp $a} keys %patterns) {
 
     $foo = join(", ", @{$patterns{$pattern}});
 
-    if ($class eq 'api') {
+    if ($class eq 'api') { #### TODO: CHECK THE PATTERN DOES NOT CONTAIN 'FMT'
         $dispatch = "API_CALL";
     }
     else {
@@ -112,6 +112,10 @@ __END__;
 mine  GET     /                                read-mine-root
 mine  GET     /doc                             read-doc-root
 mine  GET     /pub                             read-pub-root
+
+sys   GET     /export                          mine-export
+sys   GET     /import                          mine-import
+sys   GET     /cleanup                         mine-cleanup
 
 ##################################################################
 

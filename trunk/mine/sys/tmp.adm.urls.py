@@ -1,0 +1,6 @@
+    (r'^import$', REST,
+     {'GET': adm.mine_import}),
+    (r'^export$', REST,
+     {'GET': adm.mine_export}),
+    (r'^cleanup$', REST,
+     {'GET': adm.mine_cleanup}),
