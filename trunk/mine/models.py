@@ -102,6 +102,7 @@ class Item(models.Model):
     content_type = models.CharField(max_length=settings.MINE_STRINGSIZE)
     data = models.FileField(storage=ITEM_FSS, upload_to='%Y/%m/%d')
     # thumbnail = models.FileField(storage=ITEM_FSS, upload_to='%Y/%m/%d', null=True, blank=True)
+    # parent = models.ForeignKey(Item, null=True, blank=True) # for clones
     hide_after = models.DateTimeField(null=True, blank=True)
     hide_before = models.DateTimeField(null=True, blank=True)
     created = models.DateTimeField(auto_now_add=True)
@@ -464,6 +465,26 @@ for (sattr, mattr, defer, r2s_func, s2m_func, m2s_func) in xtable:
 	    break
     else:
 	raise Exception, "unrecognised prefix in xtable: " + sattr
+
+###
+# general purpose
+
+def lookup_m2s(kind, mattr):
+    if mattr in m2s_table[kind]:
+        (m2s_func, sattr) = m2s_table[kind][mattr]
+        return sattr
+    else:
+        return None
+
+def lookup_s2m(kind, sattr):
+    if mattr in s2m_table[kind]:
+        (r2s_func, s2m_func, mattr) = s2m_table[kind][sattr]
+        return sattr
+    elsif mattr in defer_s2m_table[kind]:
+        (r2s_func, s2m_func, mattr) = defer_s2m_table[kind][sattr]
+        return sattr
+    else:
+        return None
 
 ###
 # convert a model to a structure

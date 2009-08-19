@@ -281,13 +281,13 @@ def get_comment_key(request, cid, key, *args, **kwargs):
 
 ##################################################################
 
-## rest: GET /api/item/IID/clone.FMT
+## rest: GET /api/clone/IID.FMT
 ## function: list_clones
 ## declared args: iid
 def list_clones(request, iid, *args, **kwargs):
     return api_retval()
 
-## rest: POST /api/item/IID/clone.FMT
+## rest: POST /api/clone/IID.FMT
 ## function: create_clone
 ## declared args: iid
 def create_clone(request, iid, *args, **kwargs):

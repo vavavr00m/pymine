@@ -158,6 +158,7 @@ api   GET     /api/tag/TID/KEY.FMT             get-tag-key
 
 ##################################################################
 
+# IID==0 is ok for /api/comment/item/IID.FMT
 api   GET     /api/comment/item/IID.FMT        list-comments
 api   POST    /api/comment/item/IID.FMT        create-comment
 api   DELETE  /api/comment/CID.FMT             delete-comment
@@ -168,8 +169,9 @@ api   GET     /api/comment/CID/KEY.FMT         get-comment-key
 
 ##################################################################
 
-api   GET     /api/item/IID/clone.FMT          list-clones
-api   POST    /api/item/IID/clone.FMT          create-clone
+# IID==0 is ok for /api/clone/IID.FMT
+api   GET     /api/clone/IID.FMT               list-clones
+api   POST    /api/clone/IID.FMT               create-clone
 
 ##################################################################
 
