@@ -10,6 +10,8 @@
   * FMT = "xml" | "json"
   * KEY = structure element name, eg: "relationName", camelcase, case-sensitive
 
+= Item API =
+
 || GET || /api/item/IID || read-item-data ||
 || GET || /api/item.FMT || list-items ||
 || POST || /api/item.FMT || create-item ||
@@ -19,6 +21,8 @@
 || DELETE || /api/item/IID/KEY.FMT || delete-item-key ||
 || GET || /api/item/IID/KEY.FMT || get-item-key ||
 
+= Relation API =
+
 || GET || /api/relation.FMT || list-relations ||
 || POST || /api/relation.FMT || create-relation ||
 || DELETE || /api/relation/RID.FMT || delete-relation ||
@@ -26,6 +30,8 @@
 || POST || /api/relation/RID.FMT || update-relation ||
 || DELETE || /api/relation/RID/KEY.FMT || delete-relation-key ||
 || GET || /api/relation/RID/KEY.FMT || get-relation-key ||
+
+= Tag API =
 
 || GET || /api/tag.FMT || list-tags ||
 || POST || /api/tag.FMT || create-tag ||
@@ -35,6 +41,8 @@
 || DELETE || /api/tag/TID/KEY.FMT || delete-tag-key ||
 || GET || /api/tag/TID/KEY.FMT || get-tag-key ||
 
+= Commenting API =
+
 || GET || /api/comment/item/IID.FMT || list-comments (IID=0 for wildcard) ||
 || POST || /api/comment/item/IID.FMT || create-comment ||
 || DELETE || /api/comment/CID.FMT || delete-comment ||
@@ -43,20 +51,30 @@
 || DELETE || /api/comment/CID/KEY.FMT || delete-comment-key ||
 || GET || /api/comment/CID/KEY.FMT || get-comment-key ||
 
+= Item Cloning API =
+
 || GET || /api/clone/IID.FMT || list-clones (IID=0 for wildcard) ||
 || POST || /api/clone/IID.FMT || create-clone ||
+
+= Registry API / Configuration Information = 
 
 || GET || /api/registry.FMT || read-registry ||
 || POST || /api/registry.FMT || update-registry ||
 || DELETE || /api/registry/KEY.FMT || delete-registry-key ||
 || GET || /api/registry/KEY.FMT || get-registry-key ||
 
+= Selection API =
+
 || GET || /api/select/item.FMT || read-select-item ||
 || GET || /api/select/relation.FMT || read-select-relation ||
 || GET || /api/select/tag.FMT || read-select-tag ||
 
+= MineKey Generation =
+
 || GET || /api/url/RID.FMT || encode-minekey1 ||
 || GET || /api/url/RID/IID.FMT || encode-minekey2 ||
 || GET || /api/url/RID/RVSN/IID.FMT || encode-minekey3 ||
+
+= Misc =
 
 || GET || /api/version.FMT || read-version ||
