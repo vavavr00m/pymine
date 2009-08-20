@@ -345,21 +345,36 @@ def read_select_tag(request, *args, **kwargs):
 ## function: encode_minekey1
 ## declared args: rid
 def encode_minekey1(request, rid, *args, **kwargs):
-    # CHAIN TO encode_minekey2
-    return api_retval()
+    """return the MineKey for overall feed for Relation RID with current RVSN"""
+    return encode_minekey2(request, rid, 0, *args, **kwargs)
 
 ## rest: GET /api/url/RID/IID.FMT
 ## function: encode_minekey2
 ## declared args: rid iid
 def encode_minekey2(request, rid, iid, *args, **kwargs):
-    # CHAIN TO encode_minekey3
-    return api_retval()
+    """return the MineKey for Item IID for Relation RID with current RVSN"""
+    return encode_minekey3(request, rid, 0, iid, *args, **kwargs)
 
 ## rest: GET /api/url/RID/RVSN/IID.FMT
 ## function: encode_minekey3
 ## declared args: rid rvsn iid
 def encode_minekey3(request, rid, rvsn, iid, *args, **kwargs):
-    return api_retval()
+    """return the MineKey for Item IID for Relation RID with given RVSN"""
+    if rvsn == 0:
+        # go look it up
+        pass
+    
+    result = { 
+        'keyversion': 'fake',
+        'method': 'fake',
+        'iid': iid,
+        'rid': rid,
+        'rvsn': rvsn,
+        'cid': 'tbd',
+        'depth': 'fake',
+        }
+
+    return api_retval(result)
 
 ##################################################################
 

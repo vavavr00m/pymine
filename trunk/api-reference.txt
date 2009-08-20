@@ -1,0 +1,316 @@
+MineRest#summary Mine REST API Reference
+
+= Glossary =
+
+  * _iid_ = itemId, integer > 0
+  * _tid_ = tagId, integer > 0
+  * _rid_ = relationId, integer > 0
+  * _rvsn_ = relationVersion, integer > 0
+  * _cid_ = commentId, integer > 0
+  * _format_ = `"xml"` | `"json"`
+  * _key_ = structure element name, eg: "relationName", camelcase, case-sensitive
+
+----
+
+= Item API =
+
+== read-item-data ==
+
+  * HTTP Method: GET
+  * URL: <tt>/api/item/_iid_</tt>
+
+== list-items ==
+
+  * HTTP Method: GET
+  * URL: <tt>/api/item._format_</tt>
+
+== create-item ==
+
+  * HTTP Method: POST
+  * URL: <tt>/api/item._format_</tt>
+
+== delete-item ==
+
+  * HTTP Method: DELETE
+  * URL: <tt>/api/item/_iid_._format_</tt>
+
+== read-item ==
+
+  * HTTP Method: GET
+  * URL: <tt>/api/item/_iid_._format_</tt>
+
+== update-item ==
+
+  * HTTP Method: POST
+  * URL: <tt>/api/item/_iid_._format_</tt>
+
+== delete-item-key ==
+
+  * HTTP Method: DELETE
+  * URL: <tt>/api/item/_iid_/_key_._format_</tt>
+
+== get-item-key ==
+
+  * HTTP Method: GET
+  * URL: <tt>/api/item/_iid_/_key_._format_</tt>
+
+----
+
+= Relation API =
+
+== list-relations ==
+
+  * HTTP Method: GET
+  * URL: <tt>/api/relation._format_</tt>
+
+== create-relation ==
+
+  * HTTP Method: POST
+  * URL: <tt>/api/relation._format_</tt>
+
+== delete-relation ==
+
+  * HTTP Method: DELETE
+  * URL: <tt>/api/relation/_rid_._format_</tt>
+
+== read-relation ==
+
+  * HTTP Method: GET
+  * URL: <tt>/api/relation/_rid_._format_</tt>
+
+== update-relation ==
+
+  * HTTP Method: POST
+  * URL: <tt>/api/relation/_rid_._format_</tt>
+
+== delete-relation-key ==
+
+  * HTTP Method: DELETE
+  * URL: <tt>/api/relation/_rid_/_key_._format_</tt>
+
+== get-relation-key ==
+
+  * HTTP Method: GET
+  * URL: <tt>/api/relation/_rid_/_key_._format_</tt>
+
+----
+
+= Tag API =
+
+== list-tags ==
+
+  * HTTP Method: GET
+  * URL: <tt>/api/tag._format_</tt>
+
+== create-tag ==
+
+  * HTTP Method: POST
+  * URL: <tt>/api/tag._format_</tt>
+
+== delete-tag ==
+
+  * HTTP Method: DELETE
+  * URL: <tt>/api/tag/_tid_._format_</tt>
+
+== read-tag ==
+
+  * HTTP Method: GET
+  * URL: <tt>/api/tag/_tid_._format_</tt>
+
+== update-tag ==
+
+  * HTTP Method: POST
+  * URL: <tt>/api/tag/_tid_._format_</tt>
+
+== delete-tag-key ==
+
+  * HTTP Method: DELETE
+  * URL: <tt>/api/tag/_tid_/_key_._format_</tt>
+
+== get-tag-key ==
+
+  * HTTP Method: GET
+  * URL: <tt>/api/tag/_tid_/_key_._format_</tt>
+
+----
+
+= Commenting API =
+
+== list-comments ==
+
+  * HTTP Method: GET
+  * URL: <tt>/api/comment/item/_iid_._format_</tt>
+  * Notes: use _iid_=0 for wildcard
+
+== create-comment ==
+
+  * HTTP Method: POST
+  * URL: <tt>/api/comment/item/_iid_._format_</tt>
+
+== delete-comment ==
+
+  * HTTP Method: DELETE
+  * URL: <tt>/api/comment/_cid_._format_</tt>
+
+== read-comment ==
+
+  * HTTP Method: GET
+  * URL: <tt>/api/comment/_cid_._format_</tt>
+
+== update-comment ==
+
+  * HTTP Method: POST
+  * URL: <tt>/api/comment/_cid_._format_</tt>
+
+== delete-comment-key ==
+
+  * HTTP Method: DELETE
+  * URL: <tt>/api/comment/_cid_/_key_._format_</tt>
+
+== get-comment-key ==
+
+  * HTTP Method: GET
+  * URL: <tt>/api/comment/_cid_/_key_._format_</tt>
+
+----
+
+= Item Cloning API =
+
+== list-clones ==
+
+  * HTTP Method: GET
+  * URL: <tt>/api/clone/_iid_._format_</tt>
+  * Notes: use _iid_=0 for wildcard
+
+== create-clone ==
+
+  * HTTP Method: POST
+  * URL: <tt>/api/clone/_iid_._format_</tt>
+
+----
+
+= Vanity URL API =
+
+_tbd_
+
+----
+
+= Registry API =
+
+== read-registry ==
+
+  * HTTP Method: GET
+  * URL: <tt>/api/registry._format_</tt>
+
+== update-registry ==
+
+  * HTTP Method: POST
+  * URL: <tt>/api/registry._format_</tt>
+
+== delete-registry-key ==
+
+  * HTTP Method: DELETE
+  * URL: <tt>/api/registry/_key_._format_</tt>
+
+== get-registry-key ==
+
+  * HTTP Method: GET
+  * URL: <tt>/api/registry/_key_._format_</tt>
+
+----
+
+= Selection API =
+
+== read-select-item ==
+
+  * HTTP Method: GET
+  * URL: <tt>/api/select/item._format_</tt>
+
+== read-select-relation ==
+
+  * HTTP Method: GET
+  * URL: <tt>/api/select/relation._format_</tt>
+
+== read-select-tag ==
+
+  * HTTP Method: GET
+  * URL: <tt>/api/select/tag._format_</tt>
+
+----
+
+= Minekey Generation =
+
+== encode-minekey1 ==
+
+  * HTTP Method: GET
+  * URL: <tt>/api/url/_rid_._format_</tt>
+
+== encode-minekey2 ==
+
+  * HTTP Method: GET
+  * URL: <tt>/api/url/_rid_/_iid_._format_</tt>
+
+== encode-minekey3 ==
+
+  * HTTP Method: GET
+  * URL: <tt>/api/url/_rid_/_rvsn_/_iid_._format_</tt>
+
+----
+
+= Other =
+
+== read-version ==
+
+  * HTTP Method: GET
+  * URL: <tt>/api/version._format_</tt>
+
+----
+
+= Model Key Reference =
+
+|| Structure Name (ie: key) || Corresponding Model.field || Type || Notes ||
+|| commentBody || Comment.body || string || - ||
+|| commentCreated || Comment.created || date || - ||
+|| commentId || Comment.id || int || - ||
+|| commentItem || Comment.item || int || stored as !ForeignKey(Item), shown as `itemId` ||
+|| commentLastModified || Comment.last_modified || date || - ||
+|| commentLikes || Comment.likes || boolean || - ||
+|| commentRelation || Comment.relation || string || stored as !ForeignKey(Relation),shown as `relationName` ||
+|| commentTitle || Comment.title || string || - ||
+|| itemCreated || Item.created || date || - ||
+|| itemData || Item.data || file || - ||
+|| itemDescription || Item.description || string || - ||
+|| itemHideAfter || Item.hide_after || date || - ||
+|| itemHideBefore || Item.hide_before || date || - ||
+|| itemId || Item.id || int || - ||
+|| itemLastModified || Item.last_modified || date || - ||
+|| itemName || Item.name || string || - ||
+|| itemStatus || Item.status || string || enumeration; `private shared public` ||
+|| itemTags || Item.tags || string || parsed into multiple !ManyToMany fields; `tag1 for:rel1 not:rel2 ...` ||
+|| itemType || Item.content_type || string || -  ||
+|| relationCallbackURL || Relation.url_callback || string || - ||
+|| relationCreated || Relation.created || date || - ||
+|| relationDescription || Relation.description || string || - ||
+|| relationEmailAddress || Relation.email_address || string || - ||
+|| relationEmbargoAfter || Relation.embargo_after || date || - ||
+|| relationEmbargoBefore || Relation.embargo_before || date || - ||
+|| relationHomepageURL || Relation.url_homepage || string || - ||
+|| relationId || Relation.id || int || - ||
+|| relationImageURL || Relation.url_image || string || - ||
+|| relationInterests || Relation.interests || string || parsed into multiple !ManyToMany fields; `tag1 require:tag2 exclude:tag3 ...` ||
+|| relationLastModified || Relation.last_modified || date || - ||
+|| relationName || Relation.name || string || - ||
+|| relationNetworkPattern || Relation.network_pattern || string || - ||
+|| relationVersion || Relation.version || int || - ||
+|| tagCreated || Tag.created || date || - ||
+|| tagDescription || Tag.description || string || - ||
+|| tagId || Tag.id || int || - ||
+|| tagImplies || Tag.implies || string || stored as !ManyToManyField(Tag); `tag1 tag2 tag3 ...` ||
+|| tagLastModified || Tag.last_modified || date || - ||
+|| tagName || Tag.name || string || - ||
+|| vurlCreated || VanityURL.created || date || - ||
+|| vurlId || VanityURL.id || int || - ||
+|| vurlLastModified || VanityURL.last_modified || date || - ||
+|| vurlLink || VanityURL.link || string || - ||
+|| vurlName || VanityURL.name || string || - ||
+|| vurlTags || VanityURL.tags || string || stored as !ManyToManyField(Tag); `tag1 tag2 tag3 ...` ||

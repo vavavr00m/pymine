@@ -25,7 +25,12 @@ status_lookup = {}
 
 ##################################################################
 
-class Tag(models.Model):
+class Thing():
+    pass
+
+##################################################################
+
+class Tag(models.Model, Thing):
 
     """This is the modelspace representation of the Tag object"""
 
@@ -480,7 +485,7 @@ def lookup_s2m(kind, sattr):
     if mattr in s2m_table[kind]:
         (r2s_func, s2m_func, mattr) = s2m_table[kind][sattr]
         return sattr
-    elsif mattr in defer_s2m_table[kind]:
+    elif mattr in defer_s2m_table[kind]:
         (r2s_func, s2m_func, mattr) = defer_s2m_table[kind][sattr]
         return sattr
     else:
