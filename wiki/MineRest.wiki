@@ -13,7 +13,7 @@
 ----
 
 == Result Envelopes ==
- 
+
   * Standard: <tt>`result`, `exit`, `status`, `callback`</tt>
   * Paged: <tt>`result`, `exit`, `status`, `prevurl`, `nexturl`, `thisurl`, `thissize`, `totalsize`, `callback`, `watch`</tt>
 
@@ -25,7 +25,7 @@
 
   * HTTP Method: GET
   * URL: <tt>/api/item/_iid_</tt>
-  * Parameters: 
+  * Parameters: none
   * Result Envelope: Not Applicable
   * Result: data file
 
@@ -41,7 +41,7 @@
 
   * HTTP Method: POST
   * URL: <tt>/api/item._format_</tt>
-  * Parameters: 
+  * Parameters: all writable itemKeys
   * Result Envelope: Standard
   * Result: item structure
 
@@ -57,7 +57,7 @@
 
   * HTTP Method: GET
   * URL: <tt>/api/item/_iid_._format_</tt>
-  * Parameters: 
+  * Parameters: none
   * Result Envelope: Standard
   * Result: item structure
 
@@ -65,7 +65,7 @@
 
   * HTTP Method: POST
   * URL: <tt>/api/item/_iid_._format_</tt>
-  * Parameters: 
+  * Parameters: all writable itemKeys
   * Result Envelope: Standard
   * Result: item structure
 
@@ -81,7 +81,7 @@
 
   * HTTP Method: GET
   * URL: <tt>/api/item/_iid_/_key_._format_</tt>
-  * Parameters: 
+  * Parameters: none
   * Result Envelope: Standard
   * Result: value
 
@@ -101,7 +101,7 @@
 
   * HTTP Method: POST
   * URL: <tt>/api/relation._format_</tt>
-  * Parameters: 
+  * Parameters: all writable relationKeys
   * Result Envelope: Standard
   * Result: relation structure
 
@@ -117,7 +117,7 @@
 
   * HTTP Method: GET
   * URL: <tt>/api/relation/_rid_._format_</tt>
-  * Parameters: 
+  * Parameters: none
   * Result Envelope: Standard
   * Result: relation structure
 
@@ -125,7 +125,7 @@
 
   * HTTP Method: POST
   * URL: <tt>/api/relation/_rid_._format_</tt>
-  * Parameters: 
+  * Parameters: all writable relationKeys
   * Result Envelope: Standard
   * Result: relation structure
 
@@ -141,7 +141,7 @@
 
   * HTTP Method: GET
   * URL: <tt>/api/relation/_rid_/_key_._format_</tt>
-  * Parameters: 
+  * Parameters: none
   * Result Envelope: Standard
   * Result: value
 
@@ -161,7 +161,7 @@
 
   * HTTP Method: POST
   * URL: <tt>/api/tag._format_</tt>
-  * Parameters: 
+  * Parameters: all writable tagKeys
   * Result Envelope: Standard
   * Result: tag structure
 
@@ -177,7 +177,7 @@
 
   * HTTP Method: GET
   * URL: <tt>/api/tag/_tid_._format_</tt>
-  * Parameters: 
+  * Parameters: none
   * Result Envelope: Standard
   * Result: tag structure
 
@@ -185,7 +185,7 @@
 
   * HTTP Method: POST
   * URL: <tt>/api/tag/_tid_._format_</tt>
-  * Parameters: 
+  * Parameters: all writable tagKeys
   * Result Envelope: Standard
   * Result: tag structure
 
@@ -201,7 +201,7 @@
 
   * HTTP Method: GET
   * URL: <tt>/api/tag/_tid_/_key_._format_</tt>
-  * Parameters: 
+  * Parameters: none
   * Result Envelope: Standard
   * Result: value
 
@@ -222,7 +222,7 @@
 
   * HTTP Method: POST
   * URL: <tt>/api/comment/item/_iid_._format_</tt>
-  * Parameters: 
+  * Parameters: all writable commentKeys
   * Result Envelope: Standard
   * Result: comment structure
 
@@ -238,7 +238,7 @@
 
   * HTTP Method: GET
   * URL: <tt>/api/comment/_cid_._format_</tt>
-  * Parameters: 
+  * Parameters: none
   * Result Envelope: Standard
   * Result: comment structure
 
@@ -246,7 +246,7 @@
 
   * HTTP Method: POST
   * URL: <tt>/api/comment/_cid_._format_</tt>
-  * Parameters: 
+  * Parameters: all writable commentKeys
   * Result Envelope: Standard
   * Result: comment structure
 
@@ -262,7 +262,7 @@
 
   * HTTP Method: GET
   * URL: <tt>/api/comment/_cid_/_key_._format_</tt>
-  * Parameters: 
+  * Parameters: none
   * Result Envelope: Standard
   * Result: value
 
@@ -283,7 +283,7 @@
 
   * HTTP Method: POST
   * URL: <tt>/api/clone/_iid_._format_</tt>
-  * Parameters: 
+  * Parameters: all writeable itemKeys
   * Result Envelope: Standard
   * Result: item structure
 
@@ -325,7 +325,7 @@ _tbd_
 
   * HTTP Method: GET
   * URL: <tt>/api/registry/_key_._format_</tt>
-  * Parameters: 
+  * Parameters: none
   * Result Envelope: Standard
   * Result: value
 
@@ -365,7 +365,7 @@ _tbd_
 
   * HTTP Method: GET
   * URL: <tt>/api/url/_rid_._format_</tt>
-  * Parameters: 
+  * Parameters: none
   * Result Envelope: Standard
   * Result: string
 
@@ -373,7 +373,7 @@ _tbd_
 
   * HTTP Method: GET
   * URL: <tt>/api/url/_rid_/_iid_._format_</tt>
-  * Parameters: 
+  * Parameters: none
   * Result Envelope: Standard
   * Result: string
 
@@ -381,7 +381,7 @@ _tbd_
 
   * HTTP Method: GET
   * URL: <tt>/api/url/_rid_/_rvsn_/_iid_._format_</tt>
-  * Parameters: 
+  * Parameters: none
   * Result Envelope: Standard
   * Result: string
 
@@ -393,7 +393,7 @@ _tbd_
 
   * HTTP Method: GET
   * URL: <tt>/api/version._format_</tt>
-  * Parameters: 
+  * Parameters: none
   * Result Envelope: Standard
   * Result: version structure
 
