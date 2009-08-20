@@ -1,49 +1,19 @@
-#summary Mine REST API Reference
+RESTAPI#summary Mine REST API Reference
 
 = Index =
 
-  * [ #read-item-data ]
-  * [ #list-items ]
-  * [ #create-item ]
-  * [ #delete-item ]
-  * [ #read-item ]
-  * [ #update-item ]
-  * [ #delete-item-key ]
-  * [ #get-item-key ]
-  * [ #list-relations ]
-  * [ #create-relation ]
-  * [ #delete-relation ]
-  * [ #read-relation ]
-  * [ #update-relation ]
-  * [ #delete-relation-key ]
-  * [ #get-relation-key ]
-  * [ #list-tags ]
-  * [ #create-tag ]
-  * [ #delete-tag ]
-  * [ #read-tag ]
-  * [ #update-tag ]
-  * [ #delete-tag-key ]
-  * [ #get-tag-key ]
-  * [ #list-comments ]
-  * [ #create-comment ]
-  * [ #delete-comment ]
-  * [ #read-comment ]
-  * [ #update-comment ]
-  * [ #delete-comment-key ]
-  * [ #get-comment-key ]
-  * [ #list-clones ]
-  * [ #create-clone ]
-  * [ #read-registry ]
-  * [ #update-registry ]
-  * [ #delete-registry-key ]
-  * [ #get-registry-key ]
-  * [ #read-select-item ]
-  * [ #read-select-relation ]
-  * [ #read-select-tag ]
-  * [ #encode-minekey1 ]
-  * [ #encode-minekey2 ]
-  * [ #encode-minekey3 ]
-  * [ #read-version ]
+  * [ RESTAPI#Index Index ]
+  * [ RESTAPI#Glossary Glossary ]
+  * [ RESTAPI#Item_API Item API ]
+  * [ RESTAPI#Relation_API Relation API ]
+  * [ RESTAPI#Tag_API Tag API ]
+  * [ RESTAPI#Commenting_API Commenting API ]
+  * [ RESTAPI#Item_Cloning_API Item Cloning API ]
+  * [ RESTAPI#Registry_API Registry_API ]
+  * [ RESTAPI#Vanity_URL_API VanityURL_API ]
+  * [ RESTAPI#Selection_API Selection API ]
+  * [ RESTAPI#Minekey_Generation Minekey Generation ]
+  * [ RESTAPI#Misc Misc ]
 
 = Glossary =
 
@@ -234,7 +204,13 @@
 
 ----
 
-= Registry API / Configuration Information =
+= Vanity URL API =
+
+_tbd_
+
+----
+
+= Registry API =
 
 == read-registry ==
 
