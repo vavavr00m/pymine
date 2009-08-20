@@ -41,7 +41,7 @@
 
   * HTTP Method: POST
   * URL: <tt>/api/item._format_</tt>
-  * Parameters: all writable itemKeys
+  * Parameters: writable itemKeys
   * Result Envelope: Standard
   * Result: item structure
 
@@ -65,7 +65,7 @@
 
   * HTTP Method: POST
   * URL: <tt>/api/item/_iid_._format_</tt>
-  * Parameters: all writable itemKeys
+  * Parameters: writable itemKeys
   * Result Envelope: Standard
   * Result: item structure
 
@@ -101,7 +101,7 @@
 
   * HTTP Method: POST
   * URL: <tt>/api/relation._format_</tt>
-  * Parameters: all writable relationKeys
+  * Parameters: writable relationKeys
   * Result Envelope: Standard
   * Result: relation structure
 
@@ -125,7 +125,7 @@
 
   * HTTP Method: POST
   * URL: <tt>/api/relation/_rid_._format_</tt>
-  * Parameters: all writable relationKeys
+  * Parameters: writable relationKeys
   * Result Envelope: Standard
   * Result: relation structure
 
@@ -161,7 +161,7 @@
 
   * HTTP Method: POST
   * URL: <tt>/api/tag._format_</tt>
-  * Parameters: all writable tagKeys
+  * Parameters: writable tagKeys
   * Result Envelope: Standard
   * Result: tag structure
 
@@ -185,7 +185,7 @@
 
   * HTTP Method: POST
   * URL: <tt>/api/tag/_tid_._format_</tt>
-  * Parameters: all writable tagKeys
+  * Parameters: writable tagKeys
   * Result Envelope: Standard
   * Result: tag structure
 
@@ -222,7 +222,7 @@
 
   * HTTP Method: POST
   * URL: <tt>/api/comment/item/_iid_._format_</tt>
-  * Parameters: all writable commentKeys
+  * Parameters: writable commentKeys
   * Result Envelope: Standard
   * Result: comment structure
 
@@ -246,7 +246,7 @@
 
   * HTTP Method: POST
   * URL: <tt>/api/comment/_cid_._format_</tt>
-  * Parameters: all writable commentKeys
+  * Parameters: writable commentKeys
   * Result Envelope: Standard
   * Result: comment structure
 
@@ -283,7 +283,7 @@
 
   * HTTP Method: POST
   * URL: <tt>/api/clone/_iid_._format_</tt>
-  * Parameters: all writeable itemKeys
+  * Parameters: writeable itemKeys
   * Result Envelope: Standard
   * Result: item structure
 
