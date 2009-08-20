@@ -31,11 +31,9 @@ def api_retval(result=None, **kwargs):
     template['status'] = kwargs.get('status', 'ok')
     template['exit'] = kwargs.get('exit', 0)
 
-    for k in ( 'prevpageurl', 'nextpageurl', 'thispageurl',
-	       'pagenumber', 'pagespan',
-	       'thispagesize', 'totalsize',
-	       'callback',
-	       'watch' ):
+    for k in ( 'prevurl', 'nexturl', 'thisurl',
+	       'thissize', 'totalsize',
+	       'callback', 'watch' ):
 	v = kwargs.get(k)
 	if v:
 	    template[k] = v
