@@ -1,6 +1,6 @@
 MineRest#summary Mine REST API Reference
 
-= Glossary =
+== Glossary ==
 
   * _iid_ = itemId, integer > 0
   * _tid_ = tagId, integer > 0
@@ -12,261 +12,261 @@ MineRest#summary Mine REST API Reference
 
 ----
 
-= Item API =
+== Item API ==
 
-== read-item-data ==
+=== read-item-data ===
 
   * HTTP Method: GET
   * URL: <tt>/api/item/_iid_</tt>
 
-== list-items ==
+=== list-items ===
 
   * HTTP Method: GET
   * URL: <tt>/api/item._format_</tt>
 
-== create-item ==
+=== create-item ===
 
   * HTTP Method: POST
   * URL: <tt>/api/item._format_</tt>
 
-== delete-item ==
+=== delete-item ===
 
   * HTTP Method: DELETE
   * URL: <tt>/api/item/_iid_._format_</tt>
 
-== read-item ==
+=== read-item ===
 
   * HTTP Method: GET
   * URL: <tt>/api/item/_iid_._format_</tt>
 
-== update-item ==
+=== update-item ===
 
   * HTTP Method: POST
   * URL: <tt>/api/item/_iid_._format_</tt>
 
-== delete-item-key ==
+=== delete-item-key ===
 
   * HTTP Method: DELETE
   * URL: <tt>/api/item/_iid_/_key_._format_</tt>
 
-== get-item-key ==
+=== get-item-key ===
 
   * HTTP Method: GET
   * URL: <tt>/api/item/_iid_/_key_._format_</tt>
 
 ----
 
-= Relation API =
+== Relation API ==
 
-== list-relations ==
+=== list-relations ===
 
   * HTTP Method: GET
   * URL: <tt>/api/relation._format_</tt>
 
-== create-relation ==
+=== create-relation ===
 
   * HTTP Method: POST
   * URL: <tt>/api/relation._format_</tt>
 
-== delete-relation ==
+=== delete-relation ===
 
   * HTTP Method: DELETE
   * URL: <tt>/api/relation/_rid_._format_</tt>
 
-== read-relation ==
+=== read-relation ===
 
   * HTTP Method: GET
   * URL: <tt>/api/relation/_rid_._format_</tt>
 
-== update-relation ==
+=== update-relation ===
 
   * HTTP Method: POST
   * URL: <tt>/api/relation/_rid_._format_</tt>
 
-== delete-relation-key ==
+=== delete-relation-key ===
 
   * HTTP Method: DELETE
   * URL: <tt>/api/relation/_rid_/_key_._format_</tt>
 
-== get-relation-key ==
+=== get-relation-key ===
 
   * HTTP Method: GET
   * URL: <tt>/api/relation/_rid_/_key_._format_</tt>
 
 ----
 
-= Tag API =
+== Tag API ==
 
-== list-tags ==
+=== list-tags ===
 
   * HTTP Method: GET
   * URL: <tt>/api/tag._format_</tt>
 
-== create-tag ==
+=== create-tag ===
 
   * HTTP Method: POST
   * URL: <tt>/api/tag._format_</tt>
 
-== delete-tag ==
+=== delete-tag ===
 
   * HTTP Method: DELETE
   * URL: <tt>/api/tag/_tid_._format_</tt>
 
-== read-tag ==
+=== read-tag ===
 
   * HTTP Method: GET
   * URL: <tt>/api/tag/_tid_._format_</tt>
 
-== update-tag ==
+=== update-tag ===
 
   * HTTP Method: POST
   * URL: <tt>/api/tag/_tid_._format_</tt>
 
-== delete-tag-key ==
+=== delete-tag-key ===
 
   * HTTP Method: DELETE
   * URL: <tt>/api/tag/_tid_/_key_._format_</tt>
 
-== get-tag-key ==
+=== get-tag-key ===
 
   * HTTP Method: GET
   * URL: <tt>/api/tag/_tid_/_key_._format_</tt>
 
 ----
 
-= Commenting API =
+== Commenting API ==
 
-== list-comments ==
+=== list-comments ===
 
   * HTTP Method: GET
   * URL: <tt>/api/comment/item/_iid_._format_</tt>
   * Notes: use _iid_=0 for wildcard
 
-== create-comment ==
+=== create-comment ===
 
   * HTTP Method: POST
   * URL: <tt>/api/comment/item/_iid_._format_</tt>
 
-== delete-comment ==
+=== delete-comment ===
 
   * HTTP Method: DELETE
   * URL: <tt>/api/comment/_cid_._format_</tt>
 
-== read-comment ==
+=== read-comment ===
 
   * HTTP Method: GET
   * URL: <tt>/api/comment/_cid_._format_</tt>
 
-== update-comment ==
+=== update-comment ===
 
   * HTTP Method: POST
   * URL: <tt>/api/comment/_cid_._format_</tt>
 
-== delete-comment-key ==
+=== delete-comment-key ===
 
   * HTTP Method: DELETE
   * URL: <tt>/api/comment/_cid_/_key_._format_</tt>
 
-== get-comment-key ==
+=== get-comment-key ===
 
   * HTTP Method: GET
   * URL: <tt>/api/comment/_cid_/_key_._format_</tt>
 
 ----
 
-= Item Cloning API =
+== Item Cloning API ==
 
-== list-clones ==
+=== list-clones ===
 
   * HTTP Method: GET
   * URL: <tt>/api/clone/_iid_._format_</tt>
   * Notes: use _iid_=0 for wildcard
 
-== create-clone ==
+=== create-clone ===
 
   * HTTP Method: POST
   * URL: <tt>/api/clone/_iid_._format_</tt>
 
 ----
 
-= Vanity URL API =
+== Vanity URL API ==
 
 _tbd_
 
 ----
 
-= Registry API =
+== Registry API ==
 
-== read-registry ==
+=== read-registry ===
 
   * HTTP Method: GET
   * URL: <tt>/api/registry._format_</tt>
 
-== update-registry ==
+=== update-registry ===
 
   * HTTP Method: POST
   * URL: <tt>/api/registry._format_</tt>
 
-== delete-registry-key ==
+=== delete-registry-key ===
 
   * HTTP Method: DELETE
   * URL: <tt>/api/registry/_key_._format_</tt>
 
-== get-registry-key ==
+=== get-registry-key ===
 
   * HTTP Method: GET
   * URL: <tt>/api/registry/_key_._format_</tt>
 
 ----
 
-= Selection API =
+== Selection API ==
 
-== read-select-item ==
+=== read-select-item ===
 
   * HTTP Method: GET
   * URL: <tt>/api/select/item._format_</tt>
 
-== read-select-relation ==
+=== read-select-relation ===
 
   * HTTP Method: GET
   * URL: <tt>/api/select/relation._format_</tt>
 
-== read-select-tag ==
+=== read-select-tag ===
 
   * HTTP Method: GET
   * URL: <tt>/api/select/tag._format_</tt>
 
 ----
 
-= Minekey Generation =
+== Minekey Generation ==
 
-== encode-minekey1 ==
+=== encode-minekey1 ===
 
   * HTTP Method: GET
   * URL: <tt>/api/url/_rid_._format_</tt>
 
-== encode-minekey2 ==
+=== encode-minekey2 ===
 
   * HTTP Method: GET
   * URL: <tt>/api/url/_rid_/_iid_._format_</tt>
 
-== encode-minekey3 ==
+=== encode-minekey3 ===
 
   * HTTP Method: GET
   * URL: <tt>/api/url/_rid_/_rvsn_/_iid_._format_</tt>
 
 ----
 
-= Other =
+== Other ==
 
-== read-version ==
+=== read-version ===
 
   * HTTP Method: GET
   * URL: <tt>/api/version._format_</tt>
 
 ----
 
-= Model Key Reference =
+== Model Key Reference ==
 
 || Structure Name (ie: key) || Corresponding Model.field || Type || Notes ||
 || commentBody || Comment.body || string || - ||
