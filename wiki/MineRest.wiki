@@ -1,21 +1,4 @@
-#summary Mine REST API
-
 MineRest#summary Mine REST API Reference
-
-= Index =
-
-  * [ MineRest#Index Index ]
-  * [ MineRest#Glossary Glossary ]
-  * [ MineRest#Item_API Item API ]
-  * [ MineRest#Relation_API Relation API ]
-  * [ MineRest#Tag_API Tag API ]
-  * [ MineRest#Commenting_API Commenting API ]
-  * [ MineRest#Item_Cloning_API Item Cloning API ]
-  * [ MineRest#Registry_API Registry_API ]
-  * [ MineRest#Vanity_URL_API VanityURL_API ]
-  * [ MineRest#Selection_API Selection API ]
-  * [ MineRest#Minekey_Generation Minekey Generation ]
-  * [ MineRest#Misc Misc ]
 
 = Glossary =
 
@@ -274,9 +257,60 @@ _tbd_
 
 ----
 
-= Misc =
+= Other =
 
 == read-version ==
 
   * HTTP Method: GET
   * URL: <tt>/api/version._format_</tt>
+
+----
+
+= Model / Key Reference =
+
+|| Structure Name (ie: key) || Corresponding Model.Attribute || Type || Notes ||
+|| commentBody || Comment.body || string || - ||
+|| commentCreated || Comment.created || date || - ||
+|| commentId || Comment.id || int || - ||
+|| commentItem || Comment.item || int || stored as ForeignKey(Item) ||
+|| commentLastModified || Comment.last_modified || date || - ||
+|| commentLikes || Comment.likes || boolean || - ||
+|| commentRelation || Comment.relation || string || stored as ForeignKey(Relation) ||
+|| commentTitle || Comment.title || string || - ||
+|| itemCreated || Item.created || date || - ||
+|| itemData || Item.data || string || FileField - ||
+|| itemDescription || Item.description || string || - ||
+|| itemHideAfter || Item.hide_after || date || - ||
+|| itemHideBefore || Item.hide_before || date || - ||
+|| itemId || Item.id || int || - ||
+|| itemLastModified || Item.last_modified || date || - ||
+|| itemName || Item.name || string || - ||
+|| itemStatus || Item.status || string || enumeration: private, shared, public ||
+|| itemTags || Item.tags || string || stored as multple ManyToMany fields ||
+|| itemType || Item.content_type || string || -  ||
+|| relationCallbackURL || Relation.url_callback || string || - ||
+|| relationCreated || Relation.created || date || - ||
+|| relationDescription || Relation.description || string || - ||
+|| relationEmailAddress || Relation.email_address || string || - ||
+|| relationEmbargoAfter || Relation.embargo_after || date || - ||
+|| relationEmbargoBefore || Relation.embargo_before || date || - ||
+|| relationHomepageURL || Relation.url_homepage || string || - ||
+|| relationId || Relation.id || int || - ||
+|| relationImageURL || Relation.url_image || string || - ||
+|| relationInterests || Relation.interests || string || stored as multple ManyToMany fields ||
+|| relationLastModified || Relation.last_modified || date || - ||
+|| relationName || Relation.name || string || - ||
+|| relationNetworkPattern || Relation.network_pattern || string || - ||
+|| relationVersion || Relation.version || int || - ||
+|| tagCreated || Tag.created || date || - ||
+|| tagDescription || Tag.description || string || - ||
+|| tagId || Tag.id || int || - ||
+|| tagImplies || Tag.implies || string || stored as ManyToManyField(Tag) ||
+|| tagLastModified || Tag.last_modified || date || - ||
+|| tagName || Tag.name || string || - ||
+|| vurlCreated || VanityURL.created || date || - ||
+|| vurlId || VanityURL.id || int || - ||
+|| vurlLastModified || VanityURL.last_modified || date || - ||
+|| vurlLink || VanityURL.link || string || - ||
+|| vurlName || VanityURL.name || string || - ||
+|| vurlTags || VanityURL.tags || string || stored as ManyToManyField(Tag) ||
