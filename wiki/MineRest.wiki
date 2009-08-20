@@ -3,7 +3,7 @@ MineRest#summary Mine REST API Reference
 = Glossary =
 
   * _iid_ = itemId, integer > 0
-  * TID = tagId, integer > 0
+  * _tid_ = tagId, integer > 0
   * _rid_ = relationId, integer > 0
   * _rvsn_ = relationVersion, integer > 0
   * _cid_ = commentId, integer > 0
@@ -110,27 +110,27 @@ MineRest#summary Mine REST API Reference
 == delete-tag ==
 
   * HTTP Method: DELETE
-  * URL: <tt>/api/tag/TID._format_</tt>
+  * URL: <tt>/api/tag/_tid_._format_</tt>
 
 == read-tag ==
 
   * HTTP Method: GET
-  * URL: <tt>/api/tag/TID._format_</tt>
+  * URL: <tt>/api/tag/_tid_._format_</tt>
 
 == update-tag ==
 
   * HTTP Method: POST
-  * URL: <tt>/api/tag/TID._format_</tt>
+  * URL: <tt>/api/tag/_tid_._format_</tt>
 
 == delete-tag-key ==
 
   * HTTP Method: DELETE
-  * URL: <tt>/api/tag/TID/_key_._format_</tt>
+  * URL: <tt>/api/tag/_tid_/_key_._format_</tt>
 
 == get-tag-key ==
 
   * HTTP Method: GET
-  * URL: <tt>/api/tag/TID/_key_._format_</tt>
+  * URL: <tt>/api/tag/_tid_/_key_._format_</tt>
 
 ----
 
@@ -272,10 +272,10 @@ _tbd_
 || commentBody || Comment.body || string || - ||
 || commentCreated || Comment.created || date || - ||
 || commentId || Comment.id || int || - ||
-|| commentItem || Comment.item || int || stored as !ForeignKey(Item) ||
+|| commentItem || Comment.item || int || stored as !ForeignKey(Item), shown as `itemId` ||
 || commentLastModified || Comment.last_modified || date || - ||
 || commentLikes || Comment.likes || boolean || - ||
-|| commentRelation || Comment.relation || string || stored as !ForeignKey(Relation) ||
+|| commentRelation || Comment.relation || string || stored as !ForeignKey(Relation),shown as `relationName` ||
 || commentTitle || Comment.title || string || - ||
 || itemCreated || Item.created || date || - ||
 || itemData || Item.data || file || - ||
@@ -285,8 +285,8 @@ _tbd_
 || itemId || Item.id || int || - ||
 || itemLastModified || Item.last_modified || date || - ||
 || itemName || Item.name || string || - ||
-|| itemStatus || Item.status || string || enumeration: private, shared, public ||
-|| itemTags || Item.tags || string || parsed into multiple !ManyToMany fields ||
+|| itemStatus || Item.status || string || enumeration; `private shared public` ||
+|| itemTags || Item.tags || string || parsed into multiple !ManyToMany fields; `tag1 for:rel1 not:rel2 ...` ||
 || itemType || Item.content_type || string || -  ||
 || relationCallbackURL || Relation.url_callback || string || - ||
 || relationCreated || Relation.created || date || - ||
@@ -297,7 +297,7 @@ _tbd_
 || relationHomepageURL || Relation.url_homepage || string || - ||
 || relationId || Relation.id || int || - ||
 || relationImageURL || Relation.url_image || string || - ||
-|| relationInterests || Relation.interests || string || parsed into multiple !ManyToMany fields ||
+|| relationInterests || Relation.interests || string || parsed into multiple !ManyToMany fields; `tag1 require:tag2 exclude:tag3 ...` ||
 || relationLastModified || Relation.last_modified || date || - ||
 || relationName || Relation.name || string || - ||
 || relationNetworkPattern || Relation.network_pattern || string || - ||
@@ -305,7 +305,7 @@ _tbd_
 || tagCreated || Tag.created || date || - ||
 || tagDescription || Tag.description || string || - ||
 || tagId || Tag.id || int || - ||
-|| tagImplies || Tag.implies || string || stored as !ManyToManyField(Tag) ||
+|| tagImplies || Tag.implies || string || stored as !ManyToManyField(Tag); `tag1 tag2 tag3 ...` ||
 || tagLastModified || Tag.last_modified || date || - ||
 || tagName || Tag.name || string || - ||
 || vurlCreated || VanityURL.created || date || - ||
@@ -313,4 +313,4 @@ _tbd_
 || vurlLastModified || VanityURL.last_modified || date || - ||
 || vurlLink || VanityURL.link || string || - ||
 || vurlName || VanityURL.name || string || - ||
-|| vurlTags || VanityURL.tags || string || stored as !ManyToManyField(Tag) ||
+|| vurlTags || VanityURL.tags || string || stored as !ManyToManyField(Tag); `tag1 tag2 tag3 ...` ||
