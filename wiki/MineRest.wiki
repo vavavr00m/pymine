@@ -12,47 +12,73 @@ MineRest#summary Mine REST API Reference
 
 ----
 
+== Result Envelopes ==
+ 
+  * Standard: <tt>`result`, `exit`, `status`, `callback`</tt>
+  * Paged: <tt>`result`, `exit`, `status`, `prevurl`, `nexturl`, `thisurl`, `thissize`, `totalsize`, `callback`, `watch`</tt>
+
+----
+
 == Item API ==
 
 === read-item-data ===
 
   * HTTP Method: GET
   * URL: <tt>/api/item/_iid_</tt>
+  * Result Envelope: Not Applicable
+  * Result: data file
 
 === list-items ===
 
   * HTTP Method: GET
   * URL: <tt>/api/item._format_</tt>
+  * Parameters: `page`, `span`, `callback`
+  * Result Envelope: Paged
+  * Result: list of item structure
 
 === create-item ===
 
   * HTTP Method: POST
   * URL: <tt>/api/item._format_</tt>
+  * Parameters: 
+  * Result Envelope: Standard
+  * Result: item structure
 
 === delete-item ===
 
   * HTTP Method: DELETE
   * URL: <tt>/api/item/_iid_._format_</tt>
+  * Result Envelope: Standard
+  * Result: none
 
 === read-item ===
 
   * HTTP Method: GET
   * URL: <tt>/api/item/_iid_._format_</tt>
+  * Result Envelope: Standard
+  * Result: item structure
 
 === update-item ===
 
   * HTTP Method: POST
   * URL: <tt>/api/item/_iid_._format_</tt>
+  * Parameters: 
+  * Result Envelope: Standard
+  * Result: item structure
 
 === delete-item-key ===
 
   * HTTP Method: DELETE
   * URL: <tt>/api/item/_iid_/_key_._format_</tt>
+  * Result Envelope: Standard
+  * Result: none
 
 === get-item-key ===
 
   * HTTP Method: GET
   * URL: <tt>/api/item/_iid_/_key_._format_</tt>
+  * Result Envelope: Standard
+  * Result: value
 
 ----
 
@@ -62,36 +88,53 @@ MineRest#summary Mine REST API Reference
 
   * HTTP Method: GET
   * URL: <tt>/api/relation._format_</tt>
+  * Parameters: `page`, `span`, `callback`
+  * Result Envelope: Paged
+  * Result: list of relation structure
 
 === create-relation ===
 
   * HTTP Method: POST
   * URL: <tt>/api/relation._format_</tt>
+  * Parameters: 
+  * Result Envelope: Standard
+  * Result: relation structure
 
 === delete-relation ===
 
   * HTTP Method: DELETE
   * URL: <tt>/api/relation/_rid_._format_</tt>
+  * Result Envelope: Standard
+  * Result: none
 
 === read-relation ===
 
   * HTTP Method: GET
   * URL: <tt>/api/relation/_rid_._format_</tt>
+  * Result Envelope: Standard
+  * Result: relation structure
 
 === update-relation ===
 
   * HTTP Method: POST
   * URL: <tt>/api/relation/_rid_._format_</tt>
+  * Parameters: 
+  * Result Envelope: Standard
+  * Result: relation structure
 
 === delete-relation-key ===
 
   * HTTP Method: DELETE
   * URL: <tt>/api/relation/_rid_/_key_._format_</tt>
+  * Result Envelope: Standard
+  * Result: none
 
 === get-relation-key ===
 
   * HTTP Method: GET
   * URL: <tt>/api/relation/_rid_/_key_._format_</tt>
+  * Result Envelope: Standard
+  * Result: value
 
 ----
 
@@ -101,36 +144,53 @@ MineRest#summary Mine REST API Reference
 
   * HTTP Method: GET
   * URL: <tt>/api/tag._format_</tt>
+  * Parameters: `page`, `span`, `callback`
+  * Result Envelope: Paged
+  * Result: list of tag structure
 
 === create-tag ===
 
   * HTTP Method: POST
   * URL: <tt>/api/tag._format_</tt>
+  * Parameters: 
+  * Result Envelope: Standard
+  * Result: tag structure
 
 === delete-tag ===
 
   * HTTP Method: DELETE
   * URL: <tt>/api/tag/_tid_._format_</tt>
+  * Result Envelope: Standard
+  * Result: none
 
 === read-tag ===
 
   * HTTP Method: GET
   * URL: <tt>/api/tag/_tid_._format_</tt>
+  * Result Envelope: Standard
+  * Result: tag structure
 
 === update-tag ===
 
   * HTTP Method: POST
   * URL: <tt>/api/tag/_tid_._format_</tt>
+  * Parameters: 
+  * Result Envelope: Standard
+  * Result: tag structure
 
 === delete-tag-key ===
 
   * HTTP Method: DELETE
   * URL: <tt>/api/tag/_tid_/_key_._format_</tt>
+  * Result Envelope: Standard
+  * Result: none
 
 === get-tag-key ===
 
   * HTTP Method: GET
   * URL: <tt>/api/tag/_tid_/_key_._format_</tt>
+  * Result Envelope: Standard
+  * Result: value
 
 ----
 
@@ -140,37 +200,54 @@ MineRest#summary Mine REST API Reference
 
   * HTTP Method: GET
   * URL: <tt>/api/comment/item/_iid_._format_</tt>
+  * Parameters: `page`, `span`, `callback`
+  * Result Envelope: Paged
+  * Result: list of comment structure
   * Notes: use _iid_=0 for wildcard
 
 === create-comment ===
 
   * HTTP Method: POST
   * URL: <tt>/api/comment/item/_iid_._format_</tt>
+  * Parameters: 
+  * Result Envelope: Standard
+  * Result: comment structure
 
 === delete-comment ===
 
   * HTTP Method: DELETE
   * URL: <tt>/api/comment/_cid_._format_</tt>
+  * Result Envelope: Standard
+  * Result: none
 
 === read-comment ===
 
   * HTTP Method: GET
   * URL: <tt>/api/comment/_cid_._format_</tt>
+  * Result Envelope: Standard
+  * Result: comment structure
 
 === update-comment ===
 
   * HTTP Method: POST
   * URL: <tt>/api/comment/_cid_._format_</tt>
+  * Parameters: 
+  * Result Envelope: Standard
+  * Result: comment structure
 
 === delete-comment-key ===
 
   * HTTP Method: DELETE
   * URL: <tt>/api/comment/_cid_/_key_._format_</tt>
+  * Result Envelope: Standard
+  * Result: none
 
 === get-comment-key ===
 
   * HTTP Method: GET
   * URL: <tt>/api/comment/_cid_/_key_._format_</tt>
+  * Result Envelope: Standard
+  * Result: value
 
 ----
 
@@ -180,12 +257,18 @@ MineRest#summary Mine REST API Reference
 
   * HTTP Method: GET
   * URL: <tt>/api/clone/_iid_._format_</tt>
+  * Parameters: `page`, `span`, `callback`
+  * Result Envelope: Paged
+  * Result: list of item structure
   * Notes: use _iid_=0 for wildcard
 
 === create-clone ===
 
   * HTTP Method: POST
   * URL: <tt>/api/clone/_iid_._format_</tt>
+  * Parameters: 
+  * Result Envelope: Standard
+  * Result: item structure
 
 ----
 
@@ -201,21 +284,31 @@ _tbd_
 
   * HTTP Method: GET
   * URL: <tt>/api/registry._format_</tt>
+  * Parameters: `page`, `span`, `callback`
+  * Result Envelope: Paged
+  * Result: list of key, value
 
 === update-registry ===
 
   * HTTP Method: POST
   * URL: <tt>/api/registry._format_</tt>
+  * Parameters: `key`, `value`
+  * Result Envelope: Standard
+  * Result: value
 
 === delete-registry-key ===
 
   * HTTP Method: DELETE
   * URL: <tt>/api/registry/_key_._format_</tt>
+  * Result Envelope: Standard
+  * Result: none
 
 === get-registry-key ===
 
   * HTTP Method: GET
   * URL: <tt>/api/registry/_key_._format_</tt>
+  * Result Envelope: Standard
+  * Result: value
 
 ----
 
@@ -225,16 +318,25 @@ _tbd_
 
   * HTTP Method: GET
   * URL: <tt>/api/select/item._format_</tt>
+  * Parameters: `query`, `page`, `span`, `callback`
+  * Result Envelope: Paged
+  * Result: list of item structure
 
 === read-select-relation ===
 
   * HTTP Method: GET
   * URL: <tt>/api/select/relation._format_</tt>
+  * Parameters: `query`, `page`, `span`, `callback`
+  * Result Envelope: Paged
+  * Result: list of relation structure
 
 === read-select-tag ===
 
   * HTTP Method: GET
   * URL: <tt>/api/select/tag._format_</tt>
+  * Parameters: `query`, `page`, `span`, `callback`
+  * Result Envelope: Paged
+  * Result: list of tag structure
 
 ----
 
@@ -244,16 +346,22 @@ _tbd_
 
   * HTTP Method: GET
   * URL: <tt>/api/url/_rid_._format_</tt>
+  * Result Envelope: Standard
+  * Result: string
 
 === encode-minekey2 ===
 
   * HTTP Method: GET
   * URL: <tt>/api/url/_rid_/_iid_._format_</tt>
+  * Result Envelope: Standard
+  * Result: string
 
 === encode-minekey3 ===
 
   * HTTP Method: GET
   * URL: <tt>/api/url/_rid_/_rvsn_/_iid_._format_</tt>
+  * Result Envelope: Standard
+  * Result: string
 
 ----
 
@@ -263,6 +371,8 @@ _tbd_
 
   * HTTP Method: GET
   * URL: <tt>/api/version._format_</tt>
+  * Result Envelope: Standard
+  * Result: version structure
 
 ----
 
