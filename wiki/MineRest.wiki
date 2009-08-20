@@ -1,4 +1,4 @@
-MineRest#summary Mine REST API Reference
+#summary Mine REST API Reference
 
 == Glossary ==
 
@@ -49,7 +49,7 @@ MineRest#summary Mine REST API Reference
 
   * HTTP Method: DELETE
   * URL: <tt>/api/item/_iid_._format_</tt>
-  * Parameters: `_method=DELETE`
+  * Parameters: `_method=DELETE` get-kludge
   * Result Envelope: Standard
   * Result: none
 
@@ -73,7 +73,7 @@ MineRest#summary Mine REST API Reference
 
   * HTTP Method: DELETE
   * URL: <tt>/api/item/_iid_/_key_._format_</tt>
-  * Parameters: `_method=DELETE`
+  * Parameters: `_method=DELETE` get-kludge
   * Result Envelope: Standard
   * Result: none
 
@@ -109,7 +109,7 @@ MineRest#summary Mine REST API Reference
 
   * HTTP Method: DELETE
   * URL: <tt>/api/relation/_rid_._format_</tt>
-  * Parameters: `_method=DELETE`
+  * Parameters: `_method=DELETE` get-kludge
   * Result Envelope: Standard
   * Result: none
 
@@ -133,7 +133,7 @@ MineRest#summary Mine REST API Reference
 
   * HTTP Method: DELETE
   * URL: <tt>/api/relation/_rid_/_key_._format_</tt>
-  * Parameters: `_method=DELETE`
+  * Parameters: `_method=DELETE` get-kludge
   * Result Envelope: Standard
   * Result: none
 
@@ -169,7 +169,7 @@ MineRest#summary Mine REST API Reference
 
   * HTTP Method: DELETE
   * URL: <tt>/api/tag/_tid_._format_</tt>
-  * Parameters: `_method=DELETE`
+  * Parameters: `_method=DELETE` get-kludge
   * Result Envelope: Standard
   * Result: none
 
@@ -193,7 +193,7 @@ MineRest#summary Mine REST API Reference
 
   * HTTP Method: DELETE
   * URL: <tt>/api/tag/_tid_/_key_._format_</tt>
-  * Parameters: `_method=DELETE`
+  * Parameters: `_method=DELETE` get-kludge
   * Result Envelope: Standard
   * Result: none
 
@@ -230,7 +230,7 @@ MineRest#summary Mine REST API Reference
 
   * HTTP Method: DELETE
   * URL: <tt>/api/comment/_cid_._format_</tt>
-  * Parameters: `_method=DELETE`
+  * Parameters: `_method=DELETE` get-kludge
   * Result Envelope: Standard
   * Result: none
 
@@ -254,7 +254,7 @@ MineRest#summary Mine REST API Reference
 
   * HTTP Method: DELETE
   * URL: <tt>/api/comment/_cid_/_key_._format_</tt>
-  * Parameters: `_method=DELETE`
+  * Parameters: `_method=DELETE` get-kludge
   * Result Envelope: Standard
   * Result: none
 
@@ -317,7 +317,7 @@ _tbd_
 
   * HTTP Method: DELETE
   * URL: <tt>/api/registry/_key_._format_</tt>
-  * Parameters: `_method=DELETE`
+  * Parameters: `_method=DELETE` get-kludge
   * Result Envelope: Standard
   * Result: none
 
