@@ -370,7 +370,6 @@ def encode_minekey3(request, rid, rvsn, iid, *args, **kwargs):
         'iid': iid,
         'rid': rid,
         'rvsn': rvsn,
-        'cid': 'tbd',
         'depth': 'fake',
         }
 
