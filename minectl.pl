@@ -448,7 +448,7 @@ new-relation FRELATION create /api/relation.json name vers desc tag ...
 ###
 
 # calling the feed and item retreival
-get SUB1PASS read /get?key=KEY minekey
+get SUB1PASS read /get/KEY minekey
 
 # the version command, effectively a no-op / test routine
 version PASSARGS read /api/version.json
