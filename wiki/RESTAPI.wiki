@@ -12,186 +12,228 @@
 
 = Item API =
 
-  * Name: read-item-data
-  * URL: `/api/item/_iid_`
+== read-item-data ==
+
+  * URL: <tt>/api/item/_iid_</tt>
   * HTTP Method: GET
 
-  * Name: list-items
-  * URL: `/api/item._format_`
+== list-items ==
+
+  * URL: <tt>/api/item._format_</tt>
   * HTTP Method: GET
 
-  * Name: create-item
-  * URL: `/api/item._format_`
+== create-item ==
+
+  * URL: <tt>/api/item._format_</tt>
   * HTTP Method: POST
 
-  * Name: delete-item
-  * URL: `/api/item/_iid_._format_`
+== delete-item ==
+
+  * URL: <tt>/api/item/_iid_._format_</tt>
   * HTTP Method: DELETE
 
-  * Name: read-item
-  * URL: `/api/item/_iid_._format_`
+== read-item ==
+
+  * URL: <tt>/api/item/_iid_._format_</tt>
   * HTTP Method: GET
 
-  * Name: update-item
-  * URL: `/api/item/_iid_._format_`
+== update-item ==
+
+  * URL: <tt>/api/item/_iid_._format_</tt>
   * HTTP Method: POST
 
-  * Name: delete-item-key
-  * URL: `/api/item/_iid_/_key_._format_`
+== delete-item-key ==
+
+  * URL: <tt>/api/item/_iid_/_key_._format_</tt>
   * HTTP Method: DELETE
 
-  * Name: get-item-key
-  * URL: `/api/item/_iid_/_key_._format_`
+== get-item-key ==
+
+  * URL: <tt>/api/item/_iid_/_key_._format_</tt>
   * HTTP Method: GET
 
 = Relation API =
 
-  * Name: list-relations
-  * URL: `/api/relation._format_`
+== list-relations ==
+
+  * URL: <tt>/api/relation._format_</tt>
   * HTTP Method: GET
 
-  * Name: create-relation
-  * URL: `/api/relation._format_`
+== create-relation ==
+
+  * URL: <tt>/api/relation._format_</tt>
   * HTTP Method: POST
 
-  * Name: delete-relation
-  * URL: `/api/relation/_rid_._format_`
+== delete-relation ==
+
+  * URL: <tt>/api/relation/_rid_._format_</tt>
   * HTTP Method: DELETE
 
-  * Name: read-relation
-  * URL: `/api/relation/_rid_._format_`
+== read-relation ==
+
+  * URL: <tt>/api/relation/_rid_._format_</tt>
   * HTTP Method: GET
 
-  * Name: update-relation
-  * URL: `/api/relation/_rid_._format_`
+== update-relation ==
+
+  * URL: <tt>/api/relation/_rid_._format_</tt>
   * HTTP Method: POST
 
-  * Name: delete-relation-key
-  * URL: `/api/relation/_rid_/_key_._format_`
+== delete-relation-key ==
+
+  * URL: <tt>/api/relation/_rid_/_key_._format_</tt>
   * HTTP Method: DELETE
 
-  * Name: get-relation-key
-  * URL: `/api/relation/_rid_/_key_._format_`
+== get-relation-key ==
+
+  * URL: <tt>/api/relation/_rid_/_key_._format_</tt>
   * HTTP Method: GET
 
 = Tag API =
 
-  * Name: list-tags
-  * URL: `/api/tag._format_`
+== list-tags ==
+
+  * URL: <tt>/api/tag._format_</tt>
   * HTTP Method: GET
 
-  * Name: create-tag
-  * URL: `/api/tag._format_`
+== create-tag ==
+
+  * URL: <tt>/api/tag._format_</tt>
   * HTTP Method: POST
 
-  * Name: delete-tag
-  * URL: `/api/tag/TID._format_`
+== delete-tag ==
+
+  * URL: <tt>/api/tag/TID._format_</tt>
   * HTTP Method: DELETE
 
-  * Name: read-tag
-  * URL: `/api/tag/TID._format_`
+== read-tag ==
+
+  * URL: <tt>/api/tag/TID._format_</tt>
   * HTTP Method: GET
 
-  * Name: update-tag
-  * URL: `/api/tag/TID._format_`
+== update-tag ==
+
+  * URL: <tt>/api/tag/TID._format_</tt>
   * HTTP Method: POST
 
-  * Name: delete-tag-key
-  * URL: `/api/tag/TID/_key_._format_`
+== delete-tag-key ==
+
+  * URL: <tt>/api/tag/TID/_key_._format_</tt>
   * HTTP Method: DELETE
 
-  * Name: get-tag-key
-  * URL: `/api/tag/TID/_key_._format_`
+== get-tag-key ==
+
+  * URL: <tt>/api/tag/TID/_key_._format_</tt>
   * HTTP Method: GET
 
 = Commenting API =
 
-  * Name: list-comments (_iid_=0 for wildcard)
-  * URL: `/api/comment/item/_iid_._format_`
+== list-comments (_iid_=0 for wildcard) ==
+
+  * URL: <tt>/api/comment/item/_iid_._format_</tt>
   * HTTP Method: GET
 
-  * Name: create-comment
-  * URL: `/api/comment/item/_iid_._format_`
+== create-comment ==
+
+  * URL: <tt>/api/comment/item/_iid_._format_</tt>
   * HTTP Method: POST
 
-  * Name: delete-comment
-  * URL: `/api/comment/_cid_._format_`
+== delete-comment ==
+
+  * URL: <tt>/api/comment/_cid_._format_</tt>
   * HTTP Method: DELETE
 
-  * Name: read-comment
-  * URL: `/api/comment/_cid_._format_`
+== read-comment ==
+
+  * URL: <tt>/api/comment/_cid_._format_</tt>
   * HTTP Method: GET
 
-  * Name: update-comment
-  * URL: `/api/comment/_cid_._format_`
+== update-comment ==
+
+  * URL: <tt>/api/comment/_cid_._format_</tt>
   * HTTP Method: POST
 
-  * Name: delete-comment-key
-  * URL: `/api/comment/_cid_/_key_._format_`
+== delete-comment-key ==
+
+  * URL: <tt>/api/comment/_cid_/_key_._format_</tt>
   * HTTP Method: DELETE
 
-  * Name: get-comment-key
-  * URL: `/api/comment/_cid_/_key_._format_`
+== get-comment-key ==
+
+  * URL: <tt>/api/comment/_cid_/_key_._format_</tt>
   * HTTP Method: GET
 
 = Item Cloning API =
 
-  * Name: list-clones (_iid_=0 for wildcard)
-  * URL: `/api/clone/_iid_._format_`
+== list-clones (_iid_=0 for wildcard) ==
+
+  * URL: <tt>/api/clone/_iid_._format_</tt>
   * HTTP Method: GET
 
-  * Name: create-clone
-  * URL: `/api/clone/_iid_._format_`
+== create-clone ==
+
+  * URL: <tt>/api/clone/_iid_._format_</tt>
   * HTTP Method: POST
 
 = Registry API / Configuration Information =
 
-  * Name: read-registry
-  * URL: `/api/registry._format_`
+== read-registry ==
+
+  * URL: <tt>/api/registry._format_</tt>
   * HTTP Method: GET
 
-  * Name: update-registry
-  * URL: `/api/registry._format_`
+== update-registry ==
+
+  * URL: <tt>/api/registry._format_</tt>
   * HTTP Method: POST
 
-  * Name: delete-registry-key
-  * URL: `/api/registry/_key_._format_`
+== delete-registry-key ==
+
+  * URL: <tt>/api/registry/_key_._format_</tt>
   * HTTP Method: DELETE
 
-  * Name: get-registry-key
-  * URL: `/api/registry/_key_._format_`
+== get-registry-key ==
+
+  * URL: <tt>/api/registry/_key_._format_</tt>
   * HTTP Method: GET
 
 = Selection API =
 
-  * Name: read-select-item
-  * URL: `/api/select/item._format_`
+== read-select-item ==
+
+  * URL: <tt>/api/select/item._format_</tt>
   * HTTP Method: GET
 
-  * Name: read-select-relation
-  * URL: `/api/select/relation._format_`
+== read-select-relation ==
+
+  * URL: <tt>/api/select/relation._format_</tt>
   * HTTP Method: GET
 
-  * Name: read-select-tag
-  * URL: `/api/select/tag._format_`
+== read-select-tag ==
+
+  * URL: <tt>/api/select/tag._format_</tt>
   * HTTP Method: GET
 
 = Minekey Generation =
 
-  * Name: encode-minekey1
-  * URL: `/api/url/_rid_._format_`
+== encode-minekey1 ==
+
+  * URL: <tt>/api/url/_rid_._format_</tt>
   * HTTP Method: GET
 
-  * Name: encode-minekey2
-  * URL: `/api/url/_rid_/_iid_._format_`
+== encode-minekey2 ==
+
+  * URL: <tt>/api/url/_rid_/_iid_._format_</tt>
   * HTTP Method: GET
 
-  * Name: encode-minekey3
-  * URL: `/api/url/_rid_/_rvsn_/_iid_._format_`
+== encode-minekey3 ==
+
+  * URL: <tt>/api/url/_rid_/_rvsn_/_iid_._format_</tt>
   * HTTP Method: GET
 
 = Misc =
 
-  * Name: read-version
-  * URL: `/api/version._format_`
+== read-version ==
+
+  * URL: <tt>/api/version._format_</tt>
   * HTTP Method: GET
