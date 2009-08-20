@@ -266,19 +266,19 @@ _tbd_
 
 ----
 
-= Model / Key Reference =
+= Model Key Reference =
 
-|| Structure Name (ie: key) || Corresponding Model.Attribute || Type || Notes ||
+|| Structure Name (ie: key) || Corresponding Model.field || Type || Notes ||
 || commentBody || Comment.body || string || - ||
 || commentCreated || Comment.created || date || - ||
 || commentId || Comment.id || int || - ||
-|| commentItem || Comment.item || int || stored as ForeignKey(Item) ||
+|| commentItem || Comment.item || int || stored as !ForeignKey(Item) ||
 || commentLastModified || Comment.last_modified || date || - ||
 || commentLikes || Comment.likes || boolean || - ||
-|| commentRelation || Comment.relation || string || stored as ForeignKey(Relation) ||
+|| commentRelation || Comment.relation || string || stored as !ForeignKey(Relation) ||
 || commentTitle || Comment.title || string || - ||
 || itemCreated || Item.created || date || - ||
-|| itemData || Item.data || string || FileField - ||
+|| itemData || Item.data || file || - ||
 || itemDescription || Item.description || string || - ||
 || itemHideAfter || Item.hide_after || date || - ||
 || itemHideBefore || Item.hide_before || date || - ||
@@ -286,7 +286,7 @@ _tbd_
 || itemLastModified || Item.last_modified || date || - ||
 || itemName || Item.name || string || - ||
 || itemStatus || Item.status || string || enumeration: private, shared, public ||
-|| itemTags || Item.tags || string || stored as multple ManyToMany fields ||
+|| itemTags || Item.tags || string || parsed into multiple !ManyToMany fields ||
 || itemType || Item.content_type || string || -  ||
 || relationCallbackURL || Relation.url_callback || string || - ||
 || relationCreated || Relation.created || date || - ||
@@ -297,7 +297,7 @@ _tbd_
 || relationHomepageURL || Relation.url_homepage || string || - ||
 || relationId || Relation.id || int || - ||
 || relationImageURL || Relation.url_image || string || - ||
-|| relationInterests || Relation.interests || string || stored as multple ManyToMany fields ||
+|| relationInterests || Relation.interests || string || parsed into multiple !ManyToMany fields ||
 || relationLastModified || Relation.last_modified || date || - ||
 || relationName || Relation.name || string || - ||
 || relationNetworkPattern || Relation.network_pattern || string || - ||
@@ -305,7 +305,7 @@ _tbd_
 || tagCreated || Tag.created || date || - ||
 || tagDescription || Tag.description || string || - ||
 || tagId || Tag.id || int || - ||
-|| tagImplies || Tag.implies || string || stored as ManyToManyField(Tag) ||
+|| tagImplies || Tag.implies || string || stored as !ManyToManyField(Tag) ||
 || tagLastModified || Tag.last_modified || date || - ||
 || tagName || Tag.name || string || - ||
 || vurlCreated || VanityURL.created || date || - ||
@@ -313,4 +313,4 @@ _tbd_
 || vurlLastModified || VanityURL.last_modified || date || - ||
 || vurlLink || VanityURL.link || string || - ||
 || vurlName || VanityURL.name || string || - ||
-|| vurlTags || VanityURL.tags || string || stored as ManyToManyField(Tag) ||
+|| vurlTags || VanityURL.tags || string || stored as !ManyToManyField(Tag) ||
