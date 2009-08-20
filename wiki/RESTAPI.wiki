@@ -10,6 +10,8 @@
   * _format_ = `"xml"` | `"json"`
   * _key_ = structure element name, eg: "relationName", camelcase, case-sensitive
 
+----
+
 = Item API =
 
 == read-item-data ==
@@ -52,6 +54,8 @@
   * HTTP Method: GET
   * URL: <tt>/api/item/_iid_/_key_._format_</tt>
 
+----
+
 = Relation API =
 
 == list-relations ==
@@ -89,6 +93,8 @@
   * HTTP Method: GET
   * URL: <tt>/api/relation/_rid_/_key_._format_</tt>
 
+----
+
 = Tag API =
 
 == list-tags ==
@@ -125,6 +131,8 @@
 
   * HTTP Method: GET
   * URL: <tt>/api/tag/TID/_key_._format_</tt>
+
+----
 
 = Commenting API =
 
@@ -164,6 +172,8 @@
   * HTTP Method: GET
   * URL: <tt>/api/comment/_cid_/_key_._format_</tt>
 
+----
+
 = Item Cloning API =
 
 == list-clones ==
@@ -176,6 +186,8 @@
 
   * HTTP Method: POST
   * URL: <tt>/api/clone/_iid_._format_</tt>
+
+----
 
 = Registry API / Configuration Information =
 
@@ -199,6 +211,8 @@
   * HTTP Method: GET
   * URL: <tt>/api/registry/_key_._format_</tt>
 
+----
+
 = Selection API =
 
 == read-select-item ==
@@ -216,6 +230,8 @@
   * HTTP Method: GET
   * URL: <tt>/api/select/tag._format_</tt>
 
+----
+
 = Minekey Generation =
 
 == encode-minekey1 ==
@@ -232,6 +248,8 @@
 
   * HTTP Method: GET
   * URL: <tt>/api/url/_rid_/_rvsn_/_iid_._format_</tt>
+
+----
 
 = Misc =
 
