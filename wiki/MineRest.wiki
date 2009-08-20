@@ -401,49 +401,49 @@ _tbd_
 
 == Model Key Reference ==
 
-|| Structure Name (ie: key) || Corresponding Model.field || Type || Notes ||
-|| commentBody || Comment.body || string || - ||
-|| commentCreated || Comment.created || date || - ||
-|| commentId || Comment.id || int || - ||
-|| commentItem || Comment.item || int || stored as !ForeignKey(Item), shown as `itemId` ||
-|| commentLastModified || Comment.last_modified || date || - ||
-|| commentLikes || Comment.likes || boolean || - ||
-|| commentRelation || Comment.relation || string || stored as !ForeignKey(Relation),shown as `relationName` ||
-|| commentTitle || Comment.title || string || - ||
-|| itemCreated || Item.created || date || - ||
-|| itemData || Item.data || file || - ||
-|| itemDescription || Item.description || string || - ||
-|| itemHideAfter || Item.hide_after || date || - ||
-|| itemHideBefore || Item.hide_before || date || - ||
-|| itemId || Item.id || int || - ||
-|| itemLastModified || Item.last_modified || date || - ||
-|| itemName || Item.name || string || - ||
-|| itemStatus || Item.status || string || enumeration; `private shared public` ||
-|| itemTags || Item.tags || string || parsed into multiple !ManyToMany fields; `tag1 for:rel1 not:rel2 ...` ||
-|| itemType || Item.content_type || string || -  ||
-|| relationCallbackURL || Relation.url_callback || string || - ||
-|| relationCreated || Relation.created || date || - ||
-|| relationDescription || Relation.description || string || - ||
-|| relationEmailAddress || Relation.email_address || string || - ||
-|| relationEmbargoAfter || Relation.embargo_after || date || - ||
-|| relationEmbargoBefore || Relation.embargo_before || date || - ||
-|| relationHomepageURL || Relation.url_homepage || string || - ||
-|| relationId || Relation.id || int || - ||
-|| relationImageURL || Relation.url_image || string || - ||
-|| relationInterests || Relation.interests || string || parsed into multiple !ManyToMany fields; `tag1 require:tag2 exclude:tag3 ...` ||
-|| relationLastModified || Relation.last_modified || date || - ||
-|| relationName || Relation.name || string || - ||
-|| relationNetworkPattern || Relation.network_pattern || string || - ||
-|| relationVersion || Relation.version || int || - ||
-|| tagCreated || Tag.created || date || - ||
-|| tagDescription || Tag.description || string || - ||
-|| tagId || Tag.id || int || - ||
-|| tagImplies || Tag.implies || string || stored as !ManyToManyField(Tag); `tag1 tag2 tag3 ...` ||
-|| tagLastModified || Tag.last_modified || date || - ||
-|| tagName || Tag.name || string || - ||
-|| vurlCreated || VanityURL.created || date || - ||
-|| vurlId || VanityURL.id || int || - ||
-|| vurlLastModified || VanityURL.last_modified || date || - ||
-|| vurlLink || VanityURL.link || string || - ||
-|| vurlName || VanityURL.name || string || - ||
-|| vurlTags || VanityURL.tags || string || stored as !ManyToManyField(Tag); `tag1 tag2 tag3 ...` ||
+|| Structure Name (ie: key) || Writable? || Corresponding Model.field || Type || Notes ||
+|| commentBody || Y || Comment.body || string || - ||
+|| commentCreated || . || Comment.created || date || - ||
+|| commentId || . || Comment.id || int || - ||
+|| commentItem || Y || Comment.item || int || stored as !ForeignKey(Item), shown as `itemId` ||
+|| commentLastModified || . || Comment.last_modified || date || - ||
+|| commentLikes || Y || Comment.likes || boolean || - ||
+|| commentRelation || Y || Comment.relation || string || stored as !ForeignKey(Relation),shown as `relationName` ||
+|| commentTitle || Y || Comment.title || string || - ||
+|| itemCreated || . || Item.created || date || - ||
+|| itemData || Y || Item.data || file || - ||
+|| itemDescription || Y || Item.description || string || - ||
+|| itemHideAfter || Y || Item.hide_after || date || - ||
+|| itemHideBefore || Y || Item.hide_before || date || - ||
+|| itemId || . || Item.id || int || - ||
+|| itemLastModified || . || Item.last_modified || date || - ||
+|| itemName || Y || Item.name || string || - ||
+|| itemStatus || Y || Item.status || string || enumeration; `private shared public` ||
+|| itemTags || Y || Item.tags || string || parsed into multiple !ManyToMany fields; `tag1 for:rel1 not:rel2 ...` ||
+|| itemType || Y || Item.content_type || string || -  ||
+|| relationCallbackURL || Y || Relation.url_callback || string || - ||
+|| relationCreated || . || Relation.created || date || - ||
+|| relationDescription || Y || Relation.description || string || - ||
+|| relationEmailAddress || Y || Relation.email_address || string || - ||
+|| relationEmbargoAfter || Y || Relation.embargo_after || date || - ||
+|| relationEmbargoBefore || Y || Relation.embargo_before || date || - ||
+|| relationHomepageURL || Y || Relation.url_homepage || string || - ||
+|| relationId || . || Relation.id || int || - ||
+|| relationImageURL || Y || Relation.url_image || string || - ||
+|| relationInterests || Y || Relation.interests || string || parsed into multiple !ManyToMany fields; `tag1 require:tag2 exclude:tag3 ...` ||
+|| relationLastModified || . || Relation.last_modified || date || - ||
+|| relationName || Y || Relation.name || string || - ||
+|| relationNetworkPattern || Y || Relation.network_pattern || string || - ||
+|| relationVersion || Y || Relation.version || int || - ||
+|| tagCreated || . || Tag.created || date || - ||
+|| tagDescription || Y || Tag.description || string || - ||
+|| tagId || . || Tag.id || int || - ||
+|| tagImplies || Y || Tag.implies || string || stored as !ManyToManyField(Tag); `tag1 tag2 tag3 ...` ||
+|| tagLastModified || . || Tag.last_modified || date || - ||
+|| tagName || Y || Tag.name || string || - ||
+|| vurlCreated || . || VanityURL.created || date || - ||
+|| vurlId || . || VanityURL.id || int || - ||
+|| vurlLastModified || . || VanityURL.last_modified || date || - ||
+|| vurlLink || Y || VanityURL.link || string || - ||
+|| vurlName || Y || VanityURL.name || string || - ||
+|| vurlTags || Y || VanityURL.tags || string || stored as !ManyToManyField(Tag); `tag1 tag2 tag3 ...` ||
