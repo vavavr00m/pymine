@@ -21,7 +21,6 @@ from django.http import Http404, HttpResponse, HttpResponseRedirect
 from django.shortcuts import render_to_response, get_object_or_404
 
 from mine.models import Tag, Item, Relation, Comment
-from mine.models import request_to_model_and_save
 
 #from pymine.tools.io import FileBlockIterator
 
