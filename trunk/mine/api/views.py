@@ -39,16 +39,13 @@ def api_retval(result=None, **kwargs):
 	    template[k] = v
     return template
 
-# see note in mine/model.py regards not yet doing something sensible
-# about having Modelname.saveRequest() and similar; it will happen...
-
 def list_foos(model):
-    result = [ m.structure() for m in model.objects.all() ]
+    result = [ m.to_structure() for m in model.objects.all() ]
     return api_retval(result, totalsize=len(result))
 
-def create_foo(modelname, request):
-    m = request_to_model_and_save(modelname, request)
-    return api_retval(m.structure())
+def create_foo(model, request):
+    m = model.new_from_request(request)
+    return api_retval(m.to_structure())
 
 def delete_foo(model, mid):
     m = model.objects.get(id=int(mid))
@@ -57,21 +54,24 @@ def delete_foo(model, mid):
 
 def read_foo(model, mid):
     m = model.objects.get(id=int(mid))
-    return api_retval(m.structure())
+    return api_retval(m.to_structure())
 
-def update_foo(modelname, request, mid):
-    m = request_to_model_and_save(modelname, request, int(mid))
-    return api_retval(m.structure())
-
-def delete_foo_key(model, id, key):
-    raise Exception, 'delete_foo_key not yet implemented'
-
-def get_foo_key(model, id, key):
+def update_foo(model, request, mid):
     m = model.objects.get(id=int(mid))
-    s = m.structure()
-    if not key in s:
-	raise Exception, "key not found: " + key
-    return api_retval(s[key])
+    m.update_from_request(request)
+    return api_retval(m.to_structure())
+
+def delete_foo_key(model, id, sattr):
+    m = model.objects.get(id=int(mid))
+    m.delete_sattr(sattr)
+    return api_retval(m.to_structure())
+
+def get_foo_key(model, id, sattr):
+    m = model.objects.get(id=int(mid))
+    s = m.to_structure()
+    if not sattr in s:
+	raise Exception, "sattr not found: " + sattr
+    return api_retval(s[sattr])
 
 ##################################################################
 ##################################################################
@@ -107,7 +107,7 @@ def list_items(request, *args, **kwargs):
 ## function: create_item
 ## declared args:
 def create_item(request, *args, **kwargs):
-    return create_foo('item', request)
+    return create_foo(Item, request)
 
 ## rest: DELETE /api/item/IID.FMT
 ## function: delete_item
@@ -125,7 +125,7 @@ def read_item(request, iid, *args, **kwargs):
 ## function: update_item
 ## declared args: iid
 def update_item(request, iid, *args, **kwargs):
-    return update_foo('item', request, iid)
+    return update_foo(Item, request, iid)
 
 ## rest: DELETE /api/item/IID/KEY.FMT
 ## function: delete_item_key
@@ -151,7 +151,7 @@ def list_relations(request, *args, **kwargs):
 ## function: create_relation
 ## declared args:
 def create_relation(request, *args, **kwargs):
-    return create_foo('relation', request)
+    return create_foo(Relation, request)
 
 ## rest: DELETE /api/relation/RID.FMT
 ## function: delete_relation
@@ -169,7 +169,7 @@ def read_relation(request, rid, *args, **kwargs):
 ## function: update_relation
 ## declared args: rid
 def update_relation(request, rid, *args, **kwargs):
-    return update_foo('relation', request, rid)
+    return update_foo(Relation, request, rid)
 
 ## rest: DELETE /api/relation/RID/KEY.FMT
 ## function: delete_relation_key
@@ -195,7 +195,7 @@ def list_tags(request, *args, **kwargs):
 ## function: create_tag
 ## declared args:
 def create_tag(request, *args, **kwargs):
-    return create_foo('tag', request)
+    return create_foo(Tag, request)
 
 ## rest: DELETE /api/tag/TID.FMT
 ## function: delete_tag
@@ -213,7 +213,7 @@ def read_tag(request, tid, *args, **kwargs):
 ## function: update_tag
 ## declared args: tid
 def update_tag(request, tid, *args, **kwargs):
-    return update_foo('tag', request, tid)
+    return update_foo(Tag, request, tid)
 
 ## rest: DELETE /api/tag/TID/KEY.FMT
 ## function: delete_tag_key
@@ -235,17 +235,17 @@ def get_tag_key(request, tid, key, *args, **kwargs):
 def list_comments(request, iid, *args, **kwargs):
     item_id = int(iid)
     if item_id == 0:
-        result = [ m.structure() for m in Comment.objects.all() ]
+        result = [ m.to_structure() for m in Comment.objects.all() ]
     else:
-        result = [ m.structure() for m in Comment.objects.filter(item=Item.objects.get(id=item_id)) ]
+        result = [ m.to_structure() for m in Comment.objects.filter(item=Item.objects.get(id=item_id)) ]
     return api_retval(result, totalsize=len(result))
 
 ## rest: POST /api/comment/item/IID.FMT
 ## function: create_comment
 ## declared args: iid
 def create_comment(request, iid, *args, **kwargs):
-    m = request_to_model_and_save('tag', request)
-    return api_retval(m.structure())
+    m = request_to_model_and_save(Comment, request)
+    return api_retval(m.to_structure())
 
 ## rest: DELETE /api/comment/CID.FMT
 ## function: delete_comment
@@ -263,7 +263,7 @@ def read_comment(request, cid, *args, **kwargs):
 ## function: update_comment
 ## declared args: cid
 def update_comment(request, cid, *args, **kwargs):
-    return update_foo('comment', request, cid)
+    return update_foo(Comment, request, cid)
 
 ## rest: DELETE /api/comment/CID/KEY.FMT
 ## function: delete_comment_key
