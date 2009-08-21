@@ -429,7 +429,7 @@ class Thing():
     # the old one, then updates it from the request]
 
     @transaction.commit_on_success # <- rollback if it raises an exception
-    def update_from_request(self, r):
+    def update_from_request(self, r, **kwargs):
 
 	# build a shadow structure: useful for debug/clarity
 	s = {}
@@ -438,7 +438,11 @@ class Thing():
 	for sattr, (r2s_func, s2m_func, mattr) in self.s2m_table[self.sattr_prefix].iteritems():
 
 	    # is it there?
-	    if not sattr in r.REQUEST: continue
+	    if not sattr in r.REQUEST: 
+                continue  # XXXXXX TBD ------ instead of bailing here, check if it is in kwargs
+
+
+
 
 	    # rip the attribute out of the request and convert to python int/str
 	    r2s_func(r, sattr, s)
@@ -478,7 +482,7 @@ class Thing():
 
     # cloning an item, as described above
 
-    def clone_from_request(self, r):
+    def clone_from_request(self, r, **kwargs):
 	if self.sattr_prefix != 'item':
 	    raise Exception, "clone_from_request called on non-item"
 
@@ -486,16 +490,16 @@ class Thing():
 	margs = {}
 	m = instantiator(**margs)
 	### XXX: TBD: clone self to m here
-	return m.update_from_request(r)
+	return m.update_from_request(r, **kwargs)
 
     # creating a new model
 
     @classmethod # <- new_from_request is an alternative constructor, ergo: classmethod
-    def new_from_request(self, r):
+    def new_from_request(self, r, **kwargs):
 	instantiator = self.s_classes[self.sattr_prefix]
 	margs = {}
 	m = instantiator(**margs)
-	return m.update_from_request(r)
+	return m.update_from_request(r, **kwargs)
 
     # looking up a mattr from a sattr is tedious since it has to be
     # done in two places; this wraps that for convenience
