@@ -6,6 +6,7 @@ cat <<EOF
 <LI><A HREF="/admin">django administration</A></LI>
 <p/>
 
+<LI><A HREF="/">top root</A></LI>
 <LI><A HREF="/mine">mine root</A></LI>
 <p/>
 
@@ -21,7 +22,7 @@ cat <<EOF
 <p/>
 
 <LI><A HREF="/mine/ui/create-comment/1.html">create-comment ON ITEM 1</A></LI>
-<LI><A HREF="mine/ui/create-item.html">create-item</A></LI>
+<LI><A HREF="/mine/ui/create-item.html">create-item</A></LI>
 <LI><A HREF="/mine/ui/create-relation.html">create-relation</A></LI>
 <LI><A HREF="/mine/ui/create-tag.html">create-tag</A></LI>
 <p/>
