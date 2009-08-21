@@ -1,4 +1,8 @@
-<h2>you are looking at read-registry.html</h2>
+#!/bin/sh
+
+
+boilerplate() {
+cat <<EOF
 <LI><A HREF="/admin">django administration</A></LI>
 <p/>
 
@@ -49,3 +53,12 @@
 <LI><A HREF="/mine/ui/read-registry.html">read-registry</A></LI>
 <LI><A HREF="/mine/ui/update-registry.html">update-registry</A></LI>
 <p/>
+EOF
+}
+
+for i in *.html
+do
+    echo "<h2>you are looking at $i</h2>" > $i
+    boilerplate >> $i
+done
+
