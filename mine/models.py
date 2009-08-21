@@ -29,10 +29,10 @@ item_status_choices = (
     ( 'P', 'public' ),
     )
 
-item_lookup_short = {} # create a reverse lookup table, long->short
+status_lookup = {} # create a reverse lookup table, long->short
 
 for short, long in item_status_choices:
-    item_lookup_short[long] = short
+    status_lookup[long] = short
 
 item_file_storage = FileSystemStorage(location = settings.MINE_DBDIR_FILES)
 
@@ -222,6 +222,7 @@ def s2m_itemstatus(s, sattr, m, mattr):
     if mattr != 'status' or sattr != 'itemStatus':
 	raise Exception, "m2s_itemtags is confused"
     x = s[sattr]
+
     if x in status_lookup:
 	setattr(m, mattr, status_lookup[x])
     else:
@@ -299,12 +300,17 @@ def s2m_relints(s, sattr, m, mattr):
 
 # 4) return an entire s-structure populated from a model
 
+# Methods are provided below in Thing() to permit the above and then
+# are inherited by most of the Mine models; for this to work there
+# needs to be a small amount of linker logic to bypass major circular
+# dependencies, and that's provided at the end of this file.
+
 class Thing():
 
     # sattr_prefix will be checked in methods below, inheriting from
-    # subclasses of Thing.  
+    # subclasses of Thing.
 
-    sattr_prefix = 'thing' # illegal; subclass should override this
+    sattr_prefix = 'thing' # subclass should override this for runtime
     id = 42 # fake
 
     # IMPORTANT: see s_classes registration at the bottom of this
@@ -314,13 +320,13 @@ class Thing():
     # and then have the registration code populate them for runtime.
 
     s_classes = {
-        'thing': None, # will be populated later
-        'comment': None, # will be populated later
-        'item': None, # will be populated later
-        'relation': None, # will be populated later
-        'tag': None, # will be populated later
-        'vurl': None, # will be populated later
-        } 
+	'thing': None, # will be populated later
+	'comment': None, # will be populated later
+	'item': None, # will be populated later
+	'relation': None, # will be populated later
+	'tag': None, # will be populated later
+	'vurl': None, # will be populated later
+	}
 
     # enormous table of things to make and do
 
@@ -382,14 +388,19 @@ class Thing():
     # m.save(); this is OK because there is a rollback set up around
     # the model-alteration method in case an exception is thrown.
 
+    # these tables get used to map sattr and marrt names to the tuples
+    # of how-to-convert from one to the other.
+
     m2s_table = {}
     s2m_table = {}
     defer_s2m_table = {}
 
+    # table population; we shall be asking questions later.
+
     for prefix in s_classes.iterkeys():
-        m2s_table[prefix] = {}
-        s2m_table[prefix] = {}
-        defer_s2m_table[prefix] = {}
+	m2s_table[prefix] = {}
+	s2m_table[prefix] = {}
+	defer_s2m_table[prefix] = {}
 
     for (sattr, mattr, deferflag, r2s_func, s2m_func, m2s_func) in sattr_conversion_table:
 	for prefix in s_classes.iterkeys():
@@ -403,82 +414,95 @@ class Thing():
 		    else:
 			s2m_table[prefix][sattr] = t
 		break # for loop
-        else: # for loop
-            raise Exception, "unrecognised prefix in sattr_conversion: " + sattr
+	else: # for loop; you can have a else: for a for loop in python, how cool!
+	    raise Exception, "unrecognised prefix in sattr_conversion: " + sattr
 
-    def __unicode__(self):
-	return self.name # a django favourite
+    # update_from_request updates a (possibly blank) instance of a
+    # model, with data that comes from a HttpRequest (ie: that is in
+    # r-space)
+
+    # it is used as a backend by new_from_request() [which creates a
+    # blank model instance, then updates it from the request] *and* by
+    # clone_from_request() [which creates a blank Item, clones it from
+    # the old one, then updates it from the request]
 
     @transaction.commit_on_success # <- rollback if it raises an exception
-    def update_from_request(self, request):
+    def update_from_request(self, r):
 
-        # build a shadow structure: useful for debug/clarity
-        s = {}
+	# build a shadow structure: useful for debug/clarity
+	s = {}
 
-        # for each target attribute
-        for sattr, (r2s_func, s2m_func, mattr) in s2m_table[kind].iteritems():
+	# for each target attribute
+	for sattr, (r2s_func, s2m_func, mattr) in self.s2m_table[self.sattr_prefix].iteritems():
 
-            # is it there?
-            if not sattr in r.REQUEST: continue
+	    # is it there?
+	    if not sattr in r.REQUEST: continue
 
-            # rip the attribute out of the request and convert to python int/str
-            r2s_func(r, sattr, s)
+	    # rip the attribute out of the request and convert to python int/str
+	    r2s_func(r, sattr, s)
 
-            # s2m the value into the appropriate attribute
-            s2m_func(s, sattr, self, mattr)
+	    # s2m the value into the appropriate attribute
+	    s2m_func(s, sattr, self, mattr)
 
-        # save the model
-        self.save()
+	# save the model
+	self.save()
 
-        # do the deferred (post-save) initialisation
-        needs_save = False
+	# do the deferred (post-save) initialisation
+	needs_save = False
 
-        # for each deferred target attribute
-        for sattr, (r2s_func, s2m_func, mattr) in defer_s2m_table[kind].iteritems():
+	# for each deferred target attribute
+	for sattr, (r2s_func, s2m_func, mattr) in self.defer_s2m_table[self.sattr_prefix].iteritems():
 
-            # special case file-saving, assume <model>.save_uploaded_file() works
-            if sattr in ( 'itemData' ): # ...insert others here...
-                if sattr in r.FILES:
-                    uf = r.FILES[sattr]
-                    ct = uf.content_type
-                    self.save_upload_file(uf)
-                    needs_save = True
+	    # special case file-saving, assume <model>.save_uploaded_file() works
+	    if sattr in ( 'itemData' ): # ...insert others here...
+		if sattr in r.FILES:
+		    uf = r.FILES[sattr]
+		    ct = uf.content_type
+		    self.save_upload_file(uf)
+		    needs_save = True
 
-            else:
-                # repeat the above logic
-                if not sattr in r.REQUEST: continue
-                r2s_func(r, sattr, s)
-                s2m_func(s, sattr, self, mattr)
-                needs_save = True
+	    else:
+		# repeat the above logic
+		if not sattr in r.REQUEST: continue
+		r2s_func(r, sattr, s)
+		s2m_func(s, sattr, self, mattr)
+		needs_save = True
 
-        # update if we did anything
-        if needs_save: self.save()
+	# update if we did anything
+	if needs_save: self.save()
 
-        # return it
-        return self
+	# return it
+	return self
 
-    def clone_from_request(self, request):
-        instantiator = s_classes[self.sattr_prefix]
+    # cloning an item, as described above
+
+    def clone_from_request(self, r):
+	if self.sattr_prefix != 'item':
+	    raise Exception, "clone_from_request called on non-item"
+
+	instantiator = self.s_classes[self.sattr_prefix]
 	margs = {}
 	m = instantiator(**margs)
-        ### XXX: TBD: clone self to m here
-        return m.update_from_request(request)
+	### XXX: TBD: clone self to m here
+	return m.update_from_request(r)
+
+    # creating a new model
 
     @classmethod # <- new_from_request is an alternative constructor, ergo: classmethod
-    def new_from_request(self, request):
-        instantiator = s_classes[self.sattr_prefix]
+    def new_from_request(self, r):
+	instantiator = self.s_classes[self.sattr_prefix]
 	margs = {}
 	m = instantiator(**margs)
-        return m.update_from_request(request)
+	return m.update_from_request(r)
 
     def lookup_mattr(self, sattr):
-        if sattr in s2m_table[self.sattr_prefix][sattr]:
-            r2s_func, s2m_func, mattr = s2m_table[self.sattr_prefix][sattr]
-        elif sattr in defer_s2m_table[self.sattr_prefix][sattr]:
-            r2s_func, s2m_func, mattr = defer_s2m_table[self.sattr_prefix][sattr]
-        else:
-            raise Exception, "lookup_mattr cannot lookup: " + sattr
-        return mattr
+	if sattr in self.s2m_table[self.sattr_prefix][sattr]:
+	    r2s_func, s2m_func, mattr = s2m_table[self.sattr_prefix][sattr]
+	elif sattr in self.defer_s2m_table[self.sattr_prefix][sattr]:
+	    r2s_func, s2m_func, mattr = defer_s2m_table[self.sattr_prefix][sattr]
+	else:
+	    raise Exception, "lookup_mattr cannot lookup: " + sattr
+	return mattr
 
     def get_sattr(self, sattr):
 	# check validity of sattr
@@ -504,10 +528,10 @@ class Thing():
 	pass
 
     def to_structure(self):
-        s = {}
-        for mattr, (m2s_func, sattr) in m2s_table[self.sattr_prefix].iteritems():
-            m2s_func(self, mattr, s, sattr)
-        return s
+	s = {}
+	for mattr, (m2s_func, sattr) in self.m2s_table[self.sattr_prefix].iteritems():
+	    m2s_func(self, mattr, s, sattr)
+	return s
 
 ##################################################################
 ##################################################################
@@ -527,6 +551,9 @@ class Tag(models.Model, Thing):
 
     class Meta:
 	ordering = ['name']
+
+    def __unicode__(self):
+	return self.name
 
 ##################################################################
 
@@ -555,6 +582,9 @@ class Relation(models.Model, Thing):
     class Meta:
 	ordering = ['name']
 
+    def __unicode__(self):
+	return self.name
+
 ##################################################################
 
 class Item(models.Model, Thing):
@@ -579,6 +609,9 @@ class Item(models.Model, Thing):
     class Meta:
 	ordering = ['-last_modified']
 
+    def __unicode__(self):
+	return self.name
+
     def save_upload_file(self, f):
 	if not self.id:
 	    raise Exception, "save_upload_file trying to save a model which has no IID"
@@ -600,6 +633,9 @@ class Comment(models.Model, Thing):
     created = models.DateTimeField(auto_now_add=True)
     last_modified = models.DateTimeField(auto_now=True)
 
+    def __unicode__(self):
+	return self.name
+
     class Meta:
 	ordering = ['-id']
 
@@ -617,6 +653,9 @@ class VanityURL(models.Model, Thing):
     tags = models.ManyToManyField(Tag, related_name='vurls_tagged', null=True, blank=True)
     created = models.DateTimeField(auto_now_add=True)
     last_modified = models.DateTimeField(auto_now=True)
+
+    def __unicode__(self):
+	return self.name
 
     class Meta:
 	ordering = ['-id']
