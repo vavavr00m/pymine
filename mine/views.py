@@ -71,20 +71,17 @@ def API_CALL(request, *args, **kwargs):
 ## function: read_mine_root
 ## declared args: 
 def read_mine_root(request, *args, **kwargs):
-    raise Http404('backend read_mine_root for GET / is not yet implemented') # TO BE DONE
     return render_to_response('read-mine-root.html')
 
 ## rest: GET /doc
 ## function: read_doc_root
 ## declared args: 
 def read_doc_root(request, *args, **kwargs):
-    raise Http404('backend read_doc_root for GET /doc is not yet implemented') # TO BE DONE
     return render_to_response('read-doc-root.html')
 
 ## rest: GET /pub
 ## function: read_pub_root
 ## declared args: 
 def read_pub_root(request, *args, **kwargs):
-    raise Http404('backend read_pub_root for GET /pub is not yet implemented') # TO BE DONE
     return render_to_response('read-pub-root.html')
 

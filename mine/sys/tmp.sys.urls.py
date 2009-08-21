@@ -1,6 +1,0 @@
-    (r'^import$', REST,
-     {'GET': sys.mine_import}),
-    (r'^export$', REST,
-     {'GET': sys.mine_export}),
-    (r'^cleanup$', REST,
-     {'GET': sys.mine_cleanup}),

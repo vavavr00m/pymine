@@ -207,7 +207,7 @@ ui    GET     /ui/create-comment/IID.html      create-comment
 ui    GET     /ui/create-item.html             create-item
 ui    GET     /ui/create-relation.html         create-relation
 ui    GET     /ui/create-tag.html              create-tag
-ui    GET     /ui/delete-comment/IID/CID.html  delete-comment
+ui    GET     /ui/delete-comment/CID.html      delete-comment
 ui    GET     /ui/delete-item/IID.html         delete-item
 ui    GET     /ui/delete-relation/RID.html     delete-relation
 ui    GET     /ui/delete-tag/TID.html          delete-tag
@@ -215,12 +215,12 @@ ui    GET     /ui/list-comments/IID.html       list-comments
 ui    GET     /ui/list-items.html              list-items
 ui    GET     /ui/list-relations.html          list-relations
 ui    GET     /ui/list-tags.html               list-tags
-ui    GET     /ui/read-comment/IID/CID.html    read-comment
+ui    GET     /ui/read-comment/CID.html        read-comment
 ui    GET     /ui/read-item/IID.html           read-item
 ui    GET     /ui/read-registry.html           read-registry
 ui    GET     /ui/read-relation/RID.html       read-relation
 ui    GET     /ui/read-tag/TID.html            read-tag
-ui    GET     /ui/update-comment/IID/CID.html  update-comment
+ui    GET     /ui/update-comment/CID.html      update-comment
 ui    GET     /ui/update-item/IID.html         update-item
 ui    GET     /ui/update-registry.html         update-registry
 ui    GET     /ui/update-relation/RID.html     update-relation
