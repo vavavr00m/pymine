@@ -23,18 +23,20 @@ from django.conf import settings
 
 # important stuff for below
 
+# magic storage for database items
+item_file_storage = FileSystemStorage(location = settings.MINE_DBDIR_FILES)
+
+# choices for the item status
 item_status_choices = (
     ( 'X', 'private' ),
     ( 'S', 'shared' ),
     ( 'P', 'public' ),
     )
 
-status_lookup = {} # create a reverse lookup table, long->short
-
-for short, long in item_status_choices:
-    status_lookup[long] = short
-
-item_file_storage = FileSystemStorage(location = settings.MINE_DBDIR_FILES)
+# create a reverse lookup table, long->short
+# other direction is covered by m.get_status_display()
+status_lookup = {} 
+for short, long in item_status_choices: status_lookup[long] = short
 
 ##################################################################
 
@@ -495,37 +497,62 @@ class Thing():
 	m = instantiator(**margs)
 	return m.update_from_request(r)
 
+    # looking up a mattr from a sattr is tedious since it has to be
+    # done in two places; this wraps that for convenience
+
     def lookup_mattr(self, sattr):
 	if sattr in self.s2m_table[self.sattr_prefix][sattr]:
-	    r2s_func, s2m_func, mattr = s2m_table[self.sattr_prefix][sattr]
+	    t = s2m_table[self.sattr_prefix][sattr]
 	elif sattr in self.defer_s2m_table[self.sattr_prefix][sattr]:
-	    r2s_func, s2m_func, mattr = defer_s2m_table[self.sattr_prefix][sattr]
+	    t = defer_s2m_table[self.sattr_prefix][sattr]
 	else:
 	    raise Exception, "lookup_mattr cannot lookup: " + sattr
-	return mattr
+	return t
+
+    # get_sattr and delete_sattr methods: supporting the
+    # /api/relation/42/relationName.json and similar methods.
 
     def get_sattr(self, sattr):
 	# check validity of sattr
+        if not sattr.startswith(self.sattr_prefix):
+            raise Exception, "get_sattr asked to look up bogus sattr: " + sattr
+
 	# lookup equivalent model field
+        r2s_func, s2m_func, mattr = lookup_mattr(sattr)
+
 	# retreive equivalent model field
-	# convert to s-form and return
-	pass
+        x = getattr(self, mattr)
 
-    def set_sattr(self, sattr, sval):
-	# check validity of sattr
-	# convert value to m-form
-	# lookup equivalent model field
-	# store m-form in model field
-	# return original value
-	pass
+        # lookup m2s conversion routine
+        m2s_func, sattr2 = m2s_table[self.sattr_prefix][mattr]
 
+        # sanity check
+        assert sattr == sattr2
+
+	# convert to s-form
+        s = {}
+        m2s_func(self, mattr, s, sattr)
+
+        # return
+	return s[sattr]
+
+    @transaction.commit_on_success # <- rollback if it raises an exception
     def delete_sattr(self, sattr):
 	# check validity of sattr
-	# convert value to m-form
+        if not sattr.startswith(self.sattr_prefix):
+            raise Exception, "get_sattr asked to look up bogus sattr: " + sattr
+
 	# lookup equivalent model field
-	# store m-form in model field
-	# return original value
-	pass
+        r2s_func, s2m_func, mattr = lookup_mattr(sattr)
+
+        # zero that field
+        setattr(self, None)
+
+        # try saving
+        self.save()
+
+    # render a model into a structure quitable for serializing and
+    # returning to the user.
 
     def to_structure(self):
 	s = {}

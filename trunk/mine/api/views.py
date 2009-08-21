@@ -60,12 +60,12 @@ def update_foo(model, request, mid):
     m.update_from_request(request)
     return api_retval(m.to_structure())
 
-def delete_foo_key(model, id, sattr):
+def delete_foo_key(model, mid, sattr):
     m = model.objects.get(id=int(mid))
     m.delete_sattr(sattr)
     return api_retval(m.to_structure())
 
-def get_foo_key(model, id, sattr):
+def get_foo_key(model, mid, sattr):
     m = model.objects.get(id=int(mid))
     s = m.to_structure()
     if not sattr in s:
@@ -243,7 +243,7 @@ def list_comments(request, iid, *args, **kwargs):
 ## function: create_comment
 ## declared args: iid
 def create_comment(request, iid, *args, **kwargs):
-    m = request_to_model_and_save(Comment, request)
+    m = Comment.new_from_request(request)   #################  <------ issue, need to get IID into the creation
     return api_retval(m.to_structure())
 
 ## rest: DELETE /api/comment/CID.FMT
