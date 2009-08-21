@@ -77,14 +77,12 @@ for short, long in item_status_choices: status_lookup[long] = short
 # only two of those: r2s_string and r2s_int:
 
 def r2s_string(r, rname, s):
-    """get rname from HttpRequest r's r.REQUEST and populate structure s with it"""
-    if rname in r.REQUEST:
-	s[rname] = r.REQUEST[rname]
+    """get rname from HttpRequest r's r.REQUEST and populate structure s with it; assume something else checked existence"""
+    s[rname] = r.REQUEST[rname]
 
 def r2s_int(r, rname, s):
-    """get rname from HttpRequest r's r.REQUEST and populate structure s with it after converting to int"""
-    if rname in r.REQUEST:
-	s[rname] = int(r.REQUEST[rname])
+    """get rname from HttpRequest r's r.REQUEST and populate structure s with it after converting to int; assume something else checked existence"""
+    s[rname] = int(r.REQUEST[rname])
 
 # Transfers between s-space (dictionary entries such as s['itemId'])
 # and m-space (m.id, where 'm' is a instance of the Item model and
@@ -104,12 +102,11 @@ def r2s_int(r, rname, s):
 def m2s_copy(m, mattr, s, sattr):
     """Copy mattr from m to sattr in s"""
     x = getattr(m, mattr)
-    s[sattr] = x
+    if x: s[sattr] = x
 
 def s2m_copy(s, sattr, m, mattr):
     """Copy sattr from s to mattr in m"""
-    if sattr in s:
-	setattr(m, mattr, s[sattr])
+    if sattr in s: setattr(m, mattr, s[sattr])
 
 # Because a lot of our code is table-driven, it helps to have a couple
 # of dummy routines as filler where beneficial:
@@ -131,8 +128,7 @@ def s2m_dummy(s, sattr, m, mattr):
 def m2s_date(m, mattr, s, sattr):
     """Copy a DateTime from m to a isoformat string in s"""
     x = getattr(m, mattr)
-    if x:
-	s[sattr] = x.isoformat()
+    if x: s[sattr] = x.isoformat()
 
 def s2m_date(s, sattr, m, mattr):
     if sattr in s:
@@ -150,14 +146,14 @@ def m2s_comitem(m, mattr, s, sattr):
     if mattr != 'item' or sattr != 'commentItem':
 	raise Exception, "m2s_comitem is confused"
     x = m.item
-    if x:
-	s[sattr] = x.id
+    if x: s[sattr] = x.id
 
 def s2m_comitem(s, sattr, m, mattr):
     if mattr != 'item' or sattr != 'commentItem':
 	raise Exception, "s2m_comitem is confused"
     if sattr in s:
-	m.item = Item.get(id=s[sattr]) # ITEM LOOKUP
+	m.item = Item.objects.get(id=s[sattr]) # ITEM LOOKUP
+
 
 # The 'Comment' model also has a 'relation' field that is a ForeignKey
 # representing the relation-submitting-the-comment; in s-space this is
@@ -167,14 +163,13 @@ def m2s_comrel(m, mattr, s, sattr):
     if mattr != 'relation' or sattr != 'commentRelation':
 	raise Exception, "m2s_comrel is confused"
     x = m.relation
-    if x:
-	s[sattr] = x.name
+    if x: s[sattr] = x.name
 
 def s2m_comrel(s, sattr, m, mattr):
     if mattr != 'relation' or sattr != 'commentRelation':
 	raise Exception, "s2m_comrel is confused"
     if sattr in s:
-	m.relation = Relation.get(name=s[sattr]) # RELATION LOOKUP
+	m.relation = Relation.objects.get(name=s[sattr]) # RELATION LOOKUP
 
 # The 'Tag' model contains a ManyToMany field which cites the
 # implications / multiple parents that any given Tag can have; in
@@ -185,8 +180,7 @@ def m2s_tagimplies(m, mattr, s, sattr):
     if mattr != 'implies' or sattr != 'tagImplies':
 	raise Exception, "m2s_tagimplies is confused"
     x = ' '.join([ x.name for x in m.implies.all() ])
-    if x:
-	s[sattr] = x
+    if x: s[sattr] = x
 
 def s2m_tagimplies(s, sattr, m, mattr):
     if mattr != 'implies' or sattr != 'tagImplies':
@@ -218,7 +212,8 @@ def s2m_vurltags(s, sattr, m, mattr):
 def m2s_itemstatus(m, mattr, s, sattr):
     if mattr != 'status' or sattr != 'itemStatus':
 	raise Exception, "s2m_itemtags is confused"
-    s[sattr] = m.get_status_display()
+    x = m.get_status_display()
+    if x: s[sattr] = x
 
 def s2m_itemstatus(s, sattr, m, mattr):
     if mattr != 'status' or sattr != 'itemStatus':
@@ -245,8 +240,7 @@ def m2s_itemtags(m, mattr, s, sattr):
     x = " ".join(x for x in itertools.chain([ i.name for i in m.tags.all() ],
 					    [ "for:%s" % i.name for i in m.item_for_relations.all() ],
 					    [ "not:%s" % i.name for i in m.item_not_relations.all() ]))
-    if x:
-	s[sattr] = x
+    if x: s[sattr] = x
 
 def s2m_itemtags(s, sattr, m, mattr):
     if mattr != 'tags' or sattr != 'itemTags':
@@ -337,10 +331,10 @@ class Thing():
 	(  'commentBody',             'body',             False,  r2s_string,  s2m_copy,        m2s_copy,        ),
 	(  'commentCreated',          'created',          False,  r2s_string,  s2m_date,        m2s_date,        ),
 	(  'commentId',               'id',               False,  r2s_int,     s2m_copy,        m2s_copy,        ),
-	(  'commentItem',             'item',             True,   r2s_int,     s2m_comitem,     m2s_comitem,     ),
+	(  'commentItem',             'item',             False,  r2s_int,     s2m_comitem,     m2s_comitem,     ),
 	(  'commentLastModified',     'last_modified',    False,  r2s_string,  s2m_date,        m2s_date,        ),
 	(  'commentLikes',            'likes',            False,  r2s_string,  s2m_copy,        m2s_copy,        ),
-	(  'commentRelation',         'relation',         True,   r2s_string,  s2m_comrel,      m2s_comrel,      ),
+	(  'commentRelation',         'relation',         False,  r2s_string,  s2m_comrel,      m2s_comrel,      ),
 	(  'commentTitle',            'title',            False,  r2s_string,  s2m_copy,        m2s_copy,        ),
 	(  'itemCreated',             'created',          False,  r2s_string,  s2m_date,        m2s_date,        ),
 	(  'itemData',                'data',             True,   None,        s2m_dummy,       None,            ),
@@ -437,15 +431,12 @@ class Thing():
 	# for each target attribute
 	for sattr, (r2s_func, s2m_func, mattr) in self.s2m_table[self.sattr_prefix].iteritems():
 
-	    # is it there?
-	    if not sattr in r.REQUEST: 
-                continue  # XXXXXX TBD ------ instead of bailing here, check if it is in kwargs
-
-
-
-
-	    # rip the attribute out of the request and convert to python int/str
-	    r2s_func(r, sattr, s)
+            # first check if it is in the kwargs (override / extra)
+            # else rip the attribute out of the request and convert to python int/str
+            # else skip
+            if sattr in kwargs: s[sattr] = kwargs[sattr]
+	    elif sattr in r.REQUEST: r2s_func(r, sattr, s)
+            else: continue
 
 	    # s2m the value into the appropriate attribute
 	    s2m_func(s, sattr, self, mattr)
@@ -469,8 +460,9 @@ class Thing():
 
 	    else:
 		# repeat the above logic
-		if not sattr in r.REQUEST: continue
-		r2s_func(r, sattr, s)
+                if sattr in kwargs: s[sattr] = kwargs[sattr]
+                elif sattr in r.REQUEST: r2s_func(r, sattr, s)
+                else: continue
 		s2m_func(s, sattr, self, mattr)
 		needs_save = True
 
@@ -665,7 +657,7 @@ class Comment(models.Model, Thing):
     last_modified = models.DateTimeField(auto_now=True)
 
     def __unicode__(self):
-	return self.name
+	return self.title
 
     class Meta:
 	ordering = ['-id']

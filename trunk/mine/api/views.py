@@ -243,7 +243,7 @@ def list_comments(request, iid, *args, **kwargs):
 ## function: create_comment
 ## declared args: iid
 def create_comment(request, iid, *args, **kwargs):
-    m = Comment.new_from_request(request)   #################  <------ issue, need to get IID into the creation
+    m = Comment.new_from_request(request, commentItem=int(iid)) # use kwargs to push extra information in
     return api_retval(m.to_structure())
 
 ## rest: DELETE /api/comment/CID.FMT
