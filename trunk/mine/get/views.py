@@ -25,20 +25,17 @@ from django.shortcuts import render_to_response, get_object_or_404
 ## function: read_get_root
 ## declared args: 
 def read_get_root(request, *args, **kwargs):
-    raise Http404('backend read_get_root for GET /get is not yet implemented') # TO BE DONE
     return render_to_response('read-get-root.html')
 
 ## rest: GET /get/KEY
 ## function: read_minekey
 ## declared args: key
 def read_minekey(request, key, *args, **kwargs):
-    raise Http404('backend read_minekey for GET /get/KEY is not yet implemented') # TO BE DONE
     return render_to_response('read-minekey.html')
 
 ## rest: POST /get/KEY
 ## function: submit_minekey
 ## declared args: key
 def submit_minekey(request, key, *args, **kwargs):
-    raise Http404('backend submit_minekey for POST /get/KEY is not yet implemented') # TO BE DONE
     return render_to_response('submit-minekey.html')
 

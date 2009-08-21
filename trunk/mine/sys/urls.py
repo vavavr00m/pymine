@@ -17,16 +17,18 @@
 
 from django.conf.urls.defaults import *
 
-import views as get
+import views as msys
 from mine.views import REST
 
 urlpatterns = patterns('',
                        (r'^import$', REST,
-                        {'GET': sys.mine_import}),
+                        {'GET': msys.sys_import}),
                        (r'^export$', REST,
-                        {'GET': sys.mine_export}),
+                        {'GET': msys.sys_export}),
                        (r'^cleanup$', REST,
-                        {'GET': sys.mine_cleanup}),
+                        {'GET': msys.sys_cleanup}),
+                       (r'^$', REST,
+                        {'GET': msys.read_sys_root}),
                        )
 
 
