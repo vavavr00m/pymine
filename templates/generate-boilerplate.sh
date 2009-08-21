@@ -9,11 +9,12 @@ cat <<EOF
 <LI><A HREF="/mine">mine root</A></LI>
 <p/>
 
-<LI><A HREF="/mine/ui">mine ui root</A></LI>
 <LI><A HREF="/mine/api">mine api root</A></LI>
+<LI><A HREF="/mine/doc">mine doc root</A></LI>
 <LI><A HREF="/mine/get">mine get root</A></LI>
 <LI><A HREF="/mine/pub">mine pub root</A></LI>
-<LI><A HREF="/mine/doc">mine doc root</A></LI>
+<LI><A HREF="/mine/sys">mine sys root</A></LI>
+<LI><A HREF="/mine/ui">mine ui root</A></LI>
 <p/>
 
 <LI><A HREF="/mine/ui/version.html">version</A></LI>

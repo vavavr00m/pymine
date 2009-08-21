@@ -25,8 +25,9 @@ admin.autodiscover()
 
 urlpatterns = patterns('',
 		       (r'^api/', include('mine.api.urls')),
-		       (r'^get/', include('mine.get.urls')),
 		       (r'^ui/', include('mine.ui.urls')),
+		       (r'^get/', include('mine.get.urls')),
+		       (r'^sys/', include('mine.sys.urls')),
 
                        (r'^pub$', REST, {'GET': mine.read_pub_root}),
                        (r'^doc$', REST, {'GET': mine.read_doc_root}),

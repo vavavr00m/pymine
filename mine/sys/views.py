@@ -21,21 +21,27 @@ from django.shortcuts import render_to_response, get_object_or_404
 
 ##################################################################
 
-## rest: GET /export
-## function: mine_export
+## rest: GET /sys
+## function: read_sys_root
 ## declared args: 
-def mine_export(request, *args, **kwargs):
-    return render_to_response('mine-export.html')
+def read_sys_root(request, *args, **kwargs):
+    return render_to_response('read-sys-root.html')
 
-## rest: GET /import
-## function: mine_import
+## rest: GET /sys/export
+## function: sys_export
 ## declared args: 
-def mine_import(request, *args, **kwargs):
-    return render_to_response('mine-import.html')
+def sys_export(request, *args, **kwargs):
+    return render_to_response('sys-export.html')
 
-## rest: GET /cleanup
-## function: mine_cleanup
+## rest: GET /sys/import
+## function: sys_import
 ## declared args: 
-def mine_cleanup(request, *args, **kwargs):
-    return render_to_response('mine-cleanup.html')
+def sys_import(request, *args, **kwargs):
+    return render_to_response('sys-import.html')
+
+## rest: GET /sys/cleanup
+## function: sys_cleanup
+## declared args: 
+def sys_cleanup(request, *args, **kwargs):
+    return render_to_response('sys-cleanup.html')
 
