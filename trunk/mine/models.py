@@ -479,9 +479,17 @@ class Thing():
 	    raise Exception, "clone_from_request called on non-item"
 
 	instantiator = self.s_classes[self.sattr_prefix]
+
 	margs = {}
+
 	m = instantiator(**margs)
+
 	### XXX: TBD: clone self to m here
+	### XXX: TBD: clone self to m here
+	### XXX: TBD: clone self to m here
+	### XXX: TBD: clone self to m here
+	### XXX: TBD: clone self to m here
+
 	return m.update_from_request(r, **kwargs)
 
     # creating a new model
@@ -523,7 +531,7 @@ class Thing():
         m2s_func, sattr2 = m2s_table[self.sattr_prefix][mattr]
 
         # sanity check
-        assert sattr == sattr2
+        assert sattr == sattr2, "m2s_table corruption, reverse lookup yielded wrong result"
 
 	# convert to s-form
         s = {}
@@ -638,7 +646,9 @@ class Item(models.Model, Thing):
     def save_upload_file(self, f):
 	if not self.id:
 	    raise Exception, "save_upload_file trying to save a model which has no IID"
+
 	name = str(self.id) + '.' + f.name
+
 	self.data.save(name, f)
 
 ##################################################################
@@ -692,9 +702,15 @@ class MineRegistry(models.Model): # not a Thing
 
     key = models.SlugField(max_length=settings.MINE_STRINGSIZE, unique=True)
     value = models.TextField(null=True, blank=True)
-    secret = models.BooleanField(default=False)
     created = models.DateTimeField(auto_now_add=True)
     last_modified = models.DateTimeField(auto_now=True)
+
+    def to_structure(self):
+	s = {}
+        s[self.key] = self.value # this is why it is not a Thing
+        s[keyCreated] = m2s_date(self.created)
+        s[keyLastModified] = m2s_date(self.last_modified)
+	return s
 
     class Meta:
 	ordering = ['key']

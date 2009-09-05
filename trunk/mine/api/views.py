@@ -24,53 +24,58 @@ from mine.models import Tag, Item, Relation, Comment
 
 #from pymine.tools.io import FileBlockIterator
 
-def api_retval(result=None, **kwargs):
+def construct_retval(result=None, **kwargs):
     template = {}
-    if result: template['result'] = result
-    template['status'] = kwargs.get('status', 'ok')
+
+    if result: 
+        template['result'] = result
     template['exit'] = kwargs.get('exit', 0)
+    template['status'] = kwargs.get('status', 'ok')
 
     for k in ( 'prevurl', 'nexturl', 'thisurl',
 	       'thissize', 'totalsize',
 	       'callback', 'watch' ):
-	v = kwargs.get(k)
-	if v:
-	    template[k] = v
+	v = kwargs.get(k, None)
+	if v: 
+            template[k] = v
+
     return template
 
 def list_foos(model):
     result = [ m.to_structure() for m in model.objects.all() ]
-    return api_retval(result, totalsize=len(result))
+    return construct_retval(result, totalsize=len(result))
 
 def create_foo(model, request):
+    assert request, "cannot have request=None for create_foo"
     m = model.new_from_request(request)
-    return api_retval(m.to_structure())
+    return construct_retval(m.to_structure())
 
 def delete_foo(model, mid):
     m = model.objects.get(id=int(mid))
     m.delete()
-    return api_retval()
+    return construct_retval()
 
 def read_foo(model, mid):
     m = model.objects.get(id=int(mid))
-    return api_retval(m.to_structure())
+    return construct_retval(m.to_structure())
 
 def update_foo(model, request, mid):
+    assert request, "cannot have request=None for update_foo"
     m = model.objects.get(id=int(mid))
     m.update_from_request(request)
-    return api_retval(m.to_structure())
+    return construct_retval(m.to_structure())
 
 def delete_foo_key(model, mid, sattr):
     m = model.objects.get(id=int(mid))
     m.delete_sattr(sattr)
-    return api_retval(m.to_structure())
+    return construct_retval(m.to_structure())
 
 def get_foo_key(model, mid, sattr):
     m = model.objects.get(id=int(mid))
     s = m.to_structure()
     if not sattr in s:
 	raise Exception, "sattr not found: " + sattr
-    return api_retval(s[sattr])
+    return construct_retval(s[sattr])
 
 ##################################################################
 ##################################################################
@@ -94,6 +99,8 @@ def read_item_data(request, iid, *args, **kwargs):
     ct = m.content_type
     return HttpResponse(f, mimetype=ct)
 
+##################################################################
+##################################################################
 ##################################################################
 
 ## rest: GET /api/item.FMT
@@ -237,14 +244,15 @@ def list_comments(request, iid, *args, **kwargs):
         result = [ m.to_structure() for m in Comment.objects.all() ]
     else:
         result = [ m.to_structure() for m in Comment.objects.filter(item=Item.objects.get(id=item_id)) ]
-    return api_retval(result, totalsize=len(result))
+    return construct_retval(result, totalsize=len(result))
 
 ## rest: POST /api/comment/item/IID.FMT
 ## function: create_comment
 ## declared args: iid
 def create_comment(request, iid, *args, **kwargs):
-    m = Comment.new_from_request(request, commentItem=int(iid)) # use kwargs to push extra information in
-    return api_retval(m.to_structure())
+    assert request, "cannot have request=None for create_comment"
+    m = Comment.new_from_request(request, commentItem=int(iid)) # use kwargs to push extra information
+    return construct_retval(m.to_structure())
 
 ## rest: DELETE /api/comment/CID.FMT
 ## function: delete_comment
@@ -278,43 +286,87 @@ def get_comment_key(request, cid, key, *args, **kwargs):
 
 ##################################################################
 
+## rest: GET /api/vurl.FMT
+## function: list_vurls
+## declared args:
+def list_vurls(request, *args, **kwargs):
+    return list_foos(VanityURL)
+
+## rest: POST /api/vurl.FMT
+## function: create_vurl
+## declared args:
+def create_vurl(request, *args, **kwargs):
+    return create_foo(VanityURL, request)
+
+## rest: DELETE /api/vurl/VID.FMT
+## function: delete_vurl
+## declared args: vid
+def delete_vurl(request, vid, *args, **kwargs):
+    return delete_foo(VanityURL, vid)
+
+## rest: GET /api/vurl/VID.FMT
+## function: read_vurl
+## declared args: vid
+def read_vurl(request, vid, *args, **kwargs):
+    return read_foo(VanityURL, vid)
+
+## rest: POST /api/vurl/VID.FMT
+## function: update_vurl
+## declared args: vid
+def update_vurl(request, vid, *args, **kwargs):
+    return update_foo(VanityURL, request, vid)
+
+## rest: DELETE /api/vurl/VID/KEY.FMT
+## function: delete_vurl_key
+## declared args: vid key
+def delete_vurl_key(request, vid, key, *args, **kwargs):
+    return delete_foo_key(VanityURL, vid, key)
+
+## rest: GET /api/vurl/VID/KEY.FMT
+## function: get_vurl_key
+## declared args: vid key
+def get_vurl_key(request, vid, key, *args, **kwargs):
+    return get_foo_key(VanityURL, vid, key)
+
+##################################################################
+
 ## rest: GET /api/clone/IID.FMT
 ## function: list_clones
 ## declared args: iid
 def list_clones(request, iid, *args, **kwargs):
-    return api_retval()
+    return construct_retval()
 
 ## rest: POST /api/clone/IID.FMT
 ## function: create_clone
 ## declared args: iid
 def create_clone(request, iid, *args, **kwargs):
-    return api_retval()
+    return construct_retval()
 
 ##################################################################
 
 ## rest: GET /api/registry.FMT
-## function: read_registry
+## function: list_registry
 ## declared args:
-def read_registry(request, *args, **kwargs):
-    return api_retval()
+def list_registry(request, *args, **kwargs):
+    return construct_retval()
 
 ## rest: POST /api/registry.FMT
 ## function: update_registry
 ## declared args:
 def update_registry(request, *args, **kwargs):
-    return api_retval()
+    return construct_retval()
 
 ## rest: DELETE /api/registry/KEY.FMT
 ## function: delete_registry_key
 ## declared args: key
 def delete_registry_key(request, key, *args, **kwargs):
-    return api_retval()
+    return construct_retval()
 
 ## rest: GET /api/registry/KEY.FMT
 ## function: get_registry_key
 ## declared args: key
 def get_registry_key(request, key, *args, **kwargs):
-    return api_retval()
+    return construct_retval()
 
 ##################################################################
 
@@ -322,19 +374,25 @@ def get_registry_key(request, key, *args, **kwargs):
 ## function: read_select_item
 ## declared args:
 def read_select_item(request, *args, **kwargs):
-    return api_retval()
+    return construct_retval()
 
 ## rest: GET /api/select/relation.FMT
 ## function: read_select_relation
 ## declared args:
 def read_select_relation(request, *args, **kwargs):
-    return api_retval()
+    return construct_retval()
 
 ## rest: GET /api/select/tag.FMT
 ## function: read_select_tag
 ## declared args:
 def read_select_tag(request, *args, **kwargs):
-    return api_retval()
+    return construct_retval()
+
+## rest: GET /api/select/vurl.FMT
+## function: read_select_vurl
+## declared args:
+def read_select_vurl(request, *args, **kwargs):
+    return construct_retval()
 
 ##################################################################
 
@@ -370,7 +428,7 @@ def encode_minekey3(request, rid, rvsn, iid, *args, **kwargs):
         'depth': 'fake',
         }
 
-    return api_retval(result)
+    return construct_retval(result)
 
 ##################################################################
 
@@ -383,7 +441,7 @@ def read_version(request, *args, **kwargs):
 	'softwareRevision': '1.0-alpha',
 	'mineAPIVersion': 2,
 	}
-    return api_retval(result)
+    return construct_retval(result)
 
 ##################################################################
 ##################################################################

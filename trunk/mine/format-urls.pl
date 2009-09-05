@@ -172,13 +172,23 @@ api   GET     /api/comment/CID/KEY.FMT         get-comment-key
 
 ##################################################################
 
+api   GET     /api/vurl.FMT                    list-vurls
+api   POST    /api/vurl.FMT                    create-vurl
+api   DELETE  /api/vurl/TID.FMT                delete-vurl
+api   GET     /api/vurl/TID.FMT                read-vurl
+api   POST    /api/vurl/TID.FMT                update-vurl
+api   DELETE  /api/vurl/TID/KEY.FMT            delete-vurl-key
+api   GET     /api/vurl/TID/KEY.FMT            get-vurl-key
+
+##################################################################
+
 # IID==0 is ok for /api/clone/IID.FMT
 api   GET     /api/clone/IID.FMT               list-clones
 api   POST    /api/clone/IID.FMT               create-clone
 
 ##################################################################
 
-api   GET     /api/registry.FMT                read-registry
+api   GET     /api/registry.FMT                list-registry
 api   POST    /api/registry.FMT                update-registry
 api   DELETE  /api/registry/KEY.FMT            delete-registry-key
 api   GET     /api/registry/KEY.FMT            get-registry-key
@@ -188,6 +198,7 @@ api   GET     /api/registry/KEY.FMT            get-registry-key
 api   GET     /api/select/item.FMT             read-select-item
 api   GET     /api/select/relation.FMT         read-select-relation
 api   GET     /api/select/tag.FMT              read-select-tag
+api   GET     /api/select/vurl.FMT             read-select-tag
 
 ##################################################################
 
