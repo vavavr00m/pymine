@@ -27,8 +27,8 @@ from mine.models import Tag, Item, Relation, Comment
 def construct_retval(result=None, **kwargs):
     template = {}
 
-    if result: 
-        template['result'] = result
+    if result:
+	template['result'] = result
     template['exit'] = kwargs.get('exit', 0)
     template['status'] = kwargs.get('status', 'ok')
 
@@ -36,8 +36,8 @@ def construct_retval(result=None, **kwargs):
 	       'thissize', 'totalsize',
 	       'callback', 'watch' ):
 	v = kwargs.get(k, None)
-	if v: 
-            template[k] = v
+	if v:
+	    template[k] = v
 
     return template
 
@@ -241,9 +241,9 @@ def get_tag_key(request, tid, key, *args, **kwargs):
 def list_comments(request, iid, *args, **kwargs):
     item_id = int(iid)
     if item_id == 0:
-        result = [ m.to_structure() for m in Comment.objects.all() ]
+	result = [ m.to_structure() for m in Comment.objects.all() ]
     else:
-        result = [ m.to_structure() for m in Comment.objects.filter(item=Item.objects.get(id=item_id)) ]
+	result = [ m.to_structure() for m in Comment.objects.filter(item=Item.objects.get(id=item_id)) ]
     return construct_retval(result, totalsize=len(result))
 
 ## rest: POST /api/comment/item/IID.FMT
@@ -344,7 +344,7 @@ def create_clone(request, iid, *args, **kwargs):
 
 ##################################################################
 
-# SECURITY: at some point in the future we will elide anything
+# SECURITY: TBD: at some point in the future we will elide anything
 # beginning with "__" from this list, but not yet....
 
 ## rest: GET /api/registry.FMT
@@ -354,17 +354,17 @@ def list_registry(request, *args, **kwargs):
     result = [ m.to_structure() for m in MineRegistry.objects.all() ]
     return construct_retval(result, totalsize=len(result))
 
-# BLOODYMINDEDNESS: most of the update_foo methods allow
-# batch-updating; however we do not know/constrain the names of
-# registry entries other than that they are slugs; thus this is more a
-# set_registry_key.
+# USAGE: so i can in theory set with /api/registry/foo.json?foo=bar
 
-## rest: POST /api/registry.FMT
-## function: update_registry
-## declared args:
-def update_registry(request, *args, **kwargs):
-    k = request.REQUEST['key']
-    v = request.REQUEST['value']
+# SECURITY: TBD: at some point in the future we will require setting
+# of anything where key begins with "__" over a POST and SSL
+# connection.
+
+## rest: POST /api/registry/KEY.FMT
+## function: amend_registry_key
+## declared args: key
+def amend_registry_key(request, key, *args, **kwargs):
+    v = request.REQUEST[key] # note: k is extracted from URL; v from POSTDATA (etc)
     m = MineRegistry(key=k, value=v)
     m.save();
     return construct_retval(m.to_structure())
@@ -379,16 +379,18 @@ def update_registry(request, *args, **kwargs):
 ## function: delete_registry_key
 ## declared args: key
 def delete_registry_key(request, key, *args, **kwargs):
-    return construct_retval()
     m = MineRegistry.objects.get(key=key)
     m.delete()
     return construct_retval()
+
+# SECURITY? TBD: should we look at putting m.value through a M2S layer?
 
 ## rest: GET /api/registry/KEY.FMT
 ## function: get_registry_key
 ## declared args: key
 def get_registry_key(request, key, *args, **kwargs):
-    return construct_retval()
+    m = MineRegistry.objects.get(key=key)
+    return construct_retval(m.value)
 
 ##################################################################
 
@@ -438,17 +440,17 @@ def encode_minekey2(request, rid, iid, *args, **kwargs):
 def encode_minekey3(request, rid, rvsn, iid, *args, **kwargs):
     """return the MineKey for Item IID for Relation RID with given RVSN"""
     if rvsn == 0:
-        # go look it up
-        pass
-    
-    result = { 
-        'keyversion': 'fake',
-        'method': 'fake',
-        'iid': iid,
-        'rid': rid,
-        'rvsn': rvsn,
-        'depth': 'fake',
-        }
+	# go look it up
+	pass
+
+    result = {
+	'keyversion': 'fake',
+	'method': 'fake',
+	'iid': iid,
+	'rid': rid,
+	'rvsn': rvsn,
+	'depth': 'fake',
+	}
 
     return construct_retval(result)
 
