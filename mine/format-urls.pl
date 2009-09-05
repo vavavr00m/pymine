@@ -189,7 +189,7 @@ api   POST    /api/clone/IID.FMT               create-clone
 ##################################################################
 
 api   GET     /api/registry.FMT                list-registry
-api   POST    /api/registry.FMT                update-registry
+api   POST    /api/registry/KEY.FMT            amend-registry-key
 api   DELETE  /api/registry/KEY.FMT            delete-registry-key
 api   GET     /api/registry/KEY.FMT            get-registry-key
 
@@ -236,7 +236,7 @@ ui    GET     /ui/read-relation/RID.html       read-relation
 ui    GET     /ui/read-tag/TID.html            read-tag
 ui    GET     /ui/update-comment/CID.html      update-comment
 ui    GET     /ui/update-item/IID.html         update-item
-ui    GET     /ui/update-registry.html         update-registry
+ui    GET     /ui/insert-registry-key.html         insert-registry-key
 ui    GET     /ui/update-relation/RID.html     update-relation
 ui    GET     /ui/update-tag/TID.html          update-tag
 ui    GET     /ui/version.html                 version
