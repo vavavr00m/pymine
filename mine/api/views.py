@@ -344,22 +344,44 @@ def create_clone(request, iid, *args, **kwargs):
 
 ##################################################################
 
+# SECURITY: at some point in the future we will elide anything
+# beginning with "__" from this list, but not yet....
+
 ## rest: GET /api/registry.FMT
 ## function: list_registry
 ## declared args:
 def list_registry(request, *args, **kwargs):
-    return construct_retval()
+    result = [ m.to_structure() for m in MineRegistry.objects.all() ]
+    return construct_retval(result, totalsize=len(result))
+
+# BLOODYMINDEDNESS: most of the update_foo methods allow
+# batch-updating; however we do not know/constrain the names of
+# registry entries other than that they are slugs; thus this is more a
+# set_registry_key.
 
 ## rest: POST /api/registry.FMT
 ## function: update_registry
 ## declared args:
 def update_registry(request, *args, **kwargs):
-    return construct_retval()
+    k = request.REQUEST['key']
+    v = request.REQUEST['value']
+    m = MineRegistry(key=k, value=v)
+    m.save();
+    return construct_retval(m.to_structure())
+
+# SECURITY: if we permitted deletion via primary-key (eg: delete where
+# id=42) in *addition* to deletion by name, then we would have to
+# duplicate/replicate a bunch of security checks and it could get
+# awkward.  So, we delete from the registry by keyname alone, that way
+# you are more likely to GWYW / GWYAF
 
 ## rest: DELETE /api/registry/KEY.FMT
 ## function: delete_registry_key
 ## declared args: key
 def delete_registry_key(request, key, *args, **kwargs):
+    return construct_retval()
+    m = MineRegistry.objects.get(key=key)
+    m.delete()
     return construct_retval()
 
 ## rest: GET /api/registry/KEY.FMT
