@@ -1,0 +1,21 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN">
+<html lang="en">
+<head>
+    <title>{% block title %}{% endblock %}</title>
+</head>
+<body>
+<h2>output:</h2>
+
+    {% block content %}{% endblock %}
+    {% block footer %}
+
+<h2>envelope information:</h2>
+
+    <UL>
+    <LI>exit {{ exit }}</LI>
+    <LI>status {{ status }}</LI>
+    </UL>
+
+    {% endblock %}
+</body>
+</html>
