@@ -4,18 +4,31 @@
 
 {% block content %}
 <DL>
+
 {% for item in result %}
+
 <DT>
-{{ item.itemName }}
+Name: {{ item.itemName }}
 <A HREF="/api/item/{{ item.itemId }}"><button>View</button></A>
-<A HREF="read-item/{{ item.itemId }}.html"><button>Information</button></A>
+<A HREF="read-item/{{ item.itemId }}.html"><button>Info</button></A>
+<A HREF="update-item/{{ item.itemId }}.html"><button>Update</button></A>
 <A HREF="delete-item/{{ item.itemId }}.html"><button>Delete</button></A>
+<BR/>
+Type: {{ item.itemType }}
+<BR/>
+Created: {{ item.itemCreated }}
+<BR/>
+Last-Modified: {{ item.itemLastModified }}
 </DT>
+
 <DD>
 {{ item.itemDescription }}
 </DD>
-<P/>
+
+<P/
+
 {% endfor %}
+
 </DL>
 {% endblock %}
 

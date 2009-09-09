@@ -81,7 +81,8 @@ def delete_tag(request, tid, *args, **kwargs):
 ## function: list_comments
 ## declared args: iid
 def list_comments(request, iid, *args, **kwargs):
-    return render_to_response('list-comments.html')
+    s = api.list_comments(None, iid)
+    return render_to_response('list-comments.html', s)
 
 ## rest: GET /ui/list-items.html
 ## function: list_items
