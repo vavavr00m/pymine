@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+
+{% block title %}comment listing{% endblock %}
+
+{% block content %}
+<DL>
+{% for comment in result %}
+<DT>{{ comment.commentTitle }} (on item {{ comment.commentItem }})</DT>
+<DD>
+{{ comment.commentBody }}
+</DD>
+<P/>
+{% endfor %}
+</DL>
+{% endblock %}
+
+

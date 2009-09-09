@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+
+{% block title %}relation listing{% endblock %}
+
+{% block content %}
+<DL>
+{% for relation in result %}
+<DT>{{ relation.relationName }} (version {{ relation.relationVersion }})</DT>
+<DD>
+{{ relation.relationDescription }}
+</DD>
+<P/>
+{% endfor %}
+</DL>
+{% endblock %}
+
+

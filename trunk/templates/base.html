@@ -1,21 +1,28 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN">
 <html lang="en">
 <head>
-    <title>{% block title %}{% endblock %}</title>
+<title>{% block title %}NO TITLE SUPPLIED IN TEMPLATE{% endblock %}</title>
 </head>
 <body>
-<h2>output:</h2>
 
-    {% block content %}{% endblock %}
-    {% block footer %}
+{% block header %}
+<h2>envelope:</h2>
+<UL>
+<LI>exit {{ exit }}</LI>
+<LI>status {{ status }}</LI>
+</UL>
+{% endblock %}
 
-<h2>envelope information:</h2>
+{% if result %} 
+<h2>result:</h2>
+{% block content %}
+{% endblock %}
+{% else %}
+no result returned
+{% endif %}
 
-    <UL>
-    <LI>exit {{ exit }}</LI>
-    <LI>status {{ status }}</LI>
-    </UL>
+{% block footer %}
+{% endblock %}
 
-    {% endblock %}
 </body>
 </html>
