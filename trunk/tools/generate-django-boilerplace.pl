@@ -78,7 +78,7 @@ foreach $pattern (sort {$b cmp $a} keys %patterns) {
         $dispatch = "REST";
     }
 
-    $pattern =~ s!^/(api|sys|get|ui)!!o;
+    $pattern =~ s!^/(api|archive|get|ui)!!o;
     $pattern =~ s!^/!!o;
 
     $dispatch = "REST" if ($pattern eq ''); # root
@@ -118,13 +118,13 @@ mine  GET     /pub                             read-pub-root
 api   GET     /api                             read-api-root
 get   GET     /get                             read-get-root
 ui    GET     /ui                              read-ui-root
-sys   GET     /sys                             read-sys-root
+archive   GET     /archive                             read-archive-root
 
 ##################################################################
 
-sys   GET     /sys/export                      sys-export
-sys   GET     /sys/import                      sys-import
-sys   GET     /sys/cleanup                     sys-cleanup
+archive   GET     /archive/export                      archive-export
+archive   GET     /archive/import                      archive-import
+archive   GET     /archive/cleanup                     archive-cleanup
 
 ##################################################################
 

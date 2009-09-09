@@ -17,18 +17,18 @@
 
 from django.conf.urls.defaults import *
 
-import views as msys
+import views as archive
 from pymine.views import REST
 
 urlpatterns = patterns('',
                        (r'^import$', REST,
-                        {'GET': msys.sys_import}),
+                        {'GET': archive.archive_import}),
                        (r'^export$', REST,
-                        {'GET': msys.sys_export}),
+                        {'GET': archive.archive_export}),
                        (r'^cleanup$', REST,
-                        {'GET': msys.sys_cleanup}),
+                        {'GET': archive.archive_cleanup}),
                        (r'^$', REST,
-                        {'GET': msys.read_sys_root}),
+                        {'GET': archive.read_archive_root}),
                        )
 
 
