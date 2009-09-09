@@ -5,25 +5,27 @@
 </head>
 <body>
 
+<A HREF="/ui/">home</A> <P/>
+
 {% block header %}
-<h2>envelope:</h2>
+<span>envelope:</span>
 <UL>
 <LI>exit {{ exit }}</LI>
 <LI>status {{ status }}</LI>
 </UL>
+<P/>
 {% endblock %}
 
 {% if result %}
-<h2>result:</h2>
+<span>result:</span>
 {% block content %}
-no block content defined
+no block content defined <P/>
 {% endblock %}
 {% else %}
-no result returned by API call
+no result returned by API call <P/>
 {% endif %}
 
 {% block footer %}
-<!-- no block footer defined in subclass -->
 {% endblock %}
 
 </body>
