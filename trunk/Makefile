@@ -45,6 +45,9 @@ dbsync: dbtest
 dbclean:
 	python manage.py cleanup
 
+dbdump:
+	@python manage.py dumpdata
+
 ##################################################################
 
 syntax:

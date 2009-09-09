@@ -19,6 +19,8 @@ from django.core.urlresolvers import reverse
 from django.http import Http404, HttpResponse, HttpResponseRedirect
 from django.shortcuts import render_to_response, get_object_or_404
 
+import pymine.api.views as api
+
 ##################################################################
 
 ## rest: GET /ui
@@ -97,7 +99,8 @@ def list_relations(request, *args, **kwargs):
 ## function: list_tags
 ## declared args: 
 def list_tags(request, *args, **kwargs):
-    return render_to_response('list-tags.html')
+    s = api.list_tags(None)
+    return render_to_response('list-tags.html', s)
 
 ## rest: GET /ui/read-comment/CID.html
 ## function: read_comment
@@ -163,5 +166,6 @@ def update_tag(request, tid, *args, **kwargs):
 ## function: version
 ## declared args: 
 def version(request, *args, **kwargs):
-    return render_to_response('version.html')
+    s = api.read_version(None)
+    return render_to_response('version.html', s)
 
