@@ -8,19 +8,29 @@
 <A HREF="/ui/">home</A> <P/>
 
 {% block header %}
+
 <span>envelope:</span> <P/>
 <UL>
-<LI>exit {{ exit }}</LI>
-<LI>status {{ status }}</LI>
+<LI>exit: {{ exit }}</LI>
+<LI>status: {{ status }}</LI>
+<LI>totalsize: {{ totalsize }}</LI>
+<LI>thissize: {{ thissize }}</LI>
+<LI>prevurl: {{ prevurl }}</LI>
+<LI>nexturl: {{ nexturl }}</LI>
+<LI>thisurl: {{ thisurl }}</LI>
+<LI>callback: {{ callback }}</LI>
+<LI>watch: {{ watch }}</LI>
 </UL>
 <P/>
 {% endblock %}
 
 <span>result:</span> <P/>
 {% if result %}
+<BLOCKQUOTE>
 {% block content %}
 no block content defined <P/>
 {% endblock %}
+</BLOCKQUOTE>
 {% else %}
 no result returned by API call <P/>
 {% endif %}

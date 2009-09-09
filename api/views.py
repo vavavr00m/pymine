@@ -27,6 +27,7 @@ def construct_retval(result=None, **kwargs):
 
     if result:
 	template['result'] = result
+
     template['exit'] = kwargs.get('exit', 0)
     template['status'] = kwargs.get('status', 'ok')
 
@@ -238,10 +239,12 @@ def get_tag_key(request, tid, key, *args, **kwargs):
 ## declared args: iid
 def list_comments(request, iid, *args, **kwargs):
     item_id = int(iid)
+
     if item_id == 0:
 	result = [ m.to_structure() for m in Comment.objects.all() ]
     else:
 	result = [ m.to_structure() for m in Comment.objects.filter(item=Item.objects.get(id=item_id)) ]
+
     return construct_retval(result, totalsize=len(result))
 
 ## rest: POST /api/comment/item/IID.FMT
