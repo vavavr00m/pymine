@@ -13,15 +13,17 @@
 </UL>
 {% endblock %}
 
-{% if result %} 
+{% if result %}
 <h2>result:</h2>
 {% block content %}
+no block content defined
 {% endblock %}
 {% else %}
-no result returned
+no result returned by API call
 {% endif %}
 
 {% block footer %}
+<!-- no block footer defined in subclass -->
 {% endblock %}
 
 </body>
