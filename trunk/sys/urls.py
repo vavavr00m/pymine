@@ -18,7 +18,7 @@
 from django.conf.urls.defaults import *
 
 import views as msys
-from mine.views import REST
+from pymine.views import REST
 
 urlpatterns = patterns('',
                        (r'^import$', REST,

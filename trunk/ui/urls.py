@@ -18,7 +18,7 @@
 from django.conf.urls.defaults import *
 
 import views as ui
-from mine.views import REST
+from pymine.views import REST
 
 urlpatterns = patterns('',
 		       (r'^version.html$', REST,

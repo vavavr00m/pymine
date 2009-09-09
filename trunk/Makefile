@@ -30,14 +30,14 @@ server:
 ##################################################################
 
 start:
-	python manage.py startapp mine
+	python manage.py startapp api
 
 shell:
 	python manage.py shell
 
 dbtest:
 	python manage.py validate
-	python manage.py sqlall mine
+	python manage.py sqlall api
 
 dbsync: dbtest
 	python manage.py syncdb --noinput --traceback

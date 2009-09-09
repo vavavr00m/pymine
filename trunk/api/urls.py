@@ -18,7 +18,7 @@
 from django.conf.urls.defaults import *
 
 import views as api
-from mine.views import API_CALL, REST
+from pymine.views import API_CALL, REST
 
 urlpatterns = patterns('',
     (r'^vurl/(?P<tid>\d+)/(?P<key>\w+).(?P<fmt>(xml|json|py))$', API_CALL,

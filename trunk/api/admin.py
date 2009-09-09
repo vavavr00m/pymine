@@ -15,7 +15,7 @@
 ## permissions and limitations under the License.
 ##
 
-from pymine.mine.models import Tag, Relation, Item, Comment, VanityURL, MineRegistry
+from models import Tag, Relation, Item, Comment, VanityURL, MineRegistry
 from django.contrib import admin
 
 class TagAdmin(admin.ModelAdmin):
