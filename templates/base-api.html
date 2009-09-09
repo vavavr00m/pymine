@@ -1,14 +1,14 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN">
 <html lang="en">
 <head>
-<title>{% block title %}NO TITLE SUPPLIED IN TEMPLATE{% endblock %}</title>
+<title>{% block title %}no title defined{% endblock %}</title>
 </head>
 <body>
 
 <A HREF="/ui/">home</A> <P/>
 
 {% block header %}
-<span>envelope:</span>
+<span>envelope:</span> <P/>
 <UL>
 <LI>exit {{ exit }}</LI>
 <LI>status {{ status }}</LI>
@@ -16,8 +16,8 @@
 <P/>
 {% endblock %}
 
+<span>result:</span> <P/>
 {% if result %}
-<span>result:</span>
 {% block content %}
 no block content defined <P/>
 {% endblock %}
@@ -26,6 +26,7 @@ no result returned by API call <P/>
 {% endif %}
 
 {% block footer %}
+<!-- no footer defined -->
 {% endblock %}
 
 </body>
