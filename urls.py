@@ -17,11 +17,22 @@
 
 from django.conf.urls.defaults import *
 from django.contrib import admin
+
 import views
+from views import REST
+
+admin.autodiscover()
 
 urlpatterns = patterns('',
-    (r'^mine/', include('mine.urls')),
-    (r'^admin/doc/', include('django.contrib.admindocs.urls')),
-    (r'^admin/(.*)', admin.site.root),
-    (r'^$', views.root),
+                       (r'^ui/',  include('ui.urls')),
+                       (r'^api/', include('api.urls')),
+                       (r'^get/', include('get.urls')),
+                       (r'^sys/', include('sys.urls')),
+
+                       (r'^admin/doc/', include('django.contrib.admindocs.urls')),
+                       (r'^admin/(.*)', admin.site.root),
+
+                       (r'^pub$', REST, {'GET': views.read_pub_root}),
+                       (r'^doc$', REST, {'GET': views.read_doc_root}),
+                       (r'^$',    REST, {'GET': views.read_mine_root}),
 )
