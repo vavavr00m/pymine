@@ -21,27 +21,27 @@ from django.shortcuts import render_to_response, get_object_or_404
 
 ##################################################################
 
-## rest: GET /sys
-## function: read_sys_root
+## rest: GET /archive
+## function: read_archive_root
 ## declared args: 
-def read_sys_root(request, *args, **kwargs):
-    return render_to_response('read-sys-root.html')
+def read_archive_root(request, *args, **kwargs):
+    return render_to_response('read-archive-root.html')
 
-## rest: GET /sys/export
-## function: sys_export
+## rest: GET /archive/export
+## function: archive_export
 ## declared args: 
-def sys_export(request, *args, **kwargs):
-    return render_to_response('sys-export.html')
+def archive_export(request, *args, **kwargs):
+    return render_to_response('archive-export.html')
 
-## rest: GET /sys/import
-## function: sys_import
+## rest: GET /archive/import
+## function: archive_import
 ## declared args: 
-def sys_import(request, *args, **kwargs):
-    return render_to_response('sys-import.html')
+def archive_import(request, *args, **kwargs):
+    return render_to_response('archive-import.html')
 
-## rest: GET /sys/cleanup
-## function: sys_cleanup
+## rest: GET /archive/cleanup
+## function: archive_cleanup
 ## declared args: 
-def sys_cleanup(request, *args, **kwargs):
-    return render_to_response('sys-cleanup.html')
+def archive_cleanup(request, *args, **kwargs):
+    return render_to_response('archive-cleanup.html')
 
