@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+
+{% block title %}tag listing{% endblock %}
+
+{% block content %}
+<DL>
+{% for tag in result %}
+<DT>{{ tag.tagName }}</DT>
+<DD>
+{% if tag.tagImplies %}
+(implies: {{ tag.tagImplies }})
+{% endif %}
+{{ tag.tagDescription }}
+</DD>
+<P/>
+{% endfor %}
+</DL>
+{% endblock %}
+
+

@@ -87,13 +87,15 @@ def list_comments(request, iid, *args, **kwargs):
 ## function: list_items
 ## declared args: 
 def list_items(request, *args, **kwargs):
-    return render_to_response('list-items.html')
+    s = api.list_items(None)
+    return render_to_response('list-items.html', s)
 
 ## rest: GET /ui/list-relations.html
 ## function: list_relations
 ## declared args: 
 def list_relations(request, *args, **kwargs):
-    return render_to_response('list-relations.html')
+    s = api.list_relations(None)
+    return render_to_response('list-relations.html', s)
 
 ## rest: GET /ui/list-tags.html
 ## function: list_tags
