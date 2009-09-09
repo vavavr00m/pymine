@@ -17,7 +17,7 @@
 ##
 
 # declarations
-our $MINE_HTTP_FULLPATH = "http://127.0.0.1:9862/mine";
+our $MINE_HTTP_FULLPATH = "http://127.0.0.1:9862";
 my ($d, $j, $a);
 
 # use imported values
