@@ -5,11 +5,13 @@
 {% block content %}
 <DL>
 {% for item in result %}
-<DT>{{ item.itemName }}</DT>
+<DT>
+{{ item.itemName }}
+<A HREF="/api/item/{{ item.itemId }}"><button>View</button></A>
+<A HREF="read-item/{{ item.itemId }}.html"><button>Information</button></A>
+<A HREF="delete-item/{{ item.itemId }}.html"><button>Delete</button></A>
+</DT>
 <DD>
-{% if item.itemImplies %}
-(implies: {{ item.itemImplies }})
-{% endif %}
 {{ item.itemDescription }}
 </DD>
 <P/>
