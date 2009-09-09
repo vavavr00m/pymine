@@ -1,4 +1,7 @@
-#!/bin/sh
+#!/bin/sh -x
+
+: this command manually disabled due to risk
+exit 1
 
 
 boilerplate() {
