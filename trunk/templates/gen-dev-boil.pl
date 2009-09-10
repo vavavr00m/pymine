@@ -63,15 +63,17 @@ exit 0;
 __END__;
 
 ' <hr/>
-' developer boilerplate 
+' developer boilerplate
 
 : listings
 . /ui/list-items.html list items
 . /ui/list-relations.html list relations
 . /ui/list-tags.html list tags
+. /ui/list-vurls.html list vurls
 . /ui/list-comments/0.html list comments on all items
 . /ui/list-comments/1.html list comments on item 1
 . /ui/version.html version
+. /admin/ DJANGO ADMIN BACKDOOR
 -
 
 : roots
@@ -86,27 +88,34 @@ __END__;
 
 : testing
 . /ui/create-comment/1.html create-comment on item 1
-. /ui/create-item.html create-item
-. /ui/create-relation.html create-relation
-. /ui/create-tag.html create-tag
 . /ui/delete-comment/1.html delete-comment 1
-. /ui/delete-item/1.html delete-item 1
-. /ui/delete-relation/1.html delete-relation 1
-. /ui/delete-tag/1.html delete-tag 1
 . /ui/read-comment/1.html read-comment 1
-. /ui/read-item/1.html read-item 1
-. /ui/read-relation/1.html read-relation 1
-. /ui/read-tag/1.html read-tag 1
 . /ui/update-comment/1.html update-comment 1
+'
+. /ui/create-item.html create-item
+. /ui/delete-item/1.html delete-item 1
+. /ui/read-item/1.html read-item 1
 . /ui/update-item/1.html update-item 1
+'
+. /ui/create-relation.html create-relation
+. /ui/delete-relation/1.html delete-relation 1
+. /ui/read-relation/1.html read-relation 1
 . /ui/update-relation/1.html update-relation 1
+'
+. /ui/create-tag.html create-tag
+. /ui/delete-tag/1.html delete-tag 1
+. /ui/read-tag/1.html read-tag 1
 . /ui/update-tag/1.html update-tag 1
+'
+. /ui/create-vurl.html create-vurl
+. /ui/delete-vurl/1.html delete-vurl 1
+. /ui/read-vurl/1.html read-vurl 1
+. /ui/update-vurl/1.html update-vurl 1
 -
 
 : mine documentation
 . /doc/ local
 . #themineproject project documentation
--
 -
 
 : the mine! project
@@ -129,8 +138,7 @@ __END__;
 . http://www.crypticide.com/dropsafe/ alec muffett, programmer / geek
 -
 
-' &copy; 2008-2009 Adriana Lukas &amp; Alec Muffett; 
-' pymine is open source software distributed under the Apache 2.0 license, 
-' please see the <A HREF="http://code.google.com/p/pymine/w/list">project home page</A> for details 
-
+' &copy; 2008-2009 Adriana Lukas &amp; Alec Muffett;
+' pymine is open source software distributed under the Apache 2.0 license,
+' please see the <A HREF="http://code.google.com/p/pymine/w/list">project home page</A> for details
 ' <hr/>

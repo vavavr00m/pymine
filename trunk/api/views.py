@@ -20,7 +20,7 @@ from django.core.urlresolvers import reverse
 from django.http import Http404, HttpResponse, HttpResponseRedirect
 from django.shortcuts import render_to_response, get_object_or_404
 
-from models import Tag, Item, Relation, Comment
+from models import Tag, Item, Relation, Comment, VanityURL
 
 def construct_retval(result=None, **kwargs):
     template = {}

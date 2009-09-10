@@ -245,9 +245,9 @@ ui  GET  /ui/read-tag/TID.html         read-tag
 ui  GET  /ui/update-tag/TID.html       update-tag
 
 ui  GET  /ui/create-vurl.html           create-vurl
-ui  GET  /ui/delete-vurl/TID.html       delete-vurl
+ui  GET  /ui/delete-vurl/VID.html       delete-vurl
 ui  GET  /ui/list-vurls.html            list-vurls
-ui  GET  /ui/read-vurl/TID.html         read-vurl
-ui  GET  /ui/update-vurl/TID.html       update-vurl
+ui  GET  /ui/read-vurl/VID.html         read-vurl
+ui  GET  /ui/update-vurl/VID.html       update-vurl
 
 ##################################################################
