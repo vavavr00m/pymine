@@ -1,1 +1,8 @@
-not yet implemented
+{% for tag in result %}
+<LI>tagCreated: {{ tag.tagCreated }}</LI>
+<LI>tagDescription: {{ tag.tagDescription }}</LI>
+<LI>tagId: {{ tag.tagId }}</LI>
+<LI>tagImplies: {{ tag.tagImplies }}</LI>
+<LI>tagLastModified: {{ tag.tagLastModified }}</LI>
+<LI>tagName: {{ tag.tagName }}</LI>
+{% endfor %}

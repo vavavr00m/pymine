@@ -27,7 +27,7 @@ import pymine.api.views as api
 ## function: read_ui_root
 ## declared args: 
 def read_ui_root(request, *args, **kwargs):
-    return render_to_response('read-ui-root.html')
+    return render_to_response('root-ui.html')
 
 ## rest: GET /ui/create-comment/IID.html
 ## function: create_comment

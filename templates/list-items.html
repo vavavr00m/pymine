@@ -8,18 +8,12 @@
 {% for item in result %}
 
 <DT>
-Name: {{ item.itemName }}
+{{ item.itemName }} ({{ item.itemType }})
 <A HREF="/api/item/{{ item.itemId }}"><button>View</button></A>
 <A HREF="read-item/{{ item.itemId }}.html"><button>Info</button></A>
 <A HREF="update-item/{{ item.itemId }}.html"><button>Update</button></A>
 <A HREF="delete-item/{{ item.itemId }}.html"><button>Delete</button></A>
 <BR/>
-Type: {{ item.itemType }}
-<BR/>
-Created: {{ item.itemCreated }}
-<BR/>
-Last-Modified: {{ item.itemLastModified }}
-</DT>
 
 <DD>
 {{ item.itemDescription }}
@@ -31,5 +25,3 @@ Last-Modified: {{ item.itemLastModified }}
 
 </DL>
 {% endblock %}
-
-

@@ -1,1 +1,16 @@
-not yet implemented
+{% for relation in result %}
+<LI>relationCallbackURL: {{ relation.relationCallbackURL }}</LI>
+<LI>relationCreated: {{ relation.relationCreated }}</LI>
+<LI>relationDescription: {{ relation.relationDescription }}</LI>
+<LI>relationEmailAddress: {{ relation.relationEmailAddress }}</LI>
+<LI>relationEmbargoAfter: {{ relation.relationEmbargoAfter }}</LI>
+<LI>relationEmbargoBefore: {{ relation.relationEmbargoBefore }}</LI>
+<LI>relationHomepageURL: {{ relation.relationHomepageURL }}</LI>
+<LI>relationId: {{ relation.relationId }}</LI>
+<LI>relationImageURL: {{ relation.relationImageURL }}</LI>
+<LI>relationInterests: {{ relation.relationInterests }}</LI>
+<LI>relationLastModified: {{ relation.relationLastModified }}</LI>
+<LI>relationName: {{ relation.relationName }}</LI>
+<LI>relationNetworkPattern: {{ relation.relationNetworkPattern }}</LI>
+<LI>relationVersion: {{ relation.relationVersion }}</LI>
+{% endfor %}

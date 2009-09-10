@@ -23,6 +23,11 @@ import django.utils.simplejson as json
 import pickle
 
 def REST(request, *args, **kwargs):
+
+    """Things that use REST() return their own HTTPResponse objects
+    directly; this includes item-data-reads, and most non-API
+    handlers"""
+
     get_view = kwargs.pop('GET', None)
     post_view = kwargs.pop('POST', None)
     delete_view = kwargs.pop('DELETE', None)
@@ -34,9 +39,15 @@ def REST(request, *args, **kwargs):
     elif request.method == 'DELETE' and delete_view is not None:
         return delete_view(request, *args, **kwargs)
 
-    raise Http404, "fell off the end of REST"
+    raise Http404, "cannot find handler for REST request method"
+
 
 def API_CALL(request, *args, **kwargs):
+
+    """Things that use API_CALL() return a structure that here is
+    converted to the desired output format and returned; if
+    redirect_success is set, that is executed here as well."""
+
     get_view = kwargs.pop('GET', None)
     post_view = kwargs.pop('POST', None)
     delete_view = kwargs.pop('DELETE', None)
@@ -51,19 +62,35 @@ def API_CALL(request, *args, **kwargs):
     elif request.method == 'DELETE' and delete_view is not None:
         retval = delete_view(request, *args, **kwargs)
 
-    if retval:
-        if desired_format == 'py':
-            data = pickle.dumps(retval)
-            return HttpResponse(data, mimetype="text/plain")
-        elif desired_format == 'json':
-            data = json.dumps(retval)
-            return HttpResponse(data, mimetype="application/json")
-        elif desired_format == 'xml':
-            raise Http404("XML serialization disabled temporarily due to lack of 'lxml' on OSX")
-            data = None
-            return HttpResponse(data, mimetype="application/xml")
+    if not retval:
+        raise Http404, "cannot find handler for API_CALL request method"
 
-    raise Http404, "fell off the end of API_CALL"
+    data = None
+    mimetype = None
+
+    if desired_format == 'py':
+        mimetype="text/plain"
+        data = pickle.dumps(retval)
+    elif desired_format == 'json':
+        mimetype="application/json"
+        data = json.dumps(retval)
+    elif desired_format == 'xml':
+        mimetype="application/xml"
+        data = None
+        raise Http404("XML serialization disabled temporarily due to lack of 'lxml' on OSX")
+
+    if not data:
+        raise Http404, "received None as return value from API method"
+
+    # if we get here, it worked; are we punting?
+
+    if 'redirect_success' in request.REQUEST:
+        dest = request.REQUEST['redirect_success']
+        return HttpResponseRedirect(dest)
+
+    # else it plain worked
+    return HttpResponse(data, mimetype=mimetype)
+
 
 ##################################################################
 
@@ -71,17 +98,17 @@ def API_CALL(request, *args, **kwargs):
 ## function: read_mine_root
 ## declared args: 
 def read_mine_root(request, *args, **kwargs):
-    return render_to_response('read-mine-root.html')
+    return render_to_response('root-mine.html')
 
 ## rest: GET /doc
 ## function: read_doc_root
 ## declared args: 
 def read_doc_root(request, *args, **kwargs):
-    return render_to_response('read-doc-root.html')
+    return render_to_response('root-doc.html')
 
 ## rest: GET /pub
 ## function: read_pub_root
 ## declared args: 
 def read_pub_root(request, *args, **kwargs):
-    return render_to_response('read-pub-root.html')
+    return render_to_response('root-pub.html')
 

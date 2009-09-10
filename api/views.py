@@ -85,7 +85,7 @@ def get_foo_key(model, mid, sattr):
 ## declared args:
 def read_api_root(request, *args, **kwargs):
     """REST function that handles the template for the root api directory"""
-    return render_to_response('read-api-root.html')
+    return render_to_response('root-api.html')
 
 ## rest: GET /api/item/IID
 ## function: read_item_data
