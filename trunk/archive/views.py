@@ -25,7 +25,7 @@ from django.shortcuts import render_to_response, get_object_or_404
 ## function: read_archive_root
 ## declared args: 
 def read_archive_root(request, *args, **kwargs):
-    return render_to_response('read-archive-root.html')
+    return render_to_response('root-archive.html')
 
 ## rest: GET /archive/export
 ## function: archive_export

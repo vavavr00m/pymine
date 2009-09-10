@@ -25,7 +25,7 @@ from django.shortcuts import render_to_response, get_object_or_404
 ## function: read_get_root
 ## declared args: 
 def read_get_root(request, *args, **kwargs):
-    return render_to_response('read-get-root.html')
+    return render_to_response('root-get.html')
 
 ## rest: GET /get/KEY
 ## function: read_minekey
