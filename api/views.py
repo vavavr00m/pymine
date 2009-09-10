@@ -81,9 +81,9 @@ def get_foo_key(model, mid, sattr):
 ##################################################################
 
 ## rest: GET /api
-## function: read_api_root
-## declared args:
-def read_api_root(request, *args, **kwargs):
+## function: root_api
+## declared args: 
+def root_api(request, *args, **kwargs):
     """REST function that handles the template for the root api directory"""
     return render_to_response('root-api.html')
 
@@ -97,10 +97,6 @@ def read_item_data(request, iid, *args, **kwargs):
     f = m.data.chunks()
     ct = m.content_type
     return HttpResponse(f, mimetype=ct)
-
-##################################################################
-##################################################################
-##################################################################
 
 ## rest: GET /api/item.FMT
 ## function: list_items

@@ -1,10 +1,10 @@
-{% for comment in result %}
-<LI>commentBody: {{ comment.commentBody }}</LI>
-<LI>commentCreated: {{ comment.commentCreated }}</LI>
-<LI>commentId: {{ comment.commentId }}</LI>
-<LI>commentItem: {{ comment.commentItem }}</LI>
-<LI>commentLastModified: {{ comment.commentLastModified }}</LI>
-<LI>commentLikes: {{ comment.commentLikes }}</LI>
-<LI>commentRelation: {{ comment.commentRelation }}</LI>
-<LI>commentTitle: {{ comment.commentTitle }}</LI>
-{% endfor %}
+<UL>
+<LI>commentBody: {{ result.commentBody }}</LI>
+<LI>commentCreated: {{ result.commentCreated }}</LI>
+<LI>commentId: {{ result.commentId }}</LI>
+<LI>commentItem: {{ result.commentItem }}</LI>
+<LI>commentLastModified: {{ result.commentLastModified }}</LI>
+<LI>commentLikes: {{ result.commentLikes }}</LI>
+<LI>commentRelation: {{ result.commentRelation }}</LI>
+<LI>commentTitle: {{ result.commentTitle }}</LI>
+</UL>

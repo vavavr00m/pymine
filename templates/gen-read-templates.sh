@@ -3,12 +3,13 @@
 FMT() {
     thing=$1
     sattr=$2
-    echo "<LI>$sattr: {{ $thing.$sattr }}</LI>" >> read-$thing.html
+    echo "<LI>$sattr: {{ result.$sattr }}</LI>" >> read-$thing.html
 }
 
 for thing in comment item relation tag vurl
 do
-    echo "{% for $thing in result %}"  > read-$thing.html
+    # echo "{% for $thing in result %}"  > read-$thing.html
+    echo "<UL>" > read-$thing.html
 done
 
 FMT comment commentBody
@@ -63,5 +64,5 @@ FMT vurl vurlTags
 
 for thing in comment item relation tag vurl
 do
-    echo "{% endfor %}"  >> read-$thing.html
+    echo "</UL>"  >> read-$thing.html
 done
