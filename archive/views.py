@@ -22,9 +22,9 @@ from django.shortcuts import render_to_response, get_object_or_404
 ##################################################################
 
 ## rest: GET /archive
-## function: read_archive_root
+## function: root_archive
 ## declared args: 
-def read_archive_root(request, *args, **kwargs):
+def root_archive(request, *args, **kwargs):
     return render_to_response('root-archive.html')
 
 ## rest: GET /archive/export

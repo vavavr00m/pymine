@@ -21,14 +21,8 @@ import views as archive
 from pymine.views import REST
 
 urlpatterns = patterns('',
-                       (r'^import$', REST,
-                        {'GET': archive.archive_import}),
-                       (r'^export$', REST,
-                        {'GET': archive.archive_export}),
-                       (r'^cleanup$', REST,
-                        {'GET': archive.archive_cleanup}),
-                       (r'^$', REST,
-                        {'GET': archive.read_archive_root}),
+                       (r'^import$', REST, {'GET': archive.archive_import}),
+                       (r'^export$', REST, {'GET': archive.archive_export}),
+                       (r'^cleanup$', REST, {'GET': archive.archive_cleanup}),
+                       (r'^$', REST, {'GET': archive.root_archive}),
                        )
-
-
