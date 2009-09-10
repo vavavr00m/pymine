@@ -47,7 +47,7 @@ def create_comment(request, iid, *args, **kwargs):
 ## function: delete_comment
 ## declared args: cid
 def delete_comment(request, cid, *args, **kwargs):
-    s = api.delete_comment(request, cid, *args, **kwargs)
+    s = {'commentId': cid} # punts to a confirmation page
     return render_to_response('delete-comment.html', s)
 
 ## rest: GET /ui/list-comments/IID.html
@@ -82,7 +82,7 @@ def create_item(request, *args, **kwargs):
 ## function: delete_item
 ## declared args: iid
 def delete_item(request, iid, *args, **kwargs):
-    s = api.delete_item(request, iid, *args, **kwargs)
+    s = {'itemId': iid} # punts to a confirmation page
     return render_to_response('delete-item.html', s)
 
 ## rest: GET /ui/list-items.html
@@ -117,7 +117,7 @@ def create_relation(request, *args, **kwargs):
 ## function: delete_relation
 ## declared args: rid
 def delete_relation(request, rid, *args, **kwargs):
-    s = api.delete_relation(request, rid, *args, **kwargs)
+    s = {'relationId': rid} # punts to a confirmation page
     return render_to_response('delete-relation.html', s)
 
 ## rest: GET /ui/list-relations.html
@@ -152,7 +152,7 @@ def create_tag(request, *args, **kwargs):
 ## function: delete_tag
 ## declared args: tid
 def delete_tag(request, tid, *args, **kwargs):
-    s = api.delete_tag(request, tid, *args, **kwargs)
+    s = {'tagId': tid} # punts to a confirmation page
     return render_to_response('delete-tag.html', s)
 
 ## rest: GET /ui/list-tags.html
@@ -183,11 +183,11 @@ def create_vurl(request, *args, **kwargs):
     s = api.create_vurl(request, *args, **kwargs)
     return render_to_response('create-vurl.html', s)
 
-## rest: GET /ui/delete-vurl/TID.html
+## rest: GET /ui/delete-vurl/VID.html
 ## function: delete_vurl
-## declared args: tid
-def delete_vurl(request, tid, *args, **kwargs):
-    s = api.delete_vurl(request, tid, *args, **kwargs)
+## declared args: vid
+def delete_vurl(request, vid, *args, **kwargs):
+    s = {'vurlId': vid} # punts to a confirmation page
     return render_to_response('delete-vurl.html', s)
 
 ## rest: GET /ui/list-vurls.html
@@ -197,17 +197,17 @@ def list_vurls(request, *args, **kwargs):
     s = api.list_vurls(request, *args, **kwargs)
     return render_to_response('list-vurls.html', s)
 
-## rest: GET /ui/read-vurl/TID.html
+## rest: GET /ui/read-vurl/VID.html
 ## function: read_vurl
-## declared args: tid
-def read_vurl(request, tid, *args, **kwargs):
-    s = api.read_vurl(request, tid, *args, **kwargs)
+## declared args: vid
+def read_vurl(request, vid, *args, **kwargs):
+    s = api.read_vurl(request, vid, *args, **kwargs)
     return render_to_response('read-vurl.html', s)
 
-## rest: GET /ui/update-vurl/TID.html
+## rest: GET /ui/update-vurl/VID.html
 ## function: update_vurl
-## declared args: tid
-def update_vurl(request, tid, *args, **kwargs):
-    s = api.update_vurl(request, tid, *args, **kwargs)
+## declared args: vid
+def update_vurl(request, vid, *args, **kwargs):
+    s = api.update_vurl(request, vid, *args, **kwargs)
     return render_to_response('update-vurl.html', s)
 

@@ -1,0 +1,22 @@
+{% extends "base-api.html" %}
+
+{% block title %}vurl listing{% endblock %}
+
+{% block content %}
+<DL>
+{% for vurl in result %}
+<DT>
+{{ vurl.vurlName }}
+{% if vurl.vurlTags %}
+(tags: {{ vurl.vurlTags }})
+{% endif %}
+</DT>
+<DD>
+{{ vurl.vurlLink }}
+</DD>
+<P/>
+{% endfor %}
+</DL>
+{% endblock %}
+
+
