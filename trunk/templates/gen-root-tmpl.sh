@@ -3,8 +3,9 @@ do
 cat > root-$i.html <<EOF
 {% extends 'base-page.html' %}
 {% block title %}$i root{% endblock %}
-root-$i.html
 {% block content %}
+you are looking at root-$i.html
+<P>
 {% include 'developer-boilerplate.html' %}
 {% endblock %}
 EOF
