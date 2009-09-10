@@ -65,7 +65,7 @@ __END__;
 ' <hr/>
 ' developer boilerplate
 
-: listings
+: list existing things
 . /ui/list-items.html list items
 . /ui/list-relations.html list relations
 . /ui/list-tags.html list tags
@@ -74,6 +74,14 @@ __END__;
 . /ui/list-comments/1.html list comments on item 1
 . /ui/version.html version
 . /admin/ DJANGO ADMIN BACKDOOR
+-
+
+: create new things
+. /ui/create-comment/1.html create-comment on item 1
+. /ui/create-item.html create-item
+. /ui/create-relation.html create-relation
+. /ui/create-tag.html create-tag
+. /ui/create-vurl.html create-vurl
 -
 
 : roots
@@ -87,27 +95,22 @@ __END__;
 -
 
 : testing
-. /ui/create-comment/1.html create-comment on item 1
 . /ui/delete-comment/1.html delete-comment 1
 . /ui/read-comment/1.html read-comment 1
 . /ui/update-comment/1.html update-comment 1
 '
-. /ui/create-item.html create-item
 . /ui/delete-item/1.html delete-item 1
 . /ui/read-item/1.html read-item 1
 . /ui/update-item/1.html update-item 1
 '
-. /ui/create-relation.html create-relation
 . /ui/delete-relation/1.html delete-relation 1
 . /ui/read-relation/1.html read-relation 1
 . /ui/update-relation/1.html update-relation 1
 '
-. /ui/create-tag.html create-tag
 . /ui/delete-tag/1.html delete-tag 1
 . /ui/read-tag/1.html read-tag 1
 . /ui/update-tag/1.html update-tag 1
 '
-. /ui/create-vurl.html create-vurl
 . /ui/delete-vurl/1.html delete-vurl 1
 . /ui/read-vurl/1.html read-vurl 1
 . /ui/update-vurl/1.html update-vurl 1
