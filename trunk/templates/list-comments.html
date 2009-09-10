@@ -5,7 +5,11 @@
 {% block content %}
 <DL>
 {% for comment in result %}
-<DT>{{ comment.commentTitle }} (on item {{ comment.commentItem }})</DT>
+<DT>
+{{ comment.commentTitle }} 
+(on item {{ comment.commentItem }})
+(by relation {{ comment.commentRelation }})
+</DT>
 <DD>
 {{ comment.commentBody }}
 </DD>

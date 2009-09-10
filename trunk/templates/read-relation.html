@@ -1,16 +1,16 @@
-{% for relation in result %}
-<LI>relationCallbackURL: {{ relation.relationCallbackURL }}</LI>
-<LI>relationCreated: {{ relation.relationCreated }}</LI>
-<LI>relationDescription: {{ relation.relationDescription }}</LI>
-<LI>relationEmailAddress: {{ relation.relationEmailAddress }}</LI>
-<LI>relationEmbargoAfter: {{ relation.relationEmbargoAfter }}</LI>
-<LI>relationEmbargoBefore: {{ relation.relationEmbargoBefore }}</LI>
-<LI>relationHomepageURL: {{ relation.relationHomepageURL }}</LI>
-<LI>relationId: {{ relation.relationId }}</LI>
-<LI>relationImageURL: {{ relation.relationImageURL }}</LI>
-<LI>relationInterests: {{ relation.relationInterests }}</LI>
-<LI>relationLastModified: {{ relation.relationLastModified }}</LI>
-<LI>relationName: {{ relation.relationName }}</LI>
-<LI>relationNetworkPattern: {{ relation.relationNetworkPattern }}</LI>
-<LI>relationVersion: {{ relation.relationVersion }}</LI>
-{% endfor %}
+<UL>
+<LI>relationCallbackURL: {{ result.relationCallbackURL }}</LI>
+<LI>relationCreated: {{ result.relationCreated }}</LI>
+<LI>relationDescription: {{ result.relationDescription }}</LI>
+<LI>relationEmailAddress: {{ result.relationEmailAddress }}</LI>
+<LI>relationEmbargoAfter: {{ result.relationEmbargoAfter }}</LI>
+<LI>relationEmbargoBefore: {{ result.relationEmbargoBefore }}</LI>
+<LI>relationHomepageURL: {{ result.relationHomepageURL }}</LI>
+<LI>relationId: {{ result.relationId }}</LI>
+<LI>relationImageURL: {{ result.relationImageURL }}</LI>
+<LI>relationInterests: {{ result.relationInterests }}</LI>
+<LI>relationLastModified: {{ result.relationLastModified }}</LI>
+<LI>relationName: {{ result.relationName }}</LI>
+<LI>relationNetworkPattern: {{ result.relationNetworkPattern }}</LI>
+<LI>relationVersion: {{ result.relationVersion }}</LI>
+</UL>

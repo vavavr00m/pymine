@@ -1,13 +1,13 @@
-{% for item in result %}
-<LI>itemCreated: {{ item.itemCreated }}</LI>
-<LI>itemData: {{ item.itemData }}</LI>
-<LI>itemDescription: {{ item.itemDescription }}</LI>
-<LI>itemHideAfter: {{ item.itemHideAfter }}</LI>
-<LI>itemHideBefore: {{ item.itemHideBefore }}</LI>
-<LI>itemId: {{ item.itemId }}</LI>
-<LI>itemLastModified: {{ item.itemLastModified }}</LI>
-<LI>itemName: {{ item.itemName }}</LI>
-<LI>itemStatus: {{ item.itemStatus }}</LI>
-<LI>itemTags: {{ item.itemTags }}</LI>
-<LI>itemType: {{ item.itemType }}</LI>
-{% endfor %}
+<UL>
+<LI>itemCreated: {{ result.itemCreated }}</LI>
+<LI>itemData: {{ result.itemData }}</LI>
+<LI>itemDescription: {{ result.itemDescription }}</LI>
+<LI>itemHideAfter: {{ result.itemHideAfter }}</LI>
+<LI>itemHideBefore: {{ result.itemHideBefore }}</LI>
+<LI>itemId: {{ result.itemId }}</LI>
+<LI>itemLastModified: {{ result.itemLastModified }}</LI>
+<LI>itemName: {{ result.itemName }}</LI>
+<LI>itemStatus: {{ result.itemStatus }}</LI>
+<LI>itemTags: {{ result.itemTags }}</LI>
+<LI>itemType: {{ result.itemType }}</LI>
+</UL>
