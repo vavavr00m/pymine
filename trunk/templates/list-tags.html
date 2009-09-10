@@ -5,11 +5,13 @@
 {% block content %}
 <DL>
 {% for tag in result %}
-<DT>{{ tag.tagName }}</DT>
-<DD>
+<DT>
+{{ tag.tagName }}
 {% if tag.tagImplies %}
 (implies: {{ tag.tagImplies }})
 {% endif %}
+</DT>
+<DD>
 {{ tag.tagDescription }}
 </DD>
 <P/>

@@ -22,20 +22,23 @@ from django.shortcuts import render_to_response, get_object_or_404
 ##################################################################
 
 ## rest: GET /get
-## function: read_get_root
+## function: root_get
 ## declared args: 
-def read_get_root(request, *args, **kwargs):
-    return render_to_response('root-get.html')
+def root_get(request, *args, **kwargs):
+    s = {}
+    return render_to_response('root-get.html', s)
 
 ## rest: GET /get/KEY
 ## function: read_minekey
 ## declared args: key
 def read_minekey(request, key, *args, **kwargs):
-    return render_to_response('read-minekey.html')
+    s = {}
+    return render_to_response('read-minekey.html', s)
 
 ## rest: POST /get/KEY
 ## function: submit_minekey
 ## declared args: key
 def submit_minekey(request, key, *args, **kwargs):
-    return render_to_response('submit-minekey.html')
+    s = {}
+    return render_to_response('submit-minekey.html', s)
 
