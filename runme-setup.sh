@@ -50,7 +50,7 @@ then
 fi
 
 # yes the args are visible during creation, no i can't be arsed yet to fix this
-MINE_SECRET=`./keygen.py`
+MINE_SECRET=`./tools/keygen.py`
 
 if [ ! -f settings.py ]
 then
