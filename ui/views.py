@@ -40,7 +40,7 @@ def read_version(request, *args, **kwargs):
 ## function: create_comment
 ## declared args: iid
 def create_comment(request, iid, *args, **kwargs):
-    s = api.create_comment(request, iid, *args, **kwargs)
+    s = {}
     return render_to_response('create-comment.html', s)
 
 ## rest: GET /ui/delete-comment/CID.html
@@ -68,14 +68,14 @@ def read_comment(request, cid, *args, **kwargs):
 ## function: update_comment
 ## declared args: cid
 def update_comment(request, cid, *args, **kwargs):
-    s = api.update_comment(request, cid, *args, **kwargs)
+    s = {'commentId': cid} # punts to a confirmation page
     return render_to_response('update-comment.html', s)
 
 ## rest: GET /ui/create-item.html
 ## function: create_item
 ## declared args: 
 def create_item(request, *args, **kwargs):
-    s = api.create_item(request, *args, **kwargs)
+    s = {}
     return render_to_response('create-item.html', s)
 
 ## rest: GET /ui/delete-item/IID.html
@@ -103,14 +103,14 @@ def read_item(request, iid, *args, **kwargs):
 ## function: update_item
 ## declared args: iid
 def update_item(request, iid, *args, **kwargs):
-    s = api.update_item(request, iid, *args, **kwargs)
+    s = {'itemId': iid} # punts to a confirmation page                                                                                    
     return render_to_response('update-item.html', s)
 
 ## rest: GET /ui/create-relation.html
 ## function: create_relation
 ## declared args: 
 def create_relation(request, *args, **kwargs):
-    s = api.create_relation(request, *args, **kwargs)
+    s = {}
     return render_to_response('create-relation.html', s)
 
 ## rest: GET /ui/delete-relation/RID.html
@@ -138,14 +138,14 @@ def read_relation(request, rid, *args, **kwargs):
 ## function: update_relation
 ## declared args: rid
 def update_relation(request, rid, *args, **kwargs):
-    s = api.update_relation(request, rid, *args, **kwargs)
+    s = {'relationId': rid} # punts to a confirmation page                                                                                
     return render_to_response('update-relation.html', s)
 
 ## rest: GET /ui/create-tag.html
 ## function: create_tag
 ## declared args: 
 def create_tag(request, *args, **kwargs):
-    s = api.create_tag(request, *args, **kwargs)
+    s = {}
     return render_to_response('create-tag.html', s)
 
 ## rest: GET /ui/delete-tag/TID.html
@@ -173,14 +173,14 @@ def read_tag(request, tid, *args, **kwargs):
 ## function: update_tag
 ## declared args: tid
 def update_tag(request, tid, *args, **kwargs):
-    s = api.update_tag(request, tid, *args, **kwargs)
+    s = {'tagId': tid} # punts to a confirmation page                                                                                     
     return render_to_response('update-tag.html', s)
 
 ## rest: GET /ui/create-vurl.html
 ## function: create_vurl
 ## declared args: 
 def create_vurl(request, *args, **kwargs):
-    s = api.create_vurl(request, *args, **kwargs)
+    s = {}
     return render_to_response('create-vurl.html', s)
 
 ## rest: GET /ui/delete-vurl/VID.html
@@ -208,6 +208,6 @@ def read_vurl(request, vid, *args, **kwargs):
 ## function: update_vurl
 ## declared args: vid
 def update_vurl(request, vid, *args, **kwargs):
-    s = api.update_vurl(request, vid, *args, **kwargs)
+    s = {'vurlId': vid} # punts to a confirmation page                                                                                    
     return render_to_response('update-vurl.html', s)
 

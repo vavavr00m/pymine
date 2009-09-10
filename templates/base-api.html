@@ -8,7 +8,20 @@
 <A HREF="/ui/">home</A> <P/>
 
 {% block header %}
+{% endblock %}
 
+<span>result:</span> <P/>
+{% if result %}
+<BLOCKQUOTE>
+{% block content %}
+no block content defined <P/>
+{% endblock %}
+</BLOCKQUOTE>
+{% else %}
+no result returned by API call <P/>
+{% endif %}
+
+{% block envelope %}
 <span>envelope:</span> <P/>
 <UL>
 <LI>exit: {{ exit }}</LI>
@@ -23,17 +36,6 @@
 </UL>
 <P/>
 {% endblock %}
-
-<span>result:</span> <P/>
-{% if result %}
-<BLOCKQUOTE>
-{% block content %}
-no block content defined <P/>
-{% endblock %}
-</BLOCKQUOTE>
-{% else %}
-no result returned by API call <P/>
-{% endif %}
 
 {% block footer %}
 <!-- no footer defined -->
