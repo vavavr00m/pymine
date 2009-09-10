@@ -27,8 +27,7 @@ import pymine.api.views as api
 ## function: root_ui
 ## declared args: 
 def root_ui(request, *args, **kwargs):
-    s = api.root_ui(request, *args, **kwargs)
-    return render_to_response('root-ui.html', s)
+    return render_to_response('root-ui.html')
 
 ## rest: GET /ui/version.html
 ## function: read_version
