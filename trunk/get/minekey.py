@@ -161,7 +161,7 @@ class MineKey:
 	return "%s,%s" % (hash, core)
 
     def permalink(self):
-        return "/get/" + str(self) # TODO; fix
+        return "/get/" + self.key() # TODO; fix
 
     def key(self):
 	internal = str(self)
