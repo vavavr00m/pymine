@@ -113,11 +113,11 @@ def s2m_copy(s, sattr, m, mattr):
 
 def m2s_dummy(m, mattr, s, sattr):
     """Barfing Placeholder"""
-    raise Exception, 'something invoked m2s_dummy'
+    raise RuntimeError, 'something invoked m2s_dummy'
 
 def s2m_dummy(s, sattr, m, mattr):
     """Barfing Placeholder"""
-    raise Exception, 'something invoked s2m_dummy'
+    raise RuntimeError, 'something invoked s2m_dummy'
 
 # One of the more complex translations between spaces are DateTime
 # objects; in m-space we use whatever Django mandates, and in s-space
@@ -132,7 +132,7 @@ def m2s_date(m, mattr, s, sattr):
 
 def s2m_date(s, sattr, m, mattr):
     if sattr in s:
-	raise Exception, "not yet integrated the Date parser"
+	raise RuntimeError, "not yet integrated the Date parser"
 
 # Specialist Type Conversion - Note: Where we are writing custom
 # converters we don't generally bother to use introspection because we
@@ -144,13 +144,13 @@ def s2m_date(s, sattr, m, mattr):
 
 def m2s_comitem(m, mattr, s, sattr):
     if mattr != 'item' or sattr != 'commentItem':
-	raise Exception, "m2s_comitem is confused"
+	raise RuntimeError, "m2s_comitem is confused"
     x = m.item
     if x: s[sattr] = x.id
 
 def s2m_comitem(s, sattr, m, mattr):
     if mattr != 'item' or sattr != 'commentItem':
-	raise Exception, "s2m_comitem is confused"
+	raise RuntimeError, "s2m_comitem is confused"
     if sattr in s:
 	m.item = Item.objects.get(id=s[sattr]) # ITEM LOOKUP
 
@@ -161,13 +161,13 @@ def s2m_comitem(s, sattr, m, mattr):
 
 def m2s_comrel(m, mattr, s, sattr):
     if mattr != 'relation' or sattr != 'commentRelation':
-	raise Exception, "m2s_comrel is confused"
+	raise RuntimeError, "m2s_comrel is confused"
     x = m.relation
     if x: s[sattr] = x.name
 
 def s2m_comrel(s, sattr, m, mattr):
     if mattr != 'relation' or sattr != 'commentRelation':
-	raise Exception, "s2m_comrel is confused"
+	raise RuntimeError, "s2m_comrel is confused"
     if sattr in s:
 	m.relation = Relation.objects.get(name=s[sattr]) # RELATION LOOKUP
 
@@ -178,13 +178,13 @@ def s2m_comrel(s, sattr, m, mattr):
 
 def m2s_tagimplies(m, mattr, s, sattr):
     if mattr != 'implies' or sattr != 'tagImplies':
-	raise Exception, "m2s_tagimplies is confused"
+	raise RuntimeError, "m2s_tagimplies is confused"
     x = ' '.join([ x.name for x in m.implies.all() ])
     if x: s[sattr] = x
 
 def s2m_tagimplies(s, sattr, m, mattr):
     if mattr != 'implies' or sattr != 'tagImplies':
-	raise Exception, "s2m_tagimplies is confused"
+	raise RuntimeError, "s2m_tagimplies is confused"
     if sattr in s:
 	for x in s[sattr].split():
 	    m.implies.add(Tag.objects.get(name=x))
@@ -195,13 +195,13 @@ def s2m_tagimplies(s, sattr, m, mattr):
 
 def m2s_vurltags(m, mattr, s, sattr):
     if mattr != 'tags' or sattr != 'vurlTags':
-	raise Exception, "m2s_vurltags is confused"
+	raise RuntimeError, "m2s_vurltags is confused"
     x = ' '.join([ x.name for x in m.tags.all() ])
     if x: s[sattr] = x
 
 def s2m_vurltags(s, sattr, m, mattr):
     if mattr != 'tags' or sattr != 'vurlTags':
-	raise Exception, "s2m_vurltags is confused"
+	raise RuntimeError, "s2m_vurltags is confused"
     if sattr in s:
 	for x in s[sattr].split(): m.implies.add(Tag.objects.get(name=x))
 
@@ -211,19 +211,19 @@ def s2m_vurltags(s, sattr, m, mattr):
 
 def m2s_itemstatus(m, mattr, s, sattr):
     if mattr != 'status' or sattr != 'itemStatus':
-	raise Exception, "s2m_itemtags is confused"
+	raise RuntimeError, "s2m_itemtags is confused"
     x = m.get_status_display()
     if x: s[sattr] = x
 
 def s2m_itemstatus(s, sattr, m, mattr):
     if mattr != 'status' or sattr != 'itemStatus':
-	raise Exception, "m2s_itemtags is confused"
+	raise RuntimeError, "m2s_itemtags is confused"
     x = s[sattr]
 
     if x in status_lookup:
 	setattr(m, mattr, status_lookup[x])
     else:
-	raise Exception, "s2m_itemstatus cannot remap status: " + x
+	raise RuntimeError, "s2m_itemstatus cannot remap status: " + x
 
 # itemTags is a complex tagging string: in s-space it is a
 # space-separated string like "wine beer for:alice not:bob" where
@@ -234,7 +234,7 @@ def s2m_itemstatus(s, sattr, m, mattr):
 
 def m2s_itemtags(m, mattr, s, sattr):
     if mattr != 'tags' or sattr != 'itemTags':
-	raise Exception, "m2s_itemtags is confused"
+	raise RuntimeError, "m2s_itemtags is confused"
 
     # i like this bit of code
     x = " ".join(x for x in itertools.chain([ i.name for i in m.tags.all() ],
@@ -244,7 +244,7 @@ def m2s_itemtags(m, mattr, s, sattr):
 
 def s2m_itemtags(s, sattr, m, mattr):
     if mattr != 'tags' or sattr != 'itemTags':
-	raise Exception, "s2m_itemtags is confused"
+	raise RuntimeError, "s2m_itemtags is confused"
     if sattr in s:
 	for x in s[sattr].split():
 	    if x.startswith('for:'): m.item_for_relations.add(Tag.objects.get(name=x[4:]))
@@ -262,7 +262,7 @@ def s2m_itemtags(s, sattr, m, mattr):
 
 def m2s_relints(m, mattr, s, sattr):
     if mattr != 'interests' or sattr != 'relationInterests':
-	raise Exception, "m2s_relints is confused"
+	raise RuntimeError, "m2s_relints is confused"
 
     x = " ".join(x for x in itertools.chain([ i.name for i in m.tags.all() ],
 					    [ "require:%s" % i.name for i in m.tags_required.all() ],
@@ -271,7 +271,7 @@ def m2s_relints(m, mattr, s, sattr):
 
 def s2m_relints(s, sattr, m, mattr):
     if mattr != 'interests' or sattr != 'relationInterests':
-	raise Exception, "s2m_relints is confused"
+	raise RuntimeError, "s2m_relints is confused"
     if sattr in s:
 	for x in s[sattr].split():
 	    if x.startswith('require:'): m.tags_required.add(Tag.objects.get(name=x[8:]))
@@ -411,7 +411,7 @@ class Thing():
 			s2m_table[prefix][sattr] = t
 		break # for loop
 	else: # for loop; you can have a else: for a for loop in python, how cool!
-	    raise Exception, "unrecognised prefix in sattr_conversion: " + sattr
+	    raise RuntimeError, "unrecognised prefix in sattr_conversion: " + sattr
 
     # update_from_request updates a (possibly blank) instance of a
     # model, with data that comes from a HttpRequest (ie: that is in
@@ -476,7 +476,7 @@ class Thing():
 
     def clone_from_request(self, r, **kwargs):
 	if self.sattr_prefix != 'item':
-	    raise Exception, "clone_from_request called on non-item"
+	    raise RuntimeError, "clone_from_request called on non-item"
 
 	instantiator = self.s_classes[self.sattr_prefix]
 
@@ -510,7 +510,7 @@ class Thing():
 	elif sattr in self.defer_s2m_table[self.sattr_prefix][sattr]:
 	    t = defer_s2m_table[self.sattr_prefix][sattr]
 	else:
-	    raise Exception, "lookup_mattr cannot lookup: " + sattr
+	    raise RuntimeError, "lookup_mattr cannot lookup: " + sattr
 	return t
 
     # get_sattr and delete_sattr methods: supporting the
@@ -519,7 +519,7 @@ class Thing():
     def get_sattr(self, sattr):
 	# check validity of sattr
         if not sattr.startswith(self.sattr_prefix):
-            raise Exception, "get_sattr asked to look up bogus sattr: " + sattr
+            raise RuntimeError, "get_sattr asked to look up bogus sattr: " + sattr
 
 	# lookup equivalent model field
         r2s_func, s2m_func, mattr = lookup_mattr(sattr)
@@ -544,7 +544,7 @@ class Thing():
     def delete_sattr(self, sattr):
 	# check validity of sattr
         if not sattr.startswith(self.sattr_prefix):
-            raise Exception, "get_sattr asked to look up bogus sattr: " + sattr
+            raise RuntimeError, "get_sattr asked to look up bogus sattr: " + sattr
 
 	# lookup equivalent model field
         r2s_func, s2m_func, mattr = lookup_mattr(sattr)
@@ -645,7 +645,7 @@ class Item(models.Model, Thing):
 
     def save_upload_file(self, f):
 	if not self.id:
-	    raise Exception, "save_upload_file trying to save a model which has no IID"
+	    raise RuntimeError, "save_upload_file trying to save a model which has no IID"
 
 	name = str(self.id) + '.' + f.name
 

@@ -73,7 +73,7 @@ def get_foo_key(model, mid, sattr):
     m = model.objects.get(id=int(mid))
     s = m.to_structure()
     if not sattr in s:
-	raise Exception, "sattr not found: " + sattr
+	raise RuntimeError, "sattr not found: " + sattr
     return construct_retval(s[sattr])
 
 ##################################################################
