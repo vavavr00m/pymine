@@ -17,6 +17,7 @@
 
 import base64
 import hashlib
+import re
 
 # using pycrypto 2.0.1
 # http://www.amk.ca/python/code/crypto (old)
@@ -24,102 +25,127 @@ import hashlib
 from Crypto.Cipher import AES
 
 class MineKey:
-    kmagic = 'py1' # recognise these keys
+    key_magic = 'py1' # recognise these keys
     corefmt = '%s,%d,%d,%d,%d,%s'
-    b64alt = '!@'
-    aeskey = '1234567890123456' # 128 bits
-    aesmode = AES.MODE_CBC
+    valid_methods = ( 'get', 'put' )
+
+    b64_alt = '!@'
+
+    aes_mode = AES.MODE_CBC
+    aes_key = '1234567890123456' # 128 bits
+    aes_iv =  'abcdefghijklmnop' # 128 bits
+
+    # should we be worried that href="1' - will match?
+    html_re = re.compile(r"""(SRC|HREF)\s*=\s*['"]?(\d+)['"]?""", re.IGNORECASE)
 
     def __init__(self, **kwargs):
-	self.method = kwargs.get('method', 'GET')
-	self.rid = kwargs.get('rid', 0)
-	self.rvsn = kwargs.get('rvsn', 0)
-	self.iid = kwargs.get('iid', 0)
-	self.depth = kwargs.get('depth', 0)
+	# flush with invalid data
+	self.method = kwargs.get('method', None)
+	self.rid = kwargs.get('rid', -1)
+	self.rvsn = kwargs.get('rvsn', -1)
+	self.iid = kwargs.get('iid', -1)
+	self.depth = kwargs.get('depth', -1)
 
     @classmethod
-    def b64enc(self, x):
-        return base64.b64encode(x, self.b64alt)
+    def b64e(self, x):
+	return base64.b64encode(x, self.b64_alt)
 
     @classmethod
-    def b64dec(self, x):
-        return base64.b64decode(x, self.b64alt)
-
-    @classmethod
-    def encrypt(self, x):
-        aes = AES.new(self.aeskey, self.aesmode)
-
-        l = len(x)
-        if (l % 16): # if not a 16-byte message
-            y =  '%*s' % (-(((l // 16) + 1) * 16), x)
-        else: # we got lucky
-            y = x
-
-        return aes.encrypt(y)
-
-    @classmethod
-    def decrypt(self, x):
-        aes = AES.new(self.aeskey, self.aesmode)
-        return aes.decrypt(x).rstrip()
+    def b64d(self, x):
+	return base64.b64decode(x, self.b64_alt)
 
     @classmethod
     def hashify(self, x):
-        m = hashlib.md5() # more than adequate
-        m.update(x)
-        h = m.digest()
-        return self.b64enc(h)
+	m = hashlib.md5() # more than adequate
+	m.update(x)
+	h = m.digest()
+	return self.b64e(h).rstrip('=')
+
+    @classmethod
+    def crypto_engine(self):
+	return AES.new(self.aes_key, self.aes_mode, self.aes_iv)
+
+    @classmethod
+    def encrypt(self, x):
+	l = len(x)
+	if (l % 16): # if not a 16-byte message
+	    y =  '%*s' % (-(((l // 16) + 1) * 16), x)
+	else: # we got lucky
+	    y = x
+	engine = self.crypto_engine()
+	return engine.encrypt(y)
+
+    @classmethod
+    def decrypt(self, x):
+	engine = self.crypto_engine()
+	return engine.decrypt(x).rstrip()
+
+    def validate(self):
+	if self.rid <= 0:
+	    raise RuntimeError, 'negative or zero rid: ' + str(self.rid)
+
+	if self.rvsn <= 0:
+	    raise RuntimeError, 'negative or zero rvsn: ' + str(self.rvsn)
+
+	if self.iid < 0:
+	    raise RuntimeError, 'negative iid: ' + str(self.iid)
+
+	if self.depth < 0:
+	    raise RuntimeError, 'negative depth: ' + str(self.depth)
+
+	if self.method not in self.valid_methods:
+	    raise RuntimeError, 'bad method: ' + str(self.method)
+
+    def clone(self):
+	retval = MineKey(method=self.method,
+			 rid=self.rid,
+			 rvsn=self.rvsn,
+			 iid=self.iid,
+			 depth=self.depth,
+			 )
+	retval.validate()
+	return retval
 
     @classmethod
     def parse(self, external):
-
-        encrypted = self.b64dec(external)
+	encrypted = self.b64d(external)
 	internal = self.decrypt(encrypted)
 
-	(Xhash, Xmethod, Xrid, Xrvsn, Xiid, Xdepth, Xkmagic) = internal.split(',', 7)
+	(Xhash, Xmethod, Xrid, Xrvsn, Xiid, Xdepth, Xkey_magic) = internal.split(',', 7)
 
-	if Xkmagic != self.kmagic:
-	    raise Exception, 'MineKey failed magic validation'
+	if Xkey_magic != self.key_magic: # eventually switch, here
+	    raise RuntimeError, 'failed magic validation'
 
-	# Xhash string
-        # Xmethod string
+	# Xhash computed string
+	# Xmethod string
 	Xrid = int(Xrid)
 	Xrvsn = int(Xrvsn)
 	Xiid = int(Xiid)
 	Xdepth = int(Xdepth)
-        # Xkmagic string
+	# Xkey_magic constant string
 
-	core = self.corefmt % (Xmethod, Xrid, Xrvsn, Xiid, Xdepth, Xkmagic)
-	hash2 = self.hashify(core) # compute hash over core
+        # see also __str__()
+	core = self.corefmt % (Xmethod, 
+                               Xrid, 
+                               Xrvsn, 
+                               Xiid, 
+                               Xdepth, 
+                               Xkey_magic)
+
+	hash2 = self.hashify(core)
 
 	if Xhash != hash2:
-	    raise Exception, "MineKey failed hash validation"
+	    raise RuntimeError, "failed hash validation"
 
-        retval = MineKey()
-	retval.method = Xmethod
-	retval.rid = Xrid + 1
-	retval.rvsn = Xrvsn + 1
-	retval.iid = Xiid + 1
-	retval.depth = Xdepth + 1
-        return retval
+	retval = MineKey(method=Xmethod,
+			 rid=Xrid,
+			 rvsn=Xrvsn,
+			 iid=Xiid,
+			 depth=Xdepth,
+			 )
+	retval.validate()
 
-    @classmethod
-    def feed_for(self, rid):
-        retval = MineKey()
-	retval.method = 'get'
-	retval.rid = rid
-	retval.rvsn = self.rvsn + 1
-	retval.iid = 0
-	retval.depth = 3
-        return retval
-
-    def spawn_iid(self, iid):
-        pass
-
-    def spawn_cid(self, cid):
-        pass
-
-    def rewrite_html(self, html):
-        pass
+	return retval
 
     def __str__(self):
 	args = (self.method,
@@ -127,21 +153,73 @@ class MineKey:
 		self.rvsn,
 		self.iid,
 		self.depth,
-		self.kmagic,
+		self.key_magic, # class
 		)
 
 	core = self.corefmt % args
 	hash = self.hashify(core) # compute hash over core
-	internal = "%s,%s" % (hash, core)
+	return "%s,%s" % (hash, core)
+
+    def permalink(self):
+        return "/get/" + self.key() # TODO; fix
+
+    def key(self):
+	internal = str(self)
 	encrypted = self.encrypt(internal)
-        external = self.b64enc(encrypted)
+	external = self.b64e(encrypted)
 	return external
 
+    @classmethod
+    def feed_for(self, rid):
+	rvsn = 1 # TODO: lookup
+	retval = MineKey(method='get',
+			 rid=rid,
+			 rvsn=rvsn,
+			 iid=0,
+			 depth=3,
+			 )
+	retval.validate()
+	return retval
+
+    def spawn_iid(self, iid):
+	retval = self.clone()
+	retval.iid = iid
+	retval.depth -= 1
+	retval.validate()
+	return retval
+
+    def rewrite_html(self, html):
+        def rewrite_link(mo):
+            action = mo.group(1)
+            iid = int(mo.group(2))
+            return '%s="%s"' % (action, self.spawn_iid(iid).permalink())
+        return self.html_re.sub(rewrite_link, html)
+
+##################################################################
 
 if __name__ == '__main__':
-    m1 = MineKey()
-    s = str(m1)
-    m2 = MineKey.parse(s)
-    print m1
-    print m2
+    m1 = MineKey(method='get', rid=13, rvsn=1, iid=0, depth=1)
+    print "orig: ", m1, m1.key()
 
+    m2 = MineKey.parse(m1.key())
+    print "parse:", m2, m2.key()
+
+    m3 = MineKey.feed_for(17)
+    print "feed2:", m3, m3.key()
+
+    m4 = m3.spawn_iid(69)
+    print "spawn:", m4, m4.key()
+
+    m5 = m4.spawn_iid(42)
+    print "spawn:", m5, m5.permalink()
+
+    h1 = """
+a <A HREF="99">a link to item 99</A> 
+and <A src="99">again</A>
+and <A HREF="99">again</A>
+and <A HREF="99'>again</A>
+and <A HREF='99'>again</A>
+and <A HREF=99>again</A>
+"""
+
+    print m3.rewrite_html(h1)
