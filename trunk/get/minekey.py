@@ -18,10 +18,17 @@
 import base64
 import hashlib
 
+# using pycrypto 2.0.1
+# http://www.amk.ca/python/code/crypto (old)
+# http://www.pycrypto.org/ (new)
+from Crypto.Cipher import AES
+
 class MineKey:
     kmagic = 'py1' # recognise these keys
     corefmt = '%s,%d,%d,%d,%d,%s'
     b64alt = '!@'
+    aeskey = '1234567890123456' # 128 bits
+    aesmode = AES.MODE_CBC
 
     def __init__(self, **kwargs):
 	self.method = kwargs.get('method', 'GET')
@@ -40,11 +47,20 @@ class MineKey:
 
     @classmethod
     def encrypt(self, x):
-        return x
+        aes = AES.new(self.aeskey, self.aesmode)
+
+        l = len(x)
+        if (l % 16): # if not a 16-byte message
+            y =  '%*s' % (-(((l // 16) + 1) * 16), x)
+        else: # we got lucky
+            y = x
+
+        return aes.encrypt(y)
 
     @classmethod
     def decrypt(self, x):
-        return x
+        aes = AES.new(self.aeskey, self.aesmode)
+        return aes.decrypt(x).rstrip()
 
     @classmethod
     def hashify(self, x):
