@@ -19,16 +19,16 @@ import base64
 import hashlib
 
 class MineKey:
-    kmagic = 'py1'
+    kmagic = 'py1' # recognise these keys
     corefmt = '%s,%d,%d,%d,%d,%s'
     b64alt = '!@'
 
-    def __init__(self):
-	self.method = 'get'
-	self.rid = 20
-	self.rvsn = 30
-	self.iid = 40
-	self.depth = 50
+    def __init__(self, **kwargs):
+	self.method = kwargs.get('method', 'GET')
+	self.rid = kwargs.get('rid', 0)
+	self.rvsn = kwargs.get('rvsn', 0)
+	self.iid = kwargs.get('iid', 0)
+	self.depth = kwargs.get('depth', 0)
 
     @classmethod
     def b64enc(self, x):
