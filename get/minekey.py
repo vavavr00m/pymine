@@ -36,7 +36,7 @@ class MineKey:
     aes_iv =  'abcdefghijklmnop' # 128 bits
 
     # should we be worried that href="1' - will match?
-    html_re = re.compile(r"""(SRC|HREF)\s*=\s*['"]?(\d+)['"]?""", re.IGNORECASE)
+    html_re = re.compile(r"""(SRC|HREF)\s*=\s*(['"]?)(\d+)([^\s\>]*)""", re.IGNORECASE)
 
     def __init__(self, **kwargs):
 	# flush with invalid data
@@ -161,7 +161,7 @@ class MineKey:
 	return "%s,%s" % (hash, core)
 
     def permalink(self):
-        return "/get/" + self.key() # TODO; fix
+        return "/get/" + str(self) # TODO; fix
 
     def key(self):
 	internal = str(self)
@@ -191,7 +191,10 @@ class MineKey:
     def rewrite_html(self, html):
         def rewrite_link(mo):
             action = mo.group(1)
-            iid = int(mo.group(2))
+            fq = mo.group(2)
+            iid = int(mo.group(3))
+            lq = mo.group(4)
+            if fq != lq: return mo.group(0)
             return '%s="%s"' % (action, self.spawn_iid(iid).permalink())
         return self.html_re.sub(rewrite_link, html)
 
@@ -214,12 +217,21 @@ if __name__ == '__main__':
     print "spawn:", m5, m5.permalink()
 
     h1 = """
-a <A HREF="99">a link to item 99</A> 
+<A HREF="99">a link to item 99</A> 
 and <A src="99">again</A>
 and <A HREF="99">again</A>
-and <A HREF="99'>again</A>
 and <A HREF='99'>again</A>
 and <A HREF=99>again</A>
+
+and <A HREF="99'>this should fail "x'</A>
+and <A HREF='99">this should fail "x'</A>
+
+and <A HREF='99>this should fail 'x</A>
+and <A HREF="99>this should fail "x</A>
+and <A HREF=99'>this should fail x'</A>
+and <A HREF=99">this should fail x"</A>
+and <A HREF=99.xml>this should fail 99.xml</A>
+
 """
 
     print m3.rewrite_html(h1)
