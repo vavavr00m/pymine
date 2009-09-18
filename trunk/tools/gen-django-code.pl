@@ -4,9 +4,9 @@ $indent = "    ";
 
 %regexp_lookup = ( # $value text in <anglebrackets> must be same as lcase($key)
     'CID', '?P<cid>\d+',
-    'FMT', '?P<fmt>(xml|json|py)',
+    'FMT', '?P<fmt>(api|xml|json|py)',
     'IID', '?P<iid>\d+',
-    'KEY', '?P<key>\w+',
+    'KEY', '?P<key>[A-Za-z0-9!@]+',
     'RID', '?P<rid>\d+',
     'RVSN', '?P<rvsn>\d+',
     'SUFFIX', '?P<suffix>.+',
