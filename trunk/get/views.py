@@ -19,8 +19,10 @@ from django.core.urlresolvers import reverse
 from django.http import Http404, HttpResponse, HttpResponseRedirect
 from django.shortcuts import render_to_response, get_object_or_404
 
-from minekey import MineKey
 import pymine.api.views as api
+from pymine.api.models import Tag, Item, Relation, Comment, VanityURL
+
+from minekey import MineKey
 
 ##################################################################
 
@@ -34,20 +36,51 @@ def root_get(request, *args, **kwargs):
 ## function: read_minekey
 ## declared args: key
 def read_minekey(request, key, *args, **kwargs):
+
+    # parse it out (basic validation performed)
     mk = MineKey.parse(key)
 
     # check get vs put
+    if mk.method != "get":
+        raise RuntimeError, "minekey is not 'get' method: " + str(mk)
+
     # check depth
-    # check against global time of day
-    # load relation/check rid
+    if mk.depth <= 0:
+        raise RuntimeError, "minekey has run out of depth: " + str(mk)
+
+    # check global ToD restrictions
+    # TODO
+
+    # load relation
+    try:
+        r = Relation.objects.get(id=mk.rid)
+    except Relation.DoesNotExist, e:
+        raise RuntimeError, "minekey rid is not valid: " + str(mk)
+
     # check rvsn
+    if r.version != mk.rvsn:
+        raise RuntimeError, "minekey rvsn / relation version mismatch: " + str(mk)
+
     # check against relation IP address
-    # check against relation embargoes time
-    
+    if r.network_pattern:
+        if 'REMOTE_ADDR' not in request.META:
+            raise RuntimeError, "relation specifies network pattern but REMOTE_ADDR unavailable: " + str(r)
+
+        src = request.META.get('REMOTE_ADDR')
+
+        # this is hardly CIDR but can be fixed later
+        if not src.startswith(r.network_pattern):
+            raise RuntimeError, "relation being accessed from illegal REMOTE_ADDR: " + src
+
+    # check ToD against relation embargo time
+    # TODO
+
+    # deal with it
     if mk.iid: # is an actual item
         return api.read_item_data(None, mk.iid)
     else: # is a feed
-        return HttpResponse("decoded: " + str(mk))
+        return HttpResponse("feed decoded: " + str(mk))
+
 
 ## rest: POST /get/KEY
 ## function: submit_minekey
