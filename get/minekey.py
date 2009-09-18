@@ -201,13 +201,13 @@ class MineKey:
 ##################################################################
 
 if __name__ == '__main__':
-    m1 = MineKey(method='get', rid=13, rvsn=1, iid=0, depth=1)
+    m1 = MineKey(method='get', rid=1, rvsn=1, iid=1, depth=2)
     print "orig: ", m1, m1.key()
 
     m2 = MineKey.parse(m1.key())
     print "parse:", m2, m2.key()
 
-    m3 = MineKey.feed_for(17)
+    m3 = MineKey.feed_for(2)
     print "feed2:", m3, m3.key()
 
     m4 = m3.spawn_iid(69)
