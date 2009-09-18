@@ -19,6 +19,9 @@ from django.core.urlresolvers import reverse
 from django.http import Http404, HttpResponse, HttpResponseRedirect
 from django.shortcuts import render_to_response, get_object_or_404
 
+from minekey import MineKey
+import pymine.api.views as api
+
 ##################################################################
 
 ## rest: GET /get
@@ -31,8 +34,20 @@ def root_get(request, *args, **kwargs):
 ## function: read_minekey
 ## declared args: key
 def read_minekey(request, key, *args, **kwargs):
-    s = {}
-    return render_to_response('read-minekey.html', s)
+    mk = MineKey.parse(key)
+
+    # check get vs put
+    # check depth
+    # check against global time of day
+    # load relation/check rid
+    # check rvsn
+    # check against relation IP address
+    # check against relation embargoes time
+    
+    if mk.iid: # is an actual item
+        return api.read_item_data(None, mk.iid)
+    else: # is a feed
+        return HttpResponse("decoded: " + str(mk))
 
 ## rest: POST /get/KEY
 ## function: submit_minekey

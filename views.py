@@ -44,15 +44,25 @@ def REST(request, *args, **kwargs):
 
 def API_CALL(request, *args, **kwargs):
 
-    """Things that use API_CALL() return a structure that here is
-    converted to the desired output format and returned; if
-    redirect_success is set, that is executed here as well."""
+    """
+    Things that use API_CALL() return a structure that here is
+    converted to the desired output format and returned.
+
+    The pseudo-format "api" enables use of the redirect_success
+    parameter; if "foo.api" is called and "redirect_success" is set,
+    then a successful completion of foo.api yields a redirect to the
+    value of "redirect_success"
+    """
 
     get_view = kwargs.pop('GET', None)
     post_view = kwargs.pop('POST', None)
     delete_view = kwargs.pop('DELETE', None)
     desired_format = kwargs.pop('fmt', None)
 
+    if desired_format == 'api' and \
+            'redirect_success' not in request.REQUEST:
+        raise RuntimeError, "'api' format requested and redirect_success not set"
+        
     retval = None
 
     if request.method == 'GET' and get_view is not None:
@@ -61,36 +71,32 @@ def API_CALL(request, *args, **kwargs):
         retval = post_view(request, *args, **kwargs)
     elif request.method == 'DELETE' and delete_view is not None:
         retval = delete_view(request, *args, **kwargs)
+    else:
+        raise Http404, "cannot find handler for API_CALL request method"
 
     if not retval:
-        raise Http404, "cannot find handler for API_CALL request method"
+        raise RuntimeError, "received None as return value from API_CALL request method"
 
     data = None
     mimetype = None
 
-    if desired_format == 'py':
-        mimetype="text/plain"
-        data = pickle.dumps(retval)
+    # how to deal with / format the results
+    if desired_format == 'api':
+        dest = request.REQUEST['redirect_success']
+        return HttpResponseRedirect(dest) # fast 302 redirect to page
     elif desired_format == 'json':
         mimetype="application/json"
         data = json.dumps(retval)
     elif desired_format == 'xml':
         mimetype="application/xml"
         data = None
-        raise Http404("XML serialization disabled temporarily due to lack of 'lxml' on OSX")
-
-    if not data:
-        raise Http404, "received None as return value from API method"
-
-    # if we get here, it worked; are we punting?
-
-    if 'redirect_success' in request.REQUEST:
-        dest = request.REQUEST['redirect_success']
-        return HttpResponseRedirect(dest)
+        raise RuntimeError("XML serialization disabled temporarily due to lack of 'lxml' on OSX")
+    elif desired_format == 'py':
+        mimetype="text/plain"
+        data = pickle.dumps(retval)
 
     # else it plain worked
     return HttpResponse(data, mimetype=mimetype)
-
 
 ##################################################################
 

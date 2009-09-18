@@ -108,7 +108,7 @@ class MineKey:
 
     @classmethod
     def parse(self, external):
-	encrypted = self.b64d(external)
+	encrypted = self.b64d(external.encode('utf-8')) # stuff comes from URLs in UNICODE
 	internal = self.decrypt(encrypted)
 
 	(Xhash, Xmethod, Xrid, Xrvsn, Xiid, Xdepth, Xkey_magic) = internal.split(',', 7)
