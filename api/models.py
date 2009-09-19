@@ -708,8 +708,8 @@ class MineRegistry(models.Model): # not a Thing
     def to_structure(self):
 	s = {}
         s[self.key] = self.value # this is why it is not a Thing
-        s[keyCreated] = m2s_date(self.created)
-        s[keyLastModified] = m2s_date(self.last_modified)
+        s['keyCreated'] = m2s_date(self.created)
+        s['keyLastModified'] = m2s_date(self.last_modified)
 	return s
 
     class Meta:
@@ -719,6 +719,47 @@ class MineRegistry(models.Model): # not a Thing
 
     def __unicode__(self):
 	return self.key
+
+##################################################################
+
+class EventLog(models.Model): # not a Thing
+
+    """key/value pairs for Mine configuration"""
+
+    type = models.SlugField(max_length=settings.MINE_STRINGSIZE)
+    action = models.CharField(max_length=settings.MINE_STRINGSIZE, null=False, blank=False)
+    # relation = foo
+    result = models.CharField(max_length=settings.MINE_STRINGSIZE, null=False, blank=False)
+    created = models.DateTimeField(auto_now_add=True)
+    last_modified = models.DateTimeField(auto_now=True)
+
+    # need to store relation
+
+    @classmethod
+    def new(self, type, action):
+        el = EventLog(type=type, action=action, result="new")
+        el.save()
+
+    def update(self, result):
+        self.result = result
+        self.save()
+
+    def to_structure(self):
+	s = {}
+        s['eventType'] = self.type
+        s['eventAction'] = self.action
+        s['eventResult'] = self.result
+        s['eventCreated'] = m2s_date(self.created)
+        s['eventLastModified'] = m2s_date(self.last_modified)
+	return s
+
+    class Meta:
+	ordering = ['last_modified']
+	verbose_name = 'EventLog'
+	verbose_name_plural = 'EventLog'
+
+    def __unicode__(self):
+	return self.event
 
 ##################################################################
 
