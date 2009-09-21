@@ -51,7 +51,7 @@ dbdump:
 ##################################################################
 
 syntax:
-	find mine -name "*.py" | while read f ; do echo $$f ; python $$f ; echo "" ; done
+	find */ -name "*.py" | while read f ; do echo $$f ; python $$f ; echo "" ; done
 
 # :-)
 alecm:
