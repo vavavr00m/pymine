@@ -80,7 +80,7 @@ class MineRegistryAdmin(admin.ModelAdmin):
         ]
 
 class LogEventAdmin(admin.ModelAdmin):
-    list_display = ('status', 'omsg', 'cmsg', 'ip', 'method', 'path', 'last_modified', 'created')
+    list_display = ('status', 'ip', 'omsg', 'method', 'path', 'cmsg', 'last_modified', 'created')
     search_fields = ['omsg', 'cmsg']
     list_filter = ['created']
     date_hierarchy = 'created'

@@ -737,7 +737,7 @@ class LogEvent(models.Model): # not a Thing
 
     status = models.CharField(max_length=1, choices=logevent_choices)
     omsg = models.CharField(max_length=settings.MINE_STRINGSIZE, null=False, blank=False)
-    cmsg = models.CharField(max_length=settings.MINE_STRINGSIZE, null=True, blank=True)
+    cmsg = models.TextField(null=True, blank=True)
     ip = models.CharField(max_length=settings.MINE_STRINGSIZE, null=True, blank=True)
     method = models.CharField(max_length=settings.MINE_STRINGSIZE, null=True, blank=True)
     path = models.CharField(max_length=settings.MINE_STRINGSIZE, null=True, blank=True)
@@ -746,30 +746,26 @@ class LogEvent(models.Model): # not a Thing
 
     @classmethod
     def message(self, omsg, **kwargs):
-        if not omsg: omsg = "-"
+        if not omsg: omsg = "-message-"
 	el = LogEvent(status='1', omsg=omsg, **kwargs)
 	el.save()
         return el
 
     @classmethod
     def open(self, omsg, **kwargs):
-        if not omsg: omsg = "-"
+        if not omsg: omsg = "-open-"
 	el = LogEvent(status='o', omsg=omsg, **kwargs)
 	el.save()
         return el
 
     def update(self, cmsg):
-        cm = " ".join(args)
-        if not cm: cm = "error: no message supplied to LogEvent instance.update()"
-        self.cmsg = cm
+        self.cmsg = " ".join(args)
 	self.status = 'u'
 	self.save()
 
     def __close_status(self, status, *args):
 	if self.status in 'ou': # legitimate to close
-            cm = " ".join(args)
-            if not cm: cm = "-"
-            self.cmsg = cm
+            self.cmsg = " ".join(args)
 	    self.status = status
 	else: # risk of infinite recursion if exception thrown
 	    self.status = 'x' 
@@ -800,7 +796,7 @@ class LogEvent(models.Model): # not a Thing
 	verbose_name_plural = 'Events'
 
     def __unicode__(self):
-	return seld.omsg
+	return self.omsg
 
 
 ##################################################################
