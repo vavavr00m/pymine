@@ -35,7 +35,7 @@ item_status_choices = (
 
 # create a reverse lookup table, long->short
 # other direction is covered by m.get_status_display()
-status_lookup = {} 
+status_lookup = {}
 for short, long in item_status_choices: status_lookup[long] = short
 
 ##################################################################
@@ -431,12 +431,12 @@ class Thing():
 	# for each target attribute
 	for sattr, (r2s_func, s2m_func, mattr) in self.s2m_table[self.sattr_prefix].iteritems():
 
-            # first check if it is in the kwargs (override / extra)
-            # else rip the attribute out of the request and convert to python int/str
-            # else skip
-            if sattr in kwargs: s[sattr] = kwargs[sattr]
+	    # first check if it is in the kwargs (override / extra)
+	    # else rip the attribute out of the request and convert to python int/str
+	    # else skip
+	    if sattr in kwargs: s[sattr] = kwargs[sattr]
 	    elif sattr in r.REQUEST: r2s_func(r, sattr, s)
-            else: continue
+	    else: continue
 
 	    # s2m the value into the appropriate attribute
 	    s2m_func(s, sattr, self, mattr)
@@ -460,9 +460,9 @@ class Thing():
 
 	    else:
 		# repeat the above logic
-                if sattr in kwargs: s[sattr] = kwargs[sattr]
-                elif sattr in r.REQUEST: r2s_func(r, sattr, s)
-                else: continue
+		if sattr in kwargs: s[sattr] = kwargs[sattr]
+		elif sattr in r.REQUEST: r2s_func(r, sattr, s)
+		else: continue
 		s2m_func(s, sattr, self, mattr)
 		needs_save = True
 
@@ -518,42 +518,42 @@ class Thing():
 
     def get_sattr(self, sattr):
 	# check validity of sattr
-        if not sattr.startswith(self.sattr_prefix):
-            raise RuntimeError, "get_sattr asked to look up bogus sattr: " + sattr
+	if not sattr.startswith(self.sattr_prefix):
+	    raise RuntimeError, "get_sattr asked to look up bogus sattr: " + sattr
 
 	# lookup equivalent model field
-        r2s_func, s2m_func, mattr = lookup_mattr(sattr)
+	r2s_func, s2m_func, mattr = lookup_mattr(sattr)
 
 	# retreive equivalent model field
-        x = getattr(self, mattr)
+	x = getattr(self, mattr)
 
-        # lookup m2s conversion routine
-        m2s_func, sattr2 = m2s_table[self.sattr_prefix][mattr]
+	# lookup m2s conversion routine
+	m2s_func, sattr2 = m2s_table[self.sattr_prefix][mattr]
 
-        # sanity check
-        assert sattr == sattr2, "m2s_table corruption, reverse lookup yielded wrong result"
+	# sanity check
+	assert sattr == sattr2, "m2s_table corruption, reverse lookup yielded wrong result"
 
 	# convert to s-form
-        s = {}
-        m2s_func(self, mattr, s, sattr)
+	s = {}
+	m2s_func(self, mattr, s, sattr)
 
-        # return
+	# return
 	return s[sattr]
 
     @transaction.commit_on_success # <- rollback if it raises an exception
     def delete_sattr(self, sattr):
 	# check validity of sattr
-        if not sattr.startswith(self.sattr_prefix):
-            raise RuntimeError, "get_sattr asked to look up bogus sattr: " + sattr
+	if not sattr.startswith(self.sattr_prefix):
+	    raise RuntimeError, "get_sattr asked to look up bogus sattr: " + sattr
 
 	# lookup equivalent model field
-        r2s_func, s2m_func, mattr = lookup_mattr(sattr)
+	r2s_func, s2m_func, mattr = lookup_mattr(sattr)
 
-        # zero that field
-        setattr(self, None)
+	# zero that field
+	setattr(self, None)
 
-        # try saving
-        self.save()
+	# try saving
+	self.save()
 
     # render a model into a structure quitable for serializing and
     # returning to the user.
@@ -707,9 +707,9 @@ class MineRegistry(models.Model): # not a Thing
 
     def to_structure(self):
 	s = {}
-        s[self.key] = self.value # this is why it is not a Thing
-        s['keyCreated'] = m2s_date(self.created)
-        s['keyLastModified'] = m2s_date(self.last_modified)
+	s[self.key] = self.value # this is why it is not a Thing
+	s['keyCreated'] = m2s_date(self.created)
+	s['keyLastModified'] = m2s_date(self.last_modified)
 	return s
 
     class Meta:
@@ -722,44 +722,86 @@ class MineRegistry(models.Model): # not a Thing
 
 ##################################################################
 
-class EventLog(models.Model): # not a Thing
+class LogEvent(models.Model): # not a Thing
 
     """key/value pairs for Mine configuration"""
 
-    type = models.SlugField(max_length=settings.MINE_STRINGSIZE)
-    action = models.CharField(max_length=settings.MINE_STRINGSIZE, null=False, blank=False)
-    # relation = foo
-    result = models.CharField(max_length=settings.MINE_STRINGSIZE, null=False, blank=False)
+    logevent_choices = (
+	( 'o', 'open' ),
+	( 'u', 'updated' ),
+	( 'c', 'closed' ),
+	( 'e', 'error' ),
+	( '1', 'message' ),
+	( 'x', 'corrupted' ),
+	)
+
+    status = models.CharField(max_length=1, choices=logevent_choices)
+    omsg = models.CharField(max_length=settings.MINE_STRINGSIZE, null=False, blank=False)
+    cmsg = models.CharField(max_length=settings.MINE_STRINGSIZE, null=True, blank=True)
+    ip = models.CharField(max_length=settings.MINE_STRINGSIZE, null=True, blank=True)
+    method = models.CharField(max_length=settings.MINE_STRINGSIZE, null=True, blank=True)
+    path = models.CharField(max_length=settings.MINE_STRINGSIZE, null=True, blank=True)
     created = models.DateTimeField(auto_now_add=True)
     last_modified = models.DateTimeField(auto_now=True)
 
-    # need to store relation
+    @classmethod
+    def message(self, omsg, **kwargs):
+        if not omsg: omsg = "-"
+	el = LogEvent(status='1', omsg=omsg, **kwargs)
+	el.save()
+        return el
 
     @classmethod
-    def new(self, type, action):
-        el = EventLog(type=type, action=action, result="new")
-        el.save()
+    def open(self, omsg, **kwargs):
+        if not omsg: omsg = "-"
+	el = LogEvent(status='o', omsg=omsg, **kwargs)
+	el.save()
+        return el
 
-    def update(self, result):
-        self.result = result
-        self.save()
+    def update(self, cmsg):
+        cm = " ".join(args)
+        if not cm: cm = "error: no message supplied to LogEvent instance.update()"
+        self.cmsg = cm
+	self.status = 'u'
+	self.save()
+
+    def __close_status(self, status, *args):
+	if self.status in 'ou': # legitimate to close
+            cm = " ".join(args)
+            if not cm: cm = "-"
+            self.cmsg = cm
+	    self.status = status
+	else: # risk of infinite recursion if exception thrown
+	    self.status = 'x' 
+            # leave cmsg alone
+	self.save()
+
+    def close_ok(self, *args):
+	self.__close_status('c', *args)
+
+    def close_error(self, *args):
+	self.__close_status('e', *args)
 
     def to_structure(self):
 	s = {}
-        s['eventType'] = self.type
-        s['eventAction'] = self.action
-        s['eventResult'] = self.result
-        s['eventCreated'] = m2s_date(self.created)
-        s['eventLastModified'] = m2s_date(self.last_modified)
+	s['eventStatus'] = self.status
+	s['eventOpenMessage'] = self.omsg
+	s['eventCloseMessage'] = self.cmsg
+	s['eventIPAddress'] = self.ip
+	s['eventMethod'] = self.method
+	s['eventPath'] = self.path
+	s['eventCreated'] = m2s_date(self.created)
+	s['eventLastModified'] = m2s_date(self.last_modified)
 	return s
 
     class Meta:
-	ordering = ['last_modified']
-	verbose_name = 'EventLog'
-	verbose_name_plural = 'EventLog'
+	ordering = ['-last_modified']
+	verbose_name = 'Event'
+	verbose_name_plural = 'Events'
 
     def __unicode__(self):
-	return self.event
+	return seld.omsg
+
 
 ##################################################################
 
