@@ -41,14 +41,20 @@ for short, long in item_status_choices: status_lookup[long] = short
 ##################################################################
 
 class MineModel:
-    short_string = 500
+    STRING_SHORT = 256
 
     @classmethod
-    def __defopts(self, bool):
-        if bool:
-            return dict(null=True, blank=True)
+    def __defopts(self, **kwargs):
+        if kwargs.get('blank', False):
+            opts = dict(null=True, blank=True)
         else:
-            return dict(null=False, blank=False)
+            opts = dict(null=False, blank=False)
+
+        for foo in ('unique', 'symmetrical'):        
+            if foo in kwargs:
+                opts[foo] = kwargs[foo]
+
+        return opts
 
     @classmethod
     def last_modified(self):
@@ -60,37 +66,35 @@ class MineModel:
 
     @classmethod
     def datetime(self, **kwargs):
-        opts = self.__defopts(kwargs.get('blank', False))
+        opts = self.__defopts(**kwargs)
         return models.DateTimeField(**opts)
 
     @classmethod
     def reference(self, what, **kwargs):
-        opts = self.__defopts(kwargs.get('blank', False))
+        opts = self.__defopts(**kwargs)
         return models.ForeignKey(what, **opts)
 
     @classmethod
     def reflist(self, what, **kwargs):
-        opts = self.__defopts(kwargs.get('blank', False))
-        opts['symmetrical'] = kwargs.get('symmetrical', False)
+        opts = self.__defopts(**kwargs)
         pivot = kwargs.get('pivot', None)
         if pivot: opts['related_name'] = pivot
         return models.ManyToManyField(what, **opts)
 
     @classmethod
     def string(self, **kwargs):
-        opts = self.__defopts(kwargs.get('blank', False))
-        return models.CharField(max_length=self.short_string, **opts)
+        opts = self.__defopts(**kwargs)
+        return models.CharField(max_length=self.STRING_SHORT, **opts)
 
     @classmethod
     def text(self, **kwargs):
-        opts = self.__defopts(kwargs.get('blank', False))
+        opts = self.__defopts(**kwargs)
         return models.TextField(**opts)
 
     @classmethod
     def slug(self, **kwargs):
-        opts = self.__defopts(kwargs.get('blank', False))
-        opts['unique'] = kwargs.get('unique', False)
-        return models.SlugField(max_length=self.short_string, **opts)
+        opts = self.__defopts(**kwargs)
+        return models.SlugField(max_length=self.STRING_SHORT, **opts)
 
     @classmethod
     def bool(self, default):
@@ -106,13 +110,13 @@ class MineModel:
 
     @classmethod
     def url(self, **kwargs):
-        opts = self.__defopts(kwargs.get('blank', False))
-        return models.URLField(max_length=self.short_string, **opts)
+        opts = self.__defopts(**kwargs)
+        return models.URLField(max_length=self.STRING_SHORT, **opts)
 
     @classmethod
     def email(self, **kwargs):
-        opts = self.__defopts(kwargs.get('blank', False))
-        return models.EmailField(max_length=self.short_string, **opts)
+        opts = self.__defopts(**kwargs)
+        return models.EmailField(max_length=self.STRING_SHORT, **opts)
 
     @classmethod
     def file(self, **kwargs):
