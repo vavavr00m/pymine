@@ -40,6 +40,86 @@ for short, long in item_status_choices: status_lookup[long] = short
 
 ##################################################################
 
+class MineModel:
+    short_string = 500
+
+    @classmethod
+    def __defopts(self, bool):
+        if bool:
+            return dict(null=True, blank=True)
+        else:
+            return dict(null=False, blank=False)
+
+    @classmethod
+    def last_modified(self):
+        return models.DateTimeField(auto_now=True)
+
+    @classmethod
+    def created(self):
+        return models.DateTimeField(auto_now_add=True)
+
+    @classmethod
+    def datetime(self, **kwargs):
+        opts = self.__defopts(kwargs.get('blank', False))
+        return models.DateTimeField(**opts)
+
+    @classmethod
+    def reference(self, what, **kwargs):
+        opts = self.__defopts(kwargs.get('blank', False))
+        return models.ForeignKey(what, **opts)
+
+    @classmethod
+    def reflist(self, what, **kwargs):
+        opts = self.__defopts(kwargs.get('blank', False))
+        opts['symmetrical'] = kwargs.get('symmetrical', False)
+        pivot = kwargs.get('pivot', None)
+        if pivot: opts['related_name'] = pivot
+        return models.ManyToManyField(what, **opts)
+
+    @classmethod
+    def string(self, **kwargs):
+        opts = self.__defopts(kwargs.get('blank', False))
+        return models.CharField(max_length=self.short_string, **opts)
+
+    @classmethod
+    def text(self, **kwargs):
+        opts = self.__defopts(kwargs.get('blank', False))
+        return models.TextField(**opts)
+
+    @classmethod
+    def slug(self, **kwargs):
+        opts = self.__defopts(kwargs.get('blank', False))
+        opts['unique'] = kwargs.get('unique', False)
+        return models.SlugField(max_length=self.short_string, **opts)
+
+    @classmethod
+    def bool(self, default):
+        return models.BooleanField(default=default)
+
+    @classmethod
+    def integer(self, default):
+        return models.PositiveIntegerField(default=default)
+
+    @classmethod
+    def choice(self, choices):
+        return models.CharField(max_length=1, choices=choices)
+
+    @classmethod
+    def url(self, **kwargs):
+        opts = self.__defopts(kwargs.get('blank', False))
+        return models.URLField(max_length=self.short_string, **opts)
+
+    @classmethod
+    def email(self, **kwargs):
+        opts = self.__defopts(kwargs.get('blank', False))
+        return models.EmailField(max_length=self.short_string, **opts)
+
+    @classmethod
+    def file(self, **kwargs):
+        return models.FileField(**kwargs) # TODO
+
+##################################################################
+
 # The transcoder methods below provide a lot of the security for
 # pymine, and govern the movement of data between three 'spaces" of
 # data representation; these are:
@@ -574,11 +654,11 @@ class Tag(models.Model, Thing):
 
     sattr_prefix = "tag"
 
-    name = models.SlugField(max_length=settings.MINE_SHORT_STRING, unique=True)
-    description = models.TextField(null=True, blank=True)
-    implies = models.ManyToManyField('self', symmetrical=False, related_name='x_implies', null=True, blank=True)
-    created = models.DateTimeField(auto_now_add=True)
-    last_modified = models.DateTimeField(auto_now=True)
+    name = MineModel.slug(unique=True)
+    description = MineModel.text(blank=True)
+    implies = MineModel.reflist('self', symmetrical=False, pivot='x_implies', blank=True)
+    created = MineModel.created()
+    last_modified = MineModel.last_modified()
 
     class Meta:
 	ordering = ['name']
@@ -594,21 +674,21 @@ class Relation(models.Model, Thing):
 
     sattr_prefix = "relation"
 
-    name = models.SlugField(max_length=settings.MINE_SHORT_STRING, unique=True)
-    description = models.TextField(null=True, blank=True)
-    tags = models.ManyToManyField(Tag, related_name='relations_with_tag', null=True, blank=True)
-    tags_required = models.ManyToManyField(Tag, related_name='relations_requiring', null=True, blank=True)
-    tags_excluded = models.ManyToManyField(Tag, related_name='relations_excluding', null=True, blank=True)
-    version = models.PositiveIntegerField(default=1)
-    embargo_after = models.DateTimeField(null=True, blank=True)
-    embargo_before = models.DateTimeField(null=True, blank=True)
-    network_pattern = models.CharField(max_length=settings.MINE_SHORT_STRING, blank=True)
-    email_address = models.EmailField(max_length=settings.MINE_SHORT_STRING, blank=True)
-    url_callback = models.URLField(max_length=settings.MINE_SHORT_STRING, blank=True)
-    url_homepage = models.URLField(max_length=settings.MINE_SHORT_STRING, blank=True)
-    url_image = models.URLField(max_length=settings.MINE_SHORT_STRING, blank=True)
-    created = models.DateTimeField(auto_now_add=True)
-    last_modified = models.DateTimeField(auto_now=True)
+    name = MineModel.slug(unique=True)
+    description = MineModel.text(blank=True)
+    tags = MineModel.reflist(Tag, pivot='relations_with_tag', blank=True)
+    tags_required = MineModel.reflist(Tag, pivot='relations_requiring', blank=True)
+    tags_excluded = MineModel.reflist(Tag, pivot='relations_excluding', blank=True)
+    version = MineModel.integer(1)
+    embargo_after = MineModel.datetime(blank=True)
+    embargo_before = MineModel.datetime(blank=True)
+    network_pattern = MineModel.string(blank=True)
+    email_address = MineModel.email(blank=True)
+    url_callback = MineModel.url(blank=True)
+    url_homepage = MineModel.url(blank=True)
+    url_image = MineModel.url(blank=True)
+    created = MineModel.created()
+    last_modified = MineModel.last_modified()
 
     class Meta:
 	ordering = ['name']
@@ -623,19 +703,19 @@ class Item(models.Model, Thing):
     """This is the modelspace representation of the Item object"""
 
     sattr_prefix = "item"
-    name = models.CharField(max_length=settings.MINE_SHORT_STRING)
-    description = models.TextField(null=True, blank=True)
-    tags = models.ManyToManyField(Tag, related_name='items_tagged', null=True, blank=True)
-    item_for_relations = models.ManyToManyField(Relation, related_name='items_explicitly_for', null=True, blank=True)
-    item_not_relations = models.ManyToManyField(Relation, related_name='items_explicitly_not', null=True, blank=True)
-    status = models.CharField(max_length=1, choices=item_status_choices)
-    content_type = models.CharField(max_length=settings.MINE_SHORT_STRING)
-    data = models.FileField(storage=item_file_storage, upload_to='%Y/%m/%d')
-    parent = models.ForeignKey('self', null=True, blank=True) # only set for clones
-    hide_after = models.DateTimeField(null=True, blank=True)
-    hide_before = models.DateTimeField(null=True, blank=True)
-    created = models.DateTimeField(auto_now_add=True)
-    last_modified = models.DateTimeField(auto_now=True)
+    name = MineModel.string()
+    description = MineModel.text(blank=True)
+    tags = MineModel.reflist(Tag, pivot='items_tagged', blank=True)
+    item_for_relations = MineModel.reflist(Relation, pivot='items_explicitly_for', blank=True)
+    item_not_relations = MineModel.reflist(Relation, pivot='items_explicitly_not', blank=True)
+    status = MineModel.choice(item_status_choices)
+    content_type = MineModel.string()
+    data = MineModel.file(storage=item_file_storage, upload_to='%Y/%m/%d')
+    parent = MineModel.reference('self', blank=True) # only set for clones
+    hide_after = MineModel.datetime(blank=True)
+    hide_before = MineModel.datetime(blank=True)
+    created = MineModel.created()
+    last_modified = MineModel.last_modified()
 
     class Meta:
 	ordering = ['-last_modified']
@@ -658,13 +738,13 @@ class Comment(models.Model, Thing):
     """This is the modelspace representation of the Comment object"""
 
     sattr_prefix = "comment"
-    title = models.CharField(max_length=settings.MINE_SHORT_STRING)
-    body = models.TextField(null=True, blank=True)
-    likes = models.BooleanField(default=False)
-    item = models.ForeignKey(Item)
-    relation = models.ForeignKey(Relation)
-    created = models.DateTimeField(auto_now_add=True)
-    last_modified = models.DateTimeField(auto_now=True)
+    title = MineModel.string()
+    body = MineModel.text(blank=True)
+    likes = MineModel.bool(False)
+    item = MineModel.reference(Item)
+    relation = MineModel.reference(Relation)
+    created = MineModel.created()
+    last_modified = MineModel.last_modified()
 
     def __unicode__(self):
 	return self.title
@@ -681,11 +761,11 @@ class VanityURL(models.Model, Thing):
     'name' or 'index' (suitably compressed)"""
 
     sattr_prefix = "vurl"
-    name = models.SlugField(max_length=settings.MINE_SHORT_STRING, unique=True)
-    link = models.TextField(null=True, blank=True)
-    tags = models.ManyToManyField(Tag, related_name='vurls_tagged', null=True, blank=True)
-    created = models.DateTimeField(auto_now_add=True)
-    last_modified = models.DateTimeField(auto_now=True)
+    name = MineModel.slug(unique=True)
+    link = MineModel.text(blank=True)
+    tags = MineModel.reflist(Tag, pivot='vurls_tagged', blank=True)
+    created = MineModel.created()
+    last_modified = MineModel.last_modified()
 
     def __unicode__(self):
 	return self.name
@@ -700,10 +780,10 @@ class MineRegistry(models.Model): # not a Thing
 
     """key/value pairs for Mine configuration"""
 
-    key = models.SlugField(max_length=settings.MINE_SHORT_STRING, unique=True)
-    value = models.TextField(null=True, blank=True)
-    created = models.DateTimeField(auto_now_add=True)
-    last_modified = models.DateTimeField(auto_now=True)
+    key = MineModel.slug(unique=True)
+    value = MineModel.text(blank=True)
+    created = MineModel.created()
+    last_modified = MineModel.last_modified()
 
     def to_structure(self):
 	s = {}
@@ -726,7 +806,7 @@ class LogEvent(models.Model): # not a Thing
 
     """key/value pairs for Mine configuration"""
 
-    logevent_choices = (
+    logevent_status_choices = (
 	( 'o', 'open' ),
 	( 'u', 'updated' ),
 	( 'c', 'closed' ),
@@ -736,16 +816,15 @@ class LogEvent(models.Model): # not a Thing
 	( 'x', 'corrupted' ),
 	)
 
-    status = models.CharField(max_length=1, choices=logevent_choices)
-    type = models.CharField(max_length=settings.MINE_SHORT_STRING, null=True, blank=True)
-    msg = models.TextField(null=True, blank=True)
-
-    ip = models.CharField(max_length=settings.MINE_SHORT_STRING, null=True, blank=True)
-    method = models.CharField(max_length=settings.MINE_SHORT_STRING, null=True, blank=True)
-    path = models.CharField(max_length=settings.MINE_SHORT_STRING, null=True, blank=True)
-    key = models.CharField(max_length=settings.MINE_SHORT_STRING, null=True, blank=True)
-    created = models.DateTimeField(auto_now_add=True)
-    last_modified = models.DateTimeField(auto_now=True)
+    status = MineModel.choice(logevent_status_choices)
+    type = MineModel.string(blank=True)
+    msg = MineModel.text(blank=True)
+    ip = MineModel.string(blank=True)
+    method = MineModel.string(blank=True)
+    path = MineModel.string(blank=True)
+    key = MineModel.string(blank=True)
+    created = MineModel.created()
+    last_modified = MineModel.last_modified()
 
     # various faux-constructors that do not return the object
 
@@ -768,7 +847,7 @@ class LogEvent(models.Model): # not a Thing
         self.__selfcontained('f', type, *args, **kwargs)
         raise RuntimeError, self.msg # set as side effect
 
-    # next three work together
+    # next three work together; open-update-close/_error
 
     @classmethod
     def open(self, type, **kwargs):
@@ -787,7 +866,7 @@ class LogEvent(models.Model): # not a Thing
 	    self.status = status
 	else: # risk of infinite recursion if exception thrown
             # leave msg alone
-	    self.status = 'x' 
+	    self.status = 'x'
 	self.save()
 
     def close(self, *args):
@@ -819,6 +898,8 @@ class LogEvent(models.Model): # not a Thing
 
 
 ##################################################################
+##################################################################
+##################################################################
 
 # this is a critical bit of code which registers all thing-classes
 # back with the parent thing; key=prefix, value=class
@@ -826,4 +907,6 @@ class LogEvent(models.Model): # not a Thing
 for thing in (Comment, Item, Relation, Tag, VanityURL):
     Thing.s_classes[thing.sattr_prefix] = thing
 
+##################################################################
+##################################################################
 ##################################################################
