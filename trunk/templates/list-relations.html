@@ -5,7 +5,11 @@
 {% block content %}
 <DL>
 {% for relation in result %}
-<DT>{{ relation.relationName }} (version {{ relation.relationVersion }})</DT>
+<DT>
+{{ relation.relationName }} 
+(version {{ relation.relationVersion }})
+(interests {{ relation.relationInterests}}) 
+</DT>
 <DD>
 {{ relation.relationDescription }}
 </DD>
