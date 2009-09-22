@@ -111,6 +111,19 @@ suzi.jpg cats
 woodland.jpg trees countryside
 EOF
 
+# some dummy comments
+while read item who what body
+do
+    Minectl create-comment $item commentRelation=$who commentTitle=$what commentBody="$body"
+done <<EOF
+1 adriana title1 this is body 1
+1 alec title2 this is body 2
+1 carrie title3 this is body 3
+2 perry title4 this is body 4
+2 perry title5 this is body 5
+3 ben title6 this is body 5
+EOF
+
 ###
 # done
 
