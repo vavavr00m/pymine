@@ -52,7 +52,7 @@ def REST(request, *args, **kwargs):
         el.close_error('oops')
         raise Http404, "cannot find handler for REST request method"
 
-    el.close_ok()
+    el.close()
     return retval
 
 def API_CALL(request, *args, **kwargs):
@@ -67,7 +67,7 @@ def API_CALL(request, *args, **kwargs):
     value of "redirect_success"
     """
 
-    el = LogEvent.open("API_CALL",
+    el = LogEvent.open("API",
                        ip=request.META['REMOTE_ADDR'],
                        method=request.method,
                        path=request.path,
@@ -115,7 +115,7 @@ def API_CALL(request, *args, **kwargs):
         data = pickle.dumps(retval)
 
     # else it plain worked
-    el.close_ok()
+    el.close()
     return HttpResponse(data, mimetype=mimetype)
 
 ##################################################################
