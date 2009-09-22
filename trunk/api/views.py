@@ -239,7 +239,9 @@ def list_comments(request, iid, *args, **kwargs):
     if item_id == 0:
 	result = [ m.to_structure() for m in Comment.objects.all() ]
     else:
-	result = [ m.to_structure() for m in Comment.objects.filter(item=Item.objects.get(id=item_id)) ]
+#old	result = [ m.to_structure() for m in Comment.objects.filter(item=Item.objects.get(id=item_id)) ]
+        item = Item.objects.get(id=item_id)
+        result = [ m.to_structure() for m in item.comment_set.all() ]
 
     return construct_retval(result, totalsize=len(result))
 

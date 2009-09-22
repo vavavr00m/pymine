@@ -287,7 +287,8 @@ def s2m_vurltags(s, sattr, m, mattr):
     if mattr != 'tags' or sattr != 'vurlTags':
 	raise RuntimeError, "s2m_vurltags is confused"
     if sattr in s:
-	for x in s[sattr].split(): m.implies.add(Tag.objects.get(name=x))
+	for x in s[sattr].split(): 
+            m.implies.add(Tag.objects.get(name=x))
 
 # itemStatus is a multi-choice field; the s-space representation of
 # itemStatus ('public', 'shared', 'private') must be mapped back and
