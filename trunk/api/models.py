@@ -574,7 +574,7 @@ class Tag(models.Model, Thing):
 
     sattr_prefix = "tag"
 
-    name = models.SlugField(max_length=settings.MINE_STRINGSIZE, unique=True)
+    name = models.SlugField(max_length=settings.MINE_SHORT_STRING, unique=True)
     description = models.TextField(null=True, blank=True)
     implies = models.ManyToManyField('self', symmetrical=False, related_name='x_implies', null=True, blank=True)
     created = models.DateTimeField(auto_now_add=True)
@@ -594,7 +594,7 @@ class Relation(models.Model, Thing):
 
     sattr_prefix = "relation"
 
-    name = models.SlugField(max_length=settings.MINE_STRINGSIZE, unique=True)
+    name = models.SlugField(max_length=settings.MINE_SHORT_STRING, unique=True)
     description = models.TextField(null=True, blank=True)
     tags = models.ManyToManyField(Tag, related_name='relations_with_tag', null=True, blank=True)
     tags_required = models.ManyToManyField(Tag, related_name='relations_requiring', null=True, blank=True)
@@ -602,11 +602,11 @@ class Relation(models.Model, Thing):
     version = models.PositiveIntegerField(default=1)
     embargo_after = models.DateTimeField(null=True, blank=True)
     embargo_before = models.DateTimeField(null=True, blank=True)
-    network_pattern = models.CharField(max_length=settings.MINE_STRINGSIZE, blank=True)
-    email_address = models.EmailField(max_length=settings.MINE_STRINGSIZE, blank=True)
-    url_callback = models.URLField(max_length=settings.MINE_STRINGSIZE, blank=True)
-    url_homepage = models.URLField(max_length=settings.MINE_STRINGSIZE, blank=True)
-    url_image = models.URLField(max_length=settings.MINE_STRINGSIZE, blank=True)
+    network_pattern = models.CharField(max_length=settings.MINE_SHORT_STRING, blank=True)
+    email_address = models.EmailField(max_length=settings.MINE_SHORT_STRING, blank=True)
+    url_callback = models.URLField(max_length=settings.MINE_SHORT_STRING, blank=True)
+    url_homepage = models.URLField(max_length=settings.MINE_SHORT_STRING, blank=True)
+    url_image = models.URLField(max_length=settings.MINE_SHORT_STRING, blank=True)
     created = models.DateTimeField(auto_now_add=True)
     last_modified = models.DateTimeField(auto_now=True)
 
@@ -623,13 +623,13 @@ class Item(models.Model, Thing):
     """This is the modelspace representation of the Item object"""
 
     sattr_prefix = "item"
-    name = models.CharField(max_length=settings.MINE_STRINGSIZE)
+    name = models.CharField(max_length=settings.MINE_SHORT_STRING)
     description = models.TextField(null=True, blank=True)
     tags = models.ManyToManyField(Tag, related_name='items_tagged', null=True, blank=True)
     item_for_relations = models.ManyToManyField(Relation, related_name='items_explicitly_for', null=True, blank=True)
     item_not_relations = models.ManyToManyField(Relation, related_name='items_explicitly_not', null=True, blank=True)
     status = models.CharField(max_length=1, choices=item_status_choices)
-    content_type = models.CharField(max_length=settings.MINE_STRINGSIZE)
+    content_type = models.CharField(max_length=settings.MINE_SHORT_STRING)
     data = models.FileField(storage=item_file_storage, upload_to='%Y/%m/%d')
     parent = models.ForeignKey('self', null=True, blank=True) # only set for clones
     hide_after = models.DateTimeField(null=True, blank=True)
@@ -658,7 +658,7 @@ class Comment(models.Model, Thing):
     """This is the modelspace representation of the Comment object"""
 
     sattr_prefix = "comment"
-    title = models.CharField(max_length=settings.MINE_STRINGSIZE)
+    title = models.CharField(max_length=settings.MINE_SHORT_STRING)
     body = models.TextField(null=True, blank=True)
     likes = models.BooleanField(default=False)
     item = models.ForeignKey(Item)
@@ -681,7 +681,7 @@ class VanityURL(models.Model, Thing):
     'name' or 'index' (suitably compressed)"""
 
     sattr_prefix = "vurl"
-    name = models.SlugField(max_length=settings.MINE_STRINGSIZE, unique=True)
+    name = models.SlugField(max_length=settings.MINE_SHORT_STRING, unique=True)
     link = models.TextField(null=True, blank=True)
     tags = models.ManyToManyField(Tag, related_name='vurls_tagged', null=True, blank=True)
     created = models.DateTimeField(auto_now_add=True)
@@ -700,7 +700,7 @@ class MineRegistry(models.Model): # not a Thing
 
     """key/value pairs for Mine configuration"""
 
-    key = models.SlugField(max_length=settings.MINE_STRINGSIZE, unique=True)
+    key = models.SlugField(max_length=settings.MINE_SHORT_STRING, unique=True)
     value = models.TextField(null=True, blank=True)
     created = models.DateTimeField(auto_now_add=True)
     last_modified = models.DateTimeField(auto_now=True)
@@ -731,48 +731,66 @@ class LogEvent(models.Model): # not a Thing
 	( 'u', 'updated' ),
 	( 'c', 'closed' ),
 	( 'e', 'error' ),
-	( '1', 'message' ),
+	( 'm', 'message' ),
+	( 'f', 'fatal' ),
 	( 'x', 'corrupted' ),
 	)
 
     status = models.CharField(max_length=1, choices=logevent_choices)
-    omsg = models.CharField(max_length=settings.MINE_STRINGSIZE, null=False, blank=False)
-    cmsg = models.TextField(null=True, blank=True)
-    ip = models.CharField(max_length=settings.MINE_STRINGSIZE, null=True, blank=True)
-    method = models.CharField(max_length=settings.MINE_STRINGSIZE, null=True, blank=True)
-    path = models.CharField(max_length=settings.MINE_STRINGSIZE, null=True, blank=True)
+    type = models.CharField(max_length=settings.MINE_SHORT_STRING, null=True, blank=True)
+    msg = models.TextField(null=True, blank=True)
+
+    ip = models.CharField(max_length=settings.MINE_SHORT_STRING, null=True, blank=True)
+    method = models.CharField(max_length=settings.MINE_SHORT_STRING, null=True, blank=True)
+    path = models.CharField(max_length=settings.MINE_SHORT_STRING, null=True, blank=True)
+    key = models.CharField(max_length=settings.MINE_SHORT_STRING, null=True, blank=True)
     created = models.DateTimeField(auto_now_add=True)
     last_modified = models.DateTimeField(auto_now=True)
 
+    # various faux-constructors that do not return the object
+
     @classmethod
-    def message(self, omsg, **kwargs):
-        if not omsg: omsg = "-message-"
-	el = LogEvent(status='1', omsg=omsg, **kwargs)
+    def __selfcontained(self, status, type, *args, **kwargs):
+        m = " ".join(args)
+	el = LogEvent(status=status, type=type, msg=m, **kwargs)
+	el.save()
+
+    @classmethod
+    def message(self, type, *args, **kwargs):
+        self.__selfcontained('m', type, *args, **kwargs)
+
+    @classmethod
+    def error(self, type, *args, **kwargs):
+        self.__selfcontained('e', type, *args, **kwargs)
+
+    @classmethod
+    def fatal(self, type, *args, **kwargs):
+        self.__selfcontained('f', type, *args, **kwargs)
+        raise RuntimeError, self.msg # set as side effect
+
+    # next three work together
+
+    @classmethod
+    def open(self, type, **kwargs):
+	el = LogEvent(status='o', type=type, **kwargs)
 	el.save()
         return el
 
-    @classmethod
-    def open(self, omsg, **kwargs):
-        if not omsg: omsg = "-open-"
-	el = LogEvent(status='o', omsg=omsg, **kwargs)
-	el.save()
-        return el
-
-    def update(self, cmsg):
-        self.cmsg = " ".join(args)
+    def update(self, *args):
+        self.msg = " ".join(args)
 	self.status = 'u'
 	self.save()
 
     def __close_status(self, status, *args):
 	if self.status in 'ou': # legitimate to close
-            self.cmsg = " ".join(args)
+            self.msg = " ".join(args)
 	    self.status = status
 	else: # risk of infinite recursion if exception thrown
+            # leave msg alone
 	    self.status = 'x' 
-            # leave cmsg alone
 	self.save()
 
-    def close_ok(self, *args):
+    def close(self, *args):
 	self.__close_status('c', *args)
 
     def close_error(self, *args):
@@ -781,11 +799,12 @@ class LogEvent(models.Model): # not a Thing
     def to_structure(self):
 	s = {}
 	s['eventStatus'] = self.status
-	s['eventOpenMessage'] = self.omsg
-	s['eventCloseMessage'] = self.cmsg
-	s['eventIPAddress'] = self.ip
-	s['eventMethod'] = self.method
-	s['eventPath'] = self.path
+	if self.type: s['eventType'] = self.type
+	if self.msg: s['eventMessage'] = self.msg
+	if self.ip: s['eventIPAddress'] = self.ip
+	if self.method: s['eventMethod'] = self.method
+	if self.path: s['eventPath'] = self.path
+	if self.key: s['eventKey'] = self.key
 	s['eventCreated'] = m2s_date(self.created)
 	s['eventLastModified'] = m2s_date(self.last_modified)
 	return s
@@ -796,7 +815,7 @@ class LogEvent(models.Model): # not a Thing
 	verbose_name_plural = 'Events'
 
     def __unicode__(self):
-	return self.omsg
+	return self.get_status_display()
 
 
 ##################################################################

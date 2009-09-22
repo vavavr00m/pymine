@@ -37,6 +37,9 @@ def root_get(request, *args, **kwargs):
 ## declared args: key
 def read_minekey(request, key, *args, **kwargs):
 
+    el = LogEvent.open("KEY",
+                       )
+
     # parse it out (basic validation performed)
     mk = MineKey.parse(key)
 
