@@ -20,29 +20,34 @@ from django.core.urlresolvers import reverse
 from django.http import Http404, HttpResponse, HttpResponseRedirect
 from django.shortcuts import render_to_response, get_object_or_404
 
+from django.core.paginator import Paginator, InvalidPage, EmptyPage   <----- THIS IS WHAT YOU ARE IMPLEMENTING
+
 from models import Tag, Item, Relation, Comment, VanityURL
 
 def construct_retval(result=None, **kwargs):
     template = {}
 
-    if result:
-	template['result'] = result
-
     template['exit'] = kwargs.get('exit', 0)
     template['status'] = kwargs.get('status', 'ok')
+
+    if result: 
+        template['result'] = result
+
+
 
     for k in ( 'prevurl', 'nexturl', 'thisurl',
 	       'thissize', 'totalsize',
 	       'callback', 'watch' ):
 	v = kwargs.get(k, None)
-	if v:
-	    template[k] = v
+        if v: template[k] = v
+
+
 
     return template
 
 def list_foos(model):
     result = [ m.to_structure() for m in model.objects.all() ]
-    return construct_retval(result, totalsize=len(result))
+    return construct_retval(result)
 
 def create_foo(model, request):
     assert request, "cannot have request=None for create_foo"
@@ -243,7 +248,7 @@ def list_comments(request, iid, *args, **kwargs):
         item = Item.objects.get(id=item_id)
         result = [ m.to_structure() for m in item.comment_set.all() ]
 
-    return construct_retval(result, totalsize=len(result))
+    return construct_retval(result)
 
 ## rest: POST /api/comment/item/IID.FMT
 ## function: create_comment
@@ -351,7 +356,7 @@ def create_clone(request, iid, *args, **kwargs):
 ## declared args:
 def list_registry(request, *args, **kwargs):
     result = [ m.to_structure() for m in MineRegistry.objects.all() ]
-    return construct_retval(result, totalsize=len(result))
+    return construct_retval(result)
 
 # USAGE: so i can in theory set with /api/registry/foo.json?foo=bar
 
