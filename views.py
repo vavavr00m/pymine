@@ -40,20 +40,20 @@ def REST(request, *args, **kwargs):
     post_view = kwargs.pop('POST', None)
     delete_view = kwargs.pop('DELETE', None)
 
-    retval = None
+    response = None
 
     if request.method == 'GET' and get_view is not None:
-        retval = get_view(request, *args, **kwargs)
+        response = get_view(request, *args, **kwargs)
     elif request.method == 'POST' and post_view is not None:
-        retval = post_view(request, *args, **kwargs)
+        response = post_view(request, *args, **kwargs)
     elif request.method == 'DELETE' and delete_view is not None:
-        retval = delete_view(request, *args, **kwargs)
+        response = delete_view(request, *args, **kwargs)
     else:
         el.close_error('oops')
         raise Http404, "cannot find handler for REST request method"
 
     el.close()
-    return retval
+    return response
 
 def API_CALL(request, *args, **kwargs):
 

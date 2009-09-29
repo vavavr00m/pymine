@@ -3,15 +3,26 @@
 $indent = "    ";
 
 %regexp_lookup = ( # $value text in <anglebrackets> must be same as lcase($key)
-    'CID', '?P<cid>\d+',
-    'FMT', '?P<fmt>(api|xml|json|py)',
+    'TID', '?P<tid>\d+',
     'IID', '?P<iid>\d+',
-    'KEY', '?P<key>[A-Za-z0-9!@]+',
     'RID', '?P<rid>\d+',
     'RVSN', '?P<rvsn>\d+',
+    'CID', '?P<cid>\d+',
+    'VID', '?P<vid>\d+',
+    'FMT', '?P<fmt>(rdr|xml|json)',
+
+    'VURLKEY', '?P<vurlkey>[A-Za-z0-9!@]+',
+
+    'SATTR', '?P<sattr>(__)?[a-z][A-Za-z]*', # f, foo, fooBar, __fooBar
+    'SAFMT', '?P<safmt>(rdr|xml|json)',
+
+    'RATTR', '?P<rattr>[a-z][A-Za-z]*', # f, foo, fooBar
+
+    'MINEKEY', '?P<minekey>[A-Za-z0-9!@]+',
+
     'SUFFIX', '?P<suffix>.+',
-    'TID', '?P<tid>\d+',
     );
+
 
 while (<DATA>) {
     if (/^\s*(\#.*)?$/o) {
@@ -31,11 +42,13 @@ while (<DATA>) {
 
     $pattern = $url;
 
+    $pattern =~ s!\.!\\.!go; # escape all dots
+
     $pattern =~ s/([A-Z]+)/"(" . ($regexp_lookup{$1}||"&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&& $1 &&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&") . ")"/goe;
 
     @kwds = grep(/^[A-Z]+$/o, split(/\b/o, $url));
 
-    @kwds = map { lc($_) } grep(!/^(FMT)$/o, @kwds);
+    @kwds = map { lc($_) } grep(!/^(FMT)$/o, @kwds); # exclude .FMT which is handled elsewhere
 
     $aaa = join(", ", 'request', @kwds, '*args', '**kwargs');
 
@@ -108,18 +121,23 @@ foreach $file (sort keys %text) {
 ##################################################################
 __END__;
 
-# note: the /key/ thing is needed because of risk of /item/IID/KEY.FMT
-# clashing with the /item/IID/comment.FMT namespace, and any other
-# namespaces that may arise; and thus for orthogonality...
+mine  GET   /             root-mine
+mine  GET   /doc          root-doc
+mine  GET   /pub          root-pub
 
-mine  GET     /                                root-mine
-mine  GET     /doc                             root-doc
-mine  GET     /pub                             root-pub
+# minekey
+mine  GET   /k/MINEKEY  read-minekey
+mine  POST  /k/MINEKEY  submit-minekey
+
+# short to long remapping
+mine  GET  /r/VURLKEY  redirect-vurlkey
+
+# long to long remapping
+mine  GET  /v/SUFFIX  redirect-vurlname
 
 ##################################################################
 
 api      GET  /api      root-api
-get      GET  /get      root-get
 ui       GET  /ui       root-ui
 archive  GET  /archive  root-archive
 
@@ -127,59 +145,58 @@ archive  GET  /archive  root-archive
 
 archive  GET  /archive/export   archive-export
 archive  GET  /archive/import   archive-import
-archive  GET  /archive/cleanup  archive-cleanup
 
 ##################################################################
 
-api  GET     /api/item/IID          read-item-data
-api  GET     /api/item.FMT          list-items
-api  POST    /api/item.FMT          create-item
-api  DELETE  /api/item/IID.FMT      delete-item
-api  GET     /api/item/IID.FMT      read-item
-api  POST    /api/item/IID.FMT      update-item
-api  DELETE  /api/item/IID/KEY.FMT  delete-item-key
-api  GET     /api/item/IID/KEY.FMT  get-item-key
+api  GET     /api/item/IID              read-item-data
+api  GET     /api/item.FMT              list-items
+api  POST    /api/item.FMT              create-item
+api  DELETE  /api/item/IID.FMT          delete-item
+api  GET     /api/item/IID.FMT          read-item
+api  POST    /api/item/IID.FMT          update-item
+api  DELETE  /api/item/IID/SATTR.SAFMT  delete-item-key
+api  GET     /api/item/IID/SATTR.SAFMT  get-item-key
 
 ##################################################################
 
-api  GET     /api/relation.FMT          list-relations
-api  POST    /api/relation.FMT          create-relation
-api  DELETE  /api/relation/RID.FMT      delete-relation
-api  GET     /api/relation/RID.FMT      read-relation
-api  POST    /api/relation/RID.FMT      update-relation
-api  DELETE  /api/relation/RID/KEY.FMT  delete-relation-key
-api  GET     /api/relation/RID/KEY.FMT  get-relation-key
+api  GET     /api/relation.FMT              list-relations
+api  POST    /api/relation.FMT              create-relation
+api  DELETE  /api/relation/RID.FMT          delete-relation
+api  GET     /api/relation/RID.FMT          read-relation
+api  POST    /api/relation/RID.FMT          update-relation
+api  DELETE  /api/relation/RID/SATTR.SAFMT  delete-relation-key
+api  GET     /api/relation/RID/SATTR.SAFMT  get-relation-key
 
 ##################################################################
 
-api  GET     /api/tag.FMT          list-tags
-api  POST    /api/tag.FMT          create-tag
-api  DELETE  /api/tag/TID.FMT      delete-tag
-api  GET     /api/tag/TID.FMT      read-tag
-api  POST    /api/tag/TID.FMT      update-tag
-api  DELETE  /api/tag/TID/KEY.FMT  delete-tag-key
-api  GET     /api/tag/TID/KEY.FMT  get-tag-key
+api  GET     /api/tag.FMT              list-tags
+api  POST    /api/tag.FMT              create-tag
+api  DELETE  /api/tag/TID.FMT          delete-tag
+api  GET     /api/tag/TID.FMT          read-tag
+api  POST    /api/tag/TID.FMT          update-tag
+api  DELETE  /api/tag/TID/SATTR.SAFMT  delete-tag-key
+api  GET     /api/tag/TID/SATTR.SAFMT  get-tag-key
 
 ##################################################################
 
 # IID==0 is ok for /api/comment/item/IID.FMT
-api  GET     /api/comment/item/IID.FMT  list-comments
-api  POST    /api/comment/item/IID.FMT  create-comment
-api  DELETE  /api/comment/CID.FMT       delete-comment
-api  GET     /api/comment/CID.FMT       read-comment
-api  POST    /api/comment/CID.FMT       update-comment
-api  DELETE  /api/comment/CID/KEY.FMT   delete-comment-key
-api  GET     /api/comment/CID/KEY.FMT   get-comment-key
+api  GET     /api/comment/item/IID.FMT     list-comments
+api  POST    /api/comment/item/IID.FMT     create-comment
+api  DELETE  /api/comment/CID.FMT          delete-comment
+api  GET     /api/comment/CID.FMT          read-comment
+api  POST    /api/comment/CID.FMT          update-comment
+api  DELETE  /api/comment/CID/SATTR.SAFMT  delete-comment-key
+api  GET     /api/comment/CID/SATTR.SAFMT  get-comment-key
 
 ##################################################################
 
-api  GET     /api/vurl.FMT          list-vurls
-api  POST    /api/vurl.FMT          create-vurl
-api  DELETE  /api/vurl/TID.FMT      delete-vurl
-api  GET     /api/vurl/TID.FMT      read-vurl
-api  POST    /api/vurl/TID.FMT      update-vurl
-api  DELETE  /api/vurl/TID/KEY.FMT  delete-vurl-key
-api  GET     /api/vurl/TID/KEY.FMT  get-vurl-key
+api  GET     /api/vurl.FMT              list-vurls
+api  POST    /api/vurl.FMT              create-vurl
+api  DELETE  /api/vurl/TID.FMT          delete-vurl
+api  GET     /api/vurl/TID.FMT          read-vurl
+api  POST    /api/vurl/TID.FMT          update-vurl
+api  DELETE  /api/vurl/TID/SATTR.SAFMT  delete-vurl-key
+api  GET     /api/vurl/TID/SATTR.SAFMT  get-vurl-key
 
 ##################################################################
 
@@ -189,10 +206,10 @@ api  POST  /api/clone/IID.FMT  create-clone
 
 ##################################################################
 
-api  GET     /api/registry.FMT      list-registry
-api  POST    /api/registry/KEY.FMT  amend-registry-key
-api  DELETE  /api/registry/KEY.FMT  delete-registry-key
-api  GET     /api/registry/KEY.FMT  get-registry-key
+api  GET     /api/registry.FMT        list-registry
+api  POST    /api/registry/RATTR.FMT  amend-registry-key
+api  DELETE  /api/registry/RATTR.FMT  delete-registry-key
+api  GET     /api/registry/RATTR.FMT  get-registry-key
 
 ##################################################################
 
@@ -210,11 +227,6 @@ api  GET  /api/url/RID/RVSN/IID.FMT  encode-minekey3
 ##################################################################
 
 api  GET  /api/version.FMT  read-version
-
-##################################################################
-
-get  GET   /get/KEY  read-minekey
-get  POST  /get/KEY  submit-minekey
 
 ##################################################################
 
