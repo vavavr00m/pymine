@@ -92,6 +92,11 @@ class MineModel:
         return models.TextField(**opts)
 
     @classmethod
+    def blob(self, **kwargs):
+        opts = self.__defopts(**kwargs)
+        return models.TextField(**opts)
+
+    @classmethod
     def slug(self, **kwargs):
         opts = self.__defopts(**kwargs)
         return models.SlugField(max_length=self.STRING_SHORT, **opts)
@@ -418,7 +423,6 @@ class Thing():
 	(  'commentId',               'id',               False,  r2s_int,     s2m_copy,        m2s_copy,        ),
 	(  'commentItem',             'item',             False,  r2s_int,     s2m_comitem,     m2s_comitem,     ),
 	(  'commentLastModified',     'last_modified',    False,  r2s_string,  s2m_date,        m2s_date,        ),
-	(  'commentLikes',            'likes',            False,  r2s_string,  s2m_copy,        m2s_copy,        ),
 	(  'commentRelation',         'relation',         False,  r2s_string,  s2m_comrel,      m2s_comrel,      ),
 	(  'commentTitle',            'title',            False,  r2s_string,  s2m_copy,        m2s_copy,        ),
 	(  'itemCreated',             'created',          False,  r2s_string,  s2m_date,        m2s_date,        ),
@@ -432,15 +436,11 @@ class Thing():
 	(  'itemStatus',              'status',           False,  r2s_string,  s2m_itemstatus,  m2s_itemstatus,  ),
 	(  'itemTags',                'tags',             True,   r2s_string,  s2m_itemtags,    m2s_itemtags,    ),
 	(  'itemType',                'content_type',     False,  r2s_string,  s2m_copy,        m2s_copy,        ),
-	(  'relationCallbackURL',     'url_callback',     False,  r2s_string,  s2m_copy,        m2s_copy,        ),
 	(  'relationCreated',         'created',          False,  r2s_string,  s2m_date,        m2s_date,        ),
 	(  'relationDescription',     'description',      False,  r2s_string,  s2m_copy,        m2s_copy,        ),
-	(  'relationEmailAddress',    'email_address',    False,  r2s_string,  s2m_copy,        m2s_copy,        ),
 	(  'relationEmbargoAfter',    'embargo_after',    False,  r2s_string,  s2m_date,        m2s_date,        ),
 	(  'relationEmbargoBefore',   'embargo_before',   False,  r2s_string,  s2m_date,        m2s_date,        ),
-	(  'relationHomepageURL',     'url_homepage',     False,  r2s_string,  s2m_copy,        m2s_copy,        ),
 	(  'relationId',              'id',               False,  r2s_int,     s2m_copy,        m2s_copy,        ),
-	(  'relationImageURL',        'url_image',        False,  r2s_string,  s2m_copy,        m2s_copy,        ),
 	(  'relationInterests',       'interests',        True,   r2s_string,  s2m_relints,     m2s_relints,     ),
 	(  'relationLastModified',    'last_modified',    False,  r2s_string,  s2m_date,        m2s_date,        ),
 	(  'relationName',            'name',             False,  r2s_string,  s2m_copy,        m2s_copy,        ),
@@ -653,160 +653,6 @@ class Thing():
 ##################################################################
 ##################################################################
 
-class Tag(models.Model, Thing):
-
-    """This is the modelspace representation of the Tag object"""
-
-    sattr_prefix = "tag"
-
-    name = MineModel.slug(unique=True)
-    description = MineModel.text(blank=True)
-    implies = MineModel.reflist('self', symmetrical=False, pivot='x_implies', blank=True)
-    created = MineModel.created()
-    last_modified = MineModel.last_modified()
-
-    class Meta:
-	ordering = ['name']
-
-    def __unicode__(self):
-	return self.name
-
-##################################################################
-
-class Relation(models.Model, Thing):
-
-    """This is the modelspace representation of the Relation object"""
-
-    sattr_prefix = "relation"
-
-    name = MineModel.slug(unique=True)
-    description = MineModel.text(blank=True)
-    tags = MineModel.reflist(Tag, pivot='relations_with_tag', blank=True)
-    tags_required = MineModel.reflist(Tag, pivot='relations_requiring', blank=True)
-    tags_excluded = MineModel.reflist(Tag, pivot='relations_excluding', blank=True)
-    version = MineModel.integer(1)
-    embargo_after = MineModel.datetime(blank=True)
-    embargo_before = MineModel.datetime(blank=True)
-    network_pattern = MineModel.string(blank=True)
-    email_address = MineModel.email(blank=True)
-    url_callback = MineModel.url(blank=True)
-    url_homepage = MineModel.url(blank=True)
-    url_image = MineModel.url(blank=True)
-    created = MineModel.created()
-    last_modified = MineModel.last_modified()
-
-    class Meta:
-	ordering = ['name']
-
-    def __unicode__(self):
-	return self.name
-
-##################################################################
-
-class Item(models.Model, Thing):
-
-    """This is the modelspace representation of the Item object"""
-
-    sattr_prefix = "item"
-    name = MineModel.string()
-    description = MineModel.text(blank=True)
-    tags = MineModel.reflist(Tag, pivot='items_tagged', blank=True)
-    item_for_relations = MineModel.reflist(Relation, pivot='items_explicitly_for', blank=True)
-    item_not_relations = MineModel.reflist(Relation, pivot='items_explicitly_not', blank=True)
-    status = MineModel.choice(item_status_choices)
-    content_type = MineModel.string()
-    data = MineModel.file(storage=item_file_storage, upload_to='%Y/%m/%d')
-    parent = MineModel.reference('self', blank=True) # only set for clones
-    hide_after = MineModel.datetime(blank=True)
-    hide_before = MineModel.datetime(blank=True)
-    created = MineModel.created()
-    last_modified = MineModel.last_modified()
-
-    class Meta:
-	ordering = ['-last_modified']
-
-    def __unicode__(self):
-	return self.name
-
-    def save_upload_file(self, f):
-	if not self.id:
-	    raise RuntimeError, "save_upload_file trying to save a model which has no IID"
-
-	name = str(self.id) + '.' + f.name
-
-	self.data.save(name, f)
-
-##################################################################
-
-class Comment(models.Model, Thing):
-
-    """This is the modelspace representation of the Comment object"""
-
-    sattr_prefix = "comment"
-    title = MineModel.string()
-    body = MineModel.text(blank=True)
-    likes = MineModel.bool(False)
-    item = MineModel.reference(Item)
-    relation = MineModel.reference(Relation)
-    created = MineModel.created()
-    last_modified = MineModel.last_modified()
-
-    def __unicode__(self):
-	return self.title
-
-    class Meta:
-	ordering = ['-id']
-
-##################################################################
-
-class VanityURL(models.Model, Thing):
-
-    """The VanityURL model implements a TinyURL-like concept, allowing
-    arbitrary cookies to map to much longer URLs, indexable either by
-    'name' or 'index' (suitably compressed)"""
-
-    sattr_prefix = "vurl"
-    name = MineModel.slug(unique=True)
-    link = MineModel.text(blank=True)
-    tags = MineModel.reflist(Tag, pivot='vurls_tagged', blank=True)
-    created = MineModel.created()
-    last_modified = MineModel.last_modified()
-
-    def __unicode__(self):
-	return self.name
-
-    class Meta:
-	ordering = ['-id']
-	verbose_name = 'Vanity URL'
-
-##################################################################
-
-class MineRegistry(models.Model): # not a Thing
-
-    """key/value pairs for Mine configuration"""
-
-    key = MineModel.slug(unique=True)
-    value = MineModel.text(blank=True)
-    created = MineModel.created()
-    last_modified = MineModel.last_modified()
-
-    def to_structure(self):
-	s = {}
-	s[self.key] = self.value # this is why it is not a Thing
-	s['keyCreated'] = m2s_date(self.created)
-	s['keyLastModified'] = m2s_date(self.last_modified)
-	return s
-
-    class Meta:
-	ordering = ['key']
-	verbose_name = 'Registry'
-	verbose_name_plural = 'Registry'
-
-    def __unicode__(self):
-	return self.key
-
-##################################################################
-
 class LogEvent(models.Model): # not a Thing
 
     """key/value pairs for Mine configuration"""
@@ -896,11 +742,200 @@ class LogEvent(models.Model): # not a Thing
     class Meta:
 	ordering = ['-last_modified']
 	verbose_name = 'Event'
-	verbose_name_plural = 'Events'
 
     def __unicode__(self):
 	return self.get_status_display()
 
+##################################################################
+
+class MineRegistry(models.Model): # not a Thing
+
+    """key/value pairs for Mine configuration"""
+
+    key = MineModel.slug(unique=True) # unique differentiates from ExtendedAttribute
+    value = MineModel.text(blank=True)
+    created = MineModel.created()
+    last_modified = MineModel.last_modified()
+
+    def to_structure(self):
+	s = {}
+	s[self.key] = self.value # this is why it is not a Thing
+	s['keyCreated'] = m2s_date(self.created)
+	s['keyLastModified'] = m2s_date(self.last_modified)
+	return s
+
+    class Meta:
+	ordering = ['key']
+	verbose_name = 'Registry'
+	verbose_name_plural = 'Registries'
+
+    def __unicode__(self):
+	return self.key
+
+##################################################################
+
+class ExtendedAttribute(models.Model): # not a Thing
+
+    """key/value pairs for Mine Thing extensions"""
+
+    key = MineModel.slug()
+    value = MineModel.blob()
+    content_type = MineModel.string()
+    created = MineModel.created()
+    last_modified = MineModel.last_modified()
+
+    def to_structure(self):
+	s = {}
+	s[self.key] = self.value # this is why it is not a Thing
+	s['keyCreated'] = m2s_date(self.created)
+	s['keyLastModified'] = m2s_date(self.last_modified)
+	return s
+
+    class Meta:
+	ordering = ['key']
+	verbose_name = 'ExtendedAttribute'
+
+    def __unicode__(self):
+	return self.key
+
+
+##################################################################
+##################################################################
+##################################################################
+
+class Tag(models.Model, Thing):
+
+    """This is the modelspace representation of the Tag object"""
+
+    sattr_prefix = "tag"
+
+    name = MineModel.slug(unique=True)
+    created = MineModel.created()
+    last_modified = MineModel.last_modified()
+    extend = MineModel.reflist(ExtendedAttribute, pivot='tag_extend', blank=True)
+
+    description = MineModel.text(blank=True)
+    implies = MineModel.reflist('self', symmetrical=False, pivot='tag_implied_from', blank=True)
+
+    class Meta:
+	ordering = ['name']
+
+    def __unicode__(self):
+	return self.name
+
+##################################################################
+
+class Relation(models.Model, Thing):
+
+    """This is the modelspace representation of the Relation object"""
+
+    sattr_prefix = "relation"
+
+    name = MineModel.slug(unique=True)
+    created = MineModel.created()
+    last_modified = MineModel.last_modified()
+    extend = MineModel.reflist(ExtendedAttribute, pivot='relation_extend', blank=True)
+
+    description = MineModel.text(blank=True)
+    embargo_after = MineModel.datetime(blank=True)
+    embargo_before = MineModel.datetime(blank=True)
+    network_pattern = MineModel.string(blank=True)
+    tags = MineModel.reflist(Tag, pivot='relations_with_tag', blank=True)
+    tags_excluded = MineModel.reflist(Tag, pivot='relations_excluding', blank=True)
+    tags_required = MineModel.reflist(Tag, pivot='relations_requiring', blank=True)
+    version = MineModel.integer(1)
+
+    class Meta:
+	ordering = ['name']
+
+    def __unicode__(self):
+	return self.name
+
+##################################################################
+
+class Item(models.Model, Thing):
+
+    """This is the modelspace representation of the Item object"""
+
+    sattr_prefix = "item"
+
+    name = MineModel.string()
+    created = MineModel.created()
+    last_modified = MineModel.last_modified()
+    extend = MineModel.reflist(ExtendedAttribute, pivot='item_extend', blank=True)
+
+    content_type = MineModel.string()
+    data = MineModel.file(storage=item_file_storage, upload_to='%Y/%m/%d')
+    description = MineModel.text(blank=True)
+    hide_after = MineModel.datetime(blank=True)
+    hide_before = MineModel.datetime(blank=True)
+    item_for_relations = MineModel.reflist(Relation, pivot='items_explicitly_for', blank=True)
+    item_not_relations = MineModel.reflist(Relation, pivot='items_explicitly_not', blank=True)
+    parent = MineModel.reference('self', blank=True) # only set for clones
+    status = MineModel.choice(item_status_choices)
+    tags = MineModel.reflist(Tag, pivot='items_tagged', blank=True)
+
+    class Meta:
+	ordering = ['-last_modified']
+
+    def __unicode__(self):
+	return self.name
+
+    def save_upload_file(self, f):
+	if not self.id:
+	    raise RuntimeError, "save_upload_file trying to save a model which has no IID"
+
+	name = str(self.id) + '.' + f.name
+
+	self.data.save(name, f)
+
+##################################################################
+
+class Comment(models.Model, Thing):
+
+    """This is the modelspace representation of the Comment object"""
+
+    sattr_prefix = "comment"
+
+    title = MineModel.string()
+    created = MineModel.created()
+    last_modified = MineModel.last_modified()
+    extend = MineModel.reflist(ExtendedAttribute, pivot='comment_extend', blank=True)
+
+    body = MineModel.text(blank=True)
+    item = MineModel.reference(Item)
+    relation = MineModel.reference(Relation)
+
+    def __unicode__(self):
+	return self.title
+
+    class Meta:
+	ordering = ['-id']
+
+##################################################################
+
+class VanityURL(models.Model, Thing):
+
+    """The VanityURL model implements a TinyURL-like concept, allowing
+    arbitrary cookies to map to much longer URLs, indexable either by
+    'name' or 'index' (suitably compressed)"""
+
+    sattr_prefix = "vurl"
+
+    name = MineModel.slug(unique=True)
+    created = MineModel.created()
+    last_modified = MineModel.last_modified()
+    extend = MineModel.reflist(ExtendedAttribute, pivot='vurl_extend', blank=True)
+
+    link = MineModel.text(blank=True)
+    tags = MineModel.reflist(Tag, pivot='vurls_tagged', blank=True)
+
+    def __unicode__(self):
+	return self.name
+
+    class Meta:
+	ordering = ['-id']
+	verbose_name = 'VanityURL'
 
 ##################################################################
 ##################################################################
