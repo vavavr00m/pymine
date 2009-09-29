@@ -3,24 +3,24 @@
 $indent = "    ";
 
 %regexp_lookup = ( # $value text in <anglebrackets> must be same as lcase($key)
-    'TID', '?P<tid>\d+',
-    'IID', '?P<iid>\d+',
-    'RID', '?P<rid>\d+',
-    'RVSN', '?P<rvsn>\d+',
-    'CID', '?P<cid>\d+',
-    'VID', '?P<vid>\d+',
-    'FMT', '?P<fmt>(rdr|xml|json)',
+		   'TID',      '?P<tid>\d+',
+		   'IID',      '?P<iid>\d+',
+		   'RID',      '?P<rid>\d+',
+		   'RVSN',     '?P<rvsn>\d+',
+		   'CID',      '?P<cid>\d+',
+		   'VID',      '?P<vid>\d+',
+		   'FMT',      '?P<fmt>(rdr|xml|json)',
 
-    'VURLKEY', '?P<vurlkey>[A-Za-z0-9!@]+',
+		   'VURLKEY',  '?P<vurlkey>[A-Za-z0-9!@]+',
 
-    'SATTR', '?P<sattr>(__)?[a-z][A-Za-z]*', # f, foo, fooBar, __fooBar
-    'SAFMT', '?P<safmt>(rdr|xml|json)',
+		   'SATTR',    '?P<sattr>(__)?[a-z][A-Za-z]*',  #  f,  foo,  fooBar,  __fooBar
+		   'SAFMT',    '?P<safmt>(rdr|xml|json)',
 
-    'RATTR', '?P<rattr>[a-z][A-Za-z]*', # f, foo, fooBar
+		   'RATTR',    '?P<rattr>[a-z][A-Za-z]*',       #  f,  foo,  fooBar
 
-    'MINEKEY', '?P<minekey>[A-Za-z0-9!@]+',
+		   'MINEKEY',  '?P<minekey>[A-Za-z0-9!@]+',
 
-    'SUFFIX', '?P<suffix>.+',
+		   'SUFFIX',   '?P<suffix>.+',
     );
 
 

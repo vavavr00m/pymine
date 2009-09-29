@@ -15,7 +15,7 @@
 ## permissions and limitations under the License.
 ##
 
-from models import Tag, Relation, Item, Comment, VanityURL, MineRegistry, LogEvent
+from models import Tag, Relation, Item, Comment, VanityURL, MineRegistry, ExtendedAttribute, LogEvent
 from django.contrib import admin
 
 class TagAdmin(admin.ModelAdmin):
@@ -36,7 +36,6 @@ class RelationAdmin(admin.ModelAdmin):
     fieldsets = [
         (None, {'fields': ['name', 'version', 'description']}), 
         ('Tags', {'fields': ['tags', 'tags_required', 'tags_excluded']}), 
-        ('Contact Information', {'fields': ['email_address', 'url_homepage', 'url_image', 'url_callback']}), 
         ('Access Control', {'fields': ['embargo_before', 'embargo_after', 'network_pattern'], 'classes': ['collapse']}), 
         ]
 
@@ -52,12 +51,12 @@ class ItemAdmin(admin.ModelAdmin):
         ]
 
 class CommentAdmin(admin.ModelAdmin):
-    list_display = ('title', 'relation',  'item', 'likes', 'last_modified', 'created')
+    list_display = ('title', 'relation',  'item', 'last_modified', 'created')
     search_fields = ['title', 'body']
     list_filter = ['created']
     date_hierarchy = 'created'
     fieldsets = [
-        (None, {'fields': ['title', 'body', 'likes']}), 
+        (None, {'fields': ['title', 'body']}), 
         ('Advanced', {'fields': ['item', 'relation']}), 
         ]
 
@@ -79,6 +78,15 @@ class MineRegistryAdmin(admin.ModelAdmin):
         (None, {'fields': ['key', 'value']}), 
         ]
 
+class ExtendedAttributeAdmin(admin.ModelAdmin):
+    list_display = ('key', 'content_type', 'value', 'last_modified', 'created')
+    search_fields = ['key']
+    list_filter = ['created']
+    date_hierarchy = 'created'
+    fieldsets = [
+        (None, {'fields': ['key', 'content_type', 'value']}), 
+        ]
+
 class LogEventAdmin(admin.ModelAdmin):
     list_display = ('status', 'ip', 'type', 'method', 'path', 'key', 'msg', 'last_modified', 'created')
     search_fields = ['type', 'msg']
@@ -91,5 +99,6 @@ admin.site.register(Item, ItemAdmin)
 admin.site.register(Comment, CommentAdmin)
 admin.site.register(VanityURL, VanityURLAdmin)
 admin.site.register(MineRegistry, MineRegistryAdmin)
+admin.site.register(ExtendedAttribute, ExtendedAttributeAdmin)
 admin.site.register(LogEvent, LogEventAdmin)
 
