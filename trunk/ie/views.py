@@ -21,27 +21,24 @@ from django.shortcuts import render_to_response, get_object_or_404
 
 ##################################################################
 
-## rest: GET /archive
-## function: root_archive
+## rest: GET /ie
+## function: root_ie
 ## declared args: 
-def root_archive(request, *args, **kwargs):
-    return render_to_response('root-archive.html')
+def root_ie(request, *args, **kwargs):
+    s = api.root_ie(request, *args, **kwargs)
+    return render_to_response('root-ie.html', s)
 
-## rest: GET /archive/export
-## function: archive_export
+## rest: GET /ie/export
+## function: ie_export
 ## declared args: 
-def archive_export(request, *args, **kwargs):
-    return render_to_response('archive-export.html')
+def ie_export(request, *args, **kwargs):
+    s = api.ie_export(request, *args, **kwargs)
+    return render_to_response('ie-export.html', s)
 
-## rest: GET /archive/import
-## function: archive_import
+## rest: GET /ie/import
+## function: ie_import
 ## declared args: 
-def archive_import(request, *args, **kwargs):
-    return render_to_response('archive-import.html')
-
-## rest: GET /archive/cleanup
-## function: archive_cleanup
-## declared args: 
-def archive_cleanup(request, *args, **kwargs):
-    return render_to_response('archive-cleanup.html')
+def ie_import(request, *args, **kwargs):
+    s = api.ie_import(request, *args, **kwargs)
+    return render_to_response('ie-import.html', s)
 

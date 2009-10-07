@@ -17,12 +17,11 @@
 
 from django.conf.urls.defaults import *
 
-import views as archive
+import views as ie
 from pymine.views import REST
 
 urlpatterns = patterns('',
-                       (r'^import$', REST, {'GET': archive.archive_import}),
-                       (r'^export$', REST, {'GET': archive.archive_export}),
-                       (r'^cleanup$', REST, {'GET': archive.archive_cleanup}),
-                       (r'^$', REST, {'GET': archive.root_archive}),
+                       (r'^import$', REST, {'GET': ie.ie_import}),
+                       (r'^export$', REST, {'GET': ie.ie_export}),
+                       (r'^$', REST, {'GET': ie.root_ie}),
                        )
