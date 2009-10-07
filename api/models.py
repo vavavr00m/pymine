@@ -622,43 +622,56 @@ class AbstractThing(AbstractModel):
     # /api/relation/42/relationName.json and similar methods.
 
     def get_sattr(self, sattr):
+
+	if sattr.startswith(self.xattr_prefix):
+            k = sattr[len(self.xattr_prefix):]
+            mgr = getattr(self, self.xattr_manager)
+            xa = mgr.get(key=k)
+            return xa.value
+
 	# check validity of sattr
-	if not sattr.startswith(self.sattr_prefix):
+	elif sattr.startswith(self.sattr_prefix):
+            # lookup equivalent model field
+            r2s_func, s2m_func, mattr = lookup_mattr(sattr)
+
+            # retreive equivalent model field
+            x = getattr(self, mattr)
+
+            # lookup m2s conversion routine
+            m2s_func, sattr2 = m2s_table[self.sattr_prefix][mattr]
+
+            # sanity check
+            assert sattr == sattr2, "m2s_table corruption, reverse lookup yielded wrong result"
+
+            # convert to s-form and return
+            s = {}
+            m2s_func(self, mattr, s, sattr)
+            return s[sattr]
+
+        else:
 	    raise RuntimeError, "get_sattr asked to look up bogus sattr: " + sattr
-
-	# lookup equivalent model field
-	r2s_func, s2m_func, mattr = lookup_mattr(sattr)
-
-	# retreive equivalent model field
-	x = getattr(self, mattr)
-
-	# lookup m2s conversion routine
-	m2s_func, sattr2 = m2s_table[self.sattr_prefix][mattr]
-
-	# sanity check
-	assert sattr == sattr2, "m2s_table corruption, reverse lookup yielded wrong result"
-
-	# convert to s-form
-	s = {}
-	m2s_func(self, mattr, s, sattr)
-
-	# return
-	return s[sattr]
 
     @transaction.commit_on_success # <- rollback if it raises an exception
     def delete_sattr(self, sattr):
-	# check validity of sattr
-	if not sattr.startswith(self.sattr_prefix):
-	    raise RuntimeError, "get_sattr asked to look up bogus sattr: " + sattr
 
-	# lookup equivalent model field
-	r2s_func, s2m_func, mattr = lookup_mattr(sattr)
+	if sattr.startswith(self.xattr_prefix):
+            k = sattr[len(self.xattr_prefix):]
+            mgr = getattr(self, self.xattr_manager)
+            xa = mgr.get(key=k)
+            xa.delete()
 
-	# zero that field
-	setattr(self, None)
+	elif sattr.startswith(self.sattr_prefix):
+            # lookup equivalent model field
+            r2s_func, s2m_func, mattr = lookup_mattr(sattr)
 
-	# try saving and hope model will bitch if it's required=True
-	self.save()
+            # zero that field
+            setattr(self, None)
+
+        else:
+            raise RuntimeError, "get_sattr asked to look up bogus sattr: " + sattr
+
+        # try saving and hope model will bitch if something is wrong
+        self.save()
 
     # render a model into a structure suitable for serializing and
     # returning to the user.
