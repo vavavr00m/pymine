@@ -19,7 +19,7 @@ from django.core.urlresolvers import reverse
 from django.http import Http404, HttpResponse, HttpResponseRedirect
 from django.shortcuts import render_to_response, get_object_or_404
 
-from pymine.api.models import Tag, Item, Relation, Comment, VanityURL
+from pymine.api.models import Tag, Item, Relation, Comment, Vurl
 import pymine.api.views as api
 
 ##################################################################
@@ -223,7 +223,7 @@ def update_tag(request, tid, *args, **kwargs):
 ## declared args: vid
 def update_vurl(request, vid, *args, **kwargs):
     # punts to editor page which calls API
-    s = VanityURL.objects.get(id=vid).to_structure()
+    s = Vurl.objects.get(id=vid).to_structure()
     return render_to_response('update-vurl.html', s)
 
 ##################################################################

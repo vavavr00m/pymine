@@ -15,7 +15,7 @@
 ## permissions and limitations under the License.
 ##
 
-from models import Tag, Relation, Item, Comment, VanityURL, MineRegistry, ExtendedAttribute, LogEvent
+from models import Tag, Relation, Item, Comment, Vurl, MineRegistry, ExtendedAttribute, LogEvent
 from django.contrib import admin
 
 class TagAdmin(admin.ModelAdmin):
@@ -60,13 +60,13 @@ class CommentAdmin(admin.ModelAdmin):
         ('Advanced', {'fields': ['item', 'relation']}), 
         ]
 
-class VanityURLAdmin(admin.ModelAdmin):
+class VurlAdmin(admin.ModelAdmin):
     list_display = ('name', 'link', 'last_modified', 'created')
     search_fields = ['name']
     list_filter = ['created']
     date_hierarchy = 'created'
     fieldsets = [
-        (None, {'fields': ['name', 'link', 'tags']}), 
+        (None, {'fields': ['name', 'link']}), 
         ]
 
 class MineRegistryAdmin(admin.ModelAdmin):
@@ -97,7 +97,7 @@ admin.site.register(Tag, TagAdmin)
 admin.site.register(Relation, RelationAdmin)
 admin.site.register(Item, ItemAdmin)
 admin.site.register(Comment, CommentAdmin)
-admin.site.register(VanityURL, VanityURLAdmin)
+admin.site.register(Vurl, VurlAdmin)
 admin.site.register(MineRegistry, MineRegistryAdmin)
 admin.site.register(ExtendedAttribute, ExtendedAttributeAdmin)
 admin.site.register(LogEvent, LogEventAdmin)

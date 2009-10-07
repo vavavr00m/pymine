@@ -11,12 +11,11 @@ $root_path_strip = "/(api|ui|ie|get|r|v)";
 		   'RVSN',     '?P<rvsn>[1-9]\d*',
 		   'CID',      '?P<cid>[1-9]\d*',
 		   'VID',      '?P<vid>[1-9]\d*',
-		   'FMT',      '?P<fmt>(rdr|xml|json)',
+		   'FMT',      '?P<fmt>(rdr|xml|json|raw)',
 
 		   'VURLKEY',  '?P<vurlkey>[A-Za-z0-9!@]+',
 
 		   'SATTR',    '?P<sattr>(__)?[A-Za-z][_A-Za-z]*',  #  f,  foo,  fooBar,  __fooBar
-		   'SAFMT',    '?P<safmt>(rdr|xml|json|raw)',
 
 		   'RATTR',    '?P<rattr>[A-Za-z][_A-Za-z]*',       #  f,  foo,  fooBar
 
@@ -131,8 +130,8 @@ api    GET    /api/clone/IID.FMT             list-clones # IID==0 -> list all cl
 api    DELETE /api/comment/CID.FMT           delete-comment 
 api    GET    /api/comment/CID.FMT           read-comment 
 api    POST   /api/comment/CID.FMT           update-comment 
-api    DELETE /api/comment/CID/SATTR.SAFMT   delete-comment-key 
-api    GET    /api/comment/CID/SATTR.SAFMT   get-comment-key 
+api    DELETE /api/comment/CID/SATTR.FMT     delete-comment-key 
+api    GET    /api/comment/CID/SATTR.FMT     get-comment-key 
 api    POST   /api/comment/item/IID.FMT      create-comment # IID==0 -> comment on entire feed
 api    GET    /api/comment/item/IID.FMT      list-comments # IID==0 -> list all comments
 api    GET    /api/ie/export.EFMT            export-mine 
@@ -143,8 +142,8 @@ api    GET    /api/item/IID                  read-item-data # this is the raw it
 api    DELETE /api/item/IID.FMT              delete-item 
 api    GET    /api/item/IID.FMT              read-item 
 api    POST   /api/item/IID.FMT              update-item 
-api    DELETE /api/item/IID/SATTR.SAFMT      delete-item-key 
-api    GET    /api/item/IID/SATTR.SAFMT      get-item-key 
+api    DELETE /api/item/IID/SATTR.FMT        delete-item-key 
+api    GET    /api/item/IID/SATTR.FMT        get-item-key 
 api    GET    /api/registry.FMT              list-registry 
 api    POST   /api/registry/RATTR.FMT        amend-registry-key 
 api    DELETE /api/registry/RATTR.FMT        delete-registry-key 
@@ -154,19 +153,19 @@ api    GET    /api/relation.FMT              list-relations
 api    DELETE /api/relation/RID.FMT          delete-relation 
 api    GET    /api/relation/RID.FMT          read-relation 
 api    POST   /api/relation/RID.FMT          update-relation 
-api    DELETE /api/relation/RID/SATTR.SAFMT  delete-relation-key 
-api    GET    /api/relation/RID/SATTR.SAFMT  get-relation-key 
+api    DELETE /api/relation/RID/SATTR.FMT    delete-relation-key 
+api    GET    /api/relation/RID/SATTR.FMT    get-relation-key 
 api    GET    /api/select/item.FMT           read-select-item 
 api    GET    /api/select/relation.FMT       read-select-relation 
 api    GET    /api/select/tag.FMT            read-select-tag 
-api    GET    /api/select/vurl.FMT           read-select-tag 
+api    GET    /api/select/vurl.FMT           read-select-vurl
 api    POST   /api/tag.FMT                   create-tag 
 api    GET    /api/tag.FMT                   list-tags 
 api    DELETE /api/tag/TID.FMT               delete-tag 
 api    GET    /api/tag/TID.FMT               read-tag 
 api    POST   /api/tag/TID.FMT               update-tag 
-api    DELETE /api/tag/TID/SATTR.SAFMT       delete-tag-key 
-api    GET    /api/tag/TID/SATTR.SAFMT       get-tag-key 
+api    DELETE /api/tag/TID/SATTR.FMT         delete-tag-key 
+api    GET    /api/tag/TID/SATTR.FMT         get-tag-key 
 api    GET    /api/url/RID.FMT               encode-minekey1 
 api    GET    /api/url/RID/IID.FMT           encode-minekey2 
 api    GET    /api/url/RID/RVSN/IID.FMT      encode-minekey3 
@@ -176,8 +175,8 @@ api    GET    /api/vurl.FMT                  list-vurls
 api    DELETE /api/vurl/TID.FMT              delete-vurl 
 api    GET    /api/vurl/TID.FMT              read-vurl 
 api    POST   /api/vurl/TID.FMT              update-vurl 
-api    DELETE /api/vurl/TID/SATTR.SAFMT      delete-vurl-key 
-api    GET    /api/vurl/TID/SATTR.SAFMT      get-vurl-key 
+api    DELETE /api/vurl/TID/SATTR.FMT        delete-vurl-key 
+api    GET    /api/vurl/TID/SATTR.FMT        get-vurl-key 
 
 get    GET    /get                           root-get 
 get    GET    /get/MINEKEY                   read-minekey 
