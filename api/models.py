@@ -604,10 +604,11 @@ class AbstractThing(AbstractModel):
             # chop out the suffix
             k = k[len(self.xattr_prefix):]
 
-            # get/create the xattr and return it
-            xa, created = mgr.get_or_create(key=k)
-            xa.value = v
-            xa.save()
+            # get/create the xattr
+            xa, created = mgr.get_or_create(key=k, defaults={'value': v})
+            if not created: # then it needs updating
+                xa.value = v
+                xa.save()
 
             # mark updates on the item
             needs_save = True

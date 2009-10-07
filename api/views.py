@@ -249,9 +249,10 @@ def list_registry(request, *args, **kwargs):
 ## declared args: rattr
 def amend_registry_key(request, rattr, *args, **kwargs):
     v = request.POST[key]
-    m, created = MineRegistry.objects.get_or_create(key=k)
-    m.value = v
-    m.save();
+    m, created = MineRegistry.objects.get_or_create(key=k,defaults={'value':v})
+    if not created: # then it will need updating
+        m.value = v
+        m.save();
     return construct_retval(m.to_structure())
 
 # SECURITY: if we permitted deletion via primary-key (eg: delete where
