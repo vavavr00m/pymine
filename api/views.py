@@ -421,8 +421,8 @@ def encode_minekey3(request, rid, rvsn, iid, *args, **kwargs):
 def read_version(request, *args, **kwargs):
     result = {
 	'softwareName': 'pymine',
-	'softwareRevision': '1.0-alpha',
-	'mineAPIVersion': 2,
+	'softwareRevision': '1.1-alpha',
+	'mineAPIVersion': 3,
 	}
     return construct_retval(result)
 

@@ -151,7 +151,7 @@ class AbstractXattr(AbstractModel):
 ##################################################################
 
 # The transcoder methods below provide a lot of the security for
-# pymine, and govern the movement of data between three 'spaces" of
+# pymine, and govern the movement of data between three 'spaces' of
 # data representation; these are:
 
 # r-space - request space, where data are held in a HttpRequest
@@ -175,7 +175,7 @@ class AbstractXattr(AbstractModel):
 
 # r-space and s-space share exactly the same naming conventions, ie:
 # they use mixedCase key (aka: 's-attribute' or 'sattr') such as
-# "relationName" and "tagDescription" and "itemId" to label data; the
+# 'relationName' and 'tagDescription' and 'itemId' to label data; the
 # only meaningful difference is that in r-space all data are held in
 # HttpRequest objects as strings; when pulled into s-space Python
 # dictionaries, any data which are integers (eg: itemId) are converted
@@ -436,7 +436,7 @@ class AbstractThing(AbstractModel):
     # subclasses
 
     sattr_prefix = 'thing' # subclass should override this for runtime
-    xattr_class = None # subclass should override this for runtime
+    xattr_manager = None # subclass should override this for runtime
     id = 42 # fake
 
     # IMPORTANT: see s_classes registration at the bottom of this
@@ -668,6 +668,14 @@ class AbstractThing(AbstractModel):
 	s = {}
 	for mattr, (m2s_func, sattr) in self.m2s_table[self.sattr_prefix].iteritems():
 	    m2s_func(self, mattr, s, sattr)
+
+        mgr = getattr(self, self.xattr_manager)
+        
+        for xa in mgr.all(): 
+            k = "__%s%s" % (self.sattr_prefix, xa.key)
+            v = xa.value
+            s[k] = v
+
 	return s
 
 ##################################################################
@@ -807,7 +815,7 @@ class Tag(AbstractThing):
     """This is the modelspace representation of the Tag object"""
 
     sattr_prefix = "tag"
-    xattr_class = TagXattr
+    xattr_manager = "tagxattr_set"
 
     name = AbstractModelField.slug(unique=True)
     description = AbstractModelField.text(required=False)
@@ -839,7 +847,7 @@ class Relation(AbstractThing):
     """This is the modelspace representation of the Relation object"""
 
     sattr_prefix = "relation"
-    xattr_class = RelationXattr
+    xattr_manager = "relationxattr_set"
 
     name = AbstractModelField.slug(unique=True)
     version = AbstractModelField.integer(1)
@@ -877,7 +885,7 @@ class Item(AbstractThing):
     """This is the modelspace representation of the Item object"""
 
     sattr_prefix = "item"
-    xattr_class = ItemXattr
+    xattr_manager = "itemxattr_set"
 
     name = AbstractModelField.string()
     content_type = AbstractModelField.string()
@@ -939,7 +947,7 @@ class Comment(AbstractThing):
     """This is the modelspace representation of the Comment object"""
 
     sattr_prefix = "comment"
-    xattr_class = CommentXattr
+    xattr_manager = "commentxattr_set"
 
     title = AbstractModelField.string()
     body = AbstractModelField.text(required=False)
@@ -976,7 +984,7 @@ class Vurl(AbstractThing):
     provides for much elective, longer token names to be used"""
 
     sattr_prefix = "vurl"
-    xattr_class = VurlXattr
+    xattr_manager = "vurlxattr_set"
 
     name = AbstractModelField.slug(unique=True)
     link = AbstractModelField.text(unique=True) # TODO: does 'unique' work on this?
