@@ -432,8 +432,8 @@ class AbstractThing(AbstractModel):
     class Meta:
 	abstract = True
 
-    # sattr_prefix will be checked in methods below, inheriting from
-    # subclasses of Thing.
+    # sattr_prefix will be checked in methods below, overridden in
+    # subclasses
 
     sattr_prefix = 'thing' # subclass should override this for runtime
     xattr_class = None # subclass should override this for runtime
@@ -792,11 +792,11 @@ class MineRegistry(AbstractModel):
 class TagXattr(AbstractXattr):
     """tag extended attributes"""
 
-    tag = AbstractModelField.reference(Tag)
+    tag = AbstractModelField.reference('Tag')
 
     class Meta:
 	ordering = ['key']
-	order_with_respect_to = 'tag'
+	# order_with_respect_to = 'tag'
 	unique_together = ('tag', 'key')
 	verbose_name = 'TagXattr'
 
@@ -824,11 +824,11 @@ class Tag(AbstractThing):
 class RelationXattr(AbstractXattr):
     """relation extended attributes"""
 
-    relation = AbstractModelField.reference(Relation)
+    relation = AbstractModelField.reference('Relation')
 
     class Meta:
 	ordering = ['key']
-	order_with_respect_to = 'relation'
+	# order_with_respect_to = 'relation'
 	unique_together = ('relation', 'key')
 	verbose_name = 'RelationXattr'
 
@@ -862,11 +862,11 @@ class Relation(AbstractThing):
 class ItemXattr(AbstractXattr):
     """item extended attributes"""
 
-    item = AbstractModelField.reference(Item)
+    item = AbstractModelField.reference('Item')
 
     class Meta:
 	ordering = ['key']
-	order_with_respect_to = 'item'
+	# order_with_respect_to = 'item'
 	unique_together = ('item', 'key')
 	verbose_name = 'ItemXattr'
 
@@ -924,11 +924,11 @@ class Item(AbstractThing):
 class CommentXattr(AbstractXattr):
     """comment extended attributes"""
 
-    comment = AbstractModelField.reference(Comment)
+    comment = AbstractModelField.reference('Comment')
 
     class Meta:
 	ordering = ['key']
-	order_with_respect_to = 'comment'
+	# order_with_respect_to = 'comment'
 	unique_together = ('comment', 'key')
 	verbose_name = 'CommentXattr'
 
@@ -957,11 +957,11 @@ class Comment(AbstractThing):
 class VurlXattr(AbstractXattr):
     """vurl extended attributes"""
 
-    vurl = AbstractModelField.reference(Vurl)
+    vurl = AbstractModelField.reference('Vurl')
 
     class Meta:
 	ordering = ['key']
-	order_with_respect_to = 'vurl'
+	# order_with_respect_to = 'vurl'
 	unique_together = ('vurl', 'key')
 	verbose_name = 'VurlXattr'
 
@@ -996,7 +996,7 @@ class Vurl(AbstractThing):
 # back with the parent thing; key=prefix, value=class
 
 for thing in (Comment, Item, Relation, Tag, Vurl):
-    Thing.s_classes[thing.sattr_prefix] = thing
+    AbstractThing.s_classes[thing.sattr_prefix] = thing
 
 ##################################################################
 ##################################################################
