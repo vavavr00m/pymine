@@ -34,10 +34,10 @@ def construct_retval(result=None, **kwargs):
 
     for k in ( 'prevurl', 'nexturl', 'thisurl',
 	       'count', 'span', 'page',
-               ):
+	       ):
 	v = kwargs.get(k, None)
 
-        if v: template[k] = v
+	if v: template[k] = v
 
     return template
 
@@ -86,7 +86,7 @@ def nyi():
 
 ## rest: GET /api
 ## function: root_api
-## declared args: 
+## declared args:
 def root_api(request, *args, **kwargs):
     """REST function that handles the template for the root api directory"""
     s = {}
@@ -152,10 +152,10 @@ def create_comment(request, iid, *args, **kwargs):
 def list_comments(request, iid, *args, **kwargs):
     item_id = int(iid)
     if item_id == 0:
-        result = [ m.to_structure() for m in Comment.objects.all() ]
+	result = [ m.to_structure() for m in Comment.objects.all() ]
     else:
-        item = Item.objects.get(id=item_id)
-        result = [ m.to_structure() for m in item.comment_set.all() ]
+	item = Item.objects.get(id=item_id)
+	result = [ m.to_structure() for m in item.comment_set.all() ]
     return construct_retval(result)
 
 ##################################################################
@@ -176,13 +176,13 @@ def import_mine(request, efmt, *args, **kwargs):
 
 ## rest: POST /api/item.FMT
 ## function: create_item
-## declared args: 
+## declared args:
 def create_item(request, *args, **kwargs):
     return create_foo(Item, request)
 
 ## rest: GET /api/item.FMT
 ## function: list_items
-## declared args: 
+## declared args:
 def list_items(request, *args, **kwargs):
     return list_foos(Item)
 
@@ -231,7 +231,7 @@ def get_item_key(request, iid, sattr, *args, **kwargs):
 
 ## rest: GET /api/registry.FMT
 ## function: list_registry
-## declared args: 
+## declared args:
 def list_registry(request, *args, **kwargs):
     result = [ m.to_structure() for m in MineRegistry.objects.all() ]
     return construct_retval(result)
@@ -240,13 +240,15 @@ def list_registry(request, *args, **kwargs):
 # of anything where key begins with "__" over a POST and SSL
 # connection.
 
-# TBD: so i can in theory set with /api/registry/foo.json?foo=bar ?
-
 ## rest: POST /api/registry/RATTR.FMT
 ## function: amend_registry_key
 ## declared args: rattr
 def amend_registry_key(request, rattr, *args, **kwargs):
-    v = request.REQUEST[key] # note: k is extracted from URL; v from POSTDATA (etc)
+
+    # note: k is extracted from URL; v from POSTDATA (etc) -- so, in
+    # theory, I can set with /api/registry/foo.json?foo=bar in a POST
+
+    v = request.REQUEST[key]
     m = MineRegistry(key=k, value=v)
     m.save();
     return construct_retval(m.to_structure())
@@ -281,13 +283,13 @@ def get_registry_key(request, rattr, *args, **kwargs):
 
 ## rest: POST /api/relation.FMT
 ## function: create_relation
-## declared args: 
+## declared args:
 def create_relation(request, *args, **kwargs):
     return create_foo(Relation, request)
 
 ## rest: GET /api/relation.FMT
 ## function: list_relations
-## declared args: 
+## declared args:
 def list_relations(request, *args, **kwargs):
     return list_foos(Relation)
 
@@ -325,25 +327,25 @@ def get_relation_key(request, rid, sattr, *args, **kwargs):
 
 ## rest: GET /api/select/item.FMT
 ## function: read_select_item
-## declared args: 
+## declared args:
 def read_select_item(request, *args, **kwargs):
     nyi()
 
 ## rest: GET /api/select/relation.FMT
 ## function: read_select_relation
-## declared args: 
+## declared args:
 def read_select_relation(request, *args, **kwargs):
     nyi()
 
 ## rest: GET /api/select/tag.FMT
 ## function: read_select_tag
-## declared args: 
+## declared args:
 def read_select_tag(request, *args, **kwargs):
     nyi()
 
 ## rest: GET /api/select/vurl.FMT
 ## function: read_select_tag
-## declared args: 
+## declared args:
 def read_select_vurl(request, *args, **kwargs):
     nyi()
 
@@ -351,13 +353,13 @@ def read_select_vurl(request, *args, **kwargs):
 
 ## rest: POST /api/tag.FMT
 ## function: create_tag
-## declared args: 
+## declared args:
 def create_tag(request, *args, **kwargs):
     return create_foo(Tag, request)
 
 ## rest: GET /api/tag.FMT
 ## function: list_tags
-## declared args: 
+## declared args:
 def list_tags(request, *args, **kwargs):
     return list_foos(Tag)
 
@@ -415,27 +417,26 @@ def encode_minekey3(request, rid, rvsn, iid, *args, **kwargs):
 
 ## rest: GET /api/version.FMT
 ## function: read_version
-## declared args: 
+## declared args:
 def read_version(request, *args, **kwargs):
     result = {
-        'softwareName': 'pymine',
-        'softwareRevision': '1.0-alpha',
-        'mineAPIVersion': 2,
-        }
+	'softwareName': 'pymine',
+	'softwareRevision': '1.0-alpha',
+	'mineAPIVersion': 2,
+	}
     return construct_retval(result)
-
 
 ##################################################################
 
 ## rest: POST /api/vurl.FMT
 ## function: create_vurl
-## declared args: 
+## declared args:
 def create_vurl(request, *args, **kwargs):
     return create_foo(Vurl, request)
 
 ## rest: GET /api/vurl.FMT
 ## function: list_vurls
-## declared args: 
+## declared args:
 def list_vurls(request, *args, **kwargs):
     return list_foos(Vurl)
 
