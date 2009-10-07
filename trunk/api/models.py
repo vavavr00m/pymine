@@ -143,7 +143,7 @@ class AbstractModel(models.Model):
 
 class AbstractXattr(AbstractModel):
     key = AbstractModelField.slug()
-    value = AbstractModelField.text(required=False)
+    value = AbstractModelField.text()
 
     class Meta:
 	abstract = True
@@ -611,7 +611,7 @@ class AbstractThing(AbstractModel):
                 xa.save()
 
             # mark updates on the item
-            needs_save = True
+            #needs_save = True
 
 	# update if we did anything
 	if needs_save: 
@@ -812,7 +812,7 @@ class MineRegistry(AbstractModel):
     """key/value pairs for Mine configuration"""
 
     key = AbstractModelField.slug(unique=True)
-    value = AbstractModelField.text(required=False)
+    value = AbstractModelField.text()
 
     def to_structure(self):
 	s = {}
@@ -1023,7 +1023,6 @@ class Vurl(AbstractThing):
 
     class Meta:
 	ordering = ['-id']
-	verbose_name = 'VanityURL'
 
 ##################################################################
 ##################################################################
