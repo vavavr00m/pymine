@@ -22,5 +22,7 @@ url hierarchy:
 
 - pagination
 
-- hack gen-django-code.pl so that the IID==0 regexp is restricted to pertinent URLs
-
+- hack gen-django-code.pl so that 
+	1) the IID==0 regexp is restricted to pertinent URLs
+	2) FMT for SATTRs can include "raw", different to FMT elsewhere
+  ...these are the same problem

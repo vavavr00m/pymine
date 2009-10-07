@@ -20,7 +20,7 @@ from django.http import Http404, HttpResponse, HttpResponseRedirect
 from django.shortcuts import render_to_response, get_object_or_404
 
 import pymine.api.views as api
-from pymine.api.models import Tag, Item, Relation, Comment, VanityURL
+from pymine.api.models import Tag, Item, Relation, Comment, Vurl
 
 from minekey import MineKey
 
