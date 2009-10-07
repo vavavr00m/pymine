@@ -30,7 +30,7 @@ def main(argv):
     bytes = rng.read(nbytes)
     rng.close()
 
-    print base64.b64encode(bytes, '.,')
+    print base64.b64encode(bytes, '!@')
 
 if __name__ == "__main__":
     main(sys.argv[1:])
