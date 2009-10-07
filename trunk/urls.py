@@ -18,7 +18,7 @@
 from django.conf.urls.defaults import *
 from django.contrib import admin
 
-import views
+import views as mine
 from views import REST
 
 admin.autodiscover()
@@ -27,8 +27,7 @@ urlpatterns = patterns('',
                        (r'^api/', include('api.urls')),
                        (r'^ui/', include('ui.urls')),
                        (r'^get/', include('get.urls')),
-                       (r'^ie/', include('ie.urls')),
-
+          
                        (r'^admin/(.*)', admin.site.root),
                        (r'^admin/doc/', include('django.contrib.admindocs.urls')),
                        #################################

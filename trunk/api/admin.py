@@ -15,8 +15,36 @@
 ## permissions and limitations under the License.
 ##
 
-from models import Tag, Relation, Item, Comment, Vurl, MineRegistry, ExtendedAttribute, LogEvent
+from models import Tag, Relation, Item, Comment, Vurl
+from models import TagXattr, RelationXattr, ItemXattr, CommentXattr, VurlXattr
+from models import MineRegistry, LogEvent
+
 from django.contrib import admin
+
+##################################################################
+
+class MineRegistryAdmin(admin.ModelAdmin):
+    list_display = ('key', 'value', 'last_modified', 'created')
+    search_fields = ['key']
+    list_filter = ['created']
+    date_hierarchy = 'created'
+    fieldsets = [
+        (None, {'fields': ['key', 'value']}), 
+        ]
+
+admin.site.register(MineRegistry, MineRegistryAdmin)
+
+##################################################################
+
+class LogEventAdmin(admin.ModelAdmin):
+    list_display = ('status', 'ip', 'type', 'method', 'path', 'key', 'msg', 'last_modified', 'created')
+    search_fields = ['type', 'msg']
+    list_filter = ['created']
+    date_hierarchy = 'created'
+
+admin.site.register(LogEvent, LogEventAdmin)
+
+##################################################################
 
 class TagAdmin(admin.ModelAdmin):
     list_display = ('name', 'last_modified', 'created')
@@ -27,6 +55,10 @@ class TagAdmin(admin.ModelAdmin):
         (None, {'fields': ['name']}), 
         ('Advanced', {'fields': ['description', 'implies']}), 
         ]
+
+admin.site.register(Tag, TagAdmin)
+
+##################################################################
 
 class RelationAdmin(admin.ModelAdmin):
     list_display = ('name', 'version', 'last_modified', 'created')
@@ -39,6 +71,10 @@ class RelationAdmin(admin.ModelAdmin):
         ('Access Control', {'fields': ['embargo_before', 'embargo_after', 'network_pattern'], 'classes': ['collapse']}), 
         ]
 
+admin.site.register(Relation, RelationAdmin)
+
+##################################################################
+
 class ItemAdmin(admin.ModelAdmin):
     list_display = ('name', 'status', 'content_type', 'last_modified', 'created')
     search_fields = ['name', 'description']
@@ -50,6 +86,10 @@ class ItemAdmin(admin.ModelAdmin):
         ('Access Control', {'fields': ['hide_before', 'hide_after'], 'classes': ['collapse']}), 
         ]
 
+admin.site.register(Item, ItemAdmin)
+
+##################################################################
+
 class CommentAdmin(admin.ModelAdmin):
     list_display = ('title', 'relation',  'item', 'last_modified', 'created')
     search_fields = ['title', 'body']
@@ -60,6 +100,10 @@ class CommentAdmin(admin.ModelAdmin):
         ('Advanced', {'fields': ['item', 'relation']}), 
         ]
 
+admin.site.register(Comment, CommentAdmin)
+
+##################################################################
+
 class VurlAdmin(admin.ModelAdmin):
     list_display = ('name', 'link', 'last_modified', 'created')
     search_fields = ['name']
@@ -69,36 +113,58 @@ class VurlAdmin(admin.ModelAdmin):
         (None, {'fields': ['name', 'link']}), 
         ]
 
-class MineRegistryAdmin(admin.ModelAdmin):
-    list_display = ('key', 'value', 'last_modified', 'created')
-    search_fields = ['key']
-    list_filter = ['created']
-    date_hierarchy = 'created'
-    fieldsets = [
-        (None, {'fields': ['key', 'value']}), 
-        ]
-
-class ExtendedAttributeAdmin(admin.ModelAdmin):
-    list_display = ('key', 'value', 'last_modified', 'created')
-    search_fields = ['key']
-    list_filter = ['created']
-    date_hierarchy = 'created'
-    fieldsets = [
-        (None, {'fields': ['key', 'value']}), 
-        ]
-
-class LogEventAdmin(admin.ModelAdmin):
-    list_display = ('status', 'ip', 'type', 'method', 'path', 'key', 'msg', 'last_modified', 'created')
-    search_fields = ['type', 'msg']
-    list_filter = ['created']
-    date_hierarchy = 'created'
-
-admin.site.register(Tag, TagAdmin)
-admin.site.register(Relation, RelationAdmin)
-admin.site.register(Item, ItemAdmin)
-admin.site.register(Comment, CommentAdmin)
 admin.site.register(Vurl, VurlAdmin)
-admin.site.register(MineRegistry, MineRegistryAdmin)
-admin.site.register(ExtendedAttribute, ExtendedAttributeAdmin)
-admin.site.register(LogEvent, LogEventAdmin)
 
+##################################################################
+
+class TagXattrAdmin(admin.ModelAdmin):
+    list_display = ('tag', 'key', 'value', 'last_modified', 'created')
+    search_fields = ['key', 'value']
+    list_filter = ['created']
+    date_hierarchy = 'created'
+
+admin.site.register(TagXattr, TagXattrAdmin)
+
+##################################################################
+
+class CommentXattrAdmin(admin.ModelAdmin):
+    list_display = ('comment', 'key', 'value', 'last_modified', 'created')
+    search_fields = ['key', 'value']
+    list_filter = ['created']
+    date_hierarchy = 'created'
+
+admin.site.register(CommentXattr, CommentXattrAdmin)
+
+##################################################################
+
+class ItemXattrAdmin(admin.ModelAdmin):
+    list_display = ('item', 'key', 'value', 'last_modified', 'created')
+    search_fields = ['key', 'value']
+    list_filter = ['created']
+    date_hierarchy = 'created'
+
+admin.site.register(ItemXattr, ItemXattrAdmin)
+
+##################################################################
+
+class RelationXattrAdmin(admin.ModelAdmin):
+    list_display = ('relation', 'key', 'value', 'last_modified', 'created')
+    search_fields = ['key', 'value']
+    list_filter = ['created']
+    date_hierarchy = 'created'
+
+admin.site.register(RelationXattr, RelationXattrAdmin)
+
+##################################################################
+
+class VurlXattrAdmin(admin.ModelAdmin):
+    list_display = ('vurl', 'key', 'value', 'last_modified', 'created')
+    search_fields = ['key', 'value']
+    list_filter = ['created']
+    date_hierarchy = 'created'
+
+admin.site.register(VurlXattr, VurlXattrAdmin)
+
+##################################################################
+##################################################################
+##################################################################

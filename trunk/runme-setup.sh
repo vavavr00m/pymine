@@ -17,8 +17,8 @@ YESNO() {
     done
 }
 
-make clean
-make perms
+make clean || exit 1
+make perms || exit 1
 
 if [ -f settings.py ]
 then
@@ -67,11 +67,11 @@ then
 fi
 
 # go for it
-make dbsync
+make dbsync  || exit 1
 
 # last step
 echo "We shall use '$MINE_USER' as your mine database superuser login name."
 echo "You will now be asked to select a password for '$MINE_USER'"
-python manage.py createsuperuser --username $MINE_USER --email $MINE_EMAIL
+python manage.py createsuperuser --username $MINE_USER --email $MINE_EMAIL || exit 1
 
 exit 0 
