@@ -28,67 +28,60 @@ from minekey import MineKey
 
 ## rest: GET /get
 ## function: root_get
-## declared args: 
+## declared args:
 def root_get(request, *args, **kwargs):
-    return render_to_response('root-get.html')
+    s = {}
+    return render_to_response('root-get.html', s)
 
-## rest: GET /get/KEY
+## rest: GET /get/MINEKEY
 ## function: read_minekey
-## declared args: key
-def read_minekey(request, key, *args, **kwargs):
+## declared args: minekey
+def read_minekey(request, minekey, *args, **kwargs):
+    # log this
+    el = LogEvent.open("MKREAD", )
 
-    el = LogEvent.open("KEY",
-                       )
-
-    # parse it out (basic validation performed)
-    mk = MineKey.parse(key)
-
-    # check get vs put
-    if mk.method != "get":
-        raise RuntimeError, "minekey is not 'get' method: " + str(mk)
-
-    # check depth
-    if mk.depth <= 0:
-        raise RuntimeError, "minekey has run out of depth: " + str(mk)
-
-    # check global ToD restrictions
-    # TODO
-
-    # load relation
+    # big wrapper for all possible exceptions
     try:
-        r = Relation.objects.get(id=mk.rid)
-    except Relation.DoesNotExist, e:
-        raise RuntimeError, "minekey rid is not valid: " + str(mk)
+        # parse it out (basic validation performed)
+        mk = MineKey.parse(minekey)
 
-    # check rvsn
-    if r.version != mk.rvsn:
-        raise RuntimeError, "minekey rvsn / relation version mismatch: " + str(mk)
+        # extended validation
+        mk.validate_against(request, 'get')
 
-    # check against relation IP address
-    if r.network_pattern:
-        if 'REMOTE_ADDR' not in request.META:
-            raise RuntimeError, "relation specifies network pattern but REMOTE_ADDR unavailable: " + str(r)
+        # deal with it
+        if mk.iid: # item
+            retval = api.read_item_data(None, mk.iid)
+            el.close('item processed')
+            return retval
+        else: # feed
+            retval = HttpResponse("feed decoded: " + str(mk))
+            el.close('feed processed')
+            return retval
 
-        src = request.META.get('REMOTE_ADDR')
-
-        # this is hardly CIDR but can be fixed later
-        if not src.startswith(r.network_pattern):
-            raise RuntimeError, "relation being accessed from illegal REMOTE_ADDR: " + src
-
-    # check ToD against relation embargo time
-    # TODO
-
-    # deal with it
-    if mk.iid: # is an actual item
-        return api.read_item_data(None, mk.iid)
-    else: # is a feed
-        return HttpResponse("feed decoded: " + str(mk))
+    # catch all
+    except Exception, e:
+        el.close_error(str(e))
+        raise
 
 
-## rest: POST /get/KEY
+## rest: POST /get/MINEKEY
 ## function: submit_minekey
-## declared args: key
-def submit_minekey(request, key, *args, **kwargs):
+## declared args: minekey
+def submit_minekey(request, minekey, *args, **kwargs):
     s = {}
     return render_to_response('submit-minekey.html', s)
+
+## rest: GET /get/r/VURLKEY
+## function: redirect_vurlkey
+## declared args: vurlkey
+def redirect_vurlkey(request, vurlkey, *args, **kwargs):
+    s = {}
+    return render_to_response('redirect-vurlkey.html', s)
+
+## rest: GET /get/v/SUFFIX
+## function: redirect_vurlname
+## declared args: suffix
+def redirect_vurlname(request, suffix, *args, **kwargs):
+    s = {}
+    return render_to_response('redirect-vurlname.html', s)
 

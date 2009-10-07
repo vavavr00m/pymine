@@ -24,6 +24,8 @@ import re
 # http://www.pycrypto.org/ (new)
 from Crypto.Cipher import AES
 
+from pymine.api.models import Relation
+
 class MineKey:
     key_magic = 'py1' # recognise these keys
     corefmt = '%s,%d,%d,%d,%d,%s'
@@ -39,7 +41,7 @@ class MineKey:
     html_re = re.compile(r"""(SRC|HREF)\s*=\s*(['"]?)(\d+)([^\s\>]*)""", re.IGNORECASE)
 
     def __init__(self, **kwargs):
-	# flush with invalid data
+	# flush through with invalid data
 	self.method = kwargs.get('method', None)
 	self.rid = kwargs.get('rid', -1)
 	self.rvsn = kwargs.get('rvsn', -1)
@@ -68,7 +70,7 @@ class MineKey:
     @classmethod
     def encrypt(self, x):
 	l = len(x)
-	if (l % 16): # if not a 16-byte message
+	if (l % 16): # if not a 16-byte message, pad with whitespace
 	    y =  '%*s' % (-(((l // 16) + 1) * 16), x)
 	else: # we got lucky
 	    y = x
@@ -78,7 +80,7 @@ class MineKey:
     @classmethod
     def decrypt(self, x):
 	engine = self.crypto_engine()
-	return engine.decrypt(x).rstrip()
+	return engine.decrypt(x).rstrip() # remove whitespace padding
 
     def validate(self):
 	if self.rid <= 0:
@@ -198,6 +200,50 @@ class MineKey:
             return '%s="%s"' % (action, self.spawn_iid(iid).permalink())
         return self.html_re.sub(rewrite_link, html)
 
+    def validate_against(self, request, want_method):
+
+        # check get vs put
+        if self.method != want_method:
+            raise RuntimeError, "minekey is wrong method: " + str(mk)
+
+        # check depth
+        if self.depth <= 0:
+            raise RuntimeError, "minekey has run out of depth: " + str(mk)
+
+        # check global ToD restrictions
+        # TODO
+
+        # load relation
+        try:
+            r = Relation.objects.get(id=self.rid)
+        except Relation.DoesNotExist, e:
+            raise RuntimeError, "minekey rid is not valid: " + str(mk)
+
+        # check rvsn
+        if r.version != self.rvsn:
+            raise RuntimeError, "minekey rvsn / relation version mismatch: " + str(mk)
+
+        # check against relation IP address
+        if r.network_pattern:
+            if 'REMOTE_ADDR' not in request.META:
+                raise RuntimeError, "relation specifies network pattern but REMOTE_ADDR unavailable: " + str(r)
+
+            src = request.META.get('REMOTE_ADDR')
+
+            # this is hardly CIDR but can be fixed later
+            if not src.startswith(r.network_pattern):
+                raise RuntimeError, "relation being accessed from illegal REMOTE_ADDR: " + src
+
+        # check ToD against relation embargo time
+
+        if r.embargo_before:
+            pass # TODO
+
+        if r.embargo_after:
+            pass # TODO
+
+        # ok, we're happy.
+
 ##################################################################
 
 if __name__ == '__main__':
@@ -236,3 +282,5 @@ and <A HREF=99.xml>this should fail 99.xml</A>
 """
 
     print m3.rewrite_html(h1)
+
+    m3.validate_against({}, 'get')

@@ -5,12 +5,12 @@ $root_path_strip = "/(api|ui|ie|get|r|v)";
 
 # $value text in <anglebrackets> must be same as lcase($key)
 %regexp_lookup = (
-		   'TID',      '?P<tid>\d+',
-		   'IID',      '?P<iid>\d+',
-		   'RID',      '?P<rid>\d+',
-		   'RVSN',     '?P<rvsn>\d+',
-		   'CID',      '?P<cid>\d+',
-		   'VID',      '?P<vid>\d+',
+		   'IID',      '?P<iid>\d+', # iid may be '0' sometimes
+		   'TID',      '?P<tid>[1-9]\d*',
+		   'RID',      '?P<rid>[1-9]\d*',
+		   'RVSN',     '?P<rvsn>[1-9]\d*',
+		   'CID',      '?P<cid>[1-9]\d*',
+		   'VID',      '?P<vid>[1-9]\d*',
 		   'FMT',      '?P<fmt>(rdr|xml|json)',
 
 		   'VURLKEY',  '?P<vurlkey>[A-Za-z0-9!@]+',
