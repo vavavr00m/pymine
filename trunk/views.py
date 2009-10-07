@@ -81,9 +81,9 @@ def API_CALL(request, *args, **kwargs):
     delete_view = kwargs.pop('DELETE', None)
     desired_format = kwargs.pop('fmt', None)
 
-    if desired_format == 'api' and \
+    if desired_format == 'rdr' and \
             'redirect_success' not in request.REQUEST:
-        raise RuntimeError, "'api' format requested and redirect_success not set"
+        raise RuntimeError, "rdr (redirect) format requested and redirect_success not set"
 
     retval = None
 

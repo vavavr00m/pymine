@@ -56,3 +56,4 @@ syntax:
 # :-)
 alecm:
 	env MINE_EMAIL=alec.muffett@gmail.com ./runme-setup.sh
+	make server
