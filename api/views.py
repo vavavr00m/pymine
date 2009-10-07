@@ -229,6 +229,10 @@ def get_item_key(request, iid, sattr, *args, **kwargs):
 
 ##################################################################
 
+# SECURITY: TBD: at some point in the future we will require setting
+# of anything where key begins with "__" over a POST and SSL
+# connection.
+
 ## rest: GET /api/registry.FMT
 ## function: list_registry
 ## declared args:
@@ -244,12 +248,9 @@ def list_registry(request, *args, **kwargs):
 ## function: amend_registry_key
 ## declared args: rattr
 def amend_registry_key(request, rattr, *args, **kwargs):
-
-    # note: k is extracted from URL; v from POSTDATA (etc) -- so, in
-    # theory, I can set with /api/registry/foo.json?foo=bar in a POST
-
-    v = request.REQUEST[key]
-    m = MineRegistry(key=k, value=v)
+    v = request.POST[key]
+    m, created = MineRegistry.objects.get_or_create(key=k)
+    m.value = v
     m.save();
     return construct_retval(m.to_structure())
 
@@ -266,8 +267,6 @@ def delete_registry_key(request, rattr, *args, **kwargs):
     m = MineRegistry.objects.get(key=rattr)
     m.delete()
     return construct_retval()
-
-# TBD: should we look at putting m.value through a M2S layer?
 
 # SECURITY: TBD: in the future we will refuse to return anything
 # beginning with "__" at *all*

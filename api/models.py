@@ -143,7 +143,7 @@ class AbstractModel(models.Model):
 
 class AbstractXattr(AbstractModel):
     key = AbstractModelField.slug()
-    value = AbstractModelField.text()
+    value = AbstractModelField.text(required=False)
 
     class Meta:
 	abstract = True
@@ -190,19 +190,19 @@ class AbstractXattr(AbstractModel):
 
 def r2s_string(r, rname, s):
     """
-    get rname from HttpRequest r's r.REQUEST and populate structure s
+    get rname from HttpRequest r's r.POST and populate structure s
     with it; assume something else checked existence
     """
 
-    s[rname] = r.REQUEST[rname]
+    s[rname] = r.POST[rname]
 
 def r2s_int(r, rname, s):
     """
-    get rname from HttpRequest r's r.REQUEST and populate structure s
+    get rname from HttpRequest r's r.POST and populate structure s
     with it after converting to int; assume something else checked
     existence in the first place
     """
-    s[rname] = int(r.REQUEST[rname])
+    s[rname] = int(r.POST[rname])
 
 ##################################################################
 
@@ -560,7 +560,7 @@ class AbstractThing(AbstractModel):
 	    # else rip the attribute out of the request and convert to python int/str
 	    # else skip
 	    if sattr in kwargs: s[sattr] = kwargs[sattr]
-	    elif sattr in r.REQUEST: r2s_func(r, sattr, s)
+	    elif sattr in r.POST: r2s_func(r, sattr, s)
 	    else: continue
 
 	    # s2m the value into the appropriate attribute
@@ -586,13 +586,35 @@ class AbstractThing(AbstractModel):
 	    else:
 		# repeat the above logic
 		if sattr in kwargs: s[sattr] = kwargs[sattr]
-		elif sattr in r.REQUEST: r2s_func(r, sattr, s)
+		elif sattr in r.POST: r2s_func(r, sattr, s)
 		else: continue
 		s2m_func(s, sattr, self, mattr)
 		needs_save = True
 
+        # xattr processing: grab the manager
+        mgr = getattr(self, self.xattr_manager)
+
+        # scan the request environment for xattrs
+        for k, v in r.POST.iteritems():
+
+            # is it an xattr?
+            if not k.startswith(self.xattr_prefix): 
+                continue
+
+            # chop out the suffix
+            k = k[len(self.xattr_prefix):]
+
+            # get/create the xattr and return it
+            xa, created = mgr.get_or_create(key=k)
+            xa.value = v
+            xa.save()
+
+            # mark updates on the item
+            needs_save = True
+
 	# update if we did anything
-	if needs_save: self.save()
+	if needs_save: 
+            self.save()
 
 	# return it
 	return self
@@ -622,10 +644,12 @@ class AbstractThing(AbstractModel):
     # /api/relation/42/relationName.json and similar methods.
 
     def get_sattr(self, sattr):
-
 	if sattr.startswith(self.xattr_prefix):
+            # chop out the suffix
             k = sattr[len(self.xattr_prefix):]
+            # grab the manager
             mgr = getattr(self, self.xattr_manager)
+            # lookup the xattr and return it
             xa = mgr.get(key=k)
             return xa.value
 
@@ -633,16 +657,12 @@ class AbstractThing(AbstractModel):
 	elif sattr.startswith(self.sattr_prefix):
             # lookup equivalent model field
             r2s_func, s2m_func, mattr = lookup_mattr(sattr)
-
             # retreive equivalent model field
             x = getattr(self, mattr)
-
             # lookup m2s conversion routine
             m2s_func, sattr2 = m2s_table[self.sattr_prefix][mattr]
-
             # sanity check
             assert sattr == sattr2, "m2s_table corruption, reverse lookup yielded wrong result"
-
             # convert to s-form and return
             s = {}
             m2s_func(self, mattr, s, sattr)
@@ -653,25 +673,25 @@ class AbstractThing(AbstractModel):
 
     @transaction.commit_on_success # <- rollback if it raises an exception
     def delete_sattr(self, sattr):
-
 	if sattr.startswith(self.xattr_prefix):
+            # lookup equivalent model field
             k = sattr[len(self.xattr_prefix):]
+            # grab the manager
             mgr = getattr(self, self.xattr_manager)
+            # lookup the xattr and delete it
             xa = mgr.get(key=k)
             xa.delete()
 
 	elif sattr.startswith(self.sattr_prefix):
             # lookup equivalent model field
             r2s_func, s2m_func, mattr = lookup_mattr(sattr)
-
             # zero that field
             setattr(self, None)
+            # try saving and hope model will bitch if something is wrong
+            self.save()
 
         else:
             raise RuntimeError, "get_sattr asked to look up bogus sattr: " + sattr
-
-        # try saving and hope model will bitch if something is wrong
-        self.save()
 
     # render a model into a structure suitable for serializing and
     # returning to the user.
