@@ -86,23 +86,21 @@ foreach $pattern (sort {$b cmp $a} keys %patterns) {
 
     $output = \@{$text{'urls'}{$class}};
 
-    $foo = join(", ", @{$patterns{$pattern}});
+    $foo = join(",\n$indent  ", @{$patterns{$pattern}});
 
     if (($class eq 'api') && ($pattern =~ /fmt/)) {
         $dispatch = "API_CALL";
-	$wrap = "\n$indent";
     }
     else {
         $dispatch = "REST";
-	$wrap = '';
     }
+
+    $dispatch = "REST" if ($pattern eq ''); # root
 
     $pattern =~ s!^$root_path_strip!!o;
     $pattern =~ s!^/!!o;
 
-    $dispatch = "REST" if ($pattern eq ''); # root
-
-    push(@{$output}, $indent, "(r'^$pattern\$', $dispatch,$wrap {$foo}),\n");
+    push(@{$output}, $indent, "(r'^$pattern\$',\n$indent $dispatch, { $foo }),\n");
 }
 
 
