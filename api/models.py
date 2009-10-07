@@ -432,12 +432,11 @@ class AbstractThing(AbstractModel):
     class Meta:
 	abstract = True
 
-    # sattr_prefix will be checked in methods below, overridden in
-    # subclasses
-
-    sattr_prefix = 'thing' # subclass should override this for runtime
-    xattr_manager = None # subclass should override this for runtime
-    id = 42 # fake
+    # all these will be overridden in subclasses
+    id = -1
+    sattr_prefix = None
+    xattr_prefix = None
+    xattr_manager = None
 
     # IMPORTANT: see s_classes registration at the bottom of this
     # file; there *is* slight replication of code but it's unavoidable
@@ -666,13 +665,14 @@ class AbstractThing(AbstractModel):
 
     def to_structure(self):
 	s = {}
+
 	for mattr, (m2s_func, sattr) in self.m2s_table[self.sattr_prefix].iteritems():
 	    m2s_func(self, mattr, s, sattr)
 
         mgr = getattr(self, self.xattr_manager)
         
         for xa in mgr.all(): 
-            k = "__%s%s" % (self.sattr_prefix, xa.key)
+            k = '%s%s' % (self.xattr_prefix, xa.key)
             v = xa.value
             s[k] = v
 
@@ -815,7 +815,6 @@ class Tag(AbstractThing):
     """This is the modelspace representation of the Tag object"""
 
     sattr_prefix = "tag"
-    xattr_manager = "tagxattr_set"
 
     name = AbstractModelField.slug(unique=True)
     description = AbstractModelField.text(required=False)
@@ -847,7 +846,6 @@ class Relation(AbstractThing):
     """This is the modelspace representation of the Relation object"""
 
     sattr_prefix = "relation"
-    xattr_manager = "relationxattr_set"
 
     name = AbstractModelField.slug(unique=True)
     version = AbstractModelField.integer(1)
@@ -885,7 +883,6 @@ class Item(AbstractThing):
     """This is the modelspace representation of the Item object"""
 
     sattr_prefix = "item"
-    xattr_manager = "itemxattr_set"
 
     name = AbstractModelField.string()
     content_type = AbstractModelField.string()
@@ -947,7 +944,6 @@ class Comment(AbstractThing):
     """This is the modelspace representation of the Comment object"""
 
     sattr_prefix = "comment"
-    xattr_manager = "commentxattr_set"
 
     title = AbstractModelField.string()
     body = AbstractModelField.text(required=False)
@@ -984,7 +980,6 @@ class Vurl(AbstractThing):
     provides for much elective, longer token names to be used"""
 
     sattr_prefix = "vurl"
-    xattr_manager = "vurlxattr_set"
 
     name = AbstractModelField.slug(unique=True)
     link = AbstractModelField.text(unique=True) # TODO: does 'unique' work on this?
@@ -1001,10 +996,13 @@ class Vurl(AbstractThing):
 ##################################################################
 
 # this is a critical bit of code which registers all thing-classes
-# back with the parent thing; key=prefix, value=class
+# back with the parent AbstractThing class, and populates the other
+# Thing-specific fields...
 
 for thing in (Comment, Item, Relation, Tag, Vurl):
     AbstractThing.s_classes[thing.sattr_prefix] = thing
+    thing.xattr_prefix = '__' + thing.sattr_prefix
+    thing.xattr_manager = thing.sattr_prefix + 'xattr_set'
 
 ##################################################################
 ##################################################################

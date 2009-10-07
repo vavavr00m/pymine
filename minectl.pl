@@ -71,8 +71,8 @@ my %FLAGDESC = (
     e => '# print error-page upon HTTP error (side effect: sets exit status to 0)',
     h => '# help mode; use also "help" command',
     x => '# XML output, if possible',
+    r => '# RAW output, if possible',
     q => '# do NOT quit upon curl returning an error code',
-    t => '# TEXT output, if possible (currently gets JSON as text/plain)',
     u => '[username:password] # authentication',
     v => '# verbose; -vv, -vvv = more verbose',
     );
@@ -92,8 +92,8 @@ while ($ARGV[0] =~ m!^-(\w+)!o) {
 	elsif ($switch eq 'h') {
 	    $FLAG{'help'} = 1;
 	}
-	elsif ($switch eq 't') {
-	    $FLAG{'text'} = 1;
+	elsif ($switch eq 'r') {
+	    $FLAG{'raw'} = 1;
 	}
 	elsif ($switch eq 'q') {
 	    $FLAG{'dontquit'} = 1;
@@ -365,7 +365,6 @@ unless ($we_did_something) {
 ##################################################################
 
 # done
-print "\n";
 exit 0;
 
 ##################################################################
@@ -405,10 +404,10 @@ sub Mine {
 	}
     }
 
-    if ($FLAG{'text'}) {
-	# only swap to .text if was .json beforehand
-	unless ($api =~ s!\.json$!.txt!o) {
-	    die "$0: API $api cannot be coersced to TEXT format output (fatal)\n";
+    if ($FLAG{'raw'}) {
+	# only swap to .raw if was .json beforehand
+	unless ($api =~ s!\.json$!.raw!o) {
+	    die "$0: API $api cannot be coersced to RAW format output (fatal)\n";
 	}
     }
 
@@ -470,26 +469,26 @@ delete-item          SUBEVERY   delete  /api/item/IID.json              42      
 clone-item           SUB1PASS   create  /api/item/IID/clone.json        42
 list-clones          SUB1PASS   read    /api/item/IID/clone.json        42
 update-item          SUB1PASS   create  /api/item/IID.json              42                      itemKey=value      ...
-get-item-key         SUB1EVERY  read    /api/item/IID/key/KEY.json      42                      itemKey
-delete-item-key      SUB1EVERY  delete  /api/item/IID/key/KEY.json      42                      itemKey            ...
+get-item-key         SUB1EVERY  read    /api/item/IID/KEY.json      42                      itemKey
+delete-item-key      SUB1EVERY  delete  /api/item/IID/KEY.json      42                      itemKey            ...
 list-relations       PASSARGS   read    /api/relation.json
 create-relation      PASSARGS   create  /api/relation.json              relationKey=value       ...
 get-relation         SUB1PASS   read    /api/relation/RID.json          42
 delete-relation      SUBEVERY   delete  /api/relation/RID.json          42                      17                 23   ...
 update-relation      SUB1PASS   create  /api/relation/RID.json          42                      relationKey=value  ...
-get-relation-key     SUB1EVERY  read    /api/relation/RID/key/KEY.json  42                      relationKey
-delete-relation-key  SUB1EVERY  delete  /api/relation/RID/key/KEY.json  42                      relationKey        ...
+get-relation-key     SUB1EVERY  read    /api/relation/RID/KEY.json  42                      relationKey
+delete-relation-key  SUB1EVERY  delete  /api/relation/RID/KEY.json  42                      relationKey        ...
 list-tags            PASSARGS   read    /api/tag.json
 create-tag           PASSARGS   create  /api/tag.json                   tagKey=value            ...
 get-tag              SUB1PASS   read    /api/tag/TID.json               42
 delete-tag           SUBEVERY   delete  /api/tag/TID.json               42                      17                 23   ...
 update-tag           SUB1PASS   create  /api/tag/TID.json               42                      tagKey=value       ...
-get-tag-key          SUB1EVERY  read    /api/tag/TID/key/KEY.json       42                      tagKey
-delete-tag-key       SUB1EVERY  delete  /api/tag/TID/key/KEY.json       42                      tagKey             ...
+get-tag-key          SUB1EVERY  read    /api/tag/TID/KEY.json       42                      tagKey
+delete-tag-key       SUB1EVERY  delete  /api/tag/TID/KEY.json       42                      tagKey             ...
 list-comments        SUBEVERY   read    /api/comment/item/IID.json
 create-comment       SUB1PASS   create  /api/comment/item/IID.json      commentKey=value        ...
 get-comment          SUB1PASS   read    /api/comment/CID.json           42
 delete-comment       SUBEVERY   delete  /api/comment/CID.json           42                      27                 23   ...
 update-comment       SUB1PASS   create  /api/comment/CID.json           42                      commentKey=value   ...
-get-comment-key      SUB1EVERY  read    /api/comment/CID/key/KEY.json   42                      commentKey
-delete-comment-key   SUB1EVERY  delete  /api/comment/CID/key/KEY.json   42                      commentKey         ...
+get-comment-key      SUB1EVERY  read    /api/comment/CID/KEY.json   42                      commentKey
+delete-comment-key   SUB1EVERY  delete  /api/comment/CID/KEY.json   42                      commentKey         ...

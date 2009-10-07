@@ -100,16 +100,19 @@ def API_CALL(request, *args, **kwargs):
     mimetype = None
 
     # how to deal with / format the results
-    if desired_format == 'api':
+    if desired_format == 'rdr':
         dest = request.REQUEST['redirect_success']
         return HttpResponseRedirect(dest) # fast 302 redirect to page
-    elif desired_format == 'json':
-        mimetype="application/json"
-        data = json.dumps(retval)
+    elif desired_format == 'raw':
+        mimetype="application/octet-stream"
+        data = str(retval.get('result', ''))
     elif desired_format == 'xml':
         mimetype="application/xml"
         data = None
         raise RuntimeError("XML serialization disabled temporarily due to lack of 'lxml' on OSX")
+    elif desired_format == 'json':
+        mimetype="application/json"
+        data = json.dumps(retval)
     elif desired_format == 'py':
         mimetype="text/plain"
         data = pickle.dumps(retval)
