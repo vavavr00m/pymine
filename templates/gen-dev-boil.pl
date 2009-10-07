@@ -87,7 +87,6 @@ __END__;
 : roots
 . / mine root
 . /api mine api root
-. /doc mine doc root
 . /get mine get root
 . /pub mine pub root
 . /archive mine archive root
@@ -117,7 +116,7 @@ __END__;
 -
 
 : mine documentation
-. /doc/ local
+. /pub/doc/ local installation docs
 . #themineproject project documentation
 -
 
