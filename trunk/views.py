@@ -121,20 +121,16 @@ def API_CALL(request, *args, **kwargs):
 ##################################################################
 
 ## rest: GET /
-## function: read_mine_root
-## declared args:
-def read_mine_root(request, *args, **kwargs):
-    return render_to_response('root-mine.html')
-
-## rest: GET /doc
-## function: read_doc_root
-## declared args:
-def read_doc_root(request, *args, **kwargs):
-    return render_to_response('root-doc.html')
+## function: root_mine
+## declared args: 
+def root_mine(request, *args, **kwargs):
+    s = {}
+    return render_to_response('root-mine.html', s)
 
 ## rest: GET /pub
-## function: read_pub_root
-## declared args:
-def read_pub_root(request, *args, **kwargs):
-    return render_to_response('root-pub.html')
+## function: root_pub
+## declared args: 
+def root_pub(request, *args, **kwargs):
+    s = {}
+    return render_to_response('root-pub.html', s)
 

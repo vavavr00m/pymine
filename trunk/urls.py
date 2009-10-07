@@ -25,8 +25,8 @@ admin.autodiscover()
 
 urlpatterns = patterns('',
                        (r'^api/', include('api.urls')),
-                       (r'^(get|r|v)/', include('get.urls')),
                        (r'^ui/', include('ui.urls')),
+                       (r'^get/', include('get.urls')),
                        (r'^ie/', include('ie.urls')),
 
                        (r'^admin/(.*)', admin.site.root),
