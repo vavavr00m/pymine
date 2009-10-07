@@ -40,87 +40,113 @@ for short, long in item_status_choices: status_lookup[long] = short
 
 ##################################################################
 
-class MineModel:
+class AbstractModelField:
     STRING_SHORT = 256
 
     @classmethod
     def __defopts(self, **kwargs):
-        if kwargs.get('blank', False):
-            opts = dict(null=True, blank=True)
-        else:
-            opts = dict(null=False, blank=False)
+	if kwargs.get('required', True):
+	    opts = dict(null=False, blank=False)
+	else:
+	    opts = dict(null=True, blank=True)
 
-        for foo in ('unique', 'symmetrical'):        
-            if foo in kwargs:
-                opts[foo] = kwargs[foo]
+	for foo in ('unique', 'symmetrical'):
+	    if foo in kwargs:
+		opts[foo] = kwargs[foo]
 
-        return opts
+	return opts
 
     @classmethod
     def last_modified(self):
-        return models.DateTimeField(auto_now=True)
+	return models.DateTimeField(auto_now=True)
 
     @classmethod
     def created(self):
-        return models.DateTimeField(auto_now_add=True)
+	return models.DateTimeField(auto_now_add=True)
 
     @classmethod
     def datetime(self, **kwargs):
-        opts = self.__defopts(**kwargs)
-        return models.DateTimeField(**opts)
+	opts = self.__defopts(**kwargs)
+	return models.DateTimeField(**opts)
 
     @classmethod
     def reference(self, what, **kwargs):
-        opts = self.__defopts(**kwargs)
-        return models.ForeignKey(what, **opts)
+	opts = self.__defopts(**kwargs)
+	return models.ForeignKey(what, **opts)
 
     @classmethod
     def reflist(self, what, **kwargs):
-        opts = self.__defopts(**kwargs)
-        pivot = kwargs.get('pivot', None)
-        if pivot: opts['related_name'] = pivot
-        return models.ManyToManyField(what, **opts)
+	opts = self.__defopts(**kwargs)
+	pivot = kwargs.get('pivot', None)
+	if pivot: opts['related_name'] = pivot
+	return models.ManyToManyField(what, **opts)
 
     @classmethod
     def string(self, **kwargs):
-        opts = self.__defopts(**kwargs)
-        return models.CharField(max_length=self.STRING_SHORT, **opts)
+	opts = self.__defopts(**kwargs)
+	return models.CharField(max_length=self.STRING_SHORT, **opts)
 
     @classmethod
     def text(self, **kwargs):
-        opts = self.__defopts(**kwargs)
-        return models.TextField(**opts)
+	opts = self.__defopts(**kwargs)
+	return models.TextField(**opts)
 
     @classmethod
     def slug(self, **kwargs):
-        opts = self.__defopts(**kwargs)
-        return models.SlugField(max_length=self.STRING_SHORT, **opts)
+	opts = self.__defopts(**kwargs)
+	return models.SlugField(max_length=self.STRING_SHORT, **opts)
 
     @classmethod
     def bool(self, default):
-        return models.BooleanField(default=default)
+	return models.BooleanField(default=default)
 
     @classmethod
     def integer(self, default):
-        return models.PositiveIntegerField(default=default)
+	return models.PositiveIntegerField(default=default)
 
     @classmethod
     def choice(self, choices):
-        return models.CharField(max_length=1, choices=choices)
+	return models.CharField(max_length=1, choices=choices)
 
     @classmethod
     def url(self, **kwargs):
-        opts = self.__defopts(**kwargs)
-        return models.URLField(max_length=self.STRING_SHORT, **opts)
+	opts = self.__defopts(**kwargs)
+	return models.URLField(max_length=self.STRING_SHORT, **opts)
 
     @classmethod
     def email(self, **kwargs):
-        opts = self.__defopts(**kwargs)
-        return models.EmailField(max_length=self.STRING_SHORT, **opts)
+	opts = self.__defopts(**kwargs)
+	return models.EmailField(max_length=self.STRING_SHORT, **opts)
 
     @classmethod
     def file(self, **kwargs):
-        return models.FileField(**kwargs) # TODO
+	return models.FileField(**kwargs) # TODO
+
+##################################################################
+
+class AbstractModel(models.Model):
+    created = AbstractModelField.created()
+    last_modified = AbstractModelField.last_modified()
+
+    class Meta:
+	abstract = True
+
+    @classmethod
+    def get_object(self, **kwargs):
+	pass
+
+    @classmethod
+    def list_objects(self, **kwargs):
+	pass
+
+##################################################################
+
+class AbstractXattr(AbstractModel):
+    key = AbstractModelField.slug()
+    value = AbstractModelField.text()
+
+    class Meta:
+	abstract = True
 
 ##################################################################
 
@@ -160,13 +186,25 @@ class MineModel:
 # *into* structures, hence there are only r2s_foo methods, and indeed
 # only two of those: r2s_string and r2s_int:
 
+##################################################################
+
 def r2s_string(r, rname, s):
-    """get rname from HttpRequest r's r.REQUEST and populate structure s with it; assume something else checked existence"""
+    """
+    get rname from HttpRequest r's r.REQUEST and populate structure s
+    with it; assume something else checked existence
+    """
+
     s[rname] = r.REQUEST[rname]
 
 def r2s_int(r, rname, s):
-    """get rname from HttpRequest r's r.REQUEST and populate structure s with it after converting to int; assume something else checked existence"""
+    """
+    get rname from HttpRequest r's r.REQUEST and populate structure s
+    with it after converting to int; assume something else checked
+    existence in the first place
+    """
     s[rname] = int(r.REQUEST[rname])
+
+##################################################################
 
 # Transfers between s-space (dictionary entries such as s['itemId'])
 # and m-space (m.id, where 'm' is a instance of the Item model and
@@ -183,6 +221,8 @@ def r2s_int(r, rname, s):
 
 # XXX: TBD: COPYING NONE FOR S2M THROUGHOUT
 
+##################################################################
+
 def m2s_copy(m, mattr, s, sattr):
     """Copy mattr from m to sattr in s"""
     x = getattr(m, mattr)
@@ -191,6 +231,8 @@ def m2s_copy(m, mattr, s, sattr):
 def s2m_copy(s, sattr, m, mattr):
     """Copy sattr from s to mattr in m"""
     if sattr in s: setattr(m, mattr, s[sattr])
+
+##################################################################
 
 # Because a lot of our code is table-driven, it helps to have a couple
 # of dummy routines as filler where beneficial:
@@ -202,6 +244,8 @@ def m2s_dummy(m, mattr, s, sattr):
 def s2m_dummy(s, sattr, m, mattr):
     """Barfing Placeholder"""
     raise RuntimeError, 'something invoked s2m_dummy'
+
+##################################################################
 
 # One of the more complex translations between spaces are DateTime
 # objects; in m-space we use whatever Django mandates, and in s-space
@@ -217,6 +261,8 @@ def m2s_date(m, mattr, s, sattr):
 def s2m_date(s, sattr, m, mattr):
     if sattr in s:
 	raise RuntimeError, "not yet integrated the Date parser"
+
+##################################################################
 
 # Specialist Type Conversion - Note: Where we are writing custom
 # converters we don't generally bother to use introspection because we
@@ -238,6 +284,7 @@ def s2m_comitem(s, sattr, m, mattr):
     if sattr in s:
 	m.item = Item.objects.get(id=s[sattr]) # ITEM LOOKUP
 
+##################################################################
 
 # The 'Comment' model also has a 'relation' field that is a ForeignKey
 # representing the relation-submitting-the-comment; in s-space this is
@@ -254,6 +301,8 @@ def s2m_comrel(s, sattr, m, mattr):
 	raise RuntimeError, "s2m_comrel is confused"
     if sattr in s:
 	m.relation = Relation.objects.get(name=s[sattr]) # RELATION LOOKUP
+
+##################################################################
 
 # The 'Tag' model contains a ManyToMany field which cites the
 # implications / multiple parents that any given Tag can have; in
@@ -273,22 +322,7 @@ def s2m_tagimplies(s, sattr, m, mattr):
 	for x in s[sattr].split():
 	    m.implies.add(Tag.objects.get(name=x))
 
-# VirtualURL models contain very basic tagging for reference puproses;
-# the model field is 'tags' and is a space-separated string which
-# contatenates tagNames.
-
-def m2s_vurltags(m, mattr, s, sattr):
-    if mattr != 'tags' or sattr != 'vurlTags':
-	raise RuntimeError, "m2s_vurltags is confused"
-    x = ' '.join([ x.name for x in m.tags.all() ])
-    if x: s[sattr] = x
-
-def s2m_vurltags(s, sattr, m, mattr):
-    if mattr != 'tags' or sattr != 'vurlTags':
-	raise RuntimeError, "s2m_vurltags is confused"
-    if sattr in s:
-	for x in s[sattr].split(): 
-            m.implies.add(Tag.objects.get(name=x))
+##################################################################
 
 # itemStatus is a multi-choice field; the s-space representation of
 # itemStatus ('public', 'shared', 'private') must be mapped back and
@@ -309,6 +343,8 @@ def s2m_itemstatus(s, sattr, m, mattr):
 	setattr(m, mattr, status_lookup[x])
     else:
 	raise RuntimeError, "s2m_itemstatus cannot remap status: " + x
+
+##################################################################
 
 # itemTags is a complex tagging string: in s-space it is a
 # space-separated string like "wine beer for:alice not:bob" where
@@ -336,6 +372,7 @@ def s2m_itemtags(s, sattr, m, mattr):
 	    elif x.startswith('not:'): m.item_not_relations.add(Tag.objects.get(name=x[4:]))
 	    else: m.tags.add(Tag.objects.get(name=x))
 
+##################################################################
 
 # relationInterests is another complex string: in s-space it is a
 # space-separated string like "wine require:australia exclude:merlot"
@@ -364,10 +401,12 @@ def s2m_relints(s, sattr, m, mattr):
 	    elif x.startswith('except:'): m.tags_excluded.add(Tag.objects.get(name=x[7:])) # common typo
 	    else: m.tags.add(Tag.objects.get(name=x))
 
-# The Thing class is a base class that exists to provide a few common
-# methods to the core Mine models; it's obviously easy to 'get' or
-# 'set' the fields of a model instance because you can always do
-# "m.field = foo" or something
+##################################################################
+
+# The AbstractThing class is a base model class that exists to provide
+# a few common methods to the core Mine models; it's obviously easy to
+# 'get' or 'set' the fields of a model instance because you can always
+# do "m.field = foo" or something
 
 # What we need to do is:
 
@@ -376,8 +415,7 @@ def s2m_relints(s, sattr, m, mattr):
 
 # 2) empty/nullify the mattr that corresponds with a model's sattr
 
-# 3) create, update or clone a model, from information held in a
-#    HttpRequest (r-space)
+# 3) create or update, from information held in a HttpRequest (r-space)
 
 # 4) return an entire s-structure populated from a model
 
@@ -386,12 +424,19 @@ def s2m_relints(s, sattr, m, mattr):
 # needs to be a small amount of linker logic to bypass major circular
 # dependencies, and that's provided at the end of this file.
 
-class Thing():
+##################################################################
+
+class AbstractThing(AbstractModel):
+
+    # continuing the chain of inheritance
+    class Meta:
+	abstract = True
 
     # sattr_prefix will be checked in methods below, inheriting from
     # subclasses of Thing.
 
     sattr_prefix = 'thing' # subclass should override this for runtime
+    xattr_class = None # subclass should override this for runtime
     id = 42 # fake
 
     # IMPORTANT: see s_classes registration at the bottom of this
@@ -409,7 +454,9 @@ class Thing():
 	'vurl': None, # will be populated later
 	}
 
-    # enormous table of things to make and do
+    # enormous table of things to make and do; don't worry about
+    # linear lookup overhead because this table gets compiled into
+    # dictionaries for fast lookup...
 
     sattr_conversion_table = (
 	(  'thingId',                 'id',               False,  r2s_int,     s2m_copy,        m2s_copy,        ),
@@ -452,7 +499,6 @@ class Thing():
 	(  'vurlLastModified',        'last_modified',    False,  r2s_string,  s2m_date,        m2s_date,        ),
 	(  'vurlLink',                'link',             False,  r2s_string,  s2m_copy,        m2s_copy,        ),
 	(  'vurlName',                'name',             False,  r2s_string,  s2m_copy,        m2s_copy,        ),
-	(  'vurlTags',                'tags',             True,   r2s_string,  s2m_vurltags,    m2s_vurltags,    ),
 	)
 
     # A word about deferral: some s2m conversions can only take place
@@ -464,7 +510,7 @@ class Thing():
     # m.save(); this is OK because there is a rollback set up around
     # the model-alteration method in case an exception is thrown.
 
-    # these tables get used to map sattr and marrt names to the tuples
+    # these tables get used to map sattr and mattr names to the tuples
     # of how-to-convert from one to the other.
 
     m2s_table = {}
@@ -552,26 +598,6 @@ class Thing():
 	# return it
 	return self
 
-    # cloning an item, as described above
-
-    def clone_from_request(self, r, **kwargs):
-	if self.sattr_prefix != 'item':
-	    raise RuntimeError, "clone_from_request called on non-item"
-
-	instantiator = self.s_classes[self.sattr_prefix]
-
-	margs = {}
-
-	m = instantiator(**margs)
-
-	### XXX: TBD: clone self to m here
-	### XXX: TBD: clone self to m here
-	### XXX: TBD: clone self to m here
-	### XXX: TBD: clone self to m here
-	### XXX: TBD: clone self to m here
-
-	return m.update_from_request(r, **kwargs)
-
     # creating a new model
 
     @classmethod # <- new_from_request is an alternative constructor, ergo: classmethod
@@ -593,7 +619,7 @@ class Thing():
 	    raise RuntimeError, "lookup_mattr cannot lookup: " + sattr
 	return t
 
-    # get_sattr and delete_sattr methods: supporting the
+    # get_sattr and delete_sattr methods: supporting
     # /api/relation/42/relationName.json and similar methods.
 
     def get_sattr(self, sattr):
@@ -632,10 +658,10 @@ class Thing():
 	# zero that field
 	setattr(self, None)
 
-	# try saving
+	# try saving and hope model will bitch if it's required=True
 	self.save()
 
-    # render a model into a structure quitable for serializing and
+    # render a model into a structure suitable for serializing and
     # returning to the user.
 
     def to_structure(self):
@@ -648,8 +674,7 @@ class Thing():
 ##################################################################
 ##################################################################
 
-class LogEvent(models.Model): # not a Thing
-
+class LogEvent(AbstractModel):
     """key/value pairs for Mine configuration"""
 
     logevent_status_choices = (
@@ -662,36 +687,34 @@ class LogEvent(models.Model): # not a Thing
 	( 'x', 'corrupted' ),
 	)
 
-    status = MineModel.choice(logevent_status_choices)
-    type = MineModel.string(blank=True)
-    msg = MineModel.text(blank=True)
-    ip = MineModel.string(blank=True)
-    method = MineModel.string(blank=True)
-    path = MineModel.string(blank=True)
-    key = MineModel.string(blank=True)
-    created = MineModel.created()
-    last_modified = MineModel.last_modified()
+    status = AbstractModelField.choice(logevent_status_choices)
+    type = AbstractModelField.string(required=False)
+    msg = AbstractModelField.text(required=False)
+    ip = AbstractModelField.string(required=False)
+    method = AbstractModelField.string(required=False)
+    path = AbstractModelField.string(required=False)
+    key = AbstractModelField.string(required=False)
 
     # various faux-constructors that do not return the object
 
     @classmethod
     def __selfcontained(self, status, type, *args, **kwargs):
-        m = " ".join(args)
+	m = " ".join(args)
 	el = LogEvent(status=status, type=type, msg=m, **kwargs)
 	el.save()
 
     @classmethod
     def message(self, type, *args, **kwargs):
-        self.__selfcontained('m', type, *args, **kwargs)
+	self.__selfcontained('m', type, *args, **kwargs)
 
     @classmethod
     def error(self, type, *args, **kwargs):
-        self.__selfcontained('e', type, *args, **kwargs)
+	self.__selfcontained('e', type, *args, **kwargs)
 
     @classmethod
     def fatal(self, type, *args, **kwargs):
-        self.__selfcontained('f', type, *args, **kwargs)
-        raise RuntimeError, self.msg # set as side effect
+	self.__selfcontained('f', type, *args, **kwargs)
+	raise RuntimeError, self.msg # set as side effect
 
     # next three work together; open-update-close/_error
 
@@ -699,19 +722,19 @@ class LogEvent(models.Model): # not a Thing
     def open(self, type, **kwargs):
 	el = LogEvent(status='o', type=type, **kwargs)
 	el.save()
-        return el
+	return el
 
     def update(self, *args):
-        self.msg = " ".join(args)
+	self.msg = " ".join(args)
 	self.status = 'u'
 	self.save()
 
     def __close_status(self, status, *args):
 	if self.status in 'ou': # legitimate to close
-            self.msg = " ".join(args)
+	    self.msg = " ".join(args)
 	    self.status = status
 	else: # risk of infinite recursion if exception thrown
-            # leave msg alone
+	    # leave msg alone
 	    self.status = 'x'
 	self.save()
 
@@ -743,14 +766,11 @@ class LogEvent(models.Model): # not a Thing
 
 ##################################################################
 
-class MineRegistry(models.Model): # not a Thing
-
+class MineRegistry(AbstractModel):
     """key/value pairs for Mine configuration"""
 
-    key = MineModel.slug(unique=True)
-    value = MineModel.text(blank=True)
-    created = MineModel.created()
-    last_modified = MineModel.last_modified()
+    key = AbstractModelField.slug(unique=True)
+    value = AbstractModelField.text(required=False)
 
     def to_structure(self):
 	s = {}
@@ -769,42 +789,29 @@ class MineRegistry(models.Model): # not a Thing
 
 ##################################################################
 
-class ItemExtAttr(models.Model): # not a Thing
+class TagXattr(AbstractXattr):
+    """tag extended attributes"""
 
-    """item extended attributes"""
-
-    item = MineModel.reference(Item)
-    key = MineModel.slug()
-    value = MineModel.text()
-    created = MineModel.created()
-    last_modified = MineModel.last_modified()
+    tag = AbstractModelField.reference(Tag)
 
     class Meta:
 	ordering = ['key']
-        order_with_respect_to = 'item'
-        unique_together = ('item', 'key')
-	verbose_name = 'ItemExtAttr'
+	order_with_respect_to = 'tag'
+	unique_together = ('tag', 'key')
+	verbose_name = 'TagXattr'
 
     def __unicode__(self):
 	return self.key
 
-
-##################################################################
-##################################################################
-##################################################################
-
-class Tag(models.Model, Thing):
-
+class Tag(AbstractThing):
     """This is the modelspace representation of the Tag object"""
 
     sattr_prefix = "tag"
+    xattr_class = TagXattr
 
-    name = MineModel.slug(unique=True)
-    created = MineModel.created()
-    last_modified = MineModel.last_modified()
-
-    description = MineModel.text(blank=True)
-    implies = MineModel.reflist('self', symmetrical=False, pivot='tag_implied_from', blank=True)
+    name = AbstractModelField.slug(unique=True)
+    description = AbstractModelField.text(required=False)
+    implies = AbstractModelField.reflist('self', symmetrical=False, pivot='tag_implied_from', required=False)
 
     class Meta:
 	ordering = ['name']
@@ -814,24 +821,35 @@ class Tag(models.Model, Thing):
 
 ##################################################################
 
-class Relation(models.Model, Thing):
+class RelationXattr(AbstractXattr):
+    """relation extended attributes"""
 
+    relation = AbstractModelField.reference(Relation)
+
+    class Meta:
+	ordering = ['key']
+	order_with_respect_to = 'relation'
+	unique_together = ('relation', 'key')
+	verbose_name = 'RelationXattr'
+
+    def __unicode__(self):
+	return self.key
+
+class Relation(AbstractThing):
     """This is the modelspace representation of the Relation object"""
 
     sattr_prefix = "relation"
+    xattr_class = RelationXattr
 
-    name = MineModel.slug(unique=True)
-    created = MineModel.created()
-    last_modified = MineModel.last_modified()
-
-    description = MineModel.text(blank=True)
-    embargo_after = MineModel.datetime(blank=True)
-    embargo_before = MineModel.datetime(blank=True)
-    network_pattern = MineModel.string(blank=True)
-    tags = MineModel.reflist(Tag, pivot='relations_with_tag', blank=True)
-    tags_excluded = MineModel.reflist(Tag, pivot='relations_excluding', blank=True)
-    tags_required = MineModel.reflist(Tag, pivot='relations_requiring', blank=True)
-    version = MineModel.integer(1)
+    name = AbstractModelField.slug(unique=True)
+    version = AbstractModelField.integer(1)
+    description = AbstractModelField.text(required=False)
+    embargo_after = AbstractModelField.datetime(required=False)
+    embargo_before = AbstractModelField.datetime(required=False)
+    network_pattern = AbstractModelField.string(required=False)
+    tags = AbstractModelField.reflist(Tag, pivot='relations_with_tag', required=False)
+    tags_excluded = AbstractModelField.reflist(Tag, pivot='relations_excluding', required=False)
+    tags_required = AbstractModelField.reflist(Tag, pivot='relations_requiring', required=False)
 
     class Meta:
 	ordering = ['name']
@@ -841,26 +859,37 @@ class Relation(models.Model, Thing):
 
 ##################################################################
 
-class Item(models.Model, Thing):
+class ItemXattr(AbstractXattr):
+    """item extended attributes"""
 
+    item = AbstractModelField.reference(Item)
+
+    class Meta:
+	ordering = ['key']
+	order_with_respect_to = 'item'
+	unique_together = ('item', 'key')
+	verbose_name = 'ItemXattr'
+
+    def __unicode__(self):
+	return self.key
+
+class Item(AbstractThing):
     """This is the modelspace representation of the Item object"""
 
     sattr_prefix = "item"
+    xattr_class = ItemXattr
 
-    name = MineModel.string()
-    created = MineModel.created()
-    last_modified = MineModel.last_modified()
-
-    content_type = MineModel.string()
-    data = MineModel.file(storage=item_file_storage, upload_to='%Y/%m/%d')
-    description = MineModel.text(blank=True)
-    hide_after = MineModel.datetime(blank=True)
-    hide_before = MineModel.datetime(blank=True)
-    item_for_relations = MineModel.reflist(Relation, pivot='items_explicitly_for', blank=True)
-    item_not_relations = MineModel.reflist(Relation, pivot='items_explicitly_not', blank=True)
-    parent = MineModel.reference('self', blank=True) # only set for clones
-    status = MineModel.choice(item_status_choices)
-    tags = MineModel.reflist(Tag, pivot='items_tagged', blank=True)
+    name = AbstractModelField.string()
+    content_type = AbstractModelField.string()
+    data = AbstractModelField.file(storage=item_file_storage, upload_to='%Y/%m/%d')
+    description = AbstractModelField.text(required=False)
+    hide_after = AbstractModelField.datetime(required=False)
+    hide_before = AbstractModelField.datetime(required=False)
+    item_for_relations = AbstractModelField.reflist(Relation, pivot='items_explicitly_for', required=False)
+    item_not_relations = AbstractModelField.reflist(Relation, pivot='items_explicitly_not', required=False)
+    parent = AbstractModelField.reference('self', required=False) # only set for clones
+    status = AbstractModelField.choice(item_status_choices)
+    tags = AbstractModelField.reflist(Tag, pivot='items_tagged', required=False)
 
     class Meta:
 	ordering = ['-last_modified']
@@ -868,32 +897,54 @@ class Item(models.Model, Thing):
     def __unicode__(self):
 	return self.name
 
+    # cloning an item, as described above
+
+    def clone_from_request(self, r, **kwargs):
+	if self.sattr_prefix != 'item':
+	    raise RuntimeError, "clone_from_request called on non-item"
+
+	instantiator = self.s_classes[self.sattr_prefix]
+
+	margs = {}
+
+	m = instantiator(**margs)
+
+	### XXX: TBD: clone self to m here
+
+	return m.update_from_request(r, **kwargs)
+
     def save_upload_file(self, f):
 	if not self.id:
 	    raise RuntimeError, "save_upload_file trying to save a model which has no IID"
-
 	name = str(self.id) + '.' + f.name
-
 	self.data.save(name, f)
 
 ##################################################################
 
-class Comment(models.Model, Thing):
+class CommentXattr(AbstractXattr):
+    """comment extended attributes"""
 
+    comment = AbstractModelField.reference(Comment)
+
+    class Meta:
+	ordering = ['key']
+	order_with_respect_to = 'comment'
+	unique_together = ('comment', 'key')
+	verbose_name = 'CommentXattr'
+
+    def __unicode__(self):
+	return self.key
+
+class Comment(AbstractThing):
     """This is the modelspace representation of the Comment object"""
 
     sattr_prefix = "comment"
+    xattr_class = CommentXattr
 
-    title = MineModel.string()
-    created = MineModel.created()
-    last_modified = MineModel.last_modified()
-
-    body = MineModel.text(blank=True)
-    item = MineModel.reference(Item)  ##### <- TODO: BLANK=True to permit commenting on feed directly
-
-    # WHEN NOT DRUNK
-
-    relation = MineModel.reference(Relation)
+    title = AbstractModelField.string()
+    body = AbstractModelField.text(required=False)
+    item = AbstractModelField.reference(Item, required=False) # required=False to permit comments on feed where IID=0
+    relation = AbstractModelField.reference(Relation)
 
     def __unicode__(self):
 	return self.title
@@ -903,20 +954,32 @@ class Comment(models.Model, Thing):
 
 ##################################################################
 
-class VanityURL(models.Model, Thing):
+class VurlXattr(AbstractXattr):
+    """vurl extended attributes"""
 
-    """The VanityURL model implements a TinyURL-like concept, allowing
-    arbitrary cookies to map to much longer URLs, indexable either by
-    'name' or 'index' (suitably compressed)"""
+    vurl = AbstractModelField.reference(Vurl)
+
+    class Meta:
+	ordering = ['key']
+	order_with_respect_to = 'vurl'
+	unique_together = ('vurl', 'key')
+	verbose_name = 'VurlXattr'
+
+    def __unicode__(self):
+	return self.key
+
+class Vurl(AbstractThing):
+
+    """The Vurl (VanityURL) model implements a TinyURL-like concept,
+    allowing arbitrary cookies to map to much longer URLs, indexable
+    either by 'name' or 'index' (suitably compressed) ; it also
+    provides for much elective, longer token names to be used"""
 
     sattr_prefix = "vurl"
+    xattr_class = VurlXattr
 
-    name = MineModel.slug(unique=True)
-    created = MineModel.created()
-    last_modified = MineModel.last_modified()
-
-    link = MineModel.text(blank=True)
-    tags = MineModel.reflist(Tag, pivot='vurls_tagged', blank=True)
+    name = AbstractModelField.slug(unique=True)
+    link = AbstractModelField.text(unique=True) # TODO: does 'unique' work on this?
 
     def __unicode__(self):
 	return self.name
@@ -932,7 +995,7 @@ class VanityURL(models.Model, Thing):
 # this is a critical bit of code which registers all thing-classes
 # back with the parent thing; key=prefix, value=class
 
-for thing in (Comment, Item, Relation, Tag, VanityURL):
+for thing in (Comment, Item, Relation, Tag, Vurl):
     Thing.s_classes[thing.sattr_prefix] = thing
 
 ##################################################################
