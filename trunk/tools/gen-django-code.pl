@@ -1,7 +1,7 @@
 #!/usr/bin/perl
 
 $indent = "    ";
-$root_path_strip = "/(api|ui|get|r|v|ie)\b";
+$root_path_strip = "/(api|ui|ie|get|r|v)\b";
 
 # $value text in <anglebrackets> must be same as lcase($key)
 %regexp_lookup = (
@@ -123,7 +123,6 @@ foreach $file (sort keys %text) {
 __END__;
 
 mine   GET    /                              root-mine
-mine   GET    /doc                           root-doc
 mine   GET    /pub                           root-pub
 
 api    GET    /api                           root-api

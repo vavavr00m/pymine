@@ -1,4 +1,20 @@
-- break out vanity urls into a separate app
+url hierarchy:
+	/ - root
+	/pub - public documents
+
+	/api - REST api
+
+	/ui - HTML user interface
+
+	/get - minekey access 
+	/r - redirection / tinyvurl (implemented in get.*)
+	/v - long vanity urls (implemented in get.*)
+
+	/ie - import/export
+
+
+
+- break out vanity urls model into /get?
 
 - allow comments on 0bject zero, by permitting NULL value for IID in Comment
 

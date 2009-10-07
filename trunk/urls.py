@@ -24,15 +24,13 @@ from views import REST
 admin.autodiscover()
 
 urlpatterns = patterns('',
-                       (r'^ui/',  include('ui.urls')),
+                       (r'^admin/(.*)', admin.site.root),
+                       (r'^admin/doc/', include('django.contrib.admindocs.urls')),
                        (r'^api/', include('api.urls')),
                        (r'^get/', include('get.urls')),
-                       (r'^archive/', include('archive.urls')),
-
-                       (r'^admin/doc/', include('django.contrib.admindocs.urls')),
-                       (r'^admin/(.*)', admin.site.root),
-
-                       (r'^pub$', REST, {'GET': views.read_pub_root}),
-                       (r'^doc$', REST, {'GET': views.read_doc_root}),
-                       (r'^$',    REST, {'GET': views.read_mine_root}),
+                       (r'^ie/', include('ie.urls')),
+                       (r'^ui/', include('ui.urls')),
+                       #################################
+                       (r'^pub$', REST, {'GET': mine.root_pub}),
+                       (r'^$', REST, {'GET': mine.root_mine}),
 )
