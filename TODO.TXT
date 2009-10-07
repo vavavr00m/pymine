@@ -1,1 +1,4 @@
 - break out vanity urls into a separate app
+
+- allow comments on 0bject zero, by permitting NULL value for IID in Comment
+

@@ -903,7 +903,10 @@ class Comment(models.Model, Thing):
     extend = MineModel.reflist(ExtendedAttribute, pivot='comment_extend', blank=True)
 
     body = MineModel.text(blank=True)
-    item = MineModel.reference(Item)
+    item = MineModel.reference(Item)  ##### <- TODO: BLANK=True to permit commenting on feed directly
+
+    # WHEN NOT DRUNK
+
     relation = MineModel.reference(Relation)
 
     def __unicode__(self):
