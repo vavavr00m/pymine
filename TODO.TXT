@@ -2,3 +2,9 @@
 
 - allow comments on 0bject zero, by permitting NULL value for IID in Comment
 
+- extended attributes
+
+- pagination
+
+- rationalise app hierarchy
+

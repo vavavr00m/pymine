@@ -79,12 +79,12 @@ class MineRegistryAdmin(admin.ModelAdmin):
         ]
 
 class ExtendedAttributeAdmin(admin.ModelAdmin):
-    list_display = ('key', 'content_type', 'value', 'last_modified', 'created')
+    list_display = ('key', 'value', 'last_modified', 'created')
     search_fields = ['key']
     list_filter = ['created']
     date_hierarchy = 'created'
     fieldsets = [
-        (None, {'fields': ['key', 'content_type', 'value']}), 
+        (None, {'fields': ['key', 'value']}), 
         ]
 
 class LogEventAdmin(admin.ModelAdmin):

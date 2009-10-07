@@ -92,11 +92,6 @@ class MineModel:
         return models.TextField(**opts)
 
     @classmethod
-    def blob(self, **kwargs):
-        opts = self.__defopts(**kwargs)
-        return models.TextField(**opts)
-
-    @classmethod
     def slug(self, **kwargs):
         opts = self.__defopts(**kwargs)
         return models.SlugField(max_length=self.STRING_SHORT, **opts)
@@ -752,7 +747,7 @@ class MineRegistry(models.Model): # not a Thing
 
     """key/value pairs for Mine configuration"""
 
-    key = MineModel.slug(unique=True) # unique differentiates from ExtendedAttribute
+    key = MineModel.slug(unique=True)
     value = MineModel.text(blank=True)
     created = MineModel.created()
     last_modified = MineModel.last_modified()
@@ -774,26 +769,21 @@ class MineRegistry(models.Model): # not a Thing
 
 ##################################################################
 
-class ExtendedAttribute(models.Model): # not a Thing
+class ItemExtAttr(models.Model): # not a Thing
 
-    """key/value pairs for Mine Thing extensions"""
+    """item extended attributes"""
 
+    item = MineModel.reference(Item)
     key = MineModel.slug()
-    value = MineModel.blob()
-    content_type = MineModel.string()
+    value = MineModel.text()
     created = MineModel.created()
     last_modified = MineModel.last_modified()
 
-    def to_structure(self):
-	s = {}
-	s[self.key] = self.value # this is why it is not a Thing
-	s['keyCreated'] = m2s_date(self.created)
-	s['keyLastModified'] = m2s_date(self.last_modified)
-	return s
-
     class Meta:
 	ordering = ['key']
-	verbose_name = 'ExtendedAttribute'
+        order_with_respect_to = 'item'
+        unique_together = ('item', 'key')
+	verbose_name = 'ItemExtAttr'
 
     def __unicode__(self):
 	return self.key
@@ -812,7 +802,6 @@ class Tag(models.Model, Thing):
     name = MineModel.slug(unique=True)
     created = MineModel.created()
     last_modified = MineModel.last_modified()
-    extend = MineModel.reflist(ExtendedAttribute, pivot='tag_extend', blank=True)
 
     description = MineModel.text(blank=True)
     implies = MineModel.reflist('self', symmetrical=False, pivot='tag_implied_from', blank=True)
@@ -834,7 +823,6 @@ class Relation(models.Model, Thing):
     name = MineModel.slug(unique=True)
     created = MineModel.created()
     last_modified = MineModel.last_modified()
-    extend = MineModel.reflist(ExtendedAttribute, pivot='relation_extend', blank=True)
 
     description = MineModel.text(blank=True)
     embargo_after = MineModel.datetime(blank=True)
@@ -862,7 +850,6 @@ class Item(models.Model, Thing):
     name = MineModel.string()
     created = MineModel.created()
     last_modified = MineModel.last_modified()
-    extend = MineModel.reflist(ExtendedAttribute, pivot='item_extend', blank=True)
 
     content_type = MineModel.string()
     data = MineModel.file(storage=item_file_storage, upload_to='%Y/%m/%d')
@@ -900,7 +887,6 @@ class Comment(models.Model, Thing):
     title = MineModel.string()
     created = MineModel.created()
     last_modified = MineModel.last_modified()
-    extend = MineModel.reflist(ExtendedAttribute, pivot='comment_extend', blank=True)
 
     body = MineModel.text(blank=True)
     item = MineModel.reference(Item)  ##### <- TODO: BLANK=True to permit commenting on feed directly
@@ -928,7 +914,6 @@ class VanityURL(models.Model, Thing):
     name = MineModel.slug(unique=True)
     created = MineModel.created()
     last_modified = MineModel.last_modified()
-    extend = MineModel.reflist(ExtendedAttribute, pivot='vurl_extend', blank=True)
 
     link = MineModel.text(blank=True)
     tags = MineModel.reflist(Tag, pivot='vurls_tagged', blank=True)
