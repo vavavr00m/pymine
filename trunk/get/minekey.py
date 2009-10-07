@@ -222,6 +222,7 @@ and <A src="99">again</A>
 and <A HREF="99">again</A>
 and <A HREF='99'>again</A>
 and <A HREF=99>again</A>
+and <A HREF=98>again</A>
 
 and <A HREF="99'>this should fail "x'</A>
 and <A HREF='99">this should fail "x'</A>
