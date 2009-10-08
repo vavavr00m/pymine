@@ -239,11 +239,11 @@ def s2m_copy(s, sattr, m, mattr):
 
 def m2s_dummy(m, mattr, s, sattr):
     """Barfing Placeholder"""
-    raise RuntimeError, 'something invoked m2s_dummy'
+    raise RuntimeError, 'something invoked m2s_dummy on %s and %s' % (sattr, mattr)
 
 def s2m_dummy(s, sattr, m, mattr):
     """Barfing Placeholder"""
-    raise RuntimeError, 'something invoked s2m_dummy'
+    raise RuntimeError, 'something invoked s2m_dummy on %s and %s' % (sattr, mattr)
 
 ##################################################################
 
@@ -274,13 +274,13 @@ def s2m_date(s, sattr, m, mattr):
 
 def m2s_comitem(m, mattr, s, sattr):
     if mattr != 'item' or sattr != 'commentItem':
-	raise RuntimeError, "m2s_comitem is confused"
+	raise RuntimeError, "m2s_comitem is confused by %s and %s" % (sattr, mattr)
     x = m.item
     if x: s[sattr] = x.id
 
 def s2m_comitem(s, sattr, m, mattr):
     if mattr != 'item' or sattr != 'commentItem':
-	raise RuntimeError, "s2m_comitem is confused"
+	raise RuntimeError, "s2m_comitem is confused by %s and %s" % (sattr, mattr)
     if sattr in s:
 	m.item = Item.objects.get(id=s[sattr]) # ITEM LOOKUP
 
@@ -292,13 +292,13 @@ def s2m_comitem(s, sattr, m, mattr):
 
 def m2s_comrel(m, mattr, s, sattr):
     if mattr != 'relation' or sattr != 'commentRelation':
-	raise RuntimeError, "m2s_comrel is confused"
+	raise RuntimeError, "m2s_comrel is confused by %s and %s" % (sattr, mattr)
     x = m.relation
     if x: s[sattr] = x.name
 
 def s2m_comrel(s, sattr, m, mattr):
     if mattr != 'relation' or sattr != 'commentRelation':
-	raise RuntimeError, "s2m_comrel is confused"
+	raise RuntimeError, "s2m_comrel is confused by %s and %s" % (sattr, mattr)
     if sattr in s:
 	m.relation = Relation.objects.get(name=s[sattr]) # RELATION LOOKUP
 
@@ -310,14 +310,15 @@ def s2m_comrel(s, sattr, m, mattr):
 # contatenates tagNames.  Loops are possible, but benign.
 
 def m2s_tagimplies(m, mattr, s, sattr):
-    if mattr != 'implies' or sattr != 'tagImplies':
-	raise RuntimeError, "m2s_tagimplies is confused"
+    if mattr not in ('implies', 'cloud') or \
+            sattr not in ('tagImplies', 'tagCloud'):
+	raise RuntimeError, "m2s_tagimplies is confused by %s and %s" % (sattr, mattr)
     x = ' '.join([ x.name for x in m.implies.all() ])
     if x: s[sattr] = x
 
 def s2m_tagimplies(s, sattr, m, mattr):
     if mattr != 'implies' or sattr != 'tagImplies':
-	raise RuntimeError, "s2m_tagimplies is confused"
+	raise RuntimeError, "s2m_tagimplies is confused by %s and %s" % (sattr, mattr)
     if sattr in s:
 	for x in s[sattr].split():
 	    m.implies.add(Tag.objects.get(name=x))
@@ -330,19 +331,19 @@ def s2m_tagimplies(s, sattr, m, mattr):
 
 def m2s_itemstatus(m, mattr, s, sattr):
     if mattr != 'status' or sattr != 'itemStatus':
-	raise RuntimeError, "s2m_itemtags is confused"
+	raise RuntimeError, "s2m_itemtags is confused by %s and %s" % (sattr, mattr)
     x = m.get_status_display()
     if x: s[sattr] = x
 
 def s2m_itemstatus(s, sattr, m, mattr):
     if mattr != 'status' or sattr != 'itemStatus':
-	raise RuntimeError, "m2s_itemtags is confused"
+	raise RuntimeError, "m2s_itemtags is confused by %s and %s" % (sattr, mattr)
     x = s[sattr]
 
     if x in status_lookup:
 	setattr(m, mattr, status_lookup[x])
     else:
-	raise RuntimeError, "s2m_itemstatus cannot remap status: " + x
+	raise RuntimeError, "s2m_itemstatus cannot remap status %s for %s and %s" % (x, sattr, mattr)
 
 ##################################################################
 
@@ -355,7 +356,7 @@ def s2m_itemstatus(s, sattr, m, mattr):
 
 def m2s_itemtags(m, mattr, s, sattr):
     if mattr != 'tags' or sattr != 'itemTags':
-	raise RuntimeError, "m2s_itemtags is confused"
+	raise RuntimeError, "m2s_itemtags is confused by %s and %s" % (sattr, mattr)
 
     # i like this bit of code
     x = " ".join(x for x in itertools.chain([ i.name for i in m.tags.all() ],
@@ -365,7 +366,7 @@ def m2s_itemtags(m, mattr, s, sattr):
 
 def s2m_itemtags(s, sattr, m, mattr):
     if mattr != 'tags' or sattr != 'itemTags':
-	raise RuntimeError, "s2m_itemtags is confused"
+	raise RuntimeError, "s2m_itemtags is confused by %s and %s" % (sattr, mattr)
     if sattr in s:
 	for x in s[sattr].split():
 	    if x.startswith('for:'): m.item_for_relations.add(Tag.objects.get(name=x[4:]))
@@ -384,7 +385,7 @@ def s2m_itemtags(s, sattr, m, mattr):
 
 def m2s_relints(m, mattr, s, sattr):
     if mattr != 'interests' or sattr != 'relationInterests':
-	raise RuntimeError, "m2s_relints is confused"
+	raise RuntimeError, "m2s_relints is confused by %s and %s" % (sattr, mattr)
 
     x = " ".join(x for x in itertools.chain([ i.name for i in m.tags.all() ],
 					    [ "require:%s" % i.name for i in m.tags_required.all() ],
@@ -393,7 +394,7 @@ def m2s_relints(m, mattr, s, sattr):
 
 def s2m_relints(s, sattr, m, mattr):
     if mattr != 'interests' or sattr != 'relationInterests':
-	raise RuntimeError, "s2m_relints is confused"
+	raise RuntimeError, "s2m_relints is confused by %s and %s" % (sattr, mattr)
     if sattr in s:
 	for x in s[sattr].split():
 	    if x.startswith('require:'): m.tags_required.add(Tag.objects.get(name=x[8:]))
@@ -458,47 +459,48 @@ class AbstractThing(AbstractModel):
     # dictionaries for fast lookup...
 
     sattr_conversion_table = (
-	(  'thingId',                 'id',               False,  r2s_int,     s2m_copy,        m2s_copy,        ),
-	(  'commentBody',             'body',             False,  r2s_string,  s2m_copy,        m2s_copy,        ),
-	(  'commentCreated',          'created',          False,  r2s_string,  s2m_date,        m2s_date,        ),
-	(  'commentId',               'id',               False,  r2s_int,     s2m_copy,        m2s_copy,        ),
-	(  'commentItem',             'item',             False,  r2s_int,     s2m_comitem,     m2s_comitem,     ),
-	(  'commentLastModified',     'last_modified',    False,  r2s_string,  s2m_date,        m2s_date,        ),
-	(  'commentRelation',         'relation',         False,  r2s_string,  s2m_comrel,      m2s_comrel,      ),
-	(  'commentTitle',            'title',            False,  r2s_string,  s2m_copy,        m2s_copy,        ),
-	(  'itemCreated',             'created',          False,  r2s_string,  s2m_date,        m2s_date,        ),
-	(  'itemData',                'data',             True,   None,        s2m_dummy,       None,            ),
-	(  'itemDescription',         'description',      False,  r2s_string,  s2m_copy,        m2s_copy,        ),
-	(  'itemHideAfter',           'hide_after',       False,  r2s_string,  s2m_date,        m2s_date,        ),
-	(  'itemHideBefore',          'hide_before',      False,  r2s_string,  s2m_date,        m2s_date,        ),
-	(  'itemId',                  'id',               False,  r2s_int,     s2m_copy,        m2s_copy,        ),
-	(  'itemLastModified',        'last_modified',    False,  r2s_string,  s2m_date,        m2s_date,        ),
-	(  'itemName',                'name',             False,  r2s_string,  s2m_copy,        m2s_copy,        ),
-	(  'itemStatus',              'status',           False,  r2s_string,  s2m_itemstatus,  m2s_itemstatus,  ),
-	(  'itemTags',                'tags',             True,   r2s_string,  s2m_itemtags,    m2s_itemtags,    ),
-	(  'itemType',                'content_type',     False,  r2s_string,  s2m_copy,        m2s_copy,        ),
-	(  'relationCreated',         'created',          False,  r2s_string,  s2m_date,        m2s_date,        ),
-	(  'relationDescription',     'description',      False,  r2s_string,  s2m_copy,        m2s_copy,        ),
-	(  'relationEmbargoAfter',    'embargo_after',    False,  r2s_string,  s2m_date,        m2s_date,        ),
-	(  'relationEmbargoBefore',   'embargo_before',   False,  r2s_string,  s2m_date,        m2s_date,        ),
-	(  'relationId',              'id',               False,  r2s_int,     s2m_copy,        m2s_copy,        ),
-	(  'relationInterests',       'interests',        True,   r2s_string,  s2m_relints,     m2s_relints,     ),
-	(  'relationLastModified',    'last_modified',    False,  r2s_string,  s2m_date,        m2s_date,        ),
-	(  'relationName',            'name',             False,  r2s_string,  s2m_copy,        m2s_copy,        ),
-	(  'relationNetworkPattern',  'network_pattern',  False,  r2s_string,  s2m_copy,        m2s_copy,        ),
-	(  'relationVersion',         'version',          False,  r2s_string,  s2m_copy,        m2s_copy,        ),
-	(  'tagCreated',              'created',          False,  r2s_string,  s2m_date,        m2s_date,        ),
-	(  'tagDescription',          'description',      False,  r2s_string,  s2m_copy,        m2s_copy,        ),
-	(  'tagId',                   'id',               False,  r2s_int,     s2m_copy,        m2s_copy,        ),
-	(  'tagImplies',              'implies',          True,   r2s_string,  s2m_tagimplies,  m2s_tagimplies,  ),
-	(  'tagLastModified',         'last_modified',    False,  r2s_string,  s2m_date,        m2s_date,        ),
-	(  'tagName',                 'name',             False,  r2s_string,  s2m_copy,        m2s_copy,        ),
-	(  'vurlCreated',             'created',          False,  r2s_string,  s2m_date,        m2s_date,        ),
-	(  'vurlId',                  'id',               False,  r2s_int,     s2m_copy,        m2s_copy,        ),
-	(  'vurlLastModified',        'last_modified',    False,  r2s_string,  s2m_date,        m2s_date,        ),
-	(  'vurlLink',                'link',             False,  r2s_string,  s2m_copy,        m2s_copy,        ),
-	(  'vurlName',                'name',             False,  r2s_string,  s2m_copy,        m2s_copy,        ),
-	)
+(  'commentBody',             'body',             False,  r2s_string,  s2m_copy,        m2s_copy,        ),
+(  'commentCreated',          'created',          False,  None,        None,            m2s_date,        ),
+(  'commentId',               'id',               False,  r2s_int,     s2m_copy,        m2s_copy,        ),
+(  'commentItem',             'item',             False,  r2s_int,     s2m_comitem,     m2s_comitem,     ),
+(  'commentLastModified',     'last_modified',    False,  None,        None,            m2s_date,        ),
+(  'commentRelation',         'relation',         False,  r2s_string,  s2m_comrel,      m2s_comrel,      ),
+(  'commentTitle',            'title',            False,  r2s_string,  s2m_copy,        m2s_copy,        ),
+(  'itemCreated',             'created',          False,  None,        None,            m2s_date,        ),
+(  'itemData',                'data',             True,   None,        None,            None,            ),
+(  'itemDescription',         'description',      False,  r2s_string,  s2m_copy,        m2s_copy,        ),
+(  'itemHideAfter',           'hide_after',       False,  r2s_string,  s2m_date,        m2s_date,        ),
+(  'itemHideBefore',          'hide_before',      False,  r2s_string,  s2m_date,        m2s_date,        ),
+(  'itemId',                  'id',               False,  r2s_int,     s2m_copy,        m2s_copy,        ),
+(  'itemLastModified',        'last_modified',    False,  None,        None,            m2s_date,        ),
+(  'itemName',                'name',             False,  r2s_string,  s2m_copy,        m2s_copy,        ),
+(  'itemStatus',              'status',           False,  r2s_string,  s2m_itemstatus,  m2s_itemstatus,  ),
+(  'itemTags',                'tags',             True,   r2s_string,  s2m_itemtags,    m2s_itemtags,    ),
+(  'itemType',                'content_type',     False,  r2s_string,  s2m_copy,        m2s_copy,        ),
+(  'relationCreated',         'created',          False,  None,        None,            m2s_date,        ),
+(  'relationDescription',     'description',      False,  r2s_string,  s2m_copy,        m2s_copy,        ),
+(  'relationEmbargoAfter',    'embargo_after',    False,  r2s_string,  s2m_date,        m2s_date,        ),
+(  'relationEmbargoBefore',   'embargo_before',   False,  r2s_string,  s2m_date,        m2s_date,        ),
+(  'relationId',              'id',               False,  r2s_int,     s2m_copy,        m2s_copy,        ),
+(  'relationInterests',       'interests',        True,   r2s_string,  s2m_relints,     m2s_relints,     ),
+(  'relationLastModified',    'last_modified',    False,  None,        None,            m2s_date,        ),
+(  'relationName',            'name',             False,  r2s_string,  s2m_copy,        m2s_copy,        ),
+(  'relationNetworkPattern',  'network_pattern',  False,  r2s_string,  s2m_copy,        m2s_copy,        ),
+(  'relationVersion',         'version',          False,  r2s_string,  s2m_copy,        m2s_copy,        ),
+(  'tagCreated',              'created',          False,  None,        None,            m2s_date,        ),
+(  'tagDescription',          'description',      False,  r2s_string,  s2m_copy,        m2s_copy,        ),
+(  'tagId',                   'id',               False,  r2s_int,     s2m_copy,        m2s_copy,        ),
+(  'tagCloud',                'cloud',            True,   None,        None,            m2s_tagimplies,  ),
+(  'tagImplies',              'implies',          True,   r2s_string,  s2m_tagimplies,  m2s_tagimplies,  ),
+(  'tagLastModified',         'last_modified',    False,  None,        None,            m2s_date,        ),
+(  'tagName',                 'name',             False,  r2s_string,  s2m_copy,        m2s_copy,        ),
+(  'thingId',                 'id',               False,  r2s_int,     s2m_copy,        m2s_copy,        ),
+(  'vurlCreated',             'created',          False,  None,        None,            m2s_date,        ),
+(  'vurlId',                  'id',               False,  r2s_int,     s2m_copy,        m2s_copy,        ),
+(  'vurlLastModified',        'last_modified',    False,  None,        None,            m2s_date,        ),
+(  'vurlLink',                'link',             False,  r2s_string,  s2m_copy,        m2s_copy,        ),
+(  'vurlName',                'name',             False,  r2s_string,  s2m_copy,        m2s_copy,        ),
+)
 
     # A word about deferral: some s2m conversions can only take place
     # after the model has been written to the database; this is
@@ -808,7 +810,7 @@ class LogEvent(AbstractModel):
 
 ##################################################################
 
-class MineRegistry(AbstractModel):
+class Registry(AbstractModel):
     """key/value pairs for Mine configuration"""
 
     key = AbstractModelField.slug(unique=True)
@@ -823,8 +825,8 @@ class MineRegistry(AbstractModel):
 
     class Meta:
 	ordering = ['key']
-	verbose_name = 'Registry'
-	verbose_name_plural = 'Registries'
+	verbose_name = 'RegisterEntry'
+	verbose_name_plural = 'Registry'
 
     def __unicode__(self):
 	return self.key
@@ -852,7 +854,8 @@ class Tag(AbstractThing):
 
     name = AbstractModelField.slug(unique=True)
     description = AbstractModelField.text(required=False)
-    implies = AbstractModelField.reflist('self', symmetrical=False, pivot='tag_implied_from', required=False)
+    implies = AbstractModelField.reflist('self', symmetrical=False, pivot='implied_by', required=False)
+    cloud = AbstractModelField.reflist('self', symmetrical=False, pivot='clouded_by', required=False)
 
     class Meta:
 	ordering = ['name']

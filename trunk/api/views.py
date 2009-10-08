@@ -237,7 +237,7 @@ def get_item_key(request, iid, sattr, *args, **kwargs):
 ## function: list_registry
 ## declared args:
 def list_registry(request, *args, **kwargs):
-    result = [ m.to_structure() for m in MineRegistry.objects.all() ]
+    result = [ m.to_structure() for m in Registry.objects.all() ]
     return construct_retval(result)
 
 # SECURITY: TBD: at some point in the future we will require setting
@@ -249,7 +249,7 @@ def list_registry(request, *args, **kwargs):
 ## declared args: rattr
 def amend_registry_key(request, rattr, *args, **kwargs):
     v = request.POST[key]
-    m, created = MineRegistry.objects.get_or_create(key=k,defaults={'value':v})
+    m, created = Registry.objects.get_or_create(key=k,defaults={'value':v})
     if not created: # then it will need updating
         m.value = v
         m.save();
@@ -265,7 +265,7 @@ def amend_registry_key(request, rattr, *args, **kwargs):
 ## function: delete_registry_key
 ## declared args: rattr
 def delete_registry_key(request, rattr, *args, **kwargs):
-    m = MineRegistry.objects.get(key=rattr)
+    m = Registry.objects.get(key=rattr)
     m.delete()
     return construct_retval()
 
@@ -276,7 +276,7 @@ def delete_registry_key(request, rattr, *args, **kwargs):
 ## function: get_registry_key
 ## declared args: rattr
 def get_registry_key(request, rattr, *args, **kwargs):
-    m = MineRegistry.objects.get(key=rattr)
+    m = Registry.objects.get(key=rattr)
     return construct_retval(m.value)
 
 ##################################################################
