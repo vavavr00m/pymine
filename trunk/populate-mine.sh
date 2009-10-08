@@ -21,65 +21,35 @@ Minectl() {
 }
 
 SAMPLES=static/testdata
-
 exec 2>&1
-
 set -x
 
-###
 # set up some very general tags
+Minectl new-tags themineproject literature photos 
 
-# concepts
-Minectl new-tags animals clothes countryside drink space \
-         fashion food friends plants transport travel
-
-# countries
-Minectl new-tags france spain italy usa
-
-# geekery
-Minectl new-tags themineproject
-
-###
-# set up some implied tags; cats imply animals, motorbikes imply transport, ...
-
-Minectl new-tags cats:animals dogs:animals birds:animals hippos:animals
-Minectl new-tags flowers:plants vegetables:plants trees:plants
-Minectl new-tags bicycles:transport motorbikes:transport cars:transport
-
-###
 # set up tags and implied tags in one go; read from left to right
+Minectl new-tags animals cats:animals dogs:animals hippos:animals
 
-Minectl new-tags wine:drink beer:drink 
-Minectl new-tags white-wine:wine red-wine:wine chardonnay:white-wine rioja:red-wine
+# a little more detailed
+Minectl new-tags food drink motorcycles
+Minectl new-tags shoes sneakers:shoes
+Minectl new-tags booze:drink juice:drink
+Minectl new-tags wine:booze beer:booze spirits:booze
+Minectl new-tags white-wine:wine red-wine:wine 
+Minectl new-tags chardonnay:white-wine rioja:red-wine 
+Minectl new-tags red-burgundy:red-wine white-burgundy:white-wine burgundy:red-wine,white-wine # latter->both
 
-###
-# for shoe-fetishists "shoes" implies BOTH clothes AND fashion
-
-Minectl new-tags shoes:clothes,fashion
-
-# shoe types
-
-Minectl new-tags \
-    mules:shoes \
-    pumps:shoes \
-    slingbacks:shoes \
-    sneakers:shoes \
-    stilettos:shoes \
-    trainers:shoes
-
-###
 # set up some relations
-
-Minectl new-relation alec 1 "Alec Muffett" cats motorbikes drink food themineproject
-Minectl new-relation adriana 1 "Adriana Lukas" wine motorbikes themineproject
-Minectl new-relation carrie 1 "Carrie Bishop" sneakers trainers themineproject
-Minectl new-relation ben 1 "Ben Laurie" wine food motorbikes
-Minectl new-relation perry 1 "Perry de Havilland" food drink except:white-wine
+Minectl new-relation alec 1 "Alec Muffett" food drink animals themineproject
+Minectl new-relation adriana 1 "Adriana Lukas" food drink shoes cats motorcycles themineproject
+Minectl new-relation carrie 1 "Carrie Bishop" food drink sneakers themineproject 
+Minectl new-relation ben 1 "Ben Laurie" food drink cats motorcycles
+Minectl new-relation perry 1 "Perry deHavilland" hippos red-wine
 
 ###
 # upload a batch of objects without individual tagging
 
-Minectl upload -s public $SAMPLES/* # wasn't that easy?
+Minectl upload -t themineproject -s public $SAMPLES/*.pdf # wasn't that easy?
 
 ###
 # highly verbose special cases for tag testing
@@ -87,28 +57,11 @@ while read file tags
 do
     Minectl upload -s public -t "$tags" $SAMPLES/$file
 done <<EOF
-adriana.jpg themineproject
-alecm.png themineproject
-austen.txt
-bridge.jpg countryside
-buster.jpg cats
-cloud.jpg
-dam.jpg countryside 
-fashion1.jpg fashion
-feeds-based-vrm.pdf themineproject
-italy.jpg italy
-milan.jpg italy
-mine-diagram.jpg themineproject
-mine-paper-v2.pdf themineproject
-monument.jpg france motorbikes countryside
-moon.jpg space
-mountains.jpg  italy motorbikes countryside
-pimpernel.jpg flowers
-rome.jpg italy
-rose.jpg flowers
-stonehenge.jpg countryside
-suzi.jpg cats
-woodland.jpg trees countryside
+adriana.jpg photos themineproject
+alecm.png photos themineproject
+austen.txt literature red-wine
+buster.jpg photos cats
+mine-diagram.jpg themineproject 
 EOF
 
 # some dummy comments
@@ -125,13 +78,12 @@ done <<EOF
 EOF
 
 # some vurls
-
 Minectl create-vurl vurlName=mine vurlLink=http://themineproject.org/
 Minectl create-vurl vurlName=alecm vurlLink=http://www.crypticide.com/dropsafe/
 Minectl create-vurl vurlName=adriana vurlLink=http://mediainfluencer.net/
 Minectl create-vurl vurlName=foo/bar vurlLink=http://www.google.com/
+Minectl create-vurl vurlLink=http://www.google.co.uk/ # autoname
 
-###
 # done
 
 exit 0
