@@ -309,9 +309,14 @@ def s2m_comrel(s, sattr, m, mattr):
 # s-space this is represented as a space-separated string which
 # contatenates tagNames.  Loops are possible, but benign.
 
+def m2s_tagcloud(m, mattr, s, sattr):
+    if mattr != 'cloud' or sattr != 'tagCloud':
+	raise RuntimeError, "m2s_tagcloud is confused by %s and %s" % (sattr, mattr)
+    x = ' '.join([ x.name for x in m.cloud.all() ])
+    if x: s[sattr] = x
+
 def m2s_tagimplies(m, mattr, s, sattr):
-    if mattr not in ('implies', 'cloud') or \
-            sattr not in ('tagImplies', 'tagCloud'):
+    if mattr != 'implies' or sattr != 'tagImplies':
 	raise RuntimeError, "m2s_tagimplies is confused by %s and %s" % (sattr, mattr)
     x = ' '.join([ x.name for x in m.implies.all() ])
     if x: s[sattr] = x
@@ -320,6 +325,7 @@ def s2m_tagimplies(s, sattr, m, mattr):
     if mattr != 'implies' or sattr != 'tagImplies':
 	raise RuntimeError, "s2m_tagimplies is confused by %s and %s" % (sattr, mattr)
     if sattr in s:
+        m.implies.clear()
 	for x in s[sattr].split():
 	    m.implies.add(Tag.objects.get(name=x))
 
@@ -368,6 +374,9 @@ def s2m_itemtags(s, sattr, m, mattr):
     if mattr != 'tags' or sattr != 'itemTags':
 	raise RuntimeError, "s2m_itemtags is confused by %s and %s" % (sattr, mattr)
     if sattr in s:
+        m.tags.clear()
+        m.item_for_relations.clear()
+        m.item_not_relations.clear()
 	for x in s[sattr].split():
 	    if x.startswith('for:'): m.item_for_relations.add(Tag.objects.get(name=x[4:]))
 	    elif x.startswith('not:'): m.item_not_relations.add(Tag.objects.get(name=x[4:]))
@@ -396,6 +405,9 @@ def s2m_relints(s, sattr, m, mattr):
     if mattr != 'interests' or sattr != 'relationInterests':
 	raise RuntimeError, "s2m_relints is confused by %s and %s" % (sattr, mattr)
     if sattr in s:
+        m.tags.clear()
+        m.tags_required.clear()
+        m.tags_excluded.clear()
 	for x in s[sattr].split():
 	    if x.startswith('require:'): m.tags_required.add(Tag.objects.get(name=x[8:]))
 	    elif x.startswith('exclude:'): m.tags_excluded.add(Tag.objects.get(name=x[8:]))
@@ -490,7 +502,7 @@ class AbstractThing(AbstractModel):
 (  'tagCreated',              'created',          False,  None,        None,            m2s_date,        ),
 (  'tagDescription',          'description',      False,  r2s_string,  s2m_copy,        m2s_copy,        ),
 (  'tagId',                   'id',               False,  r2s_int,     s2m_copy,        m2s_copy,        ),
-(  'tagCloud',                'cloud',            True,   None,        None,            m2s_tagimplies,  ),
+(  'tagCloud',                'cloud',            True,   None,        None,            m2s_tagcloud,    ),
 (  'tagImplies',              'implies',          True,   r2s_string,  s2m_tagimplies,  m2s_tagimplies,  ),
 (  'tagLastModified',         'last_modified',    False,  None,        None,            m2s_date,        ),
 (  'tagName',                 'name',             False,  r2s_string,  s2m_copy,        m2s_copy,        ),
@@ -635,10 +647,10 @@ class AbstractThing(AbstractModel):
     # done in two places; this wraps that for convenience
 
     def lookup_mattr(self, sattr):
-	if sattr in self.s2m_table[self.sattr_prefix][sattr]:
-	    t = s2m_table[self.sattr_prefix][sattr]
-	elif sattr in self.defer_s2m_table[self.sattr_prefix][sattr]:
-	    t = defer_s2m_table[self.sattr_prefix][sattr]
+	if sattr in self.s2m_table[self.sattr_prefix]:
+	    t = self.s2m_table[self.sattr_prefix][sattr]
+	elif sattr in self.defer_s2m_table[self.sattr_prefix]:
+	    t = self.defer_s2m_table[self.sattr_prefix][sattr]
 	else:
 	    raise RuntimeError, "lookup_mattr cannot lookup: " + sattr
 	return t
@@ -659,7 +671,7 @@ class AbstractThing(AbstractModel):
 	# check validity of sattr
 	elif sattr.startswith(self.sattr_prefix):
             # lookup equivalent model field
-            r2s_func, s2m_func, mattr = lookup_mattr(sattr)
+            r2s_func, s2m_func, mattr = self.lookup_mattr(sattr)
             # retreive equivalent model field
             x = getattr(self, mattr)
             # lookup m2s conversion routine
@@ -687,9 +699,10 @@ class AbstractThing(AbstractModel):
 
 	elif sattr.startswith(self.sattr_prefix):
             # lookup equivalent model field
-            r2s_func, s2m_func, mattr = lookup_mattr(sattr)
+            r2s_func, s2m_func, mattr = self.lookup_mattr(sattr)
             # zero that field
-            setattr(self, None)
+            setattr(self, sattr, None)
+            raise RuntimeException, "this method of deletion does not work" ############## FIX THIS!!!!!!!!
             # try saving and hope model will bitch if something is wrong
             self.save()
 
@@ -706,7 +719,7 @@ class AbstractThing(AbstractModel):
 	    m2s_func(self, mattr, s, sattr)
 
         mgr = getattr(self, self.xattr_manager)
-        
+
         for xa in mgr.all(): 
             k = '%s%s' % (self.xattr_prefix, xa.key)
             v = xa.value
@@ -863,8 +876,42 @@ class Tag(AbstractThing):
     def __unicode__(self):
 	return self.name
 
-    def rethink_cloud(self):
-        print "rethink_cloud called"
+    def __rethink_cloud(self, notepad):
+
+        print "%s is doing rethink_cloud" % self.name
+
+        if notepad.get(self.name, False):
+            print "%s has already been done (loop detected)" % self.name
+            return
+
+        # clear my cloud
+        self.cloud.clear()
+
+        # self.cloud = self + self.implies + union((self.implies).cloud)
+        self.cloud.add(self)
+
+        for parent in self.implies.all():
+            print "%s is clouding %s directly" % (self.name, parent.name)
+            self.cloud.add(parent)
+
+            for tag in parent.cloud.all():
+                print "%s is clouding %s via %s" % (self.name, tag.name, parent.name)
+                self.cloud.add(tag)
+
+        # save for the reference of others
+        print "%s is saving" % self.name
+        self.save()
+
+        # loop detection
+        notepad[self.name] = True
+
+        # rethink for each of self.implied_by
+        for child in self.implied_by.all():
+            if child == self:
+                print "%s is not kicking itself" % self.name
+                continue
+            print "%s is kicking child %s" % (self.name, child.name)
+            child.__rethink_cloud(notepad)
 
     def delete_sattr(self, sattr):
         """
@@ -873,9 +920,10 @@ class Tag(AbstractThing):
         trigger a recalculation of the Tag cloud.
         """
 
-        retval = super(Tag, self).update_from_request(r, **kwargs)
+        retval = super(Tag, self).delete_sattr(sattr)
         if sattr == 'tagImplies': 
-            self.rethink_cloud()
+            notepad = {}
+            self.__rethink_cloud(notepad)
         return retval
 
     def update_from_request(self, r, **kwargs):
@@ -887,7 +935,8 @@ class Tag(AbstractThing):
 
         retval = super(Tag, self).update_from_request(r, **kwargs)
         if 'tagImplies' in r.REQUEST: 
-            self.rethink_cloud()
+            notepad = {}
+            self.__rethink_cloud(notepad)
         return retval
 
 ##################################################################
