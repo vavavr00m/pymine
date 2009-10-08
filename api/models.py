@@ -701,8 +701,8 @@ class AbstractThing(AbstractModel):
             # lookup equivalent model field
             r2s_func, s2m_func, mattr = self.lookup_mattr(sattr)
             # zero that field
-            setattr(self, sattr, None)
-            raise RuntimeException, "this method of deletion does not work" ############## FIX THIS!!!!!!!!
+            setattr(self, sattr, None) ############## FIX THIS!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+            raise RuntimeException, "this method of deletion does not work" 
             # try saving and hope model will bitch if something is wrong
             self.save()
 
@@ -876,43 +876,79 @@ class Tag(AbstractThing):
     def __unicode__(self):
 	return self.name
 
-    def __rethink_cloud(self, notepad):
-
-        print "%s is doing rethink_cloud" % self.name
-
-        if notepad.get(self.name, False):
-            print "%s has already been done (loop detected)" % self.name
-            return
-
-        # clear my cloud
+    def __update_cloud_field(self):
         self.cloud.clear()
 
-        # self.cloud = self + self.implies + union((self.implies).cloud)
-        self.cloud.add(self)
+        tmap = { self: False }
+        loop = True # get us into the processing loop
 
-        for parent in self.implies.all():
-            print "%s is clouding %s directly" % (self.name, parent.name)
-            self.cloud.add(parent)
+        while loop:
+            loop = False
 
-            for tag in parent.cloud.all():
-                print "%s is clouding %s via %s" % (self.name, tag.name, parent.name)
+            for tag, tag_done in tmap.items():
+                if tag_done: 
+                    continue
+
+                for parent in tag.implies.all():
+                    if not tmap.get(parent, False):
+                        tmap[parent] = False
+                        loop = True
+
+                print "%s is clouding %s" % (self.name, tag.name)
                 self.cloud.add(tag)
+                tmap[tag] = True
 
-        # save for the reference of others
-        print "%s is saving" % self.name
-        self.save()
+        self.save() # needed?
 
-        # loop detection
-        notepad[self.name] = True
 
-        # rethink for each of self.implied_by
-        for child in self.implied_by.all():
-            if child == self:
-                print "%s is not kicking itself" % self.name
-                continue
-            print "%s is kicking child %s" % (self.name, child.name)
-            child.__rethink_cloud(notepad)
+    def __update_cloud_map(self, tmap):
+        """
+        I could try ripping out the list of tags just once (avoiding
+        ~n! database hits) and reconstructing the map from that, but
+        if they change on disk underneath me then something nasty can
+        happen; better to let caching at a lower level take the hit...
+        """
 
+        # update all the tags with this data
+        for tag in tmap.keys():
+            tag = Tag.objects.get(id=tag.id) # potentially dirty, reload
+            tag.__update_cloud_field()
+
+    def __expand_cloud_map(self):
+        """
+        This is brute-force and ignorance code but it is proof against loops.
+        """
+
+        tmap = { self: False }
+
+        if not self.id:
+            return tmap # we are not yet in the database
+
+        loop = True # get us into the processing loop
+
+        while loop:
+            loop = False
+
+            for tag, tag_done in tmap.items():
+                if tag_done: 
+                    continue
+
+                for parent in tag.implies.all():
+                    if not tmap.get(parent, False):
+                        tmap[parent] = False
+                        loop = True
+
+                for child in tag.implied_by.all():
+                    if not tmap.get(child, False):
+                        tmap[child] = False
+                        loop = True
+
+                tmap[tag] = True
+
+        return tmap
+
+
+    @transaction.commit_on_success # <- rollback if it raises an exception
     def delete_sattr(self, sattr):
         """
         This method overrides AbstractThing.delete_sattr() and acts as
@@ -920,12 +956,18 @@ class Tag(AbstractThing):
         trigger a recalculation of the Tag cloud.
         """
 
-        retval = super(Tag, self).delete_sattr(sattr)
         if sattr == 'tagImplies': 
-            notepad = {}
-            self.__rethink_cloud(notepad)
-        return retval
+            tmap = self.__expand_cloud_map()
+        else:
+            tmap = None
 
+        super(Tag, self).delete_sattr(sattr)
+
+        if tmap:
+            self.__update_cloud_map(tmap)
+
+
+    @transaction.commit_on_success # <- rollback if it raises an exception
     def update_from_request(self, r, **kwargs):
         """
         This method overrides AbstractThing.update_from_request() and
@@ -933,10 +975,17 @@ class Tag(AbstractThing):
         might trigger a recalculation of the Tag cloud.
         """
 
-        retval = super(Tag, self).update_from_request(r, **kwargs)
         if 'tagImplies' in r.REQUEST: 
-            notepad = {}
-            self.__rethink_cloud(notepad)
+            tmap = self.__expand_cloud_map()
+        else:
+            tmap = None
+
+        retval = super(Tag, self).update_from_request(r, **kwargs)
+
+        if tmap:
+            self.__update_cloud_map(tmap)
+            retval = Tag.objects.get(id=retval.id) # reload, possibly dirty
+
         return retval
 
 ##################################################################

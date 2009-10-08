@@ -62,7 +62,7 @@ def read_foo(model, mid):
 def update_foo(model, request, mid):
     assert request, "cannot have request=None for update_foo"
     m = model.objects.get(id=int(mid))
-    m.update_from_request(request)
+    m = m.update_from_request(request)
     return construct_retval(m.to_structure())
 
 def delete_foo_key(model, mid, sattr):
