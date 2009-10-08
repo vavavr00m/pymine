@@ -17,13 +17,13 @@
 
 from models import Tag, Relation, Item, Comment, Vurl
 from models import TagXattr, RelationXattr, ItemXattr, CommentXattr, VurlXattr
-from models import MineRegistry, LogEvent
+from models import Registry, LogEvent
 
 from django.contrib import admin
 
 ##################################################################
 
-class MineRegistryAdmin(admin.ModelAdmin):
+class RegistryAdmin(admin.ModelAdmin):
     list_display = ('key', 'value', 'last_modified', 'created')
     search_fields = ['key']
     list_filter = ['created']
@@ -32,7 +32,7 @@ class MineRegistryAdmin(admin.ModelAdmin):
         (None, {'fields': ['key', 'value']}), 
         ]
 
-admin.site.register(MineRegistry, MineRegistryAdmin)
+admin.site.register(Registry, RegistryAdmin)
 
 ##################################################################
 
