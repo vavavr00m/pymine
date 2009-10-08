@@ -832,8 +832,8 @@ class Registry(AbstractModel):
     def to_structure(self):
 	s = {}
 	s[self.key] = self.value # this is why it is not a Thing
-	s['keyCreated'] = m2s_date(self.created)
-	s['keyLastModified'] = m2s_date(self.last_modified)
+	s['keyCreated'] = self.created.isoformat()
+	s['keyLastModified'] = self.last_modified.isoformat()
 	return s
 
     class Meta:

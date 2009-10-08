@@ -172,15 +172,16 @@ api    GET    /api/url/RID/RVSN/IID.FMT      encode-minekey3
 api    GET    /api/version.FMT               read-version 
 api    POST   /api/vurl.FMT                  create-vurl 
 api    GET    /api/vurl.FMT                  list-vurls 
-api    DELETE /api/vurl/TID.FMT              delete-vurl 
-api    GET    /api/vurl/TID.FMT              read-vurl 
-api    POST   /api/vurl/TID.FMT              update-vurl 
-api    DELETE /api/vurl/TID/SATTR.FMT        delete-vurl-key 
-api    GET    /api/vurl/TID/SATTR.FMT        get-vurl-key 
+api    DELETE /api/vurl/VID.FMT              delete-vurl 
+api    GET    /api/vurl/VID.FMT              read-vurl 
+api    POST   /api/vurl/VID.FMT              update-vurl 
+api    DELETE /api/vurl/VID/SATTR.FMT        delete-vurl-key 
+api    GET    /api/vurl/VID/SATTR.FMT        get-vurl-key 
 
 get    GET    /get                           root-get 
 get    GET    /get/MINEKEY                   read-minekey 
 get    POST   /get/MINEKEY                   submit-minekey 
+get    GET    /get/i/VID                     redirect-vid # short to long remapping
 get    GET    /get/r/VURLKEY                 redirect-vurlkey # short to long remapping
 get    GET    /get/v/SUFFIX                  redirect-vurlname # long to long remapping
 
