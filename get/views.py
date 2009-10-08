@@ -16,13 +16,16 @@
 ##
 
 from django.core.urlresolvers import reverse
-from django.http import Http404, HttpResponse, HttpResponseRedirect
+from django.http import Http404, HttpResponse, HttpResponsePermanentRedirect
 from django.shortcuts import render_to_response, get_object_or_404
 
 import pymine.api.views as api
 from pymine.api.models import Tag, Item, Relation, Comment, Vurl
 
 from minekey import MineKey
+
+def base58_decode(encoded):
+    return 1
 
 ##################################################################
 
@@ -63,7 +66,6 @@ def read_minekey(request, minekey, *args, **kwargs):
         el.close_error(str(e))
         raise
 
-
 ## rest: POST /get/MINEKEY
 ## function: submit_minekey
 ## declared args: minekey
@@ -71,17 +73,24 @@ def submit_minekey(request, minekey, *args, **kwargs):
     s = {}
     return render_to_response('submit-minekey.html', s)
 
+## rest: GET /get/i/VID
+## function: redirect_vid
+## declared args: vid
+def redirect_vid(request, vid, *args, **kwargs):
+    v = Vurl.objects.get(id=int(vid))
+    return HttpResponsePermanentRedirect(v.link.strip()) # issue 301 redirect
+
 ## rest: GET /get/r/VURLKEY
 ## function: redirect_vurlkey
 ## declared args: vurlkey
 def redirect_vurlkey(request, vurlkey, *args, **kwargs):
-    s = {}
-    return render_to_response('redirect-vurlkey.html', s)
+    v = Vurl.objects.get(id=base58_decode(vid))
+    return HttpResponsePermanentRedirect(v.link.strip()) # issue 301 redirect
 
 ## rest: GET /get/v/SUFFIX
 ## function: redirect_vurlname
 ## declared args: suffix
 def redirect_vurlname(request, suffix, *args, **kwargs):
-    s = {}
-    return render_to_response('redirect-vurlname.html', s)
+    v = Vurl.objects.get(name=suffix)
+    return HttpResponsePermanentRedirect(v.link.strip()) # issue 301 redirect
 

@@ -22,7 +22,7 @@ from django.shortcuts import render_to_response, get_object_or_404
 
 from django.core.paginator import Paginator, InvalidPage, EmptyPage
 
-from models import Tag, Item, Relation, Comment, Vurl
+from models import Tag, Item, Relation, Comment, Vurl, Registry
 
 def construct_retval(result=None, **kwargs):
     template = {}
@@ -440,34 +440,34 @@ def create_vurl(request, *args, **kwargs):
 def list_vurls(request, *args, **kwargs):
     return list_foos(Vurl)
 
-## rest: DELETE /api/vurl/TID.FMT
+## rest: DELETE /api/vurl/VID.FMT
 ## function: delete_vurl
-## declared args: tid
-def delete_vurl(request, tid, *args, **kwargs):
+## declared args: vid
+def delete_vurl(request, vid, *args, **kwargs):
     return delete_foo(Vurl, vid)
 
-## rest: GET /api/vurl/TID.FMT
+## rest: GET /api/vurl/VID.FMT
 ## function: read_vurl
-## declared args: tid
-def read_vurl(request, tid, *args, **kwargs):
+## declared args: vid
+def read_vurl(request, vid, *args, **kwargs):
     return read_foo(Vurl, vid)
 
-## rest: POST /api/vurl/TID.FMT
+## rest: POST /api/vurl/VID.FMT
 ## function: update_vurl
-## declared args: tid
-def update_vurl(request, tid, *args, **kwargs):
+## declared args: vid
+def update_vurl(request, vid, *args, **kwargs):
     return update_foo(Vurl, request, vid)
 
-## rest: DELETE /api/vurl/TID/SATTR.FMT
+## rest: DELETE /api/vurl/VID/SATTR.FMT
 ## function: delete_vurl_key
-## declared args: tid sattr
-def delete_vurl_key(request, tid, sattr, *args, **kwargs):
+## declared args: vid sattr
+def delete_vurl_key(request, vid, sattr, *args, **kwargs):
     return delete_foo_key(Vurl, vid, sattr)
 
-## rest: GET /api/vurl/TID/SATTR.FMT
+## rest: GET /api/vurl/VID/SATTR.FMT
 ## function: get_vurl_key
-## declared args: tid sattr
-def get_vurl_key(request, tid, sattr, *args, **kwargs):
+## declared args: vid sattr
+def get_vurl_key(request, vid, sattr, *args, **kwargs):
     return get_foo_key(Vurl, vid, sattr)
 
 ##################################################################

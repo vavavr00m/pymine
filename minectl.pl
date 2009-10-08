@@ -198,7 +198,7 @@ while (<DATA>) {
 
     elsif ($call_how eq 'SUB1PASS') {
 	my $arg = shift;
-	$api =~ s!\b([RITC]ID|KEY)\b!$arg!g;
+	$api =~ s!\b([RITCV]ID|KEY)\b!$arg!g;
 	&Mine($method, $api, @ARGV);
     }
 
@@ -207,7 +207,7 @@ while (<DATA>) {
 
     elsif ($call_how eq 'SUB1ITER') {
 	my $id = shift;
-	$api =~ s![RITC]ID!$id!g;
+	$api =~ s![RITCV]ID!$id!g;
 	foreach my $arg (@ARGV) {
 	    &Mine($method, $api, $arg);
 	}
@@ -219,7 +219,7 @@ while (<DATA>) {
     elsif ($call_how eq 'SUBEVERY') {
 	foreach $arg (@ARGV) {
 	    my $api2 = $api;
-	    $api2 =~ s![RITC]ID!$arg!g;
+	    $api2 =~ s![RITCV]ID!$arg!g;
 	    &Mine($method, $api2);
 	}
     }
@@ -230,7 +230,7 @@ while (<DATA>) {
 
     elsif ($call_how eq 'SUB1EVERY') {
 	my $id = shift;
-	$api =~ s![RITC]ID!$id!g;
+	$api =~ s![RITCV]ID!$id!g;
 	foreach $arg (@ARGV) {
 	    my $api2 = $api;
 	    $api2 =~ s!KEY!$arg!g;
@@ -244,7 +244,7 @@ while (<DATA>) {
     elsif ($call_how eq 'SUB2PASS') {
 	my $arg = shift;
 	my $id = shift;
-	$api =~ s!\b([RITC]ID)\b!$arg!g;
+	$api =~ s!\b([RITCV]ID)\b!$arg!g;
 	$api =~ s!\b(KEY)\b!$id!g;
 	&Mine($method, $api, @ARGV);
     }
@@ -470,8 +470,16 @@ get-comment-key SUB1EVERY read /api/comment/CID/KEY.json 42 commentKey
 delete-comment-key SUB1EVERY delete /api/comment/CID/KEY.json 42 commentKey ...
 list-comments SUBEVERY read /api/comment/item/IID.json
 create-comment SUB1PASS create /api/comment/item/IID.json commentKey=value ...
+
+
+list-registry PASSARGS read /api/registry.json
+get-registry-key SUB1PASS read /api/registry/IID.json key
+update-registry-key SUB1PASS create /api/registry/IID.json key=value
+delete-registry-key SUB1EVERY delete /api/registry/IID.json
+
 get-config PASSARGS read /api/config.json
 update-config PASSARGS create /api/config.json key=value ...
+
 list-items PASSARGS read /api/item.json
 create-item PASSARGS create /api/item.json itemData=@filename.txt itemKey=value ...
 get-data SUB1PASS read /api/item/IID 42
@@ -480,8 +488,10 @@ delete-item SUBEVERY delete /api/item/IID.json 42 17 23 ...
 update-item SUB1PASS create /api/item/IID.json 42 itemKey=value ...
 get-item-key SUB1EVERY read /api/item/IID/KEY.json 42 itemKey
 delete-item-key SUB1EVERY delete /api/item/IID/KEY.json 42 itemKey ...
+
 clone-item SUB1PASS create /api/item/IID/clone.json 42
 list-clones SUB1PASS read /api/item/IID/clone.json 42
+
 list-relations PASSARGS read /api/relation.json
 create-relation PASSARGS create /api/relation.json relationKey=value ...
 get-relation SUB1PASS read /api/relation/RID.json 42
@@ -489,6 +499,7 @@ delete-relation SUBEVERY delete /api/relation/RID.json 42 17 23 ...
 update-relation SUB1PASS create /api/relation/RID.json 42 relationKey=value ...
 get-relation-key SUB1EVERY read /api/relation/RID/KEY.json 42 relationKey
 delete-relation-key SUB1EVERY delete /api/relation/RID/KEY.json 42 relationKey ...
+
 list-tags PASSARGS read /api/tag.json
 create-tag PASSARGS create /api/tag.json tagKey=value ...
 get-tag SUB1PASS read /api/tag/TID.json 42
@@ -496,3 +507,11 @@ delete-tag SUBEVERY delete /api/tag/TID.json 42 17 23 ...
 update-tag SUB1PASS create /api/tag/TID.json 42 tagKey=value ...
 get-tag-key SUB1EVERY read /api/tag/TID/KEY.json 42 tagKey
 delete-tag-key SUB1EVERY delete /api/tag/TID/KEY.json 42 tagKey ...
+
+list-vurls PASSARGS read /api/vurl.json
+create-vurl PASSARGS create /api/vurl.json vurlKey=value ...
+get-vurl SUB1PASS read /api/vurl/VID.json 42
+delete-vurl SUBEVERY delete /api/vurl/VID.json 42 17 23 ...
+update-vurl SUB1PASS create /api/vurl/VID.json 42 vurlKey=value ...
+get-vurl-key SUB1EVERY read /api/vurl/VID/KEY.json 42 vurlKey
+delete-vurl-key SUB1EVERY delete /api/vurl/VID/KEY.json 42 vurlKey ...
