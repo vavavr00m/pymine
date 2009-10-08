@@ -124,6 +124,13 @@ done <<EOF
 3 ben title6 this is body 5
 EOF
 
+# some vurls
+
+Minectl create-vurl vurlName=mine vurlLink=http://themineproject.org/
+Minectl create-vurl vurlName=alecm vurlLink=http://www.crypticide.com/dropsafe/
+Minectl create-vurl vurlName=adriana vurlLink=http://mediainfluencer.net/
+Minectl create-vurl vurlName=foo/bar vurlLink=http://www.google.com/
+
 ###
 # done
 

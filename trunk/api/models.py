@@ -21,7 +21,7 @@ from django.db import models, transaction
 from django.core.files.storage import FileSystemStorage
 from django.conf import settings
 
-import base58
+import base58.base58 as base58
 
 # important stuff for below
 
@@ -339,13 +339,13 @@ def s2m_tagimplies(s, sattr, m, mattr):
 
 def m2s_itemstatus(m, mattr, s, sattr):
     if mattr != 'status' or sattr != 'itemStatus':
-	raise RuntimeError, "s2m_itemtags is confused by %s and %s" % (sattr, mattr)
+	raise RuntimeError, "m2s_itemtags is confused by %s and %s" % (sattr, mattr)
     x = m.get_status_display()
     if x: s[sattr] = x
 
 def s2m_itemstatus(s, sattr, m, mattr):
     if mattr != 'status' or sattr != 'itemStatus':
-	raise RuntimeError, "m2s_itemtags is confused by %s and %s" % (sattr, mattr)
+	raise RuntimeError, "s2m_itemtags is confused by %s and %s" % (sattr, mattr)
     x = s[sattr]
 
     if x in status_lookup:
@@ -1146,7 +1146,7 @@ class Vurl(AbstractThing):
     sattr_prefix = "vurl"
 
     name = AbstractModelField.slug(unique=True)
-    link = AbstractModelField.text(unique=True) # TODO: does 'unique' work on this?
+    link = AbstractModelField.text(unique=True)
 
     def __unicode__(self):
 	return self.name
@@ -1154,12 +1154,40 @@ class Vurl(AbstractThing):
     class Meta:
 	ordering = ['-id']
 
-    def vurlkey():
-        return base58.b58encode(self.id)
-
     @classmethod
     def get_with_vurlkey(encoded):
         return Vurl.objects.get(id=base58.b58decode(encoded))
+
+    def vurlkey(self):
+        return base58.b58encode(self.id)
+
+    @transaction.commit_on_success # <- rollback if it raises an exception
+    def save(self):
+        redo = False
+
+        if not self.name:
+            redo = True
+            self.name = '__%s__' % 'temporary_random_string' # TBD FIX THIS !!!!!!!!!!!!!!!!
+
+        s = super(Vurl, self).save()
+
+        if redo:
+            self.name = '__%s__' % self.vurlkey()
+            s = super(Vurl, self).save()
+
+    def to_structure(self):
+        """
+        This is an abomination, but since m2s_foo above only allows
+        for a given mattr to map to a given sattr, and since vurl.id
+        is bound to vurlId, and since vurlKey is a restatement of
+        vurl.id in base58, we have no option but to kludge it in right
+        here as duplicate information.  It remains unsettable,
+        however...
+        """
+
+        s = super(Vurl, self).to_structure()
+        s['vurlKey'] = self.vurlkey()
+        return s
 
 ##################################################################
 ##################################################################
