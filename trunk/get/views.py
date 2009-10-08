@@ -24,9 +24,6 @@ from pymine.api.models import Tag, Item, Relation, Comment, Vurl
 
 from minekey import MineKey
 
-def base58_decode(encoded):
-    return 1
-
 ##################################################################
 
 ## rest: GET /get
@@ -57,7 +54,7 @@ def read_minekey(request, minekey, *args, **kwargs):
             el.close('item processed')
             return retval
         else: # feed
-            retval = HttpResponse("feed decoded: " + str(mk))
+            retval = HttpResponse("feed decode: " + str(mk))
             el.close('feed processed')
             return retval
 
@@ -84,7 +81,7 @@ def redirect_vid(request, vid, *args, **kwargs):
 ## function: redirect_vurlkey
 ## declared args: vurlkey
 def redirect_vurlkey(request, vurlkey, *args, **kwargs):
-    v = Vurl.objects.get(id=base58_decode(vid))
+    v = Vurl.get_with_vurlkey(vurlkey.encode('utf-8'))
     return HttpResponsePermanentRedirect(v.link.strip()) # issue 301 redirect
 
 ## rest: GET /get/v/SUFFIX

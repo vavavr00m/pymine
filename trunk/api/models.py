@@ -21,6 +21,8 @@ from django.db import models, transaction
 from django.core.files.storage import FileSystemStorage
 from django.conf import settings
 
+import base58
+
 # important stuff for below
 
 # magic storage for database items
@@ -1151,6 +1153,13 @@ class Vurl(AbstractThing):
 
     class Meta:
 	ordering = ['-id']
+
+    def vurlkey():
+        return base58.b58encode(self.id)
+
+    @classmethod
+    def get_with_vurlkey(encoded):
+        return Vurl.objects.get(id=base58.b58decode(encoded))
 
 ##################################################################
 ##################################################################
