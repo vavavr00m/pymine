@@ -15,7 +15,6 @@
 ## permissions and limitations under the License.
 ##
 
-
 # spec: http://www.flickr.com/groups/api/discuss/72157616713786392/
 
 b58chars = '123456789abcdefghijkmnopqrstuvwxyzABCDEFGHJKLMNPQRSTUVWXYZ'

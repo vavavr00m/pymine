@@ -1,28 +1,19 @@
-url hierarchy:
-	/ - root
-	/pub - public documents
-
-	/api - REST api
-
-	/ui - HTML user interface
-
-	/get - minekey access 
-	/r - redirection / tinyvurl (implemented in get.*)
-	/v - long vanity urls (implemented in get.*)
-
-	/ie - import/export
-
-
-
 - break out vanity urls model into /get?
 
 - allow comments on 0bject zero, by permitting NULL value for IID in Comment
 
-- extended attributes
-
 - pagination
+
+- extended attributes
 
 - hack gen-django-code.pl so that 
 	1) the IID==0 regexp is restricted to pertinent URLs
 	2) FMT for SATTRs can include "raw", different to FMT elsewhere
   ...these are the same problem
+
+
+- add s2m methods to model so that vurlLink gets stripped of whitespace.
+
+- fix sattr deletion in the model
+
+- what to do about relationship PKs being reusable?  ban deletion of Relations?
