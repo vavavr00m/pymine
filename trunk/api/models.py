@@ -569,7 +569,7 @@ class AbstractThing(AbstractModel):
 	    s2m_func(s, sattr, self, mattr)
 
 	# save the model
-	self.save()
+	self.save() # -> creates an id if there was not one before
 
 	# do the deferred (post-save) initialisation
 	needs_save = False
@@ -862,6 +862,33 @@ class Tag(AbstractThing):
 
     def __unicode__(self):
 	return self.name
+
+    def rethink_cloud(self):
+        print "rethink_cloud called"
+
+    def delete_sattr(self, sattr):
+        """
+        This method overrides AbstractThing.delete_sattr() and acts as
+        a hook to detect changes in the Tag implications that might
+        trigger a recalculation of the Tag cloud.
+        """
+
+        retval = super(Tag, self).update_from_request(r, **kwargs)
+        if sattr == 'tagImplies': 
+            self.rethink_cloud()
+        return retval
+
+    def update_from_request(self, r, **kwargs):
+        """
+        This method overrides AbstractThing.update_from_request() and
+        acts as a hook to detect changes in the Tag implications that
+        might trigger a recalculation of the Tag cloud.
+        """
+
+        retval = super(Tag, self).update_from_request(r, **kwargs)
+        if 'tagImplies' in r.REQUEST: 
+            self.rethink_cloud()
+        return retval
 
 ##################################################################
 
