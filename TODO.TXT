@@ -3,17 +3,18 @@ feed generation logic:
 # where X = the union of tag.cloud for each tag in relation.tags
 # the feed comprises:
 # (
-# all postings marked for:relation
+# items marked for:relation
 # so long as they are public or shared
 # +
-# all postings tagged FOO where FOO is in X 
+# items tagged FOO where FOO is in X 
 # so long as they are public
 # )
 # distinct
 # excluding any marked not:relation
+# excluding any matching "except:tag" from relation.excludes
+# excluding any NOT matching "require:tag" from relation.requires
 # excluding any that are currently hidden
 # sorted by most recently modified
-
 
 todo:
 
