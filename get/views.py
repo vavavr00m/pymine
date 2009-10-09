@@ -18,7 +18,6 @@
 from django.core.urlresolvers import reverse
 from django.http import Http404, HttpResponse, HttpResponsePermanentRedirect
 from django.shortcuts import render_to_response, get_object_or_404
-
 from django.db.models import Q
 
 import pymine.api.views as api
@@ -30,51 +29,50 @@ from minekey import MineKey
 ##################################################################
 ##################################################################
 
+# PRIORITIES:
+#
+# item.STATUS=PRIVATE trumps... 
+# item.HIDDEN_TIME trumps...
+# not:RELATION trumps...
+# [OOB MINEKEY ACCESS (PUBLIC|SHARED)>] trumps...
+# for:RELATION(PUBLIC|SHARED) trumps...
+# exclude:TAG trumps...
+# require:TAG trumps...
+# intersection of ITEM(PUBLIC).EXPANDEDTAGCLOUD and RELATION.INTERESTS.
+
 def demofeed(request, *args, **kwargs):
 
     # get RELATION
-
     r = Relation.objects.get(id=1)
 
-    # select (PUBLIC|SHARED) items marked FOR:RELATION
-
-    qs1 = r.items_explicitly_for.filter(Q(status='P') | Q(status='S'))
-
     # select PUBLIC items where ITEM.TAG_CLOUD intersects RELATION.INTERESTS
-
-    qs2 = Item.objects.none()
-
+    qs1 = Item.objects.none()
     # tbd
 
-    # add the two above, together
-
-    qs = qs1 | qs2
-
     # if RELATION.REQUIRES, reject items where ITEM.TAG_CLOUD fails to intersect it
-
     # tbd
 
     # reject items where ITEM.TAG_CLOUD intersects RELATION.EXCLUDES
-
     # tbd
 
-    # reject items marked not:relation
+    # select (PUBLIC|SHARED) items marked FOR:RELATION
+    qs2 = r.items_explicitly_for.filter(Q(status='P') | Q(status='S'))
 
+    # add the two above, together
+    qs = qs1 | qs2
+
+    # reject items marked NOT:RELATION
     # tbd
+
+    # reject items that are currently HIDDEN
+    # now=date()
+    # qs = qs.exclude(Q(hide_before__gt=now), Q(hide_after__lte=now))
+
+    # reject items that are PRIVATE
+    qs = qs.exclude(status='X')
 
     # distinct
-
     qs = qs.distinct()
-
-    # reject items that are currently hidden
-
-    # tbd
-    # now=date()
-    # qs = qs.exclude(Q(hide_before__le=now), Q(hide_after__ge=now))
-
-    # reject items that are private (extra security mugtrap)
-
-    qs = qs.exclude(status='X')
 
     # sort by most recently modified
 
