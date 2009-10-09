@@ -24,6 +24,13 @@ from pymine.api.models import Tag, Item, Relation, Comment, Vurl
 
 from minekey import MineKey
 
+
+def demofeed(request, *args, **kwargs):
+    retval = HttpResponse("demofeed")
+    return retval
+
+
+
 ##################################################################
 
 ## rest: GET /get
