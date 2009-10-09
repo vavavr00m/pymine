@@ -481,7 +481,7 @@ class AbstractThing(AbstractModel):
 (  'commentRelation',         'relation',         False,  r2s_string,  s2m_comrel,      m2s_comrel,      ),
 (  'commentTitle',            'title',            False,  r2s_string,  s2m_copy,        m2s_copy,        ),
 (  'itemCreated',             'created',          False,  None,        None,            m2s_date,        ),
-(  'itemData',                'data',             True,   None,        None,            None,            ),
+(  'itemData',                'data',             True,   None,        s2m_dummy,       None,            ),
 (  'itemDescription',         'description',      False,  r2s_string,  s2m_copy,        m2s_copy,        ),
 (  'itemHideAfter',           'hide_after',       False,  r2s_string,  s2m_date,        m2s_date,        ),
 (  'itemHideBefore',          'hide_before',      False,  r2s_string,  s2m_date,        m2s_date,        ),
@@ -896,7 +896,7 @@ class Tag(AbstractThing):
                         tmap[parent] = False
                         loop = True
 
-                print "%s is clouding %s" % (self.name, tag.name)
+                # print "%s is clouding %s" % (self.name, tag.name)
                 self.cloud.add(tag)
                 tmap[tag] = True
 
