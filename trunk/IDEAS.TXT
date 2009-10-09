@@ -1,15 +1,26 @@
-- amazon scraper
-- android badcode scanner -> "want to buy" list 
-- android camera image storage & sharing
-- android mine controller
-- blog replacement plugin
+done:
+- url shortener (MINE essential/builtin)
+
+soon:
+- atom/rss feed sucker / importer
 - delicious replacement plugin
+- last.fm scraper
+- store jpegs/scans of receipts
+- store jpegs/scans of recipes pages
+
+midterm:
+- amazon scraper
+- blog replacement plugin
 - flickr replacement plugin
 - geolocation aggregation plugin
 - identica plugin
-- last.fm scraper
-- ocr jpegs/scans of receipts
+
+longterm:
+- android badcode scanner -> "want to buy" list 
+- android camera image storage & sharing
+- ocr jpegs/scans of receipts: index your purchases
 - ocr jpegs/scans of recipes pages: instant keyword reference
-- store receipt jpegs/scans -> bookkeeping, sharing purchase history
+
+v2.0:
 - triangular feed access with crypto
-- url shortener (MINE essential/builtin)
+- android mine controller
