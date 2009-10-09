@@ -1,5 +1,9 @@
 #summary Mine REST API Reference
 
+
+*THIS PAGE IS OUT OF DATE AS OF OCTOBER 2009, UPDATES ARE PENDING*
+
+
 == Glossary ==
 
   * _iid_ = itemId, integer > 0
