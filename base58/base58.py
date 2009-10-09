@@ -17,25 +17,25 @@
 
 # spec: http://www.flickr.com/groups/api/discuss/72157616713786392/
 
-b58chars = '123456789abcdefghijkmnopqrstuvwxyzABCDEFGHJKLMNPQRSTUVWXYZ'
-b58base = len(b58chars) # mildly redundant
+__b58chars = '123456789abcdefghijkmnopqrstuvwxyzABCDEFGHJKLMNPQRSTUVWXYZ'
+__b58base = len(__b58chars) # let's not bother hard-coding
 
 def b58encode(value):
     encoded = ''
-    while value >= b58base:
-        div, mod = divmod(value, b58base)
-        encoded = b58chars[mod] + encoded # add to left
+    while value >= __b58base:
+        div, mod = divmod(value, __b58base)
+        encoded = __b58chars[mod] + encoded # add to left
         value = div
-    encoded = b58chars[value] + encoded # most significant remainder
+    encoded = __b58chars[value] + encoded # most significant remainder
     return encoded
 
 def b58decode(encoded):
     value = 0
     column_multiplier = 1;
     for c in encoded[::-1]:
-        column = b58chars.index(c)
+        column = __b58chars.index(c)
         value += column * column_multiplier
-        column_multiplier *= b58base
+        column_multiplier *= __b58base
     return value
 
 if __name__ == '__main__':

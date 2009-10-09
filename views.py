@@ -18,6 +18,7 @@
 from django.core.urlresolvers import reverse
 from django.http import Http404, HttpResponse, HttpResponseRedirect
 from django.shortcuts import render_to_response, get_object_or_404
+from django.conf import settings
 
 from api.models import LogEvent
 
@@ -110,7 +111,10 @@ def API_CALL(request, *args, **kwargs):
         dest = request.REQUEST['redirect_success']
         return HttpResponseRedirect(dest) # fast 302 redirect to page
     elif desired_format == 'raw':
-        mimetype="application/octet-stream"
+        if settings.DEBUG:
+            mimetype="text/plain" # so we can see what's going on
+        else:
+            mimetype="application/octet-stream"
         data = str(retval.get('result', ''))
     elif desired_format == 'xml':
         mimetype="application/xml"

@@ -11,6 +11,7 @@ clean:
 
 clobber: clean
 	rm database/*/sqlite3.db
+	rm -r database/*/files/
 
 perms:
 	chmod 644 `find . -type f`
