@@ -333,6 +333,16 @@ def s2m_tagimplies(s, sattr, m, mattr):
 
 ##################################################################
 
+# itemParent if a ForeignKey parent, set to non-null for clones
+
+def m2s_itemparent(m, mattr, s, sattr):
+    if mattr != 'parent' or sattr != 'itemParent':
+	raise RuntimeError, "m2s_itemtags is confused by %s and %s" % (sattr, mattr)
+    x = m.parent
+    if x: s[sattr] = x.name
+
+##################################################################
+
 # itemStatus is a multi-choice field; the s-space representation of
 # itemStatus ('public', 'shared', 'private') must be mapped back and
 # forth to the single characters which are held in item.status
@@ -488,6 +498,7 @@ class AbstractThing(AbstractModel):
 (  'itemId',                  'id',               False,  r2s_int,     s2m_copy,        m2s_copy,        ),
 (  'itemLastModified',        'last_modified',    False,  None,        None,            m2s_date,        ),
 (  'itemName',                'name',             False,  r2s_string,  s2m_copy,        m2s_copy,        ),
+(  'itemParent',              'parent',           False,  None,        None,            m2s_itemparent,  ),
 (  'itemStatus',              'status',           False,  r2s_string,  s2m_itemstatus,  m2s_itemstatus,  ),
 (  'itemTags',                'tags',             True,   r2s_string,  s2m_itemtags,    m2s_itemtags,    ),
 (  'itemType',                'content_type',     False,  r2s_string,  s2m_copy,        m2s_copy,        ),
@@ -501,16 +512,18 @@ class AbstractThing(AbstractModel):
 (  'relationName',            'name',             False,  r2s_string,  s2m_copy,        m2s_copy,        ),
 (  'relationNetworkPattern',  'network_pattern',  False,  r2s_string,  s2m_copy,        m2s_copy,        ),
 (  'relationVersion',         'version',          False,  r2s_string,  s2m_copy,        m2s_copy,        ),
+(  'tagCloud',                'cloud',            True,   None,        None,            m2s_tagcloud,    ),
 (  'tagCreated',              'created',          False,  None,        None,            m2s_date,        ),
 (  'tagDescription',          'description',      False,  r2s_string,  s2m_copy,        m2s_copy,        ),
 (  'tagId',                   'id',               False,  r2s_int,     s2m_copy,        m2s_copy,        ),
-(  'tagCloud',                'cloud',            True,   None,        None,            m2s_tagcloud,    ),
 (  'tagImplies',              'implies',          True,   r2s_string,  s2m_tagimplies,  m2s_tagimplies,  ),
 (  'tagLastModified',         'last_modified',    False,  None,        None,            m2s_date,        ),
 (  'tagName',                 'name',             False,  r2s_string,  s2m_copy,        m2s_copy,        ),
 (  'thingId',                 'id',               False,  r2s_int,     s2m_copy,        m2s_copy,        ),
+(  'vurlAbsoluteUrl',         None,               True,   None,        None,            None,            ),  #see:Vurl()
 (  'vurlCreated',             'created',          False,  None,        None,            m2s_date,        ),
 (  'vurlId',                  'id',               False,  r2s_int,     s2m_copy,        m2s_copy,        ),
+(  'vurlKey',                 None,               True,   None,        None,            None,            ),  #see:Vurl()
 (  'vurlLastModified',        'last_modified',    False,  None,        None,            m2s_date,        ),
 (  'vurlLink',                'link',             False,  r2s_string,  s2m_copy,        m2s_copy,        ),
 (  'vurlName',                'name',             False,  r2s_string,  s2m_copy,        m2s_copy,        ),
@@ -560,8 +573,8 @@ class AbstractThing(AbstractModel):
 
     # it is used as a backend by new_from_request() [which creates a
     # blank model instance, then updates it from the request] *and* by
-    # clone_from_request() [which creates a blank Item, clones it from
-    # the old one, then updates it from the request]
+    # Item.clone_from_request() [which creates a blank Item, clones it
+    # from the old one, then updates it from the request]
 
     @transaction.commit_on_success # <- rollback if it raises an exception
     def update_from_request(self, r, **kwargs):
@@ -728,6 +741,10 @@ class AbstractThing(AbstractModel):
             s[k] = v
 
 	return s
+
+    def get_absolute_url(self):
+        fmt = 'raw' # TBD
+        return '/api/%s/%d.%s' % (self.sattr_prefix, self.id, fmt)
 
 ##################################################################
 ##################################################################
@@ -1066,19 +1083,23 @@ class Item(AbstractThing):
     def __unicode__(self):
 	return self.name
 
-    # cloning an item, as described above
-
+    # cloning an item
     def clone_from_request(self, r, **kwargs):
-	if self.sattr_prefix != 'item':
-	    raise RuntimeError, "clone_from_request called on non-item"
+	margs = {
+            name: self.name,
+            content_type: self.content,
+            data: self.data,
+            description: self.description,
+            hide_after: self.hide,
+            hide_before: self.hide,
+            item_for_relations: self.item,
+            item_not_relations: self.item,
+            parent: self,
+            status: self.status,
+            tags: self.tags,
+            }
 
-	instantiator = self.s_classes[self.sattr_prefix]
-
-	margs = {}
-
-	m = instantiator(**margs)
-
-	### XXX: TBD: clone self to m here
+	m = item(**margs)
 
 	return m.update_from_request(r, **kwargs)
 
@@ -1138,10 +1159,11 @@ class VurlXattr(AbstractXattr):
 
 class Vurl(AbstractThing):
 
-    """The Vurl (VanityURL) model implements a TinyURL-like concept,
-    allowing arbitrary cookies to map to much longer URLs, indexable
-    either by 'name' or 'index' (suitably compressed) ; it also
-    provides for much elective, longer token names to be used"""
+    """The Vurl (Vanity URL) model implements URL-shortening and
+    remapping, allowing arbitrary cookies to map to much longer URLs,
+    indexable by table-id, "key" (table-id encoded under base58) and
+    "name", which provides for much elective, longer token names to be
+    used"""
 
     sattr_prefix = "vurl"
 
@@ -1177,16 +1199,17 @@ class Vurl(AbstractThing):
 
     def to_structure(self):
         """
-        This is an abomination, but since m2s_foo above only allows
-        for a given mattr to map to a given sattr, and since vurl.id
+        This is an abomination, but... since m2s_foo above only allows
+        for a single mattr to map to a single sattr, and since vurl.id
         is bound to vurlId, and since vurlKey is a restatement of
-        vurl.id in base58, we have no option but to kludge it in right
-        here as duplicate information.  It remains unsettable,
-        however...
+        vurl.id in base58, and since it is permanent and readonly, we
+        have no option but to kludge it in right here as duplicate
+        information.  It remains unsettable, however...
         """
-
+        vk = self.vurlkey()
         s = super(Vurl, self).to_structure()
-        s['vurlKey'] = self.vurlkey()
+        s['vurlKey'] = vk
+        s['vurlPath'] = "/get/r/%s" % vk
         return s
 
 ##################################################################
