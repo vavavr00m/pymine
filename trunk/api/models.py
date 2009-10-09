@@ -390,8 +390,8 @@ def s2m_itemtags(s, sattr, m, mattr):
         m.item_for_relations.clear()
         m.item_not_relations.clear()
 	for x in s[sattr].split():
-	    if x.startswith('for:'): m.item_for_relations.add(Tag.objects.get(name=x[4:]))
-	    elif x.startswith('not:'): m.item_not_relations.add(Tag.objects.get(name=x[4:]))
+	    if x.startswith('for:'): m.item_for_relations.add(Relation.objects.get(name=x[4:]))
+	    elif x.startswith('not:'): m.item_not_relations.add(Relation.objects.get(name=x[4:]))
 	    else: m.tags.add(Tag.objects.get(name=x))
 
 ##################################################################

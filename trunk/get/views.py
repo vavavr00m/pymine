@@ -24,13 +24,47 @@ from pymine.api.models import Tag, Item, Relation, Comment, Vurl
 
 from minekey import MineKey
 
+##################################################################
+##################################################################
+##################################################################
 
 def demofeed(request, *args, **kwargs):
-    retval = HttpResponse("demofeed")
-    return retval
 
+    r = Relation.objects.get(id=1)
 
+    # where X = the union of tag.cloud for each tag in relation.tags
+    for rtag in r.tags.all():
+	for ctag in rtag.cloud.all():
+	    x[ctag] = True
 
+    # the feed comprises:
+    # (
+    # items marked for:relation
+    # so long as they are public or shared
+    # +
+    # items tagged FOO where FOO is in X
+    # so long as they are public
+    # )
+    # distinct
+    # excluding any marked not:relation
+    # excluding any matching "except:tag" from relation.excludes
+    # excluding any NOT matching "require:tag" from relation.requires
+    # excluding any that are currently hidden
+    # excluding any that are private ## MUGTRAP
+    # sorted by most recently modified
+
+    qs = Item.objects.order_by('-name')
+
+    # dump it as a list
+    result = [ item.to_structure() for item in qs ]
+    s = { 'result': result,
+          'status': 'this is a fake page for demofeed',
+          'exit': 0,
+          }
+    return render_to_response('list-items.html', s)
+
+##################################################################
+##################################################################
 ##################################################################
 
 ## rest: GET /get
@@ -49,26 +83,26 @@ def read_minekey(request, minekey, *args, **kwargs):
 
     # big wrapper for all possible exceptions
     try:
-        # parse it out (basic validation performed)
-        mk = MineKey.parse(minekey)
+	# parse it out (basic validation performed)
+	mk = MineKey.parse(minekey)
 
-        # extended validation
-        mk.validate_against(request, 'get')
+	# extended validation
+	mk.validate_against(request, 'get')
 
-        # deal with it
-        if mk.iid: # item
-            retval = api.read_item_data(None, mk.iid)
-            el.close('item processed')
-            return retval
-        else: # feed
-            retval = HttpResponse("feed decode: " + str(mk))
-            el.close('feed processed')
-            return retval
+	# deal with it
+	if mk.iid: # item
+	    retval = api.read_item_data(None, mk.iid)
+	    el.close('item processed')
+	    return retval
+	else: # feed
+	    retval = HttpResponse("feed decode: " + str(mk))
+	    el.close('feed processed')
+	    return retval
 
     # catch all
     except Exception, e:
-        el.close_error(str(e))
-        raise
+	el.close_error(str(e))
+	raise
 
 ## rest: POST /get/MINEKEY
 ## function: submit_minekey

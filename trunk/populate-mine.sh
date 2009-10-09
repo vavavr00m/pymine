@@ -40,7 +40,7 @@ Minectl new-tags chardonnay:white-wine rioja:red-wine
 Minectl new-tags red-burgundy:red-wine white-burgundy:white-wine burgundy:red-wine,white-wine # latter->both
 
 # set up some relations
-Minectl new-relation alec 1 "Alec Muffett" food drink animals themineproject
+Minectl new-relation alec 1 "Alec Muffett" food drink except:spirits animals themineproject
 Minectl new-relation adriana 1 "Adriana Lukas" food drink shoes cats motorcycles themineproject
 Minectl new-relation carrie 1 "Carrie Bishop" food drink sneakers themineproject 
 Minectl new-relation ben 1 "Ben Laurie" food drink cats motorcycles
@@ -84,6 +84,45 @@ Minectl create-vurl vurlName=adriana vurlLink=http://mediainfluencer.net/
 Minectl create-vurl vurlName=foo/bar vurlLink=http://www.google.com/
 Minectl create-vurl vurlLink=http://www.google.co.uk/ # autoname
 
-# done
+# custom objects for feed testing
 
+file=static/testdata/austen.txt
+
+while read status tags
+do
+    desc="status=$status tags=$tags"
+
+    Minectl create-item \
+	"itemData=@$file" \
+	"itemDescription=..." \
+	"itemName=$desc" \
+	"itemStatus=$status" \
+	"itemTags=$tags" \
+	"itemType=text/plain"
+
+done <<EOF
+private for:adriana
+private for:alec
+private for:ben
+private for:carrie
+private for:perry
+public animals
+public food not:carrie
+public for:adriana
+public for:alec
+public for:ben
+public for:carrie
+public for:carrie not:ben
+public for:carrie not:carrie
+public for:perry
+public red-burgundy not:perry
+public rioja
+shared for:adriana
+shared for:alec
+shared for:ben
+shared for:carrie
+shared for:perry
+EOF
+
+# done
 exit 0

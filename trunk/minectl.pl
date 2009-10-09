@@ -291,11 +291,13 @@ while (<DATA>) {
 
 	foreach my $filename (@ARGV) {
 	    my $filetype = &mime_type($filename);
+	    $itemname = $filename;
+	    $itemname =~ s!^.*/!!o;
 	    my @cmdargs = (
 		"itemData=\@$filename",
-		"itemName=$filename",
+		"itemName=$itemname",
 		"itemType=$filetype",
-		"itemDescription=bulk-uploaded file, sourced from $filename"
+		"itemDescription=auto-uploaded from $filename"
 		);
 
 	    if (defined($status)) {
