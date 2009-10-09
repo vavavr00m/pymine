@@ -19,6 +19,8 @@ from django.core.urlresolvers import reverse
 from django.http import Http404, HttpResponse, HttpResponsePermanentRedirect
 from django.shortcuts import render_to_response, get_object_or_404
 
+from django.db.models import Q
+
 import pymine.api.views as api
 from pymine.api.models import Tag, Item, Relation, Comment, Vurl
 
@@ -30,37 +32,68 @@ from minekey import MineKey
 
 def demofeed(request, *args, **kwargs):
 
+    # get RELATION
+
     r = Relation.objects.get(id=1)
 
-    # where X = the union of tag.cloud for each tag in relation.tags
-    for rtag in r.tags.all():
-	for ctag in rtag.cloud.all():
-	    x[ctag] = True
+    # select (PUBLIC|SHARED) items marked FOR:RELATION
 
-    # the feed comprises:
-    # (
-    # items marked for:relation
-    # so long as they are public or shared
-    # +
-    # items tagged FOO where FOO is in X
-    # so long as they are public
-    # )
+    qs1 = r.items_explicitly_for.filter(Q(status='P') | Q(status='S'))
+
+    # select PUBLIC items where ITEM.TAG_CLOUD intersects RELATION.INTERESTS
+
+    qs2 = Item.objects.none()
+
+    # tbd
+
+    # add the two above, together
+
+    qs = qs1 | qs2
+
+    # if RELATION.REQUIRES, reject items where ITEM.TAG_CLOUD fails to intersect it
+
+    # tbd
+
+    # reject items where ITEM.TAG_CLOUD intersects RELATION.EXCLUDES
+
+    # tbd
+
+    # reject items marked not:relation
+
+    # tbd
+
     # distinct
-    # excluding any marked not:relation
-    # excluding any matching "except:tag" from relation.excludes
-    # excluding any NOT matching "require:tag" from relation.requires
-    # excluding any that are currently hidden
-    # excluding any that are private ## MUGTRAP
-    # sorted by most recently modified
 
-    qs = Item.objects.order_by('-name')
+    qs = qs.distinct()
+
+    # reject items that are currently hidden
+
+    # tbd
+    # now=date()
+    # qs = qs.exclude(Q(hide_before__le=now), Q(hide_after__ge=now))
+
+    # reject items that are private (extra security mugtrap)
+
+    qs = qs.exclude(status='X')
+
+    # sort by most recently modified
+
+    qs = qs.order_by('-last_modified')
+
+    # snark
+
+    print qs.query
 
     # dump it as a list
+
     result = [ item.to_structure() for item in qs ]
-    s = { 'result': result,
-          'status': 'this is a fake page for demofeed',
-          'exit': 0,
-          }
+
+    s = {
+	'result': result,
+	'status': 'this is a fake page for demofeed',
+	'exit': 0,
+	}
+
     return render_to_response('list-items.html', s)
 
 ##################################################################
