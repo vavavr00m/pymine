@@ -1,34 +1,29 @@
-feed generation logic:
-
-# where X = the union of tag.cloud for each tag in relation.tags
-# the feed comprises:
-# (
-# items marked for:relation
-# so long as they are public or shared
-# +
-# items tagged FOO where FOO is in X 
-# so long as they are public
-# )
-# distinct
-# excluding any marked not:relation
-# excluding any matching "except:tag" from relation.excludes
-# excluding any NOT matching "require:tag" from relation.requires
-# excluding any that are currently hidden
-# sorted by most recently modified
-
 todo:
 
 - break out vanity urls model into /get?
-- allow comments on 0bject zero, by permitting NULL value for IID in Comment
-- pagination
-- extended attributes
-- hack gen-django-code.pl so that 
 
+- allow comments on 0bject zero, by permitting NULL value for IID in Comment
+
+- pagination
+
+- hack gen-django-code.pl so that 
 	1) the IID==0 regexp is restricted to pertinent URLs
 	2) FMT for SATTRs can include "raw", different to FMT elsewhere
-
   ...these are the same problem
 
 - add s2m methods to model so that vurlLink gets stripped of whitespace.
+
 - fix sattr deletion in the model
-- what to do about relationship PKs being reusable?  ban deletion of Relations?
+
+- what to do about relationship PKs being reusable?  
+  ban deletion of Relations?
+  boolean mark Relations as deleted/inactivated?
+
+- leverage Vurls to create mechanism for Item in Mine to insert
+  third-party IRL into list of feed permalinks; first step towards
+  distributed mine, and allows your feed to contain references to
+  third-party objects
+
+- extra Item sattrs:
+	itemFeedBody(required=False) - what gets put into the feed body
+	itemFeedPermalink(required=False) - what gets put into feed permalink
