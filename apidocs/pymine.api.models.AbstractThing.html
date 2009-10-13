@@ -1,0 +1,192 @@
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+  "DTD/xhtml1-strict.dtd">
+<html>
+  <head>
+    <title>API docs for &ldquo;pymine.api.models.AbstractThing&rdquo;</title>
+    <meta content="text/html;charset=utf-8" http-equiv="Content-Type" />
+    <link href="apidocs.css" type="text/css" rel="stylesheet" />
+    
+    
+  </head>
+  <body>
+    <h1 class="class">Class p.a.m.AbstractThing(<a href="pymine.api.models.AbstractModel.html">AbstractModel</a>):</h1>
+    <p>
+      <span id="part">Part of <a href="pymine.html">pymine</a>.<a href="pymine.api.html">api</a>.<a href="pymine.api.models.html">models</a></span>
+      
+      <a href="classIndex.html#pymine.api.models.AbstractThing">View In Hierarchy</a>
+    </p>
+    <div>
+      <p>Known subclasses: <a href="pymine.api.models.Comment.html">pymine.api.models.Comment</a>, <a href="pymine.api.models.Item.html">pymine.api.models.Item</a>, <a href="pymine.api.models.Relation.html">pymine.api.models.Relation</a>, <a href="pymine.api.models.Tag.html">pymine.api.models.Tag</a>, <a href="pymine.api.models.Vurl.html">pymine.api.models.Vurl</a></p>
+    </div>
+    <div>The AbstractThing class is a abstract model class that exists to provide
+a few common methods to the core Mine models.</p>
+<p>It's obviously easy to 'get' or 'set' the fields of a model instance 
+because you can always do &quot;m.field = foo&quot; or something</p>
+<p>What we need to do is:</p>
+<p>1) get the svalue of a sattr that's associated with some model's 
+corresponding mattr</p>
+<p>2) empty/nullify the mattr that corresponds with a model's sattr</p>
+<p>3) create or update, from information held in a HttpRequest 
+(r-space)</p>
+<p>4) return an entire s-structure populated from a model</p>
+<p>Methods are provided below in Thing() to permit the above and then are 
+inherited by most of the Mine models; for this to work there needs to be a 
+small amount of linker logic to bypass major circular dependencies, and 
+that's provided at the end of this file.<table class="fieldTable"></table></div>
+    
+    
+    <div id="splitTables">
+      <table class="children sortable" id="id8">
+  
+  
+  
+  
+  <tr class="class">
+    
+    
+    <td>Class</td>
+    <td><a href="pymine.api.models.AbstractThing.Meta.html">Meta</a></td>
+    <td><span class="undocumented">Undocumented</span></td>
+  </tr><tr class="method">
+    
+    
+    <td>Method</td>
+    <td><a href="pymine.api.models.AbstractThing.html#update_from_request">update_from_request</a></td>
+    <td><span class="undocumented">Undocumented</span></td>
+  </tr><tr class="classmethod">
+    
+    
+    <td>Class Method</td>
+    <td><a href="pymine.api.models.AbstractThing.html#new_from_request">new_from_request</a></td>
+    <td><span class="undocumented">Undocumented</span></td>
+  </tr><tr class="method">
+    
+    
+    <td>Method</td>
+    <td><a href="pymine.api.models.AbstractThing.html#lookup_mattr">lookup_mattr</a></td>
+    <td><span class="undocumented">Undocumented</span></td>
+  </tr><tr class="method">
+    
+    
+    <td>Method</td>
+    <td><a href="pymine.api.models.AbstractThing.html#get_sattr">get_sattr</a></td>
+    <td><span class="undocumented">Undocumented</span></td>
+  </tr><tr class="method">
+    
+    
+    <td>Method</td>
+    <td><a href="pymine.api.models.AbstractThing.html#delete_sattr">delete_sattr</a></td>
+    <td><span class="undocumented">Undocumented</span></td>
+  </tr><tr class="method">
+    
+    
+    <td>Method</td>
+    <td><a href="pymine.api.models.AbstractThing.html#to_structure">to_structure</a></td>
+    <td><span class="undocumented">Undocumented</span></td>
+  </tr><tr class="method">
+    
+    
+    <td>Method</td>
+    <td><a href="pymine.api.models.AbstractThing.html#get_absolute_url">get_absolute_url</a></td>
+    <td><span class="undocumented">Undocumented</span></td>
+  </tr>
+  
+</table>
+      
+      
+    </div>
+    
+    
+    
+    <div class="function">
+        <a name="pymine.api.models.AbstractThing.update_from_request"></a>
+        <a name="update_from_request"></a>
+        <div class="functionHeader">
+        @transaction.commit_on_success<br />
+        def update_from_request(self, r, **kwargs):
+        
+      </div>
+        <div class="functionBody">
+          <div class="interfaceinfo">overridden in <a href="pymine.api.models.Tag.html">pymine.api.models.Tag</a></div>
+          <div class="undocumented">Undocumented</div>
+        </div>
+      </div><div class="function">
+        <a name="pymine.api.models.AbstractThing.new_from_request"></a>
+        <a name="new_from_request"></a>
+        <div class="functionHeader">
+        @classmethod<br />
+        def new_from_request(self, r, **kwargs):
+        
+      </div>
+        <div class="functionBody">
+          
+          <div class="undocumented">Undocumented</div>
+        </div>
+      </div><div class="function">
+        <a name="pymine.api.models.AbstractThing.lookup_mattr"></a>
+        <a name="lookup_mattr"></a>
+        <div class="functionHeader">
+        
+        def lookup_mattr(self, sattr):
+        
+      </div>
+        <div class="functionBody">
+          
+          <div class="undocumented">Undocumented</div>
+        </div>
+      </div><div class="function">
+        <a name="pymine.api.models.AbstractThing.get_sattr"></a>
+        <a name="get_sattr"></a>
+        <div class="functionHeader">
+        
+        def get_sattr(self, sattr):
+        
+      </div>
+        <div class="functionBody">
+          
+          <div class="undocumented">Undocumented</div>
+        </div>
+      </div><div class="function">
+        <a name="pymine.api.models.AbstractThing.delete_sattr"></a>
+        <a name="delete_sattr"></a>
+        <div class="functionHeader">
+        @transaction.commit_on_success<br />
+        def delete_sattr(self, sattr):
+        
+      </div>
+        <div class="functionBody">
+          <div class="interfaceinfo">overridden in <a href="pymine.api.models.Tag.html">pymine.api.models.Tag</a></div>
+          <div class="undocumented">Undocumented</div>
+        </div>
+      </div><div class="function">
+        <a name="pymine.api.models.AbstractThing.to_structure"></a>
+        <a name="to_structure"></a>
+        <div class="functionHeader">
+        
+        def to_structure(self):
+        
+      </div>
+        <div class="functionBody">
+          <div class="interfaceinfo">overridden in <a href="pymine.api.models.Vurl.html">pymine.api.models.Vurl</a></div>
+          <div class="undocumented">Undocumented</div>
+        </div>
+      </div><div class="function">
+        <a name="pymine.api.models.AbstractThing.get_absolute_url"></a>
+        <a name="get_absolute_url"></a>
+        <div class="functionHeader">
+        
+        def get_absolute_url(self):
+        
+      </div>
+        <div class="functionBody">
+          
+          <div class="undocumented">Undocumented</div>
+        </div>
+      </div>
+    
+    <address>
+      <a href="index.html">API Documentation</a> for pymine, generated by <a href="http://codespeak.net/~mwh/pydoctor/">pydoctor</a> at 2009-10-13 14:18:03.
+    </address>
+  </body>
+</html>

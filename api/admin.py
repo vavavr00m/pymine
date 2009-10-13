@@ -68,7 +68,7 @@ class RelationAdmin(admin.ModelAdmin):
     fieldsets = [
         (None, {'fields': ['name', 'version', 'description']}), 
         ('Tags', {'fields': ['tags', 'tags_required', 'tags_excluded']}), 
-        ('Access Control', {'fields': ['embargo_before', 'embargo_after', 'network_pattern'], 'classes': ['collapse']}), 
+        ('Advanced', {'fields': ['network_pattern', 'embargo_before', 'embargo_after'], 'classes': ['collapse']}), 
         ]
 
 admin.site.register(Relation, RelationAdmin)
@@ -83,7 +83,7 @@ class ItemAdmin(admin.ModelAdmin):
     fieldsets = [
         (None, {'fields': ['name', 'status', 'data', 'content_type', 'description']}), 
         ('Tags', {'fields': ['tags', 'item_for_relations', 'item_not_relations']}), 
-        ('Access Control', {'fields': ['hide_before', 'hide_after'], 'classes': ['collapse']}), 
+        ('Advanced', {'fields': ['feed_link', 'hide_before', 'hide_after'], 'classes': ['collapse']}), 
         ]
 
 admin.site.register(Item, ItemAdmin)
