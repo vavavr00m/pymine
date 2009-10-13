@@ -76,7 +76,7 @@ admin.site.register(Relation, RelationAdmin)
 ##################################################################
 
 class ItemAdmin(admin.ModelAdmin):
-    list_display = ('name', 'status', 'content_type', 'last_modified', 'created')
+    list_display = ('name', 'status', 'content_type', 'last_modified', 'created', 'hide_before', 'hide_after')
     search_fields = ['name', 'description']
     list_filter = ['created']
     date_hierarchy = 'created'
