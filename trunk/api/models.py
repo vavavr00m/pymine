@@ -544,6 +544,7 @@ class AbstractThing(AbstractModel):
 (  'itemLastModified',        'last_modified',    False,  None,        None,            m2s_date,        ),
 (  'itemName',                'name',             False,  r2s_string,  s2m_copy,        m2s_copy,        ),
 (  'itemParent',              'parent',           False,  None,        None,            m2s_itemparent,  ),
+(  'itemSize',                None,               True,   None,        None,            None,            ),  #see:Item()
 (  'itemStatus',              'status',           False,  r2s_string,  s2m_itemstatus,  m2s_itemstatus,  ),
 (  'itemTags',                'tags',             True,   r2s_string,  s2m_itemtags,    m2s_itemtags,    ),
 (  'itemType',                'content_type',     False,  r2s_string,  s2m_copy,        m2s_copy,        ),
@@ -1210,6 +1211,16 @@ class Item(AbstractThing):
 	name = str(self.id) + '.' + f.name
 	self.data.save(name, f)
 
+    def to_structure(self):
+	"""
+        Splices the virtual itemSize sattr into the Item structure
+	"""
+
+	s = super(Item, self).to_structure()
+	s['itemSize'] = self.data.size
+	return s
+
+
 ##################################################################
 
 class CommentXattr(AbstractXattr):
@@ -1308,12 +1319,13 @@ class Vurl(AbstractThing):
 
     def to_structure(self):
 	"""
-	This is an abomination, but... since m2s_foo above only allows
-	for a single mattr to map to a single sattr, and since vurl.id
-	is bound to vurlId, and since vurlKey is a restatement of
-	vurl.id in base58, and since it is permanent and readonly, we
-	have no option but to kludge it in right here as duplicate
-	information.  It remains unsettable, however...
+        Splices the virtual vurlKey/vurlPath sattrs into the Vurl
+	structure; since m2s_foo above only allows for a single mattr
+	to map to a single sattr, and since vurl.id is bound to
+	vurlId, and since vurlKey is a restatement of vurl.id in
+	base58, and since the vurlId is permanent and readonly, we
+	have no real option but to kludge this right here as duplicate
+	information.
 	"""
 
 	vk = self.vurlkey()
