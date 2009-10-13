@@ -23,6 +23,8 @@ from django.db.models import Q
 import pymine.api.views as api
 from pymine.api.models import Tag, Item, Relation, Comment, Vurl
 
+from datetime import datetime
+
 from minekey import MineKey
 
 ##################################################################
@@ -31,7 +33,7 @@ from minekey import MineKey
 
 # PRIORITIES:
 #
-# item.STATUS=PRIVATE trumps... 
+# item.STATUS=PRIVATE trumps...
 # item.HIDDEN_TIME trumps...
 # not:RELATION trumps...
 # [MINEKEY DIRECT ACCESS (PUBLIC|SHARED)>] trumps...
@@ -43,63 +45,49 @@ from minekey import MineKey
 
 def demofeed(request, *args, **kwargs):
 
-    # the probelm with coding this is that my interests are specific,
-    # the clouding of tags is generalised and has implications which
-    # may intersect my interests, or may not.
+    rid = 2
+    relation = Relation.objects.select_related(depth=2).get(id=rid)
 
-    # get RELATION
-    r = Relation.objects.get(id=1)
+    now = datetime.now()
+    interests = relation.interests.all()
+    loves = relation.interests_required.all()
+    hates = relation.interests_excluded.all()
 
+    public_items = Item.objects.filter(status='P').select_related(depth=1)
 
-    # for interest in [ x.id for x in t.tags ]:
-        
+    candidate_iids = []
 
+    for item in public_items.all():
+	for item_tag in item.tags.all():
+	    item_cloud = item_tag.cloud.all()
+	    if item_cloud & hates:
+		break
+	    if loves and not (item_cloud & loves):
+		break
+	    if item_cloud & interests:
+		candidate_iids.append(item.id)
+		break
 
-
-
-
-
-
-    # select PUBLIC items where ITEM.TAG_CLOUD intersects RELATION.INTERESTS
-    qs1 = Item.objects.none()
-    
-
-    # tbd
-
-    # if RELATION.REQUIRES, reject items where ITEM.TAG_CLOUD fails to intersect it
-    # tbd
-
-    # reject items where ITEM.TAG_CLOUD intersects RELATION.EXCLUDES
-    # tbd
-
-    # select (PUBLIC|SHARED) items marked FOR:RELATION
-    qs2 = r.items_explicitly_for.filter(Q(status='P') | Q(status='S'))
-
-    # add the two above, together
+    qs1 = public_items.filter(id__in=candidate_iids)
+    qs2 = relation.items_explicitly_for.filter(Q(status='P') | Q(status='S'))
     qs = qs1 | qs2
-
-    # reject items marked NOT:RELATION
-    # tbd
-
-    # reject items that are currently HIDDEN
-    # now=date()
-    # qs = qs.exclude(Q(hide_before__gt=now), Q(hide_after__lte=now))
-
-    # reject items that are PRIVATE
-    qs = qs.exclude(status='X')
-
-    # distinct
     qs = qs.distinct()
-
-    # sort by most recently modified
+    qs = qs.exclude(status='X') # should be redundant
     qs = qs.order_by('-last_modified')
 
-    # snark
-    print qs.query
+    # reject items marked not:relation 
+    # i wish i could do qs = qs - blacklist
+    blacklist = relation.items_explicitly_not.values_list('id', flat=True)
+    qs = qs.exclude(id__in=blacklist)
+
+    # reject items that are currently hidden
+    qs = qs.exclude(hide_after__isnull=False, hide_after__lte=now)
+    qs = qs.exclude(hide_before__isnull=False, hide_before__gt=now)
 
     # dump it as a list
     result = [ item.to_structure() for item in qs ]
 
+    # envelope
     s = {
 	'result': result,
 	'status': 'this is a fake page for demofeed',

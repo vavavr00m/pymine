@@ -972,74 +972,85 @@ class Tag(AbstractThing):
     def __update_cloud_field(self):
 	""" """
 
+        # wipe our cloud cache
 	self.cloud.clear()
 
-	tmap = { self: False }
-	loop = True # get us into the processing loop
+        # get us into the processing loop
+	tgraph = { self: False }
+	loop = True 
 
+        # until we make a pass thru tgraph where nothing happens
 	while loop:
-	    loop = False
 
-	    for tag, tag_done in tmap.items():
-		if tag_done:
+            # default: we won't go round again
+	    loop = False 
+
+            # for each tag in tgraph
+	    for tag, visited in tgraph.items():
+
+                # if we've already exploded it, skip to next
+		if visited: 
 		    continue
 
+                # register all the unvisited parents into tgraph
 		for parent in tag.implies.all():
-		    if not tmap.get(parent, False):
-			tmap[parent] = False
-			loop = True
+		    if not tgraph.get(parent, False):
+			tgraph[parent] = False
+			loop = True # mark more work to be done
 
-		# print "%s is clouding %s" % (self.name, tag.name)
+                # add this tag to the cloud
 		self.cloud.add(tag)
-		tmap[tag] = True
+
+                # mark current tag as 'visited'
+		tgraph[tag] = True
 
 	self.save() # needed?
 
-    def __update_cloud_map(self, tmap):
+    def __update_cloud_graph(self, tgraph):
 	"""
 	I could try ripping out the list of tags just once (avoiding
-	~n! database hits) and reconstructing the map from that, but
+	~n! database hits) and reconstructing the graph from that, but
 	if they change on disk underneath me then something nasty can
 	happen; better to let caching at a lower level take the hit...
 	"""
 
 	# update all the tags with this data
-	for tag in tmap.keys():
+	for tag in tgraph.keys():
 	    tag = Tag.objects.get(id=tag.id) # potentially dirty, reload
 	    tag.__update_cloud_field()
 
-    def __expand_cloud_map(self):
+    def __expand_cloud_graph(self):
 	"""
 	This is brute-force and ignorance code but it is proof against loops.
 	"""
 
-	tmap = { self: False }
+	tgraph = { self: False }
 
 	if not self.id:
-	    return tmap # we are not yet in the database
+	    return tgraph # we are not yet in the database
 
 	loop = True # get us into the processing loop
 
 	while loop:
 	    loop = False
 
-	    for tag, tag_done in tmap.items():
-		if tag_done:
+	    for tag, visited in tgraph.items():
+		if visited:
 		    continue
 
 		for parent in tag.implies.all():
-		    if not tmap.get(parent, False):
-			tmap[parent] = False
+		    if not tgraph.get(parent, False):
+			tgraph[parent] = False
 			loop = True
 
 		for child in tag.implied_by.all():
-		    if not tmap.get(child, False):
-			tmap[child] = False
+		    if not tgraph.get(child, False):
+			tgraph[child] = False
 			loop = True
 
-		tmap[tag] = True
+		tgraph[tag] = True
 
-	return tmap
+	return tgraph
 
     @transaction.commit_on_success # <- rollback if it raises an exception
     def delete_sattr(self, sattr):
@@ -1050,14 +1061,14 @@ class Tag(AbstractThing):
 	"""
 
 	if sattr == 'tagImplies':
-	    tmap = self.__expand_cloud_map()
+	    tgraph = self.__expand_cloud_graph()
 	else:
-	    tmap = None
+	    tgraph = None
 
 	super(Tag, self).delete_sattr(sattr)
 
-	if tmap:
-	    self.__update_cloud_map(tmap)
+	if tgraph:
+	    self.__update_cloud_graph(tgraph)
 
     @transaction.commit_on_success # <- rollback if it raises an exception
     def update_from_request(self, r, **kwargs):
@@ -1068,14 +1079,14 @@ class Tag(AbstractThing):
 	"""
 
 	if 'tagImplies' in r.REQUEST:
-	    tmap = self.__expand_cloud_map()
+	    tgraph = self.__expand_cloud_graph()
 	else:
-	    tmap = None
+	    tgraph = None
 
 	retval = super(Tag, self).update_from_request(r, **kwargs)
 
-	if tmap:
-	    self.__update_cloud_map(tmap)
+	if tgraph:
+	    self.__update_cloud_graph(tgraph)
 	    retval = Tag.objects.get(id=retval.id) # reload, possibly dirty
 
 	return retval

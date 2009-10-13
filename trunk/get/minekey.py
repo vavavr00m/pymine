@@ -217,11 +217,11 @@ class MineKey:
         try:
             r = Relation.objects.get(id=self.rid)
         except Relation.DoesNotExist, e:
-            raise RuntimeError, "minekey rid is not valid: " + str(mk)
+            raise RuntimeError, "relation is not valid: " + str(mk)
 
         # check rvsn
         if r.version != self.rvsn:
-            raise RuntimeError, "minekey rvsn / relation version mismatch: " + str(mk)
+            raise RuntimeError, "minekey/relation version mismatch: " + str(mk)
 
         # check against relation IP address
         if r.network_pattern:
@@ -240,6 +240,10 @@ class MineKey:
             pass # TODO
 
         if r.embargo_after:
+            pass # TODO
+
+        # check if the non-feed item is marked "not:relationName"
+        if self.iid:
             pass # TODO
 
         # ok, we're happy.
