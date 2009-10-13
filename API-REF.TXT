@@ -1,5 +1,9 @@
 #summary Mine REST API Reference
 
+== API Documentation ==
+
+See the `apidocs` directory in the pymine distribution.
+
 == Glossary ==
 
   * _cid_ = commentId, integer > 0
@@ -25,11 +29,11 @@
 
   * `exit`
   * `status`
-  * `result` [optional]
-  * `prevurl` [optional, paged-calls only]
-  * `thisurl` [optional, paged-calls only]
-  * `nexturl` [optional, paged-calls only]
-  * `count` [optional, paged-calls only]
-  * `span` [optional, paged-calls only]
-  * `page` [optional, paged-calls only]
+  * `result` (optional)
+  * `prevurl` (optional, paged-calls only)
+  * `thisurl` (optional, paged-calls only)
+  * `nexturl` (optional, paged-calls only)
+  * `count` (optional, paged-calls only)
+  * `span` (optional, paged-calls only)
+  * `page` (optional, paged-calls only)
 
