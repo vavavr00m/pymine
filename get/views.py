@@ -46,36 +46,64 @@ from minekey import MineKey
 def demofeed(request, *args, **kwargs):
 
     rid = 2
+
+    # who are we looking at?
     relation = Relation.objects.select_related(depth=2).get(id=rid)
 
+    # when is it?
     now = datetime.now()
+
+    # what are they interested in, like, and hate?
     interests = relation.interests.all()
-    loves = relation.interests_required.all()
+    needs = relation.interests_required.all()
     hates = relation.interests_excluded.all()
 
-    public_items = Item.objects.filter(status='P').select_related(depth=1)
+    # first, deal with the 'interests' - this means public objects
+    public_items = Item.objects.filter(status='P').select_related(depth=2)
 
-    candidate_iids = []
+    # where we will stash the IIDs of candidate items
+    candidates = []
+
+    # for every item get its tag
+    # for every tag, get its cloud
+    # if relation hates things in the cloud, drop item
+    # if relation needs things and any of them are missing, drop item
+    # else mark item as candidate
+
+    print "%s interests %s" % (relation.name, str(interests))
+    print "%s hates %s" % (relation.name, str(hates))
+    print "%s needs %s" % (relation.name, str(needs))
 
     for item in public_items.all():
+	print "considering %s" % item.name
+
 	for item_tag in item.tags.all():
 	    item_cloud = item_tag.cloud.all()
+
+	    print "  examining %s -> %s" % (item_tag, str(item_cloud))
+
 	    if item_cloud & hates:
-		break
-	    if loves and not (item_cloud & loves):
-		break
-	    if item_cloud & interests:
-		candidate_iids.append(item.id)
+		print "    avoiding %s because hates %s" % (item.name, str(hates))
 		break
 
-    qs1 = public_items.filter(id__in=candidate_iids)
+            available = item_cloud.values_list('id', flat=True)
+            unavailable = needs.exclude(id__in=available)
+	    if needs and unavailable:
+		print "    avoiding %s because needs %s" % (item.name, str(unavailable))
+		break
+
+	    if item_cloud & interests:
+		print "    candidate %s" % item.name
+		candidates.append(item.id)
+		break
+
+    qs1 = public_items.filter(id__in=candidates)
     qs2 = relation.items_explicitly_for.filter(Q(status='P') | Q(status='S'))
     qs = qs1 | qs2
     qs = qs.distinct()
     qs = qs.exclude(status='X') # should be redundant
-    qs = qs.order_by('-last_modified')
 
-    # reject items marked not:relation 
+    # reject items marked not:relation
     # i wish i could do qs = qs - blacklist
     blacklist = relation.items_explicitly_not.values_list('id', flat=True)
     qs = qs.exclude(id__in=blacklist)
@@ -83,6 +111,10 @@ def demofeed(request, *args, **kwargs):
     # reject items that are currently hidden
     qs = qs.exclude(hide_after__isnull=False, hide_after__lte=now)
     qs = qs.exclude(hide_before__isnull=False, hide_before__gt=now)
+
+    # sort MRF
+    # TBD: artificially promote hidden-but-revealed into sort order
+    qs = qs.order_by('-last_modified')
 
     # dump it as a list
     result = [ item.to_structure() for item in qs ]
