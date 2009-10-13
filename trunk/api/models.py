@@ -15,6 +15,67 @@
 ## permissions and limitations under the License.
 ##
 
+"""
+PyMine Models
+
+The transcoder methods - x2y_foo() - below provide a lot of the
+security for pymine, and govern the movement of data between three
+'spaces' of data representation; these are:
+
+r-space - request space, where data are held in a HttpRequest
+
+s-space - structure space, where data are held in a dict
+
+m-space - model space, where data are fields in model instances
+
+The reason for keeping separate spaces is partly philosophic - that
+there should be a clearly defined breakpoint between the two worlds,
+and this is it; if we just serialized models and slung them back and
+forth, the mine would be wedded to Django evermore, which is not a
+good thing;
+
+If we tried to go the simple route and keep the data structures
+similar, errors would be hard to flush out plus we would tend to do
+things only the Django way - the Mine API was first written from
+scratch and driven using 'curl' so this is definitely portable.
+
+Further: certain s-space attributes (eg: 'relationInterests') map to
+more than one m-space attributes, so these functions provide parsing
+as well as translation.
+
+r-space and s-space share exactly the same naming conventions, ie:
+they use mixedCase key (aka: 's-attribute' or 'sattr') such as
+'relationName' and 'tagDescription' and 'itemId' to label data; the
+only meaningful difference is that in r-space all data are held in
+HttpRequest objects as strings; when pulled into s-space Python
+dictionaries, any data which are integers (eg: itemId) are converted
+to Python integers.
+
+For obvious reasons it's never necessary to go from s-space to
+r-space; instead data only ever comes *out* of HttpRequests and *into*
+structures, hence there are only r2s_foo methods, and indeed only two
+of those: r2s_string and r2s_int
+
+Transfers between s-space (dictionary entries such as s['itemId']) and
+m-space (m.id, where 'm' is a instance of the Item model and 'id' is
+the Item table primary key) are bidirectional; because m-space and
+s-space both frequently use strings and python integers, and since
+s-space uses Python ints, many transfers can be handled with simple
+blind copies using introspection to access the model instance.
+
+Note: as a general rule m2s routines should not copy-out a None item,
+blank or null reference; however s2m routines *may* want to copy-in
+'None' for purposes of erasure.  All copy routines should check the
+validity of their source/destination attributes.
+
+One of the more complex translations between spaces are DateTime
+objects; in m-space we use whatever Django mandates, and in s-space we
+use a string representation of the time/date in ISO format, which is
+very close to what ATOM specifies - which in turn is probably what we
+will standardise on eventually
+
+"""
+
 import itertools
 
 from django.db import models, transaction
@@ -23,12 +84,12 @@ from django.conf import settings
 
 import base58.base58 as base58
 
-# important stuff for below
-
 # magic storage for database items
+
 item_file_storage = FileSystemStorage(location = settings.MINE_DBDIR_FILES)
 
 # choices for the item status
+
 item_status_choices = (
     ( 'X', 'private' ),
     ( 'S', 'shared' ),
@@ -37,16 +98,26 @@ item_status_choices = (
 
 # create a reverse lookup table, long->short
 # other direction is covered by m.get_status_display()
+
 status_lookup = {}
 for short, long in item_status_choices: status_lookup[long] = short
 
 ##################################################################
 
 class AbstractModelField:
+    """
+    This is an factory class that is used to abstract-out field
+    definitions and simplify porting from Django to Google AppEngine.
+    """
+
     STRING_SHORT = 256
 
     @classmethod
     def __defopts(self, **kwargs):
+	"""
+	Standardised argument parser for AbstractModelField methods;
+	implements 'required', 'unique', 'symmetrical' ...
+	"""
 	if kwargs.get('required', True):
 	    opts = dict(null=False, blank=False)
 	else:
@@ -60,24 +131,29 @@ class AbstractModelField:
 
     @classmethod
     def last_modified(self):
+	"""implements last_modified date"""
 	return models.DateTimeField(auto_now=True)
 
     @classmethod
     def created(self):
+	"""implements created date"""
 	return models.DateTimeField(auto_now_add=True)
 
     @classmethod
     def datetime(self, **kwargs):
+	"""implements date/time field"""
 	opts = self.__defopts(**kwargs)
 	return models.DateTimeField(**opts)
 
     @classmethod
     def reference(self, what, **kwargs):
+	"""implements foreign-keys"""
 	opts = self.__defopts(**kwargs)
 	return models.ForeignKey(what, **opts)
 
     @classmethod
     def reflist(self, what, **kwargs):
+	"""implements list-of-foreign-keys; parses out 'pivot' argument"""
 	opts = self.__defopts(**kwargs)
 	pivot = kwargs.get('pivot', None)
 	if pivot: opts['related_name'] = pivot
@@ -85,109 +161,70 @@ class AbstractModelField:
 
     @classmethod
     def string(self, **kwargs):
+	"""implements string"""
 	opts = self.__defopts(**kwargs)
 	return models.CharField(max_length=self.STRING_SHORT, **opts)
 
     @classmethod
     def text(self, **kwargs):
+	"""implements a text area / text of arbitrary size"""
 	opts = self.__defopts(**kwargs)
 	return models.TextField(**opts)
 
     @classmethod
     def slug(self, **kwargs):
+	"""implements a slug (alphanumeric string, no spaces)"""
 	opts = self.__defopts(**kwargs)
 	return models.SlugField(max_length=self.STRING_SHORT, **opts)
 
     @classmethod
     def bool(self, default):
+	"""implements a boolean (true/false)"""
 	return models.BooleanField(default=default)
 
     @classmethod
     def integer(self, default):
+	"""implements an integer"""
 	return models.PositiveIntegerField(default=default)
 
     @classmethod
     def choice(self, choices):
+	"""implements a choices-field (max length of an encoded choice is 1 character)"""
 	return models.CharField(max_length=1, choices=choices)
 
     @classmethod
     def url(self, **kwargs):
+	"""implements a URL string"""
 	opts = self.__defopts(**kwargs)
 	return models.URLField(max_length=self.STRING_SHORT, **opts)
 
     @classmethod
     def email(self, **kwargs):
+	"""implements an e-mail address"""
 	opts = self.__defopts(**kwargs)
 	return models.EmailField(max_length=self.STRING_SHORT, **opts)
 
     @classmethod
     def file(self, **kwargs):
+	"""implements a file"""
 	return models.FileField(**kwargs) # TODO
 
 ##################################################################
 
 class AbstractModel(models.Model):
+    """
+    AbstractModel is the parent class for all Models below, providing
+    the common 'created' and 'last_modified' fields. 
+    """
+
     created = AbstractModelField.created()
     last_modified = AbstractModelField.last_modified()
 
     class Meta:
 	abstract = True
 
-    @classmethod
-    def get_object(self, **kwargs):
-	pass
-
-    @classmethod
-    def list_objects(self, **kwargs):
-	pass
-
 ##################################################################
-
-class AbstractXattr(AbstractModel):
-    key = AbstractModelField.slug()
-    value = AbstractModelField.text()
-
-    class Meta:
-	abstract = True
-
 ##################################################################
-
-# The transcoder methods below provide a lot of the security for
-# pymine, and govern the movement of data between three 'spaces' of
-# data representation; these are:
-
-# r-space - request space, where data are held in a HttpRequest
-# s-space - structure space, where data are held in a dict
-# m-space - model space, where data are fields in model instances
-
-# The reason for keeping separate spaces is partly philosophic - that
-# there should be a clearly defined breakpoint between the two worlds,
-# and this is it; if we just serialized models and slung them back and
-# forth, the mine would be wedded to Django evermore, which is not a
-# good thing;
-
-# If we tried to go the simple route and keep the data structures
-# similar, errors would be hard to flush out plus we would tend to do
-# things only the Django way - the Mine API was first written from
-# scratch and driven using 'curl' so this is definitely portable.
-
-# Further: certain s-space attributes (eg: 'relationInterests') map to
-# more than one m-space attributes, so these functions provide parsing
-# as well as translation.
-
-# r-space and s-space share exactly the same naming conventions, ie:
-# they use mixedCase key (aka: 's-attribute' or 'sattr') such as
-# 'relationName' and 'tagDescription' and 'itemId' to label data; the
-# only meaningful difference is that in r-space all data are held in
-# HttpRequest objects as strings; when pulled into s-space Python
-# dictionaries, any data which are integers (eg: itemId) are converted
-# to Python integers.
-
-# For obvious reasons it's never necessary to go from s-space to
-# r-space; instead data only ever comes *out* of HttpRequests and
-# *into* structures, hence there are only r2s_foo methods, and indeed
-# only two of those: r2s_string and r2s_int:
-
 ##################################################################
 
 def r2s_string(r, rname, s):
@@ -207,22 +244,7 @@ def r2s_int(r, rname, s):
     s[rname] = int(r.POST[rname])
 
 ##################################################################
-
-# Transfers between s-space (dictionary entries such as s['itemId'])
-# and m-space (m.id, where 'm' is a instance of the Item model and
-# 'id' is the Item table primary key) are bidirectional; because
-# m-space and s-space both frequently use strings and python integers,
-# and since s-space uses Python ints, many transfers can be handled
-# with simple blind copies using introspection to access the model
-# instance.
-
-# Note: as a general rule m2s routines should not copy-out a None
-# item, blank or null reference; however s2m routines *may* want to
-# copy-in 'None' for purposes of erasure.  All copy routines should
-# check the validity of their source/destination attributes.
-
-# XXX: TBD: COPYING NONE FOR S2M THROUGHOUT
-
+##################################################################
 ##################################################################
 
 def m2s_copy(m, mattr, s, sattr):
@@ -236,24 +258,15 @@ def s2m_copy(s, sattr, m, mattr):
 
 ##################################################################
 
-# Because a lot of our code is table-driven, it helps to have a couple
-# of dummy routines as filler where beneficial:
-
 def m2s_dummy(m, mattr, s, sattr):
-    """Barfing Placeholder"""
+    """m2s routine which raises an exception if it is ever invoked"""
     raise RuntimeError, 'something invoked m2s_dummy on %s and %s' % (sattr, mattr)
 
 def s2m_dummy(s, sattr, m, mattr):
-    """Barfing Placeholder"""
+    """s2m routine which raises an exception if it is ever invoked"""
     raise RuntimeError, 'something invoked s2m_dummy on %s and %s' % (sattr, mattr)
 
 ##################################################################
-
-# One of the more complex translations between spaces are DateTime
-# objects; in m-space we use whatever Django mandates, and in s-space
-# we use a string representation of the time/date in ISO format, which
-# is very close to what ATOM specifies - which in turn is probably
-# what we will standardise on eventually
 
 def m2s_date(m, mattr, s, sattr):
     """Copy a DateTime from m to a isoformat string in s"""
@@ -261,6 +274,7 @@ def m2s_date(m, mattr, s, sattr):
     if x: s[sattr] = x.isoformat()
 
 def s2m_date(s, sattr, m, mattr):
+    """TBD: Copy a DateTime from an isoformat string in s, into m"""
     if sattr in s:
 	raise RuntimeError, "not yet integrated the Date parser"
 
@@ -275,12 +289,14 @@ def s2m_date(s, sattr, m, mattr):
 # represented as the itemId being commented upon, an int.
 
 def m2s_comitem(m, mattr, s, sattr):
+    """ """
     if mattr != 'item' or sattr != 'commentItem':
 	raise RuntimeError, "m2s_comitem is confused by %s and %s" % (sattr, mattr)
     x = m.item
     if x: s[sattr] = x.id
 
 def s2m_comitem(s, sattr, m, mattr):
+    """ """
     if mattr != 'item' or sattr != 'commentItem':
 	raise RuntimeError, "s2m_comitem is confused by %s and %s" % (sattr, mattr)
     if sattr in s:
@@ -293,12 +309,14 @@ def s2m_comitem(s, sattr, m, mattr):
 # represented as the relationName, a string
 
 def m2s_comrel(m, mattr, s, sattr):
+    """ """
     if mattr != 'relation' or sattr != 'commentRelation':
 	raise RuntimeError, "m2s_comrel is confused by %s and %s" % (sattr, mattr)
     x = m.relation
     if x: s[sattr] = x.name
 
 def s2m_comrel(s, sattr, m, mattr):
+    """ """
     if mattr != 'relation' or sattr != 'commentRelation':
 	raise RuntimeError, "s2m_comrel is confused by %s and %s" % (sattr, mattr)
     if sattr in s:
@@ -312,22 +330,25 @@ def s2m_comrel(s, sattr, m, mattr):
 # contatenates tagNames.  Loops are possible, but benign.
 
 def m2s_tagcloud(m, mattr, s, sattr):
+    """ """
     if mattr != 'cloud' or sattr != 'tagCloud':
 	raise RuntimeError, "m2s_tagcloud is confused by %s and %s" % (sattr, mattr)
     x = ' '.join([ x.name for x in m.cloud.all() ])
     if x: s[sattr] = x
 
 def m2s_tagimplies(m, mattr, s, sattr):
+    """ """
     if mattr != 'implies' or sattr != 'tagImplies':
 	raise RuntimeError, "m2s_tagimplies is confused by %s and %s" % (sattr, mattr)
     x = ' '.join([ x.name for x in m.implies.all() ])
     if x: s[sattr] = x
 
 def s2m_tagimplies(s, sattr, m, mattr):
+    """ """
     if mattr != 'implies' or sattr != 'tagImplies':
 	raise RuntimeError, "s2m_tagimplies is confused by %s and %s" % (sattr, mattr)
     if sattr in s:
-        m.implies.clear()
+	m.implies.clear()
 	for x in s[sattr].split():
 	    m.implies.add(Tag.objects.get(name=x))
 
@@ -336,6 +357,7 @@ def s2m_tagimplies(s, sattr, m, mattr):
 # itemParent if a ForeignKey parent, set to non-null for clones
 
 def m2s_itemparent(m, mattr, s, sattr):
+    """ """
     if mattr != 'parent' or sattr != 'itemParent':
 	raise RuntimeError, "m2s_itemtags is confused by %s and %s" % (sattr, mattr)
     x = m.parent
@@ -348,12 +370,14 @@ def m2s_itemparent(m, mattr, s, sattr):
 # forth to the single characters which are held in item.status
 
 def m2s_itemstatus(m, mattr, s, sattr):
+    """ """
     if mattr != 'status' or sattr != 'itemStatus':
 	raise RuntimeError, "m2s_itemtags is confused by %s and %s" % (sattr, mattr)
     x = m.get_status_display()
     if x: s[sattr] = x
 
 def s2m_itemstatus(s, sattr, m, mattr):
+    """ """
     if mattr != 'status' or sattr != 'itemStatus':
 	raise RuntimeError, "s2m_itemtags is confused by %s and %s" % (sattr, mattr)
     x = s[sattr]
@@ -373,6 +397,7 @@ def s2m_itemstatus(s, sattr, m, mattr):
 # which are all ManyToMany fields.
 
 def m2s_itemtags(m, mattr, s, sattr):
+    """ """
     if mattr != 'tags' or sattr != 'itemTags':
 	raise RuntimeError, "m2s_itemtags is confused by %s and %s" % (sattr, mattr)
 
@@ -383,12 +408,13 @@ def m2s_itemtags(m, mattr, s, sattr):
     if x: s[sattr] = x
 
 def s2m_itemtags(s, sattr, m, mattr):
+    """ """
     if mattr != 'tags' or sattr != 'itemTags':
 	raise RuntimeError, "s2m_itemtags is confused by %s and %s" % (sattr, mattr)
     if sattr in s:
-        m.tags.clear()
-        m.item_for_relations.clear()
-        m.item_not_relations.clear()
+	m.tags.clear()
+	m.item_for_relations.clear()
+	m.item_not_relations.clear()
 	for x in s[sattr].split():
 	    if x.startswith('for:'): m.item_for_relations.add(Relation.objects.get(name=x[4:]))
 	    elif x.startswith('not:'): m.item_not_relations.add(Relation.objects.get(name=x[4:]))
@@ -405,6 +431,7 @@ def s2m_itemtags(s, sattr, m, mattr):
 # three fields: m.tags, m.tags_required, m.tags_excluded
 
 def m2s_relints(m, mattr, s, sattr):
+    """ """
     if mattr != 'interests' or sattr != 'relationInterests':
 	raise RuntimeError, "m2s_relints is confused by %s and %s" % (sattr, mattr)
 
@@ -414,12 +441,13 @@ def m2s_relints(m, mattr, s, sattr):
     if x: s[sattr] = x
 
 def s2m_relints(s, sattr, m, mattr):
+    """ """
     if mattr != 'interests' or sattr != 'relationInterests':
 	raise RuntimeError, "s2m_relints is confused by %s and %s" % (sattr, mattr)
     if sattr in s:
-        m.tags.clear()
-        m.tags_required.clear()
-        m.tags_excluded.clear()
+	m.tags.clear()
+	m.tags_required.clear()
+	m.tags_excluded.clear()
 	for x in s[sattr].split():
 	    if x.startswith('require:'): m.tags_required.add(Tag.objects.get(name=x[8:]))
 	    elif x.startswith('exclude:'): m.tags_excluded.add(Tag.objects.get(name=x[8:]))
@@ -428,30 +456,46 @@ def s2m_relints(s, sattr, m, mattr):
 
 ##################################################################
 
-# The AbstractThing class is a base model class that exists to provide
-# a few common methods to the core Mine models; it's obviously easy to
-# 'get' or 'set' the fields of a model instance because you can always
-# do "m.field = foo" or something
+class AbstractXattr(AbstractModel):
+    """
+    AbstractXattr is the parent class for all extended attribute
+    classes, providing the common 'key' and 'value' fields; it
+    inherits from AbstractModel to obtain its model-nature
+    """
 
-# What we need to do is:
+    key = AbstractModelField.slug()
+    value = AbstractModelField.text()
 
-# 1) get the svalue of a sattr that's associated with some model's
-#    corresponding mattr
-
-# 2) empty/nullify the mattr that corresponds with a model's sattr
-
-# 3) create or update, from information held in a HttpRequest (r-space)
-
-# 4) return an entire s-structure populated from a model
-
-# Methods are provided below in Thing() to permit the above and then
-# are inherited by most of the Mine models; for this to work there
-# needs to be a small amount of linker logic to bypass major circular
-# dependencies, and that's provided at the end of this file.
+    class Meta:
+	abstract = True
 
 ##################################################################
 
 class AbstractThing(AbstractModel):
+    """ 
+    The AbstractThing class is a abstract model class that exists to
+    provide a few common methods to the core Mine models.
+
+    It's obviously easy to 'get' or 'set' the fields of a model
+    instance because you can always do "m.field = foo" or something
+
+    What we need to do is:
+
+    1) get the svalue of a sattr that's associated with some model's
+    corresponding mattr
+
+    2) empty/nullify the mattr that corresponds with a model's sattr
+
+    3) create or update, from information held in a HttpRequest (r-space)
+
+    4) return an entire s-structure populated from a model
+
+    Methods are provided below in Thing() to permit the above and then
+    are inherited by most of the Mine models; for this to work there
+    needs to be a small amount of linker logic to bypass major
+    circular dependencies, and that's provided at the end of this
+    file.
+    """
 
     # continuing the chain of inheritance
     class Meta:
@@ -493,7 +537,8 @@ class AbstractThing(AbstractModel):
 (  'itemCreated',             'created',          False,  None,        None,            m2s_date,        ),
 (  'itemData',                'data',             True,   None,        s2m_dummy,       None,            ),
 (  'itemDescription',         'description',      False,  r2s_string,  s2m_copy,        m2s_copy,        ),
-(  'itemHideAfter',           'hide_after',       False,  r2s_string,  s2m_date,        m2s_date,        ),
+(  'itemFeedLink',            'feed_link',        False,  r2s_string,  s2m_copy,        m2s_copy,        ),
+(  'itemHideAfter',           'hide_after',       False,  r2s_string,  s2m_copy,        m2s_copy,        ),
 (  'itemHideBefore',          'hide_before',      False,  r2s_string,  s2m_date,        m2s_date,        ),
 (  'itemId',                  'id',               False,  r2s_int,     s2m_copy,        m2s_copy,        ),
 (  'itemLastModified',        'last_modified',    False,  None,        None,            m2s_date,        ),
@@ -620,31 +665,31 @@ class AbstractThing(AbstractModel):
 		s2m_func(s, sattr, self, mattr)
 		needs_save = True
 
-        # xattr processing: grab the manager
-        mgr = getattr(self, self.xattr_manager)
+	# xattr processing: grab the manager
+	mgr = getattr(self, self.xattr_manager)
 
-        # scan the request environment for xattrs
-        for k, v in r.POST.iteritems():
+	# scan the request environment for xattrs
+	for k, v in r.POST.iteritems():
 
-            # is it an xattr?
-            if not k.startswith(self.xattr_prefix): 
-                continue
+	    # is it an xattr?
+	    if not k.startswith(self.xattr_prefix):
+		continue
 
-            # chop out the suffix
-            k = k[len(self.xattr_prefix):]
+	    # chop out the suffix
+	    k = k[len(self.xattr_prefix):]
 
-            # get/create the xattr
-            xa, created = mgr.get_or_create(key=k, defaults={'value': v})
-            if not created: # then it needs updating
-                xa.value = v
-                xa.save()
+	    # get/create the xattr
+	    xa, created = mgr.get_or_create(key=k, defaults={'value': v})
+	    if not created: # then it needs updating
+		xa.value = v
+		xa.save()
 
-            # mark updates on the item
-            #needs_save = True
+	    # mark updates on the item
+	    #needs_save = True
 
 	# update if we did anything
-	if needs_save: 
-            self.save()
+	if needs_save:
+	    self.save()
 
 	# return it
 	return self
@@ -653,6 +698,7 @@ class AbstractThing(AbstractModel):
 
     @classmethod # <- new_from_request is an alternative constructor, ergo: classmethod
     def new_from_request(self, r, **kwargs):
+	""" """
 	instantiator = self.s_classes[self.sattr_prefix]
 	margs = {}
 	m = instantiator(**margs)
@@ -662,6 +708,7 @@ class AbstractThing(AbstractModel):
     # done in two places; this wraps that for convenience
 
     def lookup_mattr(self, sattr):
+	""" """
 	if sattr in self.s2m_table[self.sattr_prefix]:
 	    t = self.s2m_table[self.sattr_prefix][sattr]
 	elif sattr in self.defer_s2m_table[self.sattr_prefix]:
@@ -674,77 +721,82 @@ class AbstractThing(AbstractModel):
     # /api/relation/42/relationName.json and similar methods.
 
     def get_sattr(self, sattr):
+	""" """
 	if sattr.startswith(self.xattr_prefix):
-            # chop out the suffix
-            k = sattr[len(self.xattr_prefix):]
-            # grab the manager
-            mgr = getattr(self, self.xattr_manager)
-            # lookup the xattr and return it
-            xa = mgr.get(key=k)
-            return xa.value
+	    # chop out the suffix
+	    k = sattr[len(self.xattr_prefix):]
+	    # grab the manager
+	    mgr = getattr(self, self.xattr_manager)
+	    # lookup the xattr and return it
+	    xa = mgr.get(key=k)
+	    return xa.value
 
 	# check validity of sattr
 	elif sattr.startswith(self.sattr_prefix):
-            # lookup equivalent model field
-            r2s_func, s2m_func, mattr = self.lookup_mattr(sattr)
-            # retreive equivalent model field
-            x = getattr(self, mattr)
-            # lookup m2s conversion routine
-            m2s_func, sattr2 = m2s_table[self.sattr_prefix][mattr]
-            # sanity check
-            assert sattr == sattr2, "m2s_table corruption, reverse lookup yielded wrong result"
-            # convert to s-form and return
-            s = {}
-            m2s_func(self, mattr, s, sattr)
-            return s[sattr]
+	    # lookup equivalent model field
+	    r2s_func, s2m_func, mattr = self.lookup_mattr(sattr)
+	    # retreive equivalent model field
+	    x = getattr(self, mattr)
+	    # lookup m2s conversion routine
+	    m2s_func, sattr2 = m2s_table[self.sattr_prefix][mattr]
+	    # sanity check
+	    assert sattr == sattr2, "m2s_table corruption, reverse lookup yielded wrong result"
+	    # convert to s-form and return
+	    s = {}
+	    m2s_func(self, mattr, s, sattr)
+	    return s[sattr]
 
-        else:
+	else:
 	    raise RuntimeError, "get_sattr asked to look up bogus sattr: " + sattr
 
     @transaction.commit_on_success # <- rollback if it raises an exception
     def delete_sattr(self, sattr):
+	""" """
 	if sattr.startswith(self.xattr_prefix):
-            # lookup equivalent model field
-            k = sattr[len(self.xattr_prefix):]
-            # grab the manager
-            mgr = getattr(self, self.xattr_manager)
-            # lookup the xattr and delete it
-            xa = mgr.get(key=k)
-            xa.delete()
+	    # lookup equivalent model field
+	    k = sattr[len(self.xattr_prefix):]
+	    # grab the manager
+	    mgr = getattr(self, self.xattr_manager)
+	    # lookup the xattr and delete it
+	    xa = mgr.get(key=k)
+	    xa.delete()
 
 	elif sattr.startswith(self.sattr_prefix):
-            # lookup equivalent model field
-            r2s_func, s2m_func, mattr = self.lookup_mattr(sattr)
-            # zero that field
-            setattr(self, sattr, None) ############## FIX THIS!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-            raise RuntimeException, "this method of deletion does not work" 
-            # try saving and hope model will bitch if something is wrong
-            self.save()
+	    # lookup equivalent model field
+	    r2s_func, s2m_func, mattr = self.lookup_mattr(sattr)
+	    # zero that field
+	    setattr(self, sattr, None) ############## FIX THIS!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+	    raise RuntimeException, "this method of deletion does not work"
+	    # try saving and hope model will bitch if something is wrong
+	    self.save()
 
-        else:
-            raise RuntimeError, "get_sattr asked to look up bogus sattr: " + sattr
+	else:
+	    raise RuntimeError, "get_sattr asked to look up bogus sattr: " + sattr
 
     # render a model into a structure suitable for serializing and
     # returning to the user.
 
     def to_structure(self):
+	""" """
+
 	s = {}
 
 	for mattr, (m2s_func, sattr) in self.m2s_table[self.sattr_prefix].iteritems():
 	    m2s_func(self, mattr, s, sattr)
 
-        mgr = getattr(self, self.xattr_manager)
+	mgr = getattr(self, self.xattr_manager)
 
-        for xa in mgr.all(): 
-            k = '%s%s' % (self.xattr_prefix, xa.key)
-            v = xa.value
-            s[k] = v
+	for xa in mgr.all():
+	    k = '%s%s' % (self.xattr_prefix, xa.key)
+	    v = xa.value
+	    s[k] = v
 
 	return s
 
     def get_absolute_url(self):
-        fmt = 'raw' # TBD
-        return '/api/%s/%d.%s' % (self.sattr_prefix, self.id, fmt)
+	""" """
+	fmt = 'raw' # TBD
+	return '/api/%s/%d.%s' % (self.sattr_prefix, self.id, fmt)
 
 ##################################################################
 ##################################################################
@@ -775,20 +827,28 @@ class LogEvent(AbstractModel):
 
     @classmethod
     def __selfcontained(self, status, type, *args, **kwargs):
+	""" """
+
 	m = " ".join(args)
 	el = LogEvent(status=status, type=type, msg=m, **kwargs)
 	el.save()
 
     @classmethod
     def message(self, type, *args, **kwargs):
+	""" """
+
 	self.__selfcontained('m', type, *args, **kwargs)
 
     @classmethod
     def error(self, type, *args, **kwargs):
+	""" """
+
 	self.__selfcontained('e', type, *args, **kwargs)
 
     @classmethod
     def fatal(self, type, *args, **kwargs):
+	""" """
+
 	self.__selfcontained('f', type, *args, **kwargs)
 	raise RuntimeError, self.msg # set as side effect
 
@@ -796,16 +856,22 @@ class LogEvent(AbstractModel):
 
     @classmethod
     def open(self, type, **kwargs):
+	""" """
+
 	el = LogEvent(status='o', type=type, **kwargs)
 	el.save()
 	return el
 
     def update(self, *args):
+	""" """
+
 	self.msg = " ".join(args)
 	self.status = 'u'
 	self.save()
 
     def __close_status(self, status, *args):
+	""" """
+
 	if self.status in 'ou': # legitimate to close
 	    self.msg = " ".join(args)
 	    self.status = status
@@ -815,12 +881,18 @@ class LogEvent(AbstractModel):
 	self.save()
 
     def close(self, *args):
+	""" """
+
 	self.__close_status('c', *args)
 
     def close_error(self, *args):
+	""" """
+
 	self.__close_status('e', *args)
 
     def to_structure(self):
+	""" """
+
 	s = {}
 	s['eventStatus'] = self.status
 	if self.type: s['eventType'] = self.type
@@ -849,6 +921,8 @@ class Registry(AbstractModel):
     value = AbstractModelField.text()
 
     def to_structure(self):
+	""" """
+
 	s = {}
 	s[self.key] = self.value # this is why it is not a Thing
 	s['keyCreated'] = self.created.isoformat()
@@ -896,116 +970,115 @@ class Tag(AbstractThing):
 	return self.name
 
     def __update_cloud_field(self):
-        self.cloud.clear()
+	""" """
 
-        tmap = { self: False }
-        loop = True # get us into the processing loop
+	self.cloud.clear()
 
-        while loop:
-            loop = False
+	tmap = { self: False }
+	loop = True # get us into the processing loop
 
-            for tag, tag_done in tmap.items():
-                if tag_done: 
-                    continue
+	while loop:
+	    loop = False
 
-                for parent in tag.implies.all():
-                    if not tmap.get(parent, False):
-                        tmap[parent] = False
-                        loop = True
+	    for tag, tag_done in tmap.items():
+		if tag_done:
+		    continue
 
-                # print "%s is clouding %s" % (self.name, tag.name)
-                self.cloud.add(tag)
-                tmap[tag] = True
+		for parent in tag.implies.all():
+		    if not tmap.get(parent, False):
+			tmap[parent] = False
+			loop = True
 
-        self.save() # needed?
+		# print "%s is clouding %s" % (self.name, tag.name)
+		self.cloud.add(tag)
+		tmap[tag] = True
 
+	self.save() # needed?
 
     def __update_cloud_map(self, tmap):
-        """
-        I could try ripping out the list of tags just once (avoiding
-        ~n! database hits) and reconstructing the map from that, but
-        if they change on disk underneath me then something nasty can
-        happen; better to let caching at a lower level take the hit...
-        """
+	"""
+	I could try ripping out the list of tags just once (avoiding
+	~n! database hits) and reconstructing the map from that, but
+	if they change on disk underneath me then something nasty can
+	happen; better to let caching at a lower level take the hit...
+	"""
 
-        # update all the tags with this data
-        for tag in tmap.keys():
-            tag = Tag.objects.get(id=tag.id) # potentially dirty, reload
-            tag.__update_cloud_field()
+	# update all the tags with this data
+	for tag in tmap.keys():
+	    tag = Tag.objects.get(id=tag.id) # potentially dirty, reload
+	    tag.__update_cloud_field()
 
     def __expand_cloud_map(self):
-        """
-        This is brute-force and ignorance code but it is proof against loops.
-        """
+	"""
+	This is brute-force and ignorance code but it is proof against loops.
+	"""
 
-        tmap = { self: False }
+	tmap = { self: False }
 
-        if not self.id:
-            return tmap # we are not yet in the database
+	if not self.id:
+	    return tmap # we are not yet in the database
 
-        loop = True # get us into the processing loop
+	loop = True # get us into the processing loop
 
-        while loop:
-            loop = False
+	while loop:
+	    loop = False
 
-            for tag, tag_done in tmap.items():
-                if tag_done: 
-                    continue
+	    for tag, tag_done in tmap.items():
+		if tag_done:
+		    continue
 
-                for parent in tag.implies.all():
-                    if not tmap.get(parent, False):
-                        tmap[parent] = False
-                        loop = True
+		for parent in tag.implies.all():
+		    if not tmap.get(parent, False):
+			tmap[parent] = False
+			loop = True
 
-                for child in tag.implied_by.all():
-                    if not tmap.get(child, False):
-                        tmap[child] = False
-                        loop = True
+		for child in tag.implied_by.all():
+		    if not tmap.get(child, False):
+			tmap[child] = False
+			loop = True
 
-                tmap[tag] = True
+		tmap[tag] = True
 
-        return tmap
-
+	return tmap
 
     @transaction.commit_on_success # <- rollback if it raises an exception
     def delete_sattr(self, sattr):
-        """
-        This method overrides AbstractThing.delete_sattr() and acts as
-        a hook to detect changes in the Tag implications that might
-        trigger a recalculation of the Tag cloud.
-        """
+	"""
+	This method overrides AbstractThing.delete_sattr() and acts as
+	a hook to detect changes in the Tag implications that might
+	trigger a recalculation of the Tag cloud.
+	"""
 
-        if sattr == 'tagImplies': 
-            tmap = self.__expand_cloud_map()
-        else:
-            tmap = None
+	if sattr == 'tagImplies':
+	    tmap = self.__expand_cloud_map()
+	else:
+	    tmap = None
 
-        super(Tag, self).delete_sattr(sattr)
+	super(Tag, self).delete_sattr(sattr)
 
-        if tmap:
-            self.__update_cloud_map(tmap)
-
+	if tmap:
+	    self.__update_cloud_map(tmap)
 
     @transaction.commit_on_success # <- rollback if it raises an exception
     def update_from_request(self, r, **kwargs):
-        """
-        This method overrides AbstractThing.update_from_request() and
-        acts as a hook to detect changes in the Tag implications that
-        might trigger a recalculation of the Tag cloud.
-        """
+	"""
+	This method overrides AbstractThing.update_from_request() and
+	acts as a hook to detect changes in the Tag implications that
+	might trigger a recalculation of the Tag cloud.
+	"""
 
-        if 'tagImplies' in r.REQUEST: 
-            tmap = self.__expand_cloud_map()
-        else:
-            tmap = None
+	if 'tagImplies' in r.REQUEST:
+	    tmap = self.__expand_cloud_map()
+	else:
+	    tmap = None
 
-        retval = super(Tag, self).update_from_request(r, **kwargs)
+	retval = super(Tag, self).update_from_request(r, **kwargs)
 
-        if tmap:
-            self.__update_cloud_map(tmap)
-            retval = Tag.objects.get(id=retval.id) # reload, possibly dirty
+	if tmap:
+	    self.__update_cloud_map(tmap)
+	    retval = Tag.objects.get(id=retval.id) # reload, possibly dirty
 
-        return retval
+	return retval
 
 ##################################################################
 
@@ -1030,6 +1103,7 @@ class Relation(AbstractThing):
 
     name = AbstractModelField.slug(unique=True)
     version = AbstractModelField.integer(1)
+    deleted = AbstractModelField.bool(False)
     description = AbstractModelField.text(required=False)
     embargo_after = AbstractModelField.datetime(required=False)
     embargo_before = AbstractModelField.datetime(required=False)
@@ -1043,6 +1117,17 @@ class Relation(AbstractThing):
 
     def __unicode__(self):
 	return self.name
+
+    def delete(self):
+	""" """
+
+	self.deleted = True
+	self.save()
+
+    def delete_real(self):
+	""" """
+
+	pass
 
 ##################################################################
 
@@ -1069,6 +1154,7 @@ class Item(AbstractThing):
     content_type = AbstractModelField.string()
     data = AbstractModelField.file(storage=item_file_storage, upload_to='%Y/%m/%d')
     description = AbstractModelField.text(required=False)
+    feed_link = AbstractModelField.url(required=False)
     hide_after = AbstractModelField.datetime(required=False)
     hide_before = AbstractModelField.datetime(required=False)
     item_for_relations = AbstractModelField.reflist(Relation, pivot='items_explicitly_for', required=False)
@@ -1085,25 +1171,29 @@ class Item(AbstractThing):
 
     # cloning an item
     def clone_from_request(self, r, **kwargs):
+	""" """
+
 	margs = {
-            name: self.name,
-            content_type: self.content,
-            data: self.data,
-            description: self.description,
-            hide_after: self.hide,
-            hide_before: self.hide,
-            item_for_relations: self.item,
-            item_not_relations: self.item,
-            parent: self,
-            status: self.status,
-            tags: self.tags,
-            }
+	    name: self.name,
+	    content_type: self.content,
+	    data: self.data,
+	    description: self.description,
+	    hide_after: self.hide,
+	    hide_before: self.hide,
+	    item_for_relations: self.item,
+	    item_not_relations: self.item,
+	    parent: self,
+	    status: self.status,
+	    tags: self.tags,
+	    }
 
 	m = item(**margs)
 
 	return m.update_from_request(r, **kwargs)
 
     def save_upload_file(self, f):
+	""" """
+
 	if not self.id:
 	    raise RuntimeError, "save_upload_file trying to save a model which has no IID"
 	name = str(self.id) + '.' + f.name
@@ -1157,6 +1247,8 @@ class VurlXattr(AbstractXattr):
     def __unicode__(self):
 	return self.key
 
+##################################################################
+
 class Vurl(AbstractThing):
 
     """The Vurl (Vanity URL) model implements URL-shortening and
@@ -1178,39 +1270,46 @@ class Vurl(AbstractThing):
 
     @classmethod
     def get_with_vurlkey(encoded):
-        return Vurl.objects.get(id=base58.b58decode(encoded))
+	""" """
+
+	return Vurl.objects.get(id=base58.b58decode(encoded))
 
     def vurlkey(self):
-        return base58.b58encode(self.id)
+	""" """
+
+	return base58.b58encode(self.id)
 
     @transaction.commit_on_success # <- rollback if it raises an exception
     def save(self):
-        redo = False
+	""" """
 
-        if not self.name:
-            redo = True
-            self.name = '__%s__' % 'temporary_random_string' # TBD FIX THIS !!!!!!!!!!!!!!!!
+	redo = False
 
-        s = super(Vurl, self).save()
+	if not self.name:
+	    redo = True
+	    self.name = '__%s__' % 'temporary_random_string' # TBD FIX THIS !!!!!!!!!!!!!!!!
 
-        if redo:
-            self.name = '__%s__' % self.vurlkey()
-            s = super(Vurl, self).save()
+	s = super(Vurl, self).save()
+
+	if redo:
+	    self.name = '__%s__' % self.vurlkey()
+	    s = super(Vurl, self).save()
 
     def to_structure(self):
-        """
-        This is an abomination, but... since m2s_foo above only allows
-        for a single mattr to map to a single sattr, and since vurl.id
-        is bound to vurlId, and since vurlKey is a restatement of
-        vurl.id in base58, and since it is permanent and readonly, we
-        have no option but to kludge it in right here as duplicate
-        information.  It remains unsettable, however...
-        """
-        vk = self.vurlkey()
-        s = super(Vurl, self).to_structure()
-        s['vurlKey'] = vk
-        s['vurlPath'] = "/get/r/%s" % vk
-        return s
+	"""
+	This is an abomination, but... since m2s_foo above only allows
+	for a single mattr to map to a single sattr, and since vurl.id
+	is bound to vurlId, and since vurlKey is a restatement of
+	vurl.id in base58, and since it is permanent and readonly, we
+	have no option but to kludge it in right here as duplicate
+	information.  It remains unsettable, however...
+	"""
+
+	vk = self.vurlkey()
+	s = super(Vurl, self).to_structure()
+	s['vurlKey'] = vk
+	s['vurlPath'] = "/get/r/%s" % vk
+	return s
 
 ##################################################################
 ##################################################################

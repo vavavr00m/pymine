@@ -2,6 +2,8 @@ IP_ADDRESS=127.0.0.1
 IP_PORT=9862
 IP_TUPLE=$(IP_ADDRESS):$(IP_PORT)
 
+PYDOC=../pydoc/bin/pydoc
+
 all: client
 
 clean:
@@ -58,3 +60,6 @@ syntax:
 alecm:
 	env MINE_EMAIL=alec.muffett@gmail.com ./runme-setup.sh
 	make server
+
+docgen:
+	../pydoctor/bin/pydoctor --add-package=../pymine --project-name="pymine" --make-html

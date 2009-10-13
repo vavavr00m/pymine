@@ -1,0 +1,320 @@
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+  "DTD/xhtml1-strict.dtd">
+<html>
+  <head>
+    <title>API docs for &ldquo;pymine.api.models.AbstractModelField&rdquo;</title>
+    <meta content="text/html;charset=utf-8" http-equiv="Content-Type" />
+    <link href="apidocs.css" type="text/css" rel="stylesheet" />
+    
+    
+  </head>
+  <body>
+    <h1 class="class">Class p.a.m.AbstractModelField:</h1>
+    <p>
+      <span id="part">Part of <a href="pymine.html">pymine</a>.<a href="pymine.api.html">api</a>.<a href="pymine.api.models.html">models</a></span>
+      
+      <a href="classIndex.html#pymine.api.models.AbstractModelField">View In Hierarchy</a>
+    </p>
+    <div>
+      
+    </div>
+    <div>This is an factory class that is used to abstract-out field definitions 
+and simplify porting from Django to Google AppEngine.<table class="fieldTable"></table></div>
+    
+    
+    <div id="splitTables">
+      <table class="children sortable" id="id5">
+  
+  
+  
+  
+  <tr class="classmethod">
+    
+    
+    <td>Class Method</td>
+    <td><a href="pymine.api.models.AbstractModelField.html#__defopts">__defopts</a></td>
+    <td><span>Standardised argument parser for AbstractModelField methods;</span></td>
+  </tr><tr class="classmethod">
+    
+    
+    <td>Class Method</td>
+    <td><a href="pymine.api.models.AbstractModelField.html#last_modified">last_modified</a></td>
+    <td><span>implements last_modified date</span></td>
+  </tr><tr class="classmethod">
+    
+    
+    <td>Class Method</td>
+    <td><a href="pymine.api.models.AbstractModelField.html#created">created</a></td>
+    <td><span>implements created date</span></td>
+  </tr><tr class="classmethod">
+    
+    
+    <td>Class Method</td>
+    <td><a href="pymine.api.models.AbstractModelField.html#datetime">datetime</a></td>
+    <td><span>implements date/time field</span></td>
+  </tr><tr class="classmethod">
+    
+    
+    <td>Class Method</td>
+    <td><a href="pymine.api.models.AbstractModelField.html#reference">reference</a></td>
+    <td><span>implements foreign-keys</span></td>
+  </tr><tr class="classmethod">
+    
+    
+    <td>Class Method</td>
+    <td><a href="pymine.api.models.AbstractModelField.html#reflist">reflist</a></td>
+    <td><span>implements list-of-foreign-keys; parses out 'pivot' argument</span></td>
+  </tr><tr class="classmethod">
+    
+    
+    <td>Class Method</td>
+    <td><a href="pymine.api.models.AbstractModelField.html#string">string</a></td>
+    <td><span>implements string</span></td>
+  </tr><tr class="classmethod">
+    
+    
+    <td>Class Method</td>
+    <td><a href="pymine.api.models.AbstractModelField.html#text">text</a></td>
+    <td><span>implements a text area / text of arbitrary size</span></td>
+  </tr><tr class="classmethod">
+    
+    
+    <td>Class Method</td>
+    <td><a href="pymine.api.models.AbstractModelField.html#slug">slug</a></td>
+    <td><span>implements a slug (alphanumeric string, no spaces)</span></td>
+  </tr><tr class="classmethod">
+    
+    
+    <td>Class Method</td>
+    <td><a href="pymine.api.models.AbstractModelField.html#bool">bool</a></td>
+    <td><span>implements a boolean (true/false)</span></td>
+  </tr><tr class="classmethod">
+    
+    
+    <td>Class Method</td>
+    <td><a href="pymine.api.models.AbstractModelField.html#integer">integer</a></td>
+    <td><span>implements an integer</span></td>
+  </tr><tr class="classmethod">
+    
+    
+    <td>Class Method</td>
+    <td><a href="pymine.api.models.AbstractModelField.html#choice">choice</a></td>
+    <td><span>implements a choices-field (max length of an encoded choice is 1 
+character)</span></td>
+  </tr><tr class="classmethod">
+    
+    
+    <td>Class Method</td>
+    <td><a href="pymine.api.models.AbstractModelField.html#url">url</a></td>
+    <td><span>implements a URL string</span></td>
+  </tr><tr class="classmethod">
+    
+    
+    <td>Class Method</td>
+    <td><a href="pymine.api.models.AbstractModelField.html#email">email</a></td>
+    <td><span>implements an e-mail address</span></td>
+  </tr><tr class="classmethod">
+    
+    
+    <td>Class Method</td>
+    <td><a href="pymine.api.models.AbstractModelField.html#file">file</a></td>
+    <td><span>implements a file</span></td>
+  </tr>
+  
+</table>
+      
+      
+    </div>
+    
+    
+    
+    <div class="function">
+        <a name="pymine.api.models.AbstractModelField.__defopts"></a>
+        <a name="__defopts"></a>
+        <div class="functionHeader">
+        @classmethod<br />
+        def __defopts(self, **kwargs):
+        
+      </div>
+        <div class="functionBody">
+          
+          <div>Standardised argument parser for AbstractModelField methods; implements 
+'required', 'unique', 'symmetrical' ...<table class="fieldTable"></table></div>
+        </div>
+      </div><div class="function">
+        <a name="pymine.api.models.AbstractModelField.last_modified"></a>
+        <a name="last_modified"></a>
+        <div class="functionHeader">
+        @classmethod<br />
+        def last_modified(self):
+        
+      </div>
+        <div class="functionBody">
+          
+          <div>implements last_modified date<table class="fieldTable"></table></div>
+        </div>
+      </div><div class="function">
+        <a name="pymine.api.models.AbstractModelField.created"></a>
+        <a name="created"></a>
+        <div class="functionHeader">
+        @classmethod<br />
+        def created(self):
+        
+      </div>
+        <div class="functionBody">
+          
+          <div>implements created date<table class="fieldTable"></table></div>
+        </div>
+      </div><div class="function">
+        <a name="pymine.api.models.AbstractModelField.datetime"></a>
+        <a name="datetime"></a>
+        <div class="functionHeader">
+        @classmethod<br />
+        def datetime(self, **kwargs):
+        
+      </div>
+        <div class="functionBody">
+          
+          <div>implements date/time field<table class="fieldTable"></table></div>
+        </div>
+      </div><div class="function">
+        <a name="pymine.api.models.AbstractModelField.reference"></a>
+        <a name="reference"></a>
+        <div class="functionHeader">
+        @classmethod<br />
+        def reference(self, what, **kwargs):
+        
+      </div>
+        <div class="functionBody">
+          
+          <div>implements foreign-keys<table class="fieldTable"></table></div>
+        </div>
+      </div><div class="function">
+        <a name="pymine.api.models.AbstractModelField.reflist"></a>
+        <a name="reflist"></a>
+        <div class="functionHeader">
+        @classmethod<br />
+        def reflist(self, what, **kwargs):
+        
+      </div>
+        <div class="functionBody">
+          
+          <div>implements list-of-foreign-keys; parses out 'pivot' argument<table class="fieldTable"></table></div>
+        </div>
+      </div><div class="function">
+        <a name="pymine.api.models.AbstractModelField.string"></a>
+        <a name="string"></a>
+        <div class="functionHeader">
+        @classmethod<br />
+        def string(self, **kwargs):
+        
+      </div>
+        <div class="functionBody">
+          
+          <div>implements string<table class="fieldTable"></table></div>
+        </div>
+      </div><div class="function">
+        <a name="pymine.api.models.AbstractModelField.text"></a>
+        <a name="text"></a>
+        <div class="functionHeader">
+        @classmethod<br />
+        def text(self, **kwargs):
+        
+      </div>
+        <div class="functionBody">
+          
+          <div>implements a text area / text of arbitrary size<table class="fieldTable"></table></div>
+        </div>
+      </div><div class="function">
+        <a name="pymine.api.models.AbstractModelField.slug"></a>
+        <a name="slug"></a>
+        <div class="functionHeader">
+        @classmethod<br />
+        def slug(self, **kwargs):
+        
+      </div>
+        <div class="functionBody">
+          
+          <div>implements a slug (alphanumeric string, no spaces)<table class="fieldTable"></table></div>
+        </div>
+      </div><div class="function">
+        <a name="pymine.api.models.AbstractModelField.bool"></a>
+        <a name="bool"></a>
+        <div class="functionHeader">
+        @classmethod<br />
+        def bool(self, default):
+        
+      </div>
+        <div class="functionBody">
+          
+          <div>implements a boolean (true/false)<table class="fieldTable"></table></div>
+        </div>
+      </div><div class="function">
+        <a name="pymine.api.models.AbstractModelField.integer"></a>
+        <a name="integer"></a>
+        <div class="functionHeader">
+        @classmethod<br />
+        def integer(self, default):
+        
+      </div>
+        <div class="functionBody">
+          
+          <div>implements an integer<table class="fieldTable"></table></div>
+        </div>
+      </div><div class="function">
+        <a name="pymine.api.models.AbstractModelField.choice"></a>
+        <a name="choice"></a>
+        <div class="functionHeader">
+        @classmethod<br />
+        def choice(self, choices):
+        
+      </div>
+        <div class="functionBody">
+          
+          <div>implements a choices-field (max length of an encoded choice is 1 
+character)<table class="fieldTable"></table></div>
+        </div>
+      </div><div class="function">
+        <a name="pymine.api.models.AbstractModelField.url"></a>
+        <a name="url"></a>
+        <div class="functionHeader">
+        @classmethod<br />
+        def url(self, **kwargs):
+        
+      </div>
+        <div class="functionBody">
+          
+          <div>implements a URL string<table class="fieldTable"></table></div>
+        </div>
+      </div><div class="function">
+        <a name="pymine.api.models.AbstractModelField.email"></a>
+        <a name="email"></a>
+        <div class="functionHeader">
+        @classmethod<br />
+        def email(self, **kwargs):
+        
+      </div>
+        <div class="functionBody">
+          
+          <div>implements an e-mail address<table class="fieldTable"></table></div>
+        </div>
+      </div><div class="function">
+        <a name="pymine.api.models.AbstractModelField.file"></a>
+        <a name="file"></a>
+        <div class="functionHeader">
+        @classmethod<br />
+        def file(self, **kwargs):
+        
+      </div>
+        <div class="functionBody">
+          
+          <div>implements a file<table class="fieldTable"></table></div>
+        </div>
+      </div>
+    
+    <address>
+      <a href="index.html">API Documentation</a> for pymine, generated by <a href="http://codespeak.net/~mwh/pydoctor/">pydoctor</a> at 2009-10-13 14:18:03.
+    </address>
+  </body>
+</html>

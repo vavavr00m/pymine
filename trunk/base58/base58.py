@@ -21,6 +21,10 @@ __b58chars = '123456789abcdefghijkmnopqrstuvwxyzABCDEFGHJKLMNPQRSTUVWXYZ'
 __b58base = len(__b58chars) # let's not bother hard-coding
 
 def b58encode(value):
+    """
+    encode integer 'value' as a base58 string; returns string
+    """
+
     encoded = ''
     while value >= __b58base:
         div, mod = divmod(value, __b58base)
@@ -30,6 +34,10 @@ def b58encode(value):
     return encoded
 
 def b58decode(encoded):
+    """
+    decodes base58 string 'encoded' to return integer
+    """
+
     value = 0
     column_multiplier = 1;
     for c in encoded[::-1]:

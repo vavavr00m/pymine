@@ -1,0 +1,211 @@
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+  "DTD/xhtml1-strict.dtd">
+<html>
+  <head>
+    <title>API docs for &ldquo;pymine.api.models.Tag&rdquo;</title>
+    <meta content="text/html;charset=utf-8" http-equiv="Content-Type" />
+    <link href="apidocs.css" type="text/css" rel="stylesheet" />
+    
+    
+  </head>
+  <body>
+    <h1 class="class">Class p.a.m.Tag(<a href="pymine.api.models.AbstractThing.html">AbstractThing</a>):</h1>
+    <p>
+      <span id="part">Part of <a href="pymine.html">pymine</a>.<a href="pymine.api.html">api</a>.<a href="pymine.api.models.html">models</a></span>
+      
+      <a href="classIndex.html#pymine.api.models.Tag">View In Hierarchy</a>
+    </p>
+    <div>
+      
+    </div>
+    <div>This is the modelspace representation of the Tag object<table class="fieldTable"></table></div>
+    
+    
+    <div id="splitTables">
+      <table class="children sortable" id="id12">
+  
+  
+  
+  
+  <tr class="class">
+    
+    
+    <td>Class</td>
+    <td><a href="pymine.api.models.Tag.Meta.html">Meta</a></td>
+    <td><span class="undocumented">Undocumented</span></td>
+  </tr><tr class="method">
+    
+    
+    <td>Method</td>
+    <td><a href="pymine.api.models.Tag.html#__unicode__">__unicode__</a></td>
+    <td><span class="undocumented">Undocumented</span></td>
+  </tr><tr class="method">
+    
+    
+    <td>Method</td>
+    <td><a href="pymine.api.models.Tag.html#__update_cloud_field">__update_cloud_field</a></td>
+    <td><span class="undocumented">Undocumented</span></td>
+  </tr><tr class="method">
+    
+    
+    <td>Method</td>
+    <td><a href="pymine.api.models.Tag.html#__update_cloud_map">__update_cloud_map</a></td>
+    <td><span>I could try ripping out the list of tags just once (avoiding</span></td>
+  </tr><tr class="method">
+    
+    
+    <td>Method</td>
+    <td><a href="pymine.api.models.Tag.html#__expand_cloud_map">__expand_cloud_map</a></td>
+    <td><span>This is brute-force and ignorance code but it is proof against 
+loops.</span></td>
+  </tr><tr class="method">
+    
+    
+    <td>Method</td>
+    <td><a href="pymine.api.models.Tag.html#delete_sattr">delete_sattr</a></td>
+    <td><span>This method overrides AbstractThing.delete_sattr() and acts as</span></td>
+  </tr><tr class="method">
+    
+    
+    <td>Method</td>
+    <td><a href="pymine.api.models.Tag.html#update_from_request">update_from_request</a></td>
+    <td><span>This method overrides AbstractThing.update_from_request() and</span></td>
+  </tr>
+  
+</table>
+      
+        <p>
+          Inherited from <a href="pymine.api.models.AbstractThing.html">AbstractThing</a>:
+        </p>
+        <table class="children sortable" id="id13">
+  
+  
+  
+  
+  <tr class="baseclassmethod">
+    
+    
+    <td>Class Method</td>
+    <td><a href="pymine.api.models.AbstractThing.html#new_from_request">new_from_request</a></td>
+    <td><span class="undocumented">Undocumented</span></td>
+  </tr><tr class="basemethod">
+    
+    
+    <td>Method</td>
+    <td><a href="pymine.api.models.AbstractThing.html#lookup_mattr">lookup_mattr</a></td>
+    <td><span class="undocumented">Undocumented</span></td>
+  </tr><tr class="basemethod">
+    
+    
+    <td>Method</td>
+    <td><a href="pymine.api.models.AbstractThing.html#get_sattr">get_sattr</a></td>
+    <td><span class="undocumented">Undocumented</span></td>
+  </tr><tr class="basemethod">
+    
+    
+    <td>Method</td>
+    <td><a href="pymine.api.models.AbstractThing.html#to_structure">to_structure</a></td>
+    <td><span class="undocumented">Undocumented</span></td>
+  </tr><tr class="basemethod">
+    
+    
+    <td>Method</td>
+    <td><a href="pymine.api.models.AbstractThing.html#get_absolute_url">get_absolute_url</a></td>
+    <td><span class="undocumented">Undocumented</span></td>
+  </tr>
+  
+</table>
+      
+      
+    </div>
+    
+    
+    
+    <div class="function">
+        <a name="pymine.api.models.Tag.__unicode__"></a>
+        <a name="__unicode__"></a>
+        <div class="functionHeader">
+        
+        def __unicode__(self):
+        
+      </div>
+        <div class="functionBody">
+          
+          <div class="undocumented">Undocumented</div>
+        </div>
+      </div><div class="function">
+        <a name="pymine.api.models.Tag.__update_cloud_field"></a>
+        <a name="__update_cloud_field"></a>
+        <div class="functionHeader">
+        
+        def __update_cloud_field(self):
+        
+      </div>
+        <div class="functionBody">
+          
+          <div class="undocumented">Undocumented</div>
+        </div>
+      </div><div class="function">
+        <a name="pymine.api.models.Tag.__update_cloud_map"></a>
+        <a name="__update_cloud_map"></a>
+        <div class="functionHeader">
+        
+        def __update_cloud_map(self, tmap):
+        
+      </div>
+        <div class="functionBody">
+          
+          <div>I could try ripping out the list of tags just once (avoiding ~n! 
+database hits) and reconstructing the map from that, but if they change on 
+disk underneath me then something nasty can happen; better to let caching 
+at a lower level take the hit...<table class="fieldTable"></table></div>
+        </div>
+      </div><div class="function">
+        <a name="pymine.api.models.Tag.__expand_cloud_map"></a>
+        <a name="__expand_cloud_map"></a>
+        <div class="functionHeader">
+        
+        def __expand_cloud_map(self):
+        
+      </div>
+        <div class="functionBody">
+          
+          <div>This is brute-force and ignorance code but it is proof against 
+loops.<table class="fieldTable"></table></div>
+        </div>
+      </div><div class="function">
+        <a name="pymine.api.models.Tag.delete_sattr"></a>
+        <a name="delete_sattr"></a>
+        <div class="functionHeader">
+        @transaction.commit_on_success<br />
+        def delete_sattr(self, sattr):
+        
+      </div>
+        <div class="functionBody">
+          <div class="interfaceinfo">overrides <a href="pymine.api.models.AbstractThing.html#delete_sattr">pymine.api.models.AbstractThing.delete_sattr</a></div>
+          <div>This method overrides AbstractThing.delete_sattr() and acts as a hook to
+detect changes in the Tag implications that might trigger a recalculation 
+of the Tag cloud.<table class="fieldTable"></table></div>
+        </div>
+      </div><div class="function">
+        <a name="pymine.api.models.Tag.update_from_request"></a>
+        <a name="update_from_request"></a>
+        <div class="functionHeader">
+        @transaction.commit_on_success<br />
+        def update_from_request(self, r, **kwargs):
+        
+      </div>
+        <div class="functionBody">
+          <div class="interfaceinfo">overrides <a href="pymine.api.models.AbstractThing.html#update_from_request">pymine.api.models.AbstractThing.update_from_request</a></div>
+          <div>This method overrides AbstractThing.update_from_request() and acts as a 
+hook to detect changes in the Tag implications that might trigger a 
+recalculation of the Tag cloud.<table class="fieldTable"></table></div>
+        </div>
+      </div>
+    
+    <address>
+      <a href="index.html">API Documentation</a> for pymine, generated by <a href="http://codespeak.net/~mwh/pydoctor/">pydoctor</a> at 2009-10-13 14:18:03.
+    </address>
+  </body>
+</html>

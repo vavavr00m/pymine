@@ -1,4 +1,5 @@
 done:
+
 - url shortener (MINE essential/builtin)
 
 soon:
@@ -7,10 +8,12 @@ soon:
 - last.fm scraper
 - store jpegs/scans of receipts
 - store jpegs/scans of recipes pages
-- suck my google calendar using a (very) private feed; use the mine to
-  rebroadcast it with minekey-grade access control.
+
+- "suckblow": suck my google calendar using a (very) private feed; use
+  the mine to rebroadcast it with minekey access control.
 
 midterm:
+- "project minemesh"
 - amazon scraper
 - blog replacement plugin
 - flickr replacement plugin
