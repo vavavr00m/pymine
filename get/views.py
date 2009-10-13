@@ -43,11 +43,27 @@ from minekey import MineKey
 
 def demofeed(request, *args, **kwargs):
 
+    # the probelm with coding this is that my interests are specific,
+    # the clouding of tags is generalised and has implications which
+    # may intersect my interests, or may not.
+
     # get RELATION
     r = Relation.objects.get(id=1)
 
+
+    # for interest in [ x.id for x in t.tags ]:
+        
+
+
+
+
+
+
+
     # select PUBLIC items where ITEM.TAG_CLOUD intersects RELATION.INTERESTS
     qs1 = Item.objects.none()
+    
+
     # tbd
 
     # if RELATION.REQUIRES, reject items where ITEM.TAG_CLOUD fails to intersect it
@@ -76,15 +92,12 @@ def demofeed(request, *args, **kwargs):
     qs = qs.distinct()
 
     # sort by most recently modified
-
     qs = qs.order_by('-last_modified')
 
     # snark
-
     print qs.query
 
     # dump it as a list
-
     result = [ item.to_structure() for item in qs ]
 
     s = {

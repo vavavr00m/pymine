@@ -67,7 +67,7 @@ class RelationAdmin(admin.ModelAdmin):
     date_hierarchy = 'created'
     fieldsets = [
         (None, {'fields': ['name', 'version', 'description']}), 
-        ('Tags', {'fields': ['tags', 'tags_required', 'tags_excluded']}), 
+        ('Interests', {'fields': ['interests', 'interests_required', 'interests_excluded']}), 
         ('Advanced', {'fields': ['network_pattern', 'embargo_before', 'embargo_after'], 'classes': ['collapse']}), 
         ]
 

@@ -359,7 +359,7 @@ def s2m_tagimplies(s, sattr, m, mattr):
 def m2s_itemparent(m, mattr, s, sattr):
     """ """
     if mattr != 'parent' or sattr != 'itemParent':
-	raise RuntimeError, "m2s_itemtags is confused by %s and %s" % (sattr, mattr)
+	raise RuntimeError, "m2s_itemparent is confused by %s and %s" % (sattr, mattr)
     x = m.parent
     if x: s[sattr] = x.name
 
@@ -372,14 +372,14 @@ def m2s_itemparent(m, mattr, s, sattr):
 def m2s_itemstatus(m, mattr, s, sattr):
     """ """
     if mattr != 'status' or sattr != 'itemStatus':
-	raise RuntimeError, "m2s_itemtags is confused by %s and %s" % (sattr, mattr)
+	raise RuntimeError, "m2s_itemstatus is confused by %s and %s" % (sattr, mattr)
     x = m.get_status_display()
     if x: s[sattr] = x
 
 def s2m_itemstatus(s, sattr, m, mattr):
     """ """
     if mattr != 'status' or sattr != 'itemStatus':
-	raise RuntimeError, "s2m_itemtags is confused by %s and %s" % (sattr, mattr)
+	raise RuntimeError, "s2m_itemstatus is confused by %s and %s" % (sattr, mattr)
     x = s[sattr]
 
     if x in status_lookup:
@@ -428,16 +428,16 @@ def s2m_itemtags(s, sattr, m, mattr):
 # take anything implicitly or explicitly tagged 'wine' but requires
 # the 'australia' tag to be also present, rejecting anything that also
 # includes the 'merlot' tag; in m-space this also breaks out into
-# three fields: m.tags, m.tags_required, m.tags_excluded
+# three fields: m.interests, m.interests_required, m.interests_excluded
 
 def m2s_relints(m, mattr, s, sattr):
     """ """
     if mattr != 'interests' or sattr != 'relationInterests':
 	raise RuntimeError, "m2s_relints is confused by %s and %s" % (sattr, mattr)
 
-    x = " ".join(x for x in itertools.chain([ i.name for i in m.tags.all() ],
-					    [ "require:%s" % i.name for i in m.tags_required.all() ],
-					    [ "exclude:%s" % i.name for i in m.tags_excluded.all() ]))
+    x = " ".join(x for x in itertools.chain([ i.name for i in m.interests.all() ],
+					    [ "require:%s" % i.name for i in m.interests_required.all() ],
+					    [ "exclude:%s" % i.name for i in m.interests_excluded.all() ]))
     if x: s[sattr] = x
 
 def s2m_relints(s, sattr, m, mattr):
@@ -445,14 +445,14 @@ def s2m_relints(s, sattr, m, mattr):
     if mattr != 'interests' or sattr != 'relationInterests':
 	raise RuntimeError, "s2m_relints is confused by %s and %s" % (sattr, mattr)
     if sattr in s:
-	m.tags.clear()
-	m.tags_required.clear()
-	m.tags_excluded.clear()
+	m.interests.clear()
+	m.interests_required.clear()
+	m.interests_excluded.clear()
 	for x in s[sattr].split():
-	    if x.startswith('require:'): m.tags_required.add(Tag.objects.get(name=x[8:]))
-	    elif x.startswith('exclude:'): m.tags_excluded.add(Tag.objects.get(name=x[8:]))
-	    elif x.startswith('except:'): m.tags_excluded.add(Tag.objects.get(name=x[7:])) # common typo
-	    else: m.tags.add(Tag.objects.get(name=x))
+	    if x.startswith('require:'): m.interests_required.add(Tag.objects.get(name=x[8:]))
+	    elif x.startswith('exclude:'): m.interests_excluded.add(Tag.objects.get(name=x[8:]))
+	    elif x.startswith('except:'): m.interests_excluded.add(Tag.objects.get(name=x[7:])) # common typo
+	    else: m.interests.add(Tag.objects.get(name=x))
 
 ##################################################################
 
@@ -1108,9 +1108,9 @@ class Relation(AbstractThing):
     embargo_after = AbstractModelField.datetime(required=False)
     embargo_before = AbstractModelField.datetime(required=False)
     network_pattern = AbstractModelField.string(required=False)
-    tags = AbstractModelField.reflist(Tag, pivot='relations_with_tag', required=False)
-    tags_excluded = AbstractModelField.reflist(Tag, pivot='relations_excluding', required=False)
-    tags_required = AbstractModelField.reflist(Tag, pivot='relations_requiring', required=False)
+    interests = AbstractModelField.reflist(Tag, pivot='relations_with_tag', required=False)
+    interests_excluded = AbstractModelField.reflist(Tag, pivot='relations_excluding', required=False)
+    interests_required = AbstractModelField.reflist(Tag, pivot='relations_requiring', required=False)
 
     class Meta:
 	ordering = ['name']
