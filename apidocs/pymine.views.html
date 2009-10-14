@@ -86,10 +86,14 @@ this includes item-data-reads, and most non-API handlers<table class="fieldTable
           
           <div>Things that use API_CALL() return a structure that here is converted to 
 the desired output format and returned.</p>
-<p>The pseudo-format &quot;api&quot; enables use of the redirect_success 
-parameter; if &quot;foo.api&quot; is called and 
+<p>The pseudo-format &quot;rdr&quot; enables use of the redirect_success 
+parameter; if &quot;foo.rdr&quot; is called and 
 &quot;redirect_success&quot; is set, then a successful completion of 
-foo.api yields a redirect to the value of &quot;redirect_success&quot;<table class="fieldTable"></table></div>
+foo.rdr yields a redirect to the value of &quot;redirect_success&quot;</p>
+<p>The format &quot;raw&quot; returns a undefined string representation of 
+the results for &quot;foo.raw&quot;, purely for human consumption.  If 
+DEBUG is set then the return value is type text/plain, otherwise it is 
+application/octet-stream.<table class="fieldTable"></table></div>
         </div>
       </div><div class="function">
         <a name="pymine.views.root_mine"></a>
