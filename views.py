@@ -20,10 +20,12 @@ from django.http import Http404, HttpResponse, HttpResponseRedirect
 from django.shortcuts import render_to_response, get_object_or_404
 from django.conf import settings
 
-from api.models import LogEvent
-
 import django.utils.simplejson as json
 import pickle
+
+from api.models import LogEvent
+
+import cheatxml.cheatxml as cheatxml
 
 def REST(request, *args, **kwargs):
 
@@ -118,8 +120,7 @@ def API_CALL(request, *args, **kwargs):
         data = str(retval.get('result', ''))
     elif desired_format == 'xml':
         mimetype="application/xml"
-        data = None
-        raise RuntimeError("XML serialization disabled temporarily due to lack of 'lxml' on OSX")
+        data = cheatxml.dumps(retval)
     elif desired_format == 'json':
         mimetype="application/json"
         data = json.dumps(retval)
