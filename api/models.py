@@ -1222,14 +1222,14 @@ class Item(AbstractThing):
 	s['itemSize'] = self.data.size
 	return s
 
-    def to_atom(self, mk):
+    def to_atom(self, feed_mk):
 	"""
 	Creates the structure used in ATOM generation
 
 	See http://docs.djangoproject.com/en/dev/ref/contrib/syndication/#django.contrib.syndication.SyndicationFeed.add_item
 	"""
 
-	item_mk = mk.spawn_iid(self.id)
+	item_mk = feed_mk.spawn_iid(self.id)
 
 	iteminfo = {}
 	iteminfo['author_email'] = None
@@ -1237,30 +1237,38 @@ class Item(AbstractThing):
 	iteminfo['author_name'] = None
 	iteminfo['categories'] = None
 	iteminfo['comments'] = None
-	iteminfo['enclosure'] = None
 	iteminfo['item_copyright'] = None
 	iteminfo['pubdate'] = None
 	iteminfo['title'] = self.name
 	iteminfo['ttl'] = None
 	iteminfo['unique_id'] = None
 
-	if self.feed_link:
+	if self.feed_link: # third-party linkage
 	    iteminfo['link'] = self.feed_link
 	else:
-            if mk:
-                iteminfo['link'] = item_mk.permalink()
-            else:
-                iteminfo['link'] = "%s/item/%d" % (settings.MINE_URL_ROOT, self.id)
+            iteminfo['link'] = item_mk.permalink()
 
-            fd_tmpl = {
-                'title': iteminfo['title'],
-                'link': iteminfo['link'],
-                'content_type': self.content_type,
-                'size': self.data.size,
-                'description': self.description
-                }
+        fd_tmpl = {
+            'content_type': self.content_type,
+            'description': self.description,
+            'link': iteminfo['link'],
+            'size': self.data.size,
+            'title': iteminfo['title'],
+            }
+            
+            # TBD: should we use feed_mk or item_mk to rewrite, here?
+            # am thinking feed_mk
+        
+        iteminfo['description'] = \
+            feed_mk.rewrite_html(render_to_string('feed-item-desc.html', fd_tmpl))
 
-	    iteminfo['description'] = render_to_string('feed_item_desc.html', fd_tmpl)
+        encs = feedgenerator.Enclosure(
+            url=iteminfo['link'], 
+            length=str(self.data.size), # NEEDS STRING! ARGH!
+            mime_type=self.content_type,
+            )
+
+        iteminfo['enclosure'] = encs
 
 	# done
 	return iteminfo
