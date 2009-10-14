@@ -17,7 +17,7 @@
 ##
 
 Minectl() {
-    ./minectl.pl -e "$@"
+    ./minectl.pl -xe "$@"
 }
 
 SAMPLES=static/testdata
@@ -90,7 +90,7 @@ file=static/testdata/austen.txt
 
 while read status tags
 do
-    desc="status=$status tags=$tags"
+    desc="test/status=$status/tags=$tags"
 
     Minectl create-item \
 	"itemData=@$file" \
