@@ -20,10 +20,11 @@ from django.core.urlresolvers import reverse
 from django.db.models import Q
 from django.http import Http404, HttpResponse, HttpResponsePermanentRedirect
 from django.shortcuts import render_to_response, get_object_or_404
+from django.template.loader import render_to_string
 from django.utils import feedgenerator
 
 from minekey import MineKey
-from pymine.api.models import Tag, Item, Relation, Comment, Vurl
+from pymine.api.models import Tag, Item, Relation, Comment, Vurl, LogEvent
 
 import pymine.api.views as api
 
@@ -46,6 +47,7 @@ import pymine.api.views as api
 def demofeed(request, *args, **kwargs):
 
     rid = 2
+    mk = MineKey(method='get', rid=rid, rvsn=1, iid=0, depth=3)
     slicesize = 100
 
     # who are we looking at?
@@ -85,17 +87,17 @@ def demofeed(request, *args, **kwargs):
 
 	    # print "examining %s -> %s" % (item_tag, str(item_cloud))
 
-            if hates:
-                if item_cloud & hates: # <-- BITWISE NOT LOGICAL 'AND'
-                    # print "avoiding %s because hates %s" % (item.name, str(hates))
-                    break
+	    if hates:
+		if item_cloud & hates: # <-- BITWISE NOT LOGICAL 'AND'
+		    # print "avoiding %s because hates %s" % (item.name, str(hates))
+		    break
 
-            if needs:
-                obtained = item_cloud.values_list('id', flat=True)
-                unobtained = needs.exclude(id__in=obtained)
-                if unobtained:
-                    # print "avoiding %s because needs %s" % (item.name, str(unobtained))
-                    break
+	    if needs:
+		obtained = item_cloud.values_list('id', flat=True)
+		unobtained = needs.exclude(id__in=obtained)
+		if unobtained:
+		    # print "avoiding %s because needs %s" % (item.name, str(unobtained))
+		    break
 
 	    if item_cloud & interests: # <-- BITWISE NOT LOGICAL 'AND'
 		# print "candidate %s" % item.name
@@ -131,30 +133,38 @@ def demofeed(request, *args, **kwargs):
 
     # feed information
     feedinfo = {}
-
-    # required
-    feedinfo['title'] = 'test feed'
-    feedinfo['link'] = 'http://bar.bar/bar/'
-    feedinfo['description'] = 'this is a feed description'
-
-    # optional
-    feedinfo['language'] = None
     feedinfo['author_email'] = None
-    feedinfo['author_name'] = None
     feedinfo['author_link'] = None
-    feedinfo['subtitle'] = None
+    feedinfo['author_name'] = None
     feedinfo['categories'] = None
-    feedinfo['feed_url'] = None
     feedinfo['feed_copyright'] = None
     feedinfo['feed_guid'] = None
+    feedinfo['feed_url'] = mk.permalink()
+    feedinfo['language'] = None
+    feedinfo['link'] = mk.permalink()
+    feedinfo['subtitle'] = None
+    feedinfo['title'] = 'test feed'
     feedinfo['ttl'] = None
 
-    # populate
+    fd_tmpl = { # not everything/identical
+	'author_email': feedinfo['author_email'],
+	'author_link': feedinfo['author_link'],
+	'author_name': feedinfo['author_name'],
+	'feed_copyright': feedinfo['feed_copyright'],
+	'feed_url': feedinfo['feed_url'],
+	'link': feedinfo['link'],
+	'subtitle': feedinfo['subtitle'],
+	'title': feedinfo['title'],
+	}
+
+    feedinfo['description'] = render_to_string('feed_desc.html', fd_tmpl)
+
+    # populate with respect to the minekey
     feed = feedgenerator.Atom1Feed(**feedinfo)
 
     for item in qs:
-        iteminfo = item.to_atom()
-        feed.add_item(**iteminfo)
+	iteminfo = item.to_atom(mk)
+	feed.add_item(**iteminfo)
 
 
     return HttpResponse(feed.writeString('UTF-8'), mimetype='application/atom+xml')
@@ -188,11 +198,11 @@ def read_minekey(request, minekey, *args, **kwargs):
 	# deal with it
 	if mk.iid: # item
 	    retval = api.read_item_data(None, mk.iid)
-	    el.close('item processed')
+	    el.close('item ok')
 	    return retval
 	else: # feed
 	    retval = HttpResponse("feed decode: " + str(mk))
-	    el.close('feed processed')
+	    el.close('feed ok')
 	    return retval
 
     # catch all

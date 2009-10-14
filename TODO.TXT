@@ -1,29 +1,37 @@
-todo:
+todo soon:
 
-- break out vanity urls model into /get?
+- implement _fakedatafile HTTP stuff
 
 - allow comments on 0bject zero, by permitting NULL value for IID in Comment
 
 - pagination
+
+- add s2m methods to model so that vurlLink gets stripped of whitespace.
+
+- fix sattr deletion in the model
+
+
+
+todo after:
+
+- what to do about relationship PKs being reusable?  
+  ban deletion of Relations?
+  boolean mark Relations as deleted/inactivated?
+
+
+
+todo longer:
+
+- break out vanity urls model into /get?
 
 - hack gen-django-code.pl so that 
 	1) the IID==0 regexp is restricted to pertinent URLs
 	2) FMT for SATTRs can include "raw", different to FMT elsewhere
   ...these are the same problem
 
-- add s2m methods to model so that vurlLink gets stripped of whitespace.
-
-- fix sattr deletion in the model
-
-- what to do about relationship PKs being reusable?  
-  ban deletion of Relations?
-  boolean mark Relations as deleted/inactivated?
 
 - leverage Vurls to create mechanism for Item in Mine to insert
   third-party IRL into list of feed permalinks; first step towards
   distributed mine, and allows your feed to contain references to
   third-party objects
 
-- extra Item sattrs:
-	itemFeedBody(required=False) - what gets put into the feed body
-	itemFeedPermalink(required=False) - what gets put into feed permalink

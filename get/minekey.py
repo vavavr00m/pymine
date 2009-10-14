@@ -15,6 +15,7 @@
 ## permissions and limitations under the License.
 ##
 
+from django.conf import settings
 import base64
 import hashlib
 import re
@@ -22,9 +23,10 @@ import re
 # using pycrypto 2.0.1
 # http://www.amk.ca/python/code/crypto (old)
 # http://www.pycrypto.org/ (new)
+#
 from Crypto.Cipher import AES
 
-from pymine.api.models import Relation
+from pymine.api.models import Relation, LogEvent
 
 class MineKey:
     key_magic = 'py1' # recognise these keys
@@ -163,7 +165,7 @@ class MineKey:
 	return "%s,%s" % (hash, core)
 
     def permalink(self):
-        return "/get/" + self.key() # TODO; fix
+        return "%s/get/%s" % (settings.MINE_URL_ROOT, self.key())
 
     def key(self):
 	internal = str(self)
