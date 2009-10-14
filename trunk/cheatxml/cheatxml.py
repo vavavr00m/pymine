@@ -15,7 +15,12 @@
 ## permissions and limitations under the License.
 ##
 
-#from types import *
+"""
+Quick and dirty XML serialisation for data structures, wrapping them
+in an "envelope" object and returning them pretty-printed for visual
+inspection and (maybe) parsing.
+"""
+
 from xml.sax.saxutils import escape
 
 def __space(buffer):
@@ -83,13 +88,12 @@ def __descend(buffer, depth, *arguments):
 	else:
 	    raise RuntimeError, 'unknown type for argument %s %s' % (str(arg), type(arg))
 
-def dumps(foo):
+def dumps(structure):
     """
-    Quick and dirty XML serialisation for data structures, 
-    wrapping them in an "envelope" object.
+    Returns structure encoded as a single string, encoded as XML
     """
     buffer = []
-    env = { 'envelope': foo }
+    env = { 'envelope': structure }
     __descend(buffer, 0, env)
     return "".join(buffer)
 
