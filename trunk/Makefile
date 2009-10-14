@@ -63,3 +63,5 @@ alecm:
 
 docgen:
 	../pydoctor/bin/pydoctor --add-package=../pymine --project-name="pymine" --make-html
+	perl -pi~ -e "s/2009-\d{1,2}-\d{1,2} \d\d:\d\d:\d\d/(date elided)/go" apidocs/*.html
+	( cd apidocs ; rm *~ )
