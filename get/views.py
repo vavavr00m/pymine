@@ -46,6 +46,7 @@ from minekey import MineKey
 def demofeed(request, *args, **kwargs):
 
     rid = 2
+    slicesize = 100
 
     # who are we looking at?
     relation = Relation.objects.select_related(depth=2).get(id=rid)
@@ -58,7 +59,9 @@ def demofeed(request, *args, **kwargs):
     needs = relation.interests_required.all()
     hates = relation.interests_excluded.all()
 
-    # first, deal with the 'interests' - this means public objects
+    # first, deal with the 'interests' - this means public objects.
+    # TBD: add a constraint in here that nothing > N days old is
+    # considered for the feed?
     public_items = Item.objects.filter(status='P').select_related(depth=2)
 
     # where we will stash the IIDs of candidate items
@@ -70,41 +73,47 @@ def demofeed(request, *args, **kwargs):
     # if relation needs things and any of them are missing, drop item
     # else mark item as candidate
 
-    print "%s interests %s" % (relation.name, str(interests))
-    print "%s hates %s" % (relation.name, str(hates))
-    print "%s needs %s" % (relation.name, str(needs))
+    # print "%s interests %s" % (relation.name, str(interests))
+    # print "%s hates %s" % (relation.name, str(hates))
+    # print "%s needs %s" % (relation.name, str(needs))
 
     for item in public_items.all():
-	print "considering %s" % item.name
+	# print "considering %s" % item.name
 
 	for item_tag in item.tags.all():
 	    item_cloud = item_tag.cloud.all()
 
-	    print "  examining %s -> %s" % (item_tag, str(item_cloud))
+	    # print "  examining %s -> %s" % (item_tag, str(item_cloud))
 
 	    if item_cloud & hates:
-		print "    avoiding %s because hates %s" % (item.name, str(hates))
+		# print "    avoiding %s because hates %s" % (item.name, str(hates))
 		break
 
             available = item_cloud.values_list('id', flat=True)
             unavailable = needs.exclude(id__in=available)
 	    if needs and unavailable:
-		print "    avoiding %s because needs %s" % (item.name, str(unavailable))
+		# print "    avoiding %s because needs %s" % (item.name, str(unavailable))
 		break
 
 	    if item_cloud & interests:
-		print "    candidate %s" % item.name
+		# print "    candidate %s" % item.name
 		candidates.append(item.id)
 		break
 
+    # re-use cached public_items to recreate the proper selection
     qs1 = public_items.filter(id__in=candidates)
+
+    # and rip out those extra "public" or "shared" items explicitly for us
     qs2 = relation.items_explicitly_for.filter(Q(status='P') | Q(status='S'))
+
+    # collate and uniq the above
     qs = qs1 | qs2
     qs = qs.distinct()
-    qs = qs.exclude(status='X') # should be redundant
 
-    # reject items marked not:relation
-    # i wish i could do qs = qs - blacklist
+    # remove any marked as private (should be none bwtf)
+    qs = qs.exclude(status='X')
+
+    # reject items marked not:relation (i wish i could do qs = qs - blacklist)
     blacklist = relation.items_explicitly_not.values_list('id', flat=True)
     qs = qs.exclude(id__in=blacklist)
 
@@ -112,9 +121,11 @@ def demofeed(request, *args, **kwargs):
     qs = qs.exclude(hide_after__isnull=False, hide_after__lte=now)
     qs = qs.exclude(hide_before__isnull=False, hide_before__gt=now)
 
-    # sort MRF
-    # TBD: artificially promote hidden-but-revealed into sort order
+    # sort MRF (TBD: artificially promote hidden-but-revealed into sort order)
     qs = qs.order_by('-last_modified')
+
+    # slice it
+    qs = qs[:slicesize]
 
     # dump it as a list
     result = [ item.to_structure() for item in qs ]
