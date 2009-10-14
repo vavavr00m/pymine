@@ -79,9 +79,11 @@ will standardise on eventually
 from django.conf import settings
 from django.core.files.storage import FileSystemStorage
 from django.db import models, transaction
+from django.template.loader import render_to_string
 from django.utils import feedgenerator
 import itertools
 
+#from pymine.get.minekey import MineKey
 import base58.base58 as base58
 
 # magic storage for database items
@@ -214,7 +216,7 @@ class AbstractModelField:
 class AbstractModel(models.Model):
     """
     AbstractModel is the parent class for all Models below, providing
-    the common 'created' and 'last_modified' fields. 
+    the common 'created' and 'last_modified' fields.
     """
 
     created = AbstractModelField.created()
@@ -472,7 +474,7 @@ class AbstractXattr(AbstractModel):
 ##################################################################
 
 class AbstractThing(AbstractModel):
-    """ 
+    """
     The AbstractThing class is a abstract model class that exists to
     provide a few common methods to the core Mine models.
 
@@ -973,36 +975,36 @@ class Tag(AbstractThing):
     def __update_cloud_field(self):
 	""" """
 
-        # wipe our cloud cache
+	# wipe our cloud cache
 	self.cloud.clear()
 
-        # get us into the processing loop
+	# get us into the processing loop
 	tgraph = { self: False }
-	loop = True 
+	loop = True
 
-        # until we make a pass thru tgraph where nothing happens
+	# until we make a pass thru tgraph where nothing happens
 	while loop:
 
-            # default: we won't go round again
-	    loop = False 
+	    # default: we won't go round again
+	    loop = False
 
-            # for each tag in tgraph
+	    # for each tag in tgraph
 	    for tag, visited in tgraph.items():
 
-                # if we've already exploded it, skip to next
-		if visited: 
+		# if we've already exploded it, skip to next
+		if visited:
 		    continue
 
-                # register all the unvisited parents into tgraph
+		# register all the unvisited parents into tgraph
 		for parent in tag.implies.all():
 		    if not tgraph.get(parent, False):
 			tgraph[parent] = False
 			loop = True # mark more work to be done
 
-                # add this tag to the cloud
+		# add this tag to the cloud
 		self.cloud.add(tag)
 
-                # mark current tag as 'visited'
+		# mark current tag as 'visited'
 		tgraph[tag] = True
 
 	self.save() # needed?
@@ -1213,42 +1215,55 @@ class Item(AbstractThing):
 
     def to_structure(self):
 	"""
-        Splices the virtual itemSize sattr into the Item structure
+	Splices the virtual itemSize sattr into the Item structure
 	"""
 
 	s = super(Item, self).to_structure()
 	s['itemSize'] = self.data.size
 	return s
 
-    def to_atom(self):
-        """
-        Creates the structure used in ATOM generation
+    def to_atom(self, mk):
+	"""
+	Creates the structure used in ATOM generation
 
-        See http://docs.djangoproject.com/en/dev/ref/contrib/syndication/#django.contrib.syndication.SyndicationFeed.add_item
-        """
-       
-        # the returned data structure
-        retval = {}
+	See http://docs.djangoproject.com/en/dev/ref/contrib/syndication/#django.contrib.syndication.SyndicationFeed.add_item
+	"""
 
-        # required fields
-        retval['title'] = self.name
-        retval['description'] = 'foo'
-        retval['link'] = 'http://foo.foo/foo/'
+	item_mk = mk.spawn_iid(self.id)
 
-        # optional fields
-        retval['author_email'] = None
-        retval['author_name'] = None
-        retval['author_link'] = None
-        retval['pubdate'] = None
-        retval['comments'] = None
-        retval['unique_id'] = None
-        retval['enclosure'] = None
-        retval['categories'] = None
-        retval['item_copyright'] = None
-        retval['ttl'] = None
+	iteminfo = {}
+	iteminfo['author_email'] = None
+	iteminfo['author_link'] = None
+	iteminfo['author_name'] = None
+	iteminfo['categories'] = None
+	iteminfo['comments'] = None
+	iteminfo['enclosure'] = None
+	iteminfo['item_copyright'] = None
+	iteminfo['pubdate'] = None
+	iteminfo['title'] = self.name
+	iteminfo['ttl'] = None
+	iteminfo['unique_id'] = None
 
-        # done
-        return retval
+	if self.feed_link:
+	    iteminfo['link'] = self.feed_link
+	else:
+            if mk:
+                iteminfo['link'] = item_mk.permalink()
+            else:
+                iteminfo['link'] = "%s/item/%d" % (settings.MINE_URL_ROOT, self.id)
+
+            fd_tmpl = {
+                'title': iteminfo['title'],
+                'link': iteminfo['link'],
+                'content_type': self.content_type,
+                'size': self.data.size,
+                'description': self.description
+                }
+
+	    iteminfo['description'] = render_to_string('feed_item_desc.html', fd_tmpl)
+
+	# done
+	return iteminfo
 
 ##################################################################
 
@@ -1348,7 +1363,7 @@ class Vurl(AbstractThing):
 
     def to_structure(self):
 	"""
-        Splices the virtual vurlKey/vurlPath sattrs into the Vurl
+	Splices the virtual vurlKey/vurlPath sattrs into the Vurl
 	structure; since m2s_foo above only allows for a single mattr
 	to map to a single sattr, and since vurl.id is bound to
 	vurlId, and since vurlKey is a restatement of vurl.id in
