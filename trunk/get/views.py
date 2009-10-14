@@ -15,17 +15,17 @@
 ## permissions and limitations under the License.
 ##
 
+from datetime import datetime
 from django.core.urlresolvers import reverse
+from django.db.models import Q
 from django.http import Http404, HttpResponse, HttpResponsePermanentRedirect
 from django.shortcuts import render_to_response, get_object_or_404
-from django.db.models import Q
-
-import pymine.api.views as api
-from pymine.api.models import Tag, Item, Relation, Comment, Vurl
-
-from datetime import datetime
+from django.utils import feedgenerator
 
 from minekey import MineKey
+from pymine.api.models import Tag, Item, Relation, Comment, Vurl
+
+import pymine.api.views as api
 
 ##################################################################
 ##################################################################
@@ -83,20 +83,22 @@ def demofeed(request, *args, **kwargs):
 	for item_tag in item.tags.all():
 	    item_cloud = item_tag.cloud.all()
 
-	    # print "  examining %s -> %s" % (item_tag, str(item_cloud))
+	    # print "examining %s -> %s" % (item_tag, str(item_cloud))
 
-	    if item_cloud & hates:
-		# print "    avoiding %s because hates %s" % (item.name, str(hates))
-		break
+            if hates:
+                if item_cloud & hates: # <-- BITWISE NOT LOGICAL 'AND'
+                    # print "avoiding %s because hates %s" % (item.name, str(hates))
+                    break
 
-            available = item_cloud.values_list('id', flat=True)
-            unavailable = needs.exclude(id__in=available)
-	    if needs and unavailable:
-		# print "    avoiding %s because needs %s" % (item.name, str(unavailable))
-		break
+            if needs:
+                obtained = item_cloud.values_list('id', flat=True)
+                unobtained = needs.exclude(id__in=obtained)
+                if unobtained:
+                    # print "avoiding %s because needs %s" % (item.name, str(unobtained))
+                    break
 
-	    if item_cloud & interests:
-		# print "    candidate %s" % item.name
+	    if item_cloud & interests: # <-- BITWISE NOT LOGICAL 'AND'
+		# print "candidate %s" % item.name
 		candidates.append(item.id)
 		break
 
@@ -127,17 +129,35 @@ def demofeed(request, *args, **kwargs):
     # slice it
     qs = qs[:slicesize]
 
-    # dump it as a list
-    result = [ item.to_structure() for item in qs ]
+    # feed information
+    feedinfo = {}
 
-    # envelope
-    s = {
-	'result': result,
-	'status': 'this is a fake page for demofeed',
-	'exit': 0,
-	}
+    # required
+    feedinfo['title'] = 'test feed'
+    feedinfo['link'] = 'http://bar.bar/bar/'
+    feedinfo['description'] = 'this is a feed description'
 
-    return render_to_response('list-items.html', s)
+    # optional
+    feedinfo['language'] = None
+    feedinfo['author_email'] = None
+    feedinfo['author_name'] = None
+    feedinfo['author_link'] = None
+    feedinfo['subtitle'] = None
+    feedinfo['categories'] = None
+    feedinfo['feed_url'] = None
+    feedinfo['feed_copyright'] = None
+    feedinfo['feed_guid'] = None
+    feedinfo['ttl'] = None
+
+    # populate
+    feed = feedgenerator.Atom1Feed(**feedinfo)
+
+    for item in qs:
+        iteminfo = item.to_atom()
+        feed.add_item(**iteminfo)
+
+
+    return HttpResponse(feed.writeString('UTF-8'), mimetype='application/atom+xml')
 
 ##################################################################
 ##################################################################

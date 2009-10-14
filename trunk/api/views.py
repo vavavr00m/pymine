@@ -15,12 +15,12 @@
 ## permissions and limitations under the License.
 ##
 
+from django.conf import settings
 from django.core import serializers
+from django.core.paginator import Paginator, InvalidPage, EmptyPage
 from django.core.urlresolvers import reverse
 from django.http import Http404, HttpResponse, HttpResponseRedirect
 from django.shortcuts import render_to_response, get_object_or_404
-
-from django.core.paginator import Paginator, InvalidPage, EmptyPage
 
 from models import Tag, Item, Relation, Comment, Vurl, Registry
 
@@ -585,11 +585,10 @@ def encode_minekey3(request, rid, rvsn, iid, *args, **kwargs):
 def read_version(request, *args, **kwargs):
     """
     """
-
     result = {
-	'softwareName': 'pymine',
-	'softwareRevision': '1.1-alpha',
-	'mineAPIVersion': 3,
+	'softwareName': settings.MINE_SOFTWARE_NAME,
+	'softwareRevision': settings.MINE_SOFTWARE_VERSION,
+	'mineApiVersion': settings.MINE_API_VERSION,
 	}
     return construct_retval(result)
 

@@ -76,11 +76,11 @@ will standardise on eventually
 
 """
 
-import itertools
-
-from django.db import models, transaction
-from django.core.files.storage import FileSystemStorage
 from django.conf import settings
+from django.core.files.storage import FileSystemStorage
+from django.db import models, transaction
+from django.utils import feedgenerator
+import itertools
 
 import base58.base58 as base58
 
@@ -1220,6 +1220,35 @@ class Item(AbstractThing):
 	s['itemSize'] = self.data.size
 	return s
 
+    def to_atom(self):
+        """
+        Creates the structure used in ATOM generation
+
+        See http://docs.djangoproject.com/en/dev/ref/contrib/syndication/#django.contrib.syndication.SyndicationFeed.add_item
+        """
+       
+        # the returned data structure
+        retval = {}
+
+        # required fields
+        retval['title'] = self.name
+        retval['description'] = 'foo'
+        retval['link'] = 'http://foo.foo/foo/'
+
+        # optional fields
+        retval['author_email'] = None
+        retval['author_name'] = None
+        retval['author_link'] = None
+        retval['pubdate'] = None
+        retval['comments'] = None
+        retval['unique_id'] = None
+        retval['enclosure'] = None
+        retval['categories'] = None
+        retval['item_copyright'] = None
+        retval['ttl'] = None
+
+        # done
+        return retval
 
 ##################################################################
 

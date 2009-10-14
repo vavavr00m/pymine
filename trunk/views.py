@@ -67,10 +67,15 @@ def API_CALL(request, *args, **kwargs):
     Things that use API_CALL() return a structure that here is
     converted to the desired output format and returned.
 
-    The pseudo-format "api" enables use of the redirect_success
-    parameter; if "foo.api" is called and "redirect_success" is set,
-    then a successful completion of foo.api yields a redirect to the
+    The pseudo-format "rdr" enables use of the redirect_success
+    parameter; if "foo.rdr" is called and "redirect_success" is set,
+    then a successful completion of foo.rdr yields a redirect to the
     value of "redirect_success"
+
+    The format "raw" returns a undefined string representation of the
+    results for "foo.raw", purely for human consumption.  If DEBUG is
+    set then the return value is type text/plain, otherwise it is
+    application/octet-stream.
     """
 
     el = LogEvent.open("API",
@@ -123,7 +128,7 @@ def API_CALL(request, *args, **kwargs):
         data = cheatxml.dumps(retval)
     elif desired_format == 'json':
         mimetype="application/json"
-        data = json.dumps(retval)
+        data = json.dumps(retval, sort_keys=True, indent=2)
     elif desired_format == 'py':
         mimetype="text/plain"
         data = pickle.dumps(retval)
