@@ -48,11 +48,11 @@ def __descend(buffer, depth, *arguments):
 	    __push(buffer, escape(arg.encode('utf-8')))
 	    return False
 
-	elif isinstance(arg, tuple) \
-                or isinstance(arg, list):
+	elif isinstance(arg, tuple) or isinstance(arg, list):
 	    trip = False
 	    for v in arg:
-		if trip: __space(buffer)
+		if trip and not isinstance(v, dict): 
+                    __space(buffer)
 		__descend(buffer, depth, v)
 		trip = True
 	    return False
@@ -66,10 +66,13 @@ def __descend(buffer, depth, *arguments):
 		__indent(buffer, depth)
 		__push(buffer, '<%s>' % k)
 
-		if isinstance(v, dict):
+		nested = (isinstance(v, dict) or \
+                              (isinstance(v, list) and isinstance(v[0], dict)))
+
+                if nested:
 		    __newline(buffer)
 
-		if __descend(buffer, depth+1, arg[k]):
+		if __descend(buffer, depth+1, arg[k]) or nested:
 		    __indent(buffer, depth)
 
 		__push(buffer, '</%s>' % k)
@@ -94,8 +97,9 @@ if __name__ == '__main__':
     foo = {
 	'integer': 42,
 	'string': 'this is a string',
-	'list': (1,2,3),
-        'nasty': '<foo>bar&baz</foo>',
+	'list': (1, 2, 3),
+        'html': '<foo>bar&baz</foo>',
+        'complex': [ {'A':99}, {'B':98}, {'C':97} ],
 	}
     bar = foo.copy()
     baz = foo.copy()

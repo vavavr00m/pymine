@@ -50,7 +50,7 @@ def list_foos(model):
     """
     """
 
-    result = [ m.to_structure() for m in model.objects.all() ]
+    result = [ { m.sattr_prefix : m.to_structure() } for m in model.objects.all() ]
     return construct_retval(result)
 
 def create_foo(model, request):
