@@ -53,15 +53,14 @@ dbdump:
 
 ##################################################################
 
-syntax:
-	find */ -name "*.py" | while read f ; do echo $$f ; python $$f ; echo "" ; done
-
-# :-)
+# brute-force rebuild form scratch 
 alecm:
 	env MINE_EMAIL=alec.muffett@gmail.com ./runme-setup.sh
 	make server
 
-docgen:
-	../pydoctor/bin/pydoctor --add-package=../pymine --project-name="pymine" --make-html
-	perl -pi~ -e "s/2009-\d{1,2}-\d{1,2} \d\d:\d\d:\d\d/(date elided)/go" apidocs/*.html
-	( cd apidocs ; rm *~ )
+##################################################################
+
+docs:
+	( cd public_html ; pydoctor --add-package=../../pymine --project-name="pymine" --make-html )
+	( cd public_html/apidocs ; perl -pi~ -e "s/2009-\d{1,2}-\d{1,2} \d\d:\d\d:\d\d/(date elided)/go" *.html )
+	( cd public_html/apidocs ; rm *~ )
