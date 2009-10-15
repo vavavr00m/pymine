@@ -43,7 +43,7 @@ sub mime_type {
     return "text/html" if ($filesuffix eq 'htm');
 
     # insert a mime.types lookup here
-    my $mimefile = "static/mime.types";
+    my $mimefile = "etc/mime.types";
 
     open(MIME, $mimefile) || die "open: $mimefile: $!\n";
     while (<MIME>) {
