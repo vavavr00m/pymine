@@ -4,14 +4,14 @@
 
 {% block content %}
 <DL>
-{% for vurl in result %}
+{% for entry in result %}
 <DT>
-id: {{ vurl.vurlId }}
-key: {{ vurl.vurlKey }}
-name: {{ vurl.vurlName }}
+id: {{ entry.vurl.vurlId }}
+key: {{ entry.vurl.vurlKey }}
+name: {{ entry.vurl.vurlName }}
 </DT>
 <DD>
-{{ vurl.vurlLink }}
+{{ entry.vurl.vurlLink }}
 </DD>
 <P/>
 {% endfor %}

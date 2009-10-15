@@ -4,14 +4,14 @@
 
 {% block content %}
 <DL>
-{% for comment in result %}
+{% for entry in result %}
 <DT>
-{{ comment.commentTitle }} 
-(on item {{ comment.commentItem }})
-(by relation {{ comment.commentRelation }})
+{{ entry.comment.commentTitle }} 
+(on item {{ entry.comment.commentItem }})
+(by relation {{ entry.comment.commentRelation }})
 </DT>
 <DD>
-{{ comment.commentBody }}
+{{ entry.comment.commentBody }}
 </DD>
 <P/>
 {% endfor %}

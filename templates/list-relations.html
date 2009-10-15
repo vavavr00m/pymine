@@ -4,14 +4,14 @@
 
 {% block content %}
 <DL>
-{% for relation in result %}
+{% for entry in result %}
 <DT>
-{{ relation.relationName }} 
-(version {{ relation.relationVersion }})
-(interests {{ relation.relationInterests}}) 
+{{ entry.relation.relationName }} 
+(version {{ entry.relation.relationVersion }})
+(interests {{ entry.relation.relationInterests}}) 
 </DT>
 <DD>
-{{ relation.relationDescription }}
+{{ entry.relation.relationDescription }}
 </DD>
 <P/>
 {% endfor %}
