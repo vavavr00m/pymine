@@ -20,7 +20,7 @@ Minectl() {
     ./minectl.pl -xe "$@"
 }
 
-SAMPLES=static/testdata
+SAMPLES=public_html/testdata
 exec 2>&1
 set -x
 
@@ -86,7 +86,7 @@ Minectl create-vurl vurlLink=http://www.google.co.uk/ # autoname
 
 # custom objects for feed testing
 
-file=static/testdata/austen.txt
+file=public_html/testdata/austen.txt
 
 while read status tags
 do
