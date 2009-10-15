@@ -1,4 +1,4 @@
-for i in api archive doc get mine pub ui
+for i in api archive doc get mine ui
 do
 cat > root-$i.html <<EOF
 {% extends 'base-page.html' %}

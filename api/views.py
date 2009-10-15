@@ -261,15 +261,15 @@ def list_items(request, *args, **kwargs):
 ## function: read_item_data <--------------------------------- this is the big one
 ## declared args: iid
 def read_item_data(request, iid, *args, **kwargs):
-    """
-    """
-
     """REST function that handles the retreival of actual item data, eg JPEG files"""
+
     id = int(iid)
     m = Item.objects.get(id=id)
-    f = m.data.chunks()
+    fw = m.data.chunks(65536)
     ct = m.content_type
-    return HttpResponse(f, mimetype=ct)
+    response = HttpResponse(fw, content_type=ct)
+    response['Content-Length'] = m.data.size
+    return response
 
 ## rest: DELETE /api/item/IID.FMT
 ## function: delete_item
