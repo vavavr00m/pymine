@@ -4,16 +4,16 @@
 
 {% block content %}
 <DL>
-{% for tag in result %}
+{% for entry in result %}
 <DT>
-{{ tag.tagName }}
-{% if tag.tagImplies %}
-(implies: {{ tag.tagImplies }})
-(cloud: {{ tag.tagCloud }})
+{{ entry.tag.tagName }}
+{% if entry.tag.tagImplies %}
+(implies: {{ entry.tag.tagImplies }})
+(cloud: {{ entry.tag.tagCloud }})
 {% endif %}
 </DT>
 <DD>
-{{ tag.tagDescription }}
+{{ entry.tag.tagDescription }}
 </DD>
 <P/>
 {% endfor %}

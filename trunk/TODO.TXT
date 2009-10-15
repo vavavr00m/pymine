@@ -1,5 +1,7 @@
 todo soon:
 
+- pack out the individual items in the list results with useful metainfo
+
 - add field to LogEvent to break-out RID info
 
 - implement _fakedatafile HTTP stuff
