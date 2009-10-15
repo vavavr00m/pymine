@@ -1,5 +1,7 @@
 todo soon:
 
+- add field to LogEvent to break-out RID info
+
 - implement _fakedatafile HTTP stuff
 
 - allow comments on 0bject zero, by permitting NULL value for IID in Comment

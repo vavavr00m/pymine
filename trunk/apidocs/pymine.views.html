@@ -32,6 +32,30 @@
     
     
     <td>Function</td>
+    <td><a href="pymine.views.html#mime_lookup">mime_lookup</a></td>
+    <td><span class="undocumented">Undocumented</span></td>
+  </tr><tr class="function">
+    
+    
+    <td>Function</td>
+    <td><a href="pymine.views.html#http_serve_file">http_serve_file</a></td>
+    <td><span class="undocumented">Undocumented</span></td>
+  </tr><tr class="function">
+    
+    
+    <td>Function</td>
+    <td><a href="pymine.views.html#http_serve_directory">http_serve_directory</a></td>
+    <td><span class="undocumented">Undocumented</span></td>
+  </tr><tr class="function">
+    
+    
+    <td>Function</td>
+    <td><a href="pymine.views.html#http_serve_error">http_serve_error</a></td>
+    <td><span class="undocumented">Undocumented</span></td>
+  </tr><tr class="function">
+    
+    
+    <td>Function</td>
     <td><a href="pymine.views.html#REST">REST</a></td>
     <td><span>Things that use REST() return their own HTTPResponse objects</span></td>
   </tr><tr class="function">
@@ -44,14 +68,26 @@
     
     
     <td>Function</td>
-    <td><a href="pymine.views.html#root_mine">root_mine</a></td>
+    <td><a href="pymine.views.html#clean_url_path">clean_url_path</a></td>
     <td><span class="undocumented">Undocumented</span></td>
   </tr><tr class="function">
     
     
     <td>Function</td>
+    <td><a href="pymine.views.html#root_mine">root_mine</a></td>
+    <td><span>This method renders 'root-mine.html' which provides a HTML</span></td>
+  </tr><tr class="function">
+    
+    
+    <td>Function</td>
     <td><a href="pymine.views.html#root_pub">root_pub</a></td>
-    <td><span class="undocumented">Undocumented</span></td>
+    <td><span>handles the root of the public_html directory</span></td>
+  </tr><tr class="function">
+    
+    
+    <td>Function</td>
+    <td><a href="pymine.views.html#handle_pub">handle_pub</a></td>
+    <td><span>http://docs.djangoproject.com/en/dev/howto/static-files/ says:</span></td>
   </tr>
   
 </table>
@@ -62,6 +98,54 @@
     
     
     <div class="function">
+        <a name="pymine.views.mime_lookup"></a>
+        <a name="mime_lookup"></a>
+        <div class="functionHeader">
+        
+        def mime_lookup(path):
+        
+      </div>
+        <div class="functionBody">
+          
+          <div class="undocumented">Undocumented</div>
+        </div>
+      </div><div class="function">
+        <a name="pymine.views.http_serve_file"></a>
+        <a name="http_serve_file"></a>
+        <div class="functionHeader">
+        
+        def http_serve_file(file_path, content_type):
+        
+      </div>
+        <div class="functionBody">
+          
+          <div class="undocumented">Undocumented</div>
+        </div>
+      </div><div class="function">
+        <a name="pymine.views.http_serve_directory"></a>
+        <a name="http_serve_directory"></a>
+        <div class="functionHeader">
+        
+        def http_serve_directory(file_path):
+        
+      </div>
+        <div class="functionBody">
+          
+          <div class="undocumented">Undocumented</div>
+        </div>
+      </div><div class="function">
+        <a name="pymine.views.http_serve_error"></a>
+        <a name="http_serve_error"></a>
+        <div class="functionHeader">
+        
+        def http_serve_error(url_path):
+        
+      </div>
+        <div class="functionBody">
+          
+          <div class="undocumented">Undocumented</div>
+        </div>
+      </div><div class="function">
         <a name="pymine.views.REST"></a>
         <a name="REST"></a>
         <div class="functionHeader">
@@ -96,6 +180,18 @@ DEBUG is set then the return value is type text/plain, otherwise it is
 application/octet-stream.<table class="fieldTable"></table></div>
         </div>
       </div><div class="function">
+        <a name="pymine.views.clean_url_path"></a>
+        <a name="clean_url_path"></a>
+        <div class="functionHeader">
+        
+        def clean_url_path(old):
+        
+      </div>
+        <div class="functionBody">
+          
+          <div class="undocumented">Undocumented</div>
+        </div>
+      </div><div class="function">
         <a name="pymine.views.root_mine"></a>
         <a name="root_mine"></a>
         <div class="functionHeader">
@@ -105,7 +201,8 @@ application/octet-stream.<table class="fieldTable"></table></div>
       </div>
         <div class="functionBody">
           
-          <div class="undocumented">Undocumented</div>
+          <div>This method renders 'root-mine.html' which provides a HTML response for 
+requests to the mine's root URL.<table class="fieldTable"></table></div>
         </div>
       </div><div class="function">
         <a name="pymine.views.root_pub"></a>
@@ -117,7 +214,38 @@ application/octet-stream.<table class="fieldTable"></table></div>
       </div>
         <div class="functionBody">
           
-          <div class="undocumented">Undocumented</div>
+          <div>handles the root of the public_html directory<table class="fieldTable"></table></div>
+        </div>
+      </div><div class="function">
+        <a name="pymine.views.handle_pub"></a>
+        <a name="handle_pub"></a>
+        <div class="functionHeader">
+        
+        def handle_pub(request, suffix, *args, **kwargs):
+        
+      </div>
+        <div class="functionBody">
+          
+          <div>http://docs.djangoproject.com/en/dev/howto/static-files/ says:</p>
+<p>&lt;QUOTE&gt;Django itself doesn't serve static (media) files, such as 
+images, style sheets, or video. It leaves that job to whichever Web server 
+you choose.  The reasoning here is that standard Web servers, such as 
+Apache, lighttpd and Cherokee, are much more fine-tuned at serving static 
+files than a Web application framework.&lt;/QUOTE&gt;</p>
+<p>...which is fine, but which doesn't actually help us when Django is 
+being used to implement potentially hundreds of mini-websites with their 
+own novel forms of authentication and where you don't want management 
+overhead of keeping (documenting?) how to synchronise their authentication 
+needs with [INSERT NAME OF PREFERRED WEBSERVER DU JOUR].</p>
+<p>See also: http://code.djangoproject.com/ticket/2131#comment:2</p>
+<p>&lt;QUOTE&gt;Django isn't meant to serve static files, so I'm marking 
+this as a wontfix.&lt;/QUOTE&gt;</p>
+<p>So in the face of those wanting to nanny us into &quot;proper 
+behaviour&quot;, regrettably we have to roll our own.</p>
+<p>We are allowed to take the performance hit, because the point is to have
+&quot;one mine per user spattered all over the world&quot; rather than 
+&quot;bazillion mines all at one hosting company which subsequently suffers
+performance issues&quot;.<table class="fieldTable"></table></div>
         </div>
       </div>
     

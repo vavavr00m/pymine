@@ -1,0 +1,15 @@
+{% extends 'base-page.html' %}
+
+{% block title %} directory listing for {{ name }} {% endblock %}
+
+{% block content %}
+
+<UL>
+<LI><A HREF="../"><TT>[parent directory]</TT></A></LI>
+{% for item in list %}
+<LI><A HREF="{{item.link}}"><TT>{{item.name}}</TT></A> <EM>{{item.description}}</EM></LI>
+{% endfor %}
+</UL>
+<P/>
+
+{% endblock %}

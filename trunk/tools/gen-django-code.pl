@@ -122,7 +122,8 @@ foreach $file (sort keys %text) {
 __END__;
 
 mine   GET    /                              root-mine
-mine   GET    /pub                           root-pub
+mine   GET    /pub/                          root-pub
+mine   GET    /pub/SUFFIX                    handle-pub
 
 api    GET    /api                           root-api 
 api    POST   /api/clone/IID.FMT             create-clone 
