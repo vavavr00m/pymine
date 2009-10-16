@@ -1,39 +1,35 @@
 todo soon:
 
+
+- Adriana's "Objects" are items without datafile
+- If item has no datafile, don't use the template (obviously) but do add an enclosure SO LONG AS IS text/****
+- If item has no datafile, the /data/iid URL will retreive the item.description
+- If item has no datafile, fault unless content_type.startswith('text/')
+
+
 - pack out the individual items in the list results with useful metainfo
-
 - add field to LogEvent to break-out RID info
-
-- implement _fakedatafile HTTP stuff
-
 - allow comments on 0bject zero, by permitting NULL value for IID in Comment
-
 - pagination
-
 - add s2m methods to model so that vurlLink gets stripped of whitespace.
-
 - fix sattr deletion in the model
-
-
+- fix the abstractfield factory argument parser for the file() field
 
 todo after:
+
 
 - what to do about relationship PKs being reusable?  
   ban deletion of Relations?
   boolean mark Relations as deleted/inactivated?
 
 
-
 todo longer:
 
 - break out vanity urls model into /get?
-
 - hack gen-django-code.pl so that 
 	1) the IID==0 regexp is restricted to pertinent URLs
 	2) FMT for SATTRs can include "raw", different to FMT elsewhere
   ...these are the same problem
-
-
 - leverage Vurls to create mechanism for Item in Mine to insert
   third-party IRL into list of feed permalinks; first step towards
   distributed mine, and allows your feed to contain references to

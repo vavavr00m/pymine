@@ -45,10 +45,13 @@ import pymine.api.views as api
 # [FEED] intersection of ITEM(PUBLIC).EXPANDEDTAGCLOUD and RELATION.INTERESTS.
 
 def demofeed(request, *args, **kwargs):
+    pass
 
-    rid = 2
-    mk = MineKey(method='get', rid=rid, rvsn=1, iid=0, depth=3)
+def generate_feed(request, mk, *args, **kwargs):
+
     slicesize = 100
+
+    rid = mk.rid
 
     # who are we looking at?
     relation = Relation.objects.select_related(depth=2).get(id=rid)
@@ -166,7 +169,6 @@ def demofeed(request, *args, **kwargs):
 	iteminfo = item.to_atom(mk)
 	feed.add_item(**iteminfo)
 
-
     return HttpResponse(feed.writeString('UTF-8'), mimetype='application/atom+xml')
 
 ##################################################################
@@ -185,7 +187,7 @@ def root_get(request, *args, **kwargs):
 ## declared args: minekey
 def read_minekey(request, minekey, *args, **kwargs):
     # log this
-    el = LogEvent.open("MKREAD", )
+    el = LogEvent.open("minekey", )
 
     # big wrapper for all possible exceptions
     try:
@@ -197,11 +199,11 @@ def read_minekey(request, minekey, *args, **kwargs):
 
 	# deal with it
 	if mk.iid: # item
-	    retval = api.read_item_data(None, mk.iid)
+	    retval = api.read_item_data(None, mk.iid, minekey=mk)
 	    el.close('item ok')
 	    return retval
 	else: # feed
-	    retval = HttpResponse("feed decode: " + str(mk))
+	    retval = generate_feed(mk)
 	    el.close('feed ok')
 	    return retval
 

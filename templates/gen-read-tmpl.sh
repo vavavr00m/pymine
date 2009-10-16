@@ -1,9 +1,13 @@
 #!/bin/sh
 
-FMT() {
+Format() {
     thing=$1
     sattr=$2
-    echo "<LI>$sattr: {{ result.$sattr }}</LI>" >> read-$thing.html
+    (
+    echo "{% if result.$sattr %}"
+    echo "<LI>$sattr: {{ result.$sattr }}</LI>" 
+    echo "{% endif %}"
+    ) >> read-$thing.html
 }
 
 for thing in comment item relation tag vurl
@@ -12,57 +16,61 @@ do
     echo "<UL>" > read-$thing.html
 done
 
-FMT comment commentBody
-FMT comment commentCreated
-FMT comment commentId
-FMT comment commentItem
-FMT comment commentLastModified
-FMT comment commentLikes
-FMT comment commentRelation
-FMT comment commentTitle
+Format comment commentBody
+Format comment commentCreated
+Format comment commentId
+Format comment commentItem
+Format comment commentLastModified
+Format comment commentRelation
+Format comment commentTitle
 
-FMT item itemCreated
-FMT item itemData
-FMT item itemDescription
-FMT item itemHideAfter
-FMT item itemHideBefore
-FMT item itemId
-FMT item itemLastModified
-FMT item itemName
-FMT item itemStatus
-FMT item itemTags
-FMT item itemType
+Format item itemCreated
+###Format item itemData
+Format item itemDescription
+Format item itemFeedLink
+Format item itemHasFile
+Format item itemHideAfter
+Format item itemHideBefore
+Format item itemId
+Format item itemLastModified
+Format item itemName
+Format item itemParent
+Format item itemSize
+Format item itemStatus
+Format item itemTags
+Format item itemType
 
-FMT relation relationCallbackURL
-FMT relation relationCreated
-FMT relation relationDescription
-FMT relation relationEmailAddress
-FMT relation relationEmbargoAfter
-FMT relation relationEmbargoBefore
-FMT relation relationHomepageURL
-FMT relation relationId
-FMT relation relationImageURL
-FMT relation relationInterests
-FMT relation relationLastModified
-FMT relation relationName
-FMT relation relationNetworkPattern
-FMT relation relationVersion
+Format relation relationCreated
+Format relation relationDescription
+Format relation relationEmbargoAfter
+Format relation relationEmbargoBefore
+Format relation relationId
+Format relation relationInterests
+Format relation relationLastModified
+Format relation relationName
+Format relation relationNetworkPattern
+Format relation relationVersion
 
-FMT tag tagCreated
-FMT tag tagDescription
-FMT tag tagId
-FMT tag tagImplies
-FMT tag tagLastModified
-FMT tag tagName
+Format tag tagCloud
+Format tag tagCreated
+Format tag tagDescription
+Format tag tagId
+Format tag tagImplies
+Format tag tagLastModified
+Format tag tagName
 
-FMT vurl vurlCreated
-FMT vurl vurlId
-FMT vurl vurlLastModified
-FMT vurl vurlLink
-FMT vurl vurlName
-FMT vurl vurlTags
+Format vurl vurlAbsoluteUrl
+Format vurl vurlCreated
+Format vurl vurlId
+Format vurl vurlKey
+Format vurl vurlLastModified
+Format vurl vurlLink
+Format vurl vurlName
 
 for thing in comment item relation tag vurl
 do
     echo "</UL>"  >> read-$thing.html
 done
+
+
+
