@@ -1,10 +1,23 @@
 <UL>
+{% if result.commentBody %}
 <LI>commentBody: {{ result.commentBody }}</LI>
+{% endif %}
+{% if result.commentCreated %}
 <LI>commentCreated: {{ result.commentCreated }}</LI>
+{% endif %}
+{% if result.commentId %}
 <LI>commentId: {{ result.commentId }}</LI>
+{% endif %}
+{% if result.commentItem %}
 <LI>commentItem: {{ result.commentItem }}</LI>
+{% endif %}
+{% if result.commentLastModified %}
 <LI>commentLastModified: {{ result.commentLastModified }}</LI>
-<LI>commentLikes: {{ result.commentLikes }}</LI>
+{% endif %}
+{% if result.commentRelation %}
 <LI>commentRelation: {{ result.commentRelation }}</LI>
+{% endif %}
+{% if result.commentTitle %}
 <LI>commentTitle: {{ result.commentTitle }}</LI>
+{% endif %}
 </UL>

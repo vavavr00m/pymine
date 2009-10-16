@@ -258,17 +258,33 @@ def list_items(request, *args, **kwargs):
     return list_foos(Item)
 
 ## rest: GET /api/item/IID
-## function: read_item_data <--------------------------------- this is the big one
+## function: read_item_data <--------------------------------- THIS IS THE BIG ONE
 ## declared args: iid
 def read_item_data(request, iid, *args, **kwargs):
     """REST function that handles the retreival of actual item data, eg JPEG files"""
 
     id = int(iid)
+
     m = Item.objects.get(id=id)
-    fw = m.data.chunks(65536)
-    ct = m.content_type
-    response = HttpResponse(fw, content_type=ct)
-    response['Content-Length'] = m.data.size
+    ct = m.item_type()
+    mk = kwargs.get('minekey', None)
+
+    if mk and ct in ('text/html', 'application/xml+mine'):
+        if m.data:
+            content = m.data.read()
+        else:
+            content = m.item_description()
+        rewrite = mk.rewrite_html(content)
+        response = HttpResponse(rewrite, content_type=ct)
+        response['Content-Length'] = len(rewrite)
+    elif m.data:
+        fw = m.data.chunks(65536)
+        response = HttpResponse(fw, content_type=ct)
+        response['Content-Length'] = m.data.size
+    else:
+        response = HttpResponse(m.item_description(), content_type=ct)
+        response['Content-Length'] = m.data.size
+
     return response
 
 ## rest: DELETE /api/item/IID.FMT

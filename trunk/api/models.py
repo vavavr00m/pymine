@@ -209,6 +209,7 @@ class AbstractModelField:
     @classmethod
     def file(self, **kwargs):
 	"""implements a file"""
+	opts = self.__defopts(**kwargs)
 	return models.FileField(**kwargs) # TODO
 
 ##################################################################
@@ -540,6 +541,7 @@ class AbstractThing(AbstractModel):
 (  'itemData',                'data',             True,   None,        s2m_dummy,       None,            ),
 (  'itemDescription',         'description',      False,  r2s_string,  s2m_copy,        m2s_copy,        ),
 (  'itemFeedLink',            'feed_link',        False,  r2s_string,  s2m_copy,        m2s_copy,        ),
+(  'itemHasFile',             None,               True,   None,        None,            None,            ),  #see:Item()
 (  'itemHideAfter',           'hide_after',       False,  r2s_string,  s2m_copy,        m2s_copy,        ),
 (  'itemHideBefore',          'hide_before',      False,  r2s_string,  s2m_date,        m2s_date,        ),
 (  'itemId',                  'id',               False,  r2s_int,     s2m_copy,        m2s_copy,        ),
@@ -656,7 +658,7 @@ class AbstractThing(AbstractModel):
 	    if sattr in ( 'itemData' ): # ...insert others here...
 		if sattr in r.FILES:
 		    uf = r.FILES[sattr]
-		    ct = uf.content_type
+		    ct = uf.content_type # TBD: SHOULDN"T I BE DOING SOMETHING WITH THIS???
 		    self.save_upload_file(uf)
 		    needs_save = True
 
@@ -1117,14 +1119,15 @@ class Relation(AbstractThing):
 
     name = AbstractModelField.slug(unique=True)
     version = AbstractModelField.integer(1)
+
     deleted = AbstractModelField.bool(False)
     description = AbstractModelField.text(required=False)
     embargo_after = AbstractModelField.datetime(required=False)
     embargo_before = AbstractModelField.datetime(required=False)
-    network_pattern = AbstractModelField.string(required=False)
     interests = AbstractModelField.reflist(Tag, pivot='relations_with_tag', required=False)
     interests_excluded = AbstractModelField.reflist(Tag, pivot='relations_excluding', required=False)
     interests_required = AbstractModelField.reflist(Tag, pivot='relations_requiring', required=False)
+    network_pattern = AbstractModelField.string(required=False)
 
     class Meta:
 	ordering = ['name']
@@ -1165,8 +1168,10 @@ class Item(AbstractThing):
     sattr_prefix = "item"
 
     name = AbstractModelField.string()
-    content_type = AbstractModelField.string()
-    data = AbstractModelField.file(storage=item_file_storage, upload_to='%Y/%m/%d')
+    status = AbstractModelField.choice(item_status_choices) # WHY IS THIS NOT CHECKED ON SAVE? TBD
+
+    content_type = AbstractModelField.string(required=False)
+    data = AbstractModelField.file(storage=item_file_storage, upload_to='%Y/%m/%d', blank=True, null=True) # FIXME!!!
     description = AbstractModelField.text(required=False)
     feed_link = AbstractModelField.url(required=False)
     hide_after = AbstractModelField.datetime(required=False)
@@ -1174,7 +1179,6 @@ class Item(AbstractThing):
     item_for_relations = AbstractModelField.reflist(Relation, pivot='items_explicitly_for', required=False)
     item_not_relations = AbstractModelField.reflist(Relation, pivot='items_explicitly_not', required=False)
     parent = AbstractModelField.reference('self', required=False) # only set for clones
-    status = AbstractModelField.choice(item_status_choices)
     tags = AbstractModelField.reflist(Tag, pivot='items_tagged', required=False)
 
     class Meta:
@@ -1185,7 +1189,7 @@ class Item(AbstractThing):
 
     # cloning an item
     def clone_from_request(self, r, **kwargs):
-	""" """
+	""" NEEDS REVIEW AND FIXING FOR CLONING PROCESS """
 
 	margs = {
 	    name: self.name,
@@ -1210,8 +1214,31 @@ class Item(AbstractThing):
 
 	if not self.id:
 	    raise RuntimeError, "save_upload_file trying to save a model which has no IID"
+
 	name = str(self.id) + '.' + f.name
 	self.data.save(name, f)
+
+    def item_size(self):
+        if self.data:
+            return self.data.size
+        elif self.description:
+            return len(self.description)
+        else:
+            return 0
+
+    def item_type(self):
+        if not self.data:
+            return 'text/html' # forced
+        elif self.content_type:
+            return self.content_type
+        else:
+            return 'application/octet-stream'
+
+    def item_description(self):
+        if self.description:
+            return self.description
+        else:
+            return ''
 
     def to_structure(self):
 	"""
@@ -1219,7 +1246,17 @@ class Item(AbstractThing):
 	"""
 
 	s = super(Item, self).to_structure()
-	s['itemSize'] = self.data.size
+
+        if 'itemType' not in s:
+            s['itemType'] = self.item_type()
+            
+        s['itemSize'] = self.item_size()
+
+        if self.data:
+            s['itemHasFile'] = 1
+        else:
+            s['itemHasFile'] = 0
+
 	return s
 
     def to_atom(self, feed_mk):
@@ -1232,43 +1269,49 @@ class Item(AbstractThing):
 	item_mk = feed_mk.spawn_iid(self.id)
 
 	iteminfo = {}
-	iteminfo['author_email'] = None
-	iteminfo['author_link'] = None
-	iteminfo['author_name'] = None
-	iteminfo['categories'] = None
-	iteminfo['comments'] = None
-	iteminfo['item_copyright'] = None
-	iteminfo['pubdate'] = None
-	iteminfo['title'] = self.name
-	iteminfo['ttl'] = None
-	iteminfo['unique_id'] = None
 
-	if self.feed_link: # third-party linkage
+	iteminfo['author_email'] = None # TBD?
+	iteminfo['author_link'] = None # TBD?
+	iteminfo['author_name'] = None # TBD?
+	iteminfo['categories'] = None # TBD?
+	iteminfo['comments'] = None # TBD?
+	iteminfo['item_copyright'] = None # TBD?
+	iteminfo['pubdate'] = None # TBD?
+	iteminfo['ttl'] = None # TBD?
+	iteminfo['unique_id'] = None # TBD?
+
+	iteminfo['title'] = self.name
+
+        # third-party linkage? # TBD: WHAT TO DO ABOUT SIZE AND CONTENT-TYPE FOR ENCLOSURES?
+	if self.feed_link:
 	    iteminfo['link'] = self.feed_link
 	else:
             iteminfo['link'] = item_mk.permalink()
 
-        fd_tmpl = {
-            'content_type': self.content_type,
-            'description': self.description,
-            'link': iteminfo['link'],
-            'size': self.data.size,
-            'title': iteminfo['title'],
-            }
-            
-            # TBD: should we use feed_mk or item_mk to rewrite, here?
-            # am thinking feed_mk
+        # work out our enclosures
+        iteminfo['enclosure'] = \
+            feedgenerator.Enclosure(url=iteminfo['link'], 
+                                    length=str(self.item_size()),
+                                    mime_type=self.item_type())
         
-        iteminfo['description'] = \
-            feed_mk.rewrite_html(render_to_string('feed-item-desc.html', fd_tmpl))
+        # work out our description
+        if not self.data:
+            desc = self.item_description()
+        else:
+            tmpl = {
+                'link': iteminfo['link'],
+                'title': iteminfo['title'],
+                'size': self.item_size(),
+                'content_type': self.item_type(),
+                'description': self.item_description(),
+                }
+            desc = render_to_string('feed-item-desc.html', tmpl)
 
-        encs = feedgenerator.Enclosure(
-            url=iteminfo['link'], 
-            length=str(self.data.size), # NEEDS STRING! ARGH!
-            mime_type=self.content_type,
-            )
+        # TBD: should we use feed_mk or 
+        # or item_mk to rewrite, here?
+        # i am thinking feed_mk
 
-        iteminfo['enclosure'] = encs
+        iteminfo['description'] = feed_mk.rewrite_html(desc)
 
 	# done
 	return iteminfo
@@ -1295,9 +1338,10 @@ class Comment(AbstractThing):
     sattr_prefix = "comment"
 
     title = AbstractModelField.string()
+    relation = AbstractModelField.reference(Relation)
+
     body = AbstractModelField.text(required=False)
     item = AbstractModelField.reference(Item, required=False) # required=False to permit comments on feed where IID=0
-    relation = AbstractModelField.reference(Relation)
 
     def __unicode__(self):
 	return self.title
