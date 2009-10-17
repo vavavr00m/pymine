@@ -83,8 +83,8 @@ from django.template.loader import render_to_string
 from django.utils import feedgenerator
 import itertools
 
-#from pymine.get.minekey import MineKey
-import base58.base58 as base58
+#from minekey import MineKey # circular dependency, skip
+import util.base58 as base58
 
 # magic storage for database items
 
@@ -1305,7 +1305,7 @@ class Item(AbstractThing):
                 'content_type': self.item_type(),
                 'description': self.item_description(),
                 }
-            desc = render_to_string('feed-item-desc.html', tmpl)
+            desc = render_to_string('feed/item.html', tmpl)
 
         # TBD: should we use feed_mk or 
         # or item_mk to rewrite, here?
