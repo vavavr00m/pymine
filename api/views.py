@@ -122,7 +122,7 @@ def root_api(request, *args, **kwargs):
 
     """REST function that handles the template for the root api directory"""
     s = {}
-    return render_to_response('root-api.html', s)
+    return render_to_response('root/api.html', s)
 
 ##################################################################
 

@@ -23,7 +23,7 @@ from django.shortcuts import render_to_response, get_object_or_404
 from django.template.loader import render_to_string
 from django.utils import feedgenerator
 
-from minekey import MineKey
+from pymine.api.minekey import MineKey
 from pymine.api.models import Tag, Item, Relation, Comment, Vurl, LogEvent
 
 import pymine.api.views as api
@@ -160,7 +160,7 @@ def generate_feed(request, mk, *args, **kwargs):
 	'title': feedinfo['title'],
 	}
 
-    feedinfo['description'] = render_to_string('feed-desc.html', fd_tmpl)
+    feedinfo['description'] = render_to_string('feed/description.html', fd_tmpl)
 
     # populate with respect to the minekey
     feed = feedgenerator.Atom1Feed(**feedinfo)
@@ -180,7 +180,7 @@ def generate_feed(request, mk, *args, **kwargs):
 ## declared args:
 def root_get(request, *args, **kwargs):
     s = {}
-    return render_to_response('root-get.html', s)
+    return render_to_response('root/get.html', s)
 
 ## rest: GET /get/MINEKEY
 ## function: read_minekey
@@ -217,7 +217,7 @@ def read_minekey(request, minekey, *args, **kwargs):
 ## declared args: minekey
 def submit_minekey(request, minekey, *args, **kwargs):
     s = {}
-    return render_to_response('submit-minekey.html', s)
+    return render_to_response('submit/comment.html', s)
 
 ## rest: GET /get/i/VID
 ## function: redirect_vid

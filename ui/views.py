@@ -29,7 +29,7 @@ import pymine.api.views as api
 ## declared args: 
 def root_ui(request, *args, **kwargs):
     s = {}
-    return render_to_response('root-ui.html', s)
+    return render_to_response('root/ui.html', s)
 
 ##################################################################
 
@@ -38,35 +38,35 @@ def root_ui(request, *args, **kwargs):
 ## declared args: iid
 def create_comment(request, iid, *args, **kwargs):
     s = {'itemId': iid}
-    return render_to_response('create-comment.html', s)
+    return render_to_response('create/comment.html', s)
 
 ## rest: GET /ui/create-item.html
 ## function: create_item
 ## declared args: 
 def create_item(request, *args, **kwargs):
     s = {}
-    return render_to_response('create-item.html', s)
+    return render_to_response('create/item.html', s)
 
 ## rest: GET /ui/create-relation.html
 ## function: create_relation
 ## declared args: 
 def create_relation(request, *args, **kwargs):
     s = {}
-    return render_to_response('create-relation.html', s)
+    return render_to_response('create/relation.html', s)
 
 ## rest: GET /ui/create-tag.html
 ## function: create_tag
 ## declared args: 
 def create_tag(request, *args, **kwargs):
     s = {}
-    return render_to_response('create-tag.html', s)
+    return render_to_response('create/tag.html', s)
 
 ## rest: GET /ui/create-vurl.html
 ## function: create_vurl
 ## declared args: 
 def create_vurl(request, *args, **kwargs):
     s = {}
-    return render_to_response('create-vurl.html', s)
+    return render_to_response('create/vurl.html', s)
 
 ##################################################################
 
@@ -76,7 +76,7 @@ def create_vurl(request, *args, **kwargs):
 def delete_comment(request, cid, *args, **kwargs):
     # punts to confirmation page that calls API
     s = {'commentId': cid} 
-    return render_to_response('delete-comment.html', s)
+    return render_to_response('delete/comment.html', s)
 
 ## rest: GET /ui/delete-item/IID.html
 ## function: delete_item
@@ -84,7 +84,7 @@ def delete_comment(request, cid, *args, **kwargs):
 def delete_item(request, iid, *args, **kwargs):
     # punts to confirmation page that calls API
     s = {'itemId': iid} 
-    return render_to_response('delete-item.html', s)
+    return render_to_response('delete/item.html', s)
 
 ## rest: GET /ui/delete-relation/RID.html
 ## function: delete_relation
@@ -92,7 +92,7 @@ def delete_item(request, iid, *args, **kwargs):
 def delete_relation(request, rid, *args, **kwargs):
     # punts to confirmation page that calls API
     s = {'relationId': rid} 
-    return render_to_response('delete-relation.html', s)
+    return render_to_response('delete/relation.html', s)
 
 ## rest: GET /ui/delete-tag/TID.html
 ## function: delete_tag
@@ -100,7 +100,7 @@ def delete_relation(request, rid, *args, **kwargs):
 def delete_tag(request, tid, *args, **kwargs):
     # punts to confirmation page that calls API
     s = {'tagId': tid} 
-    return render_to_response('delete-tag.html', s)
+    return render_to_response('delete/tag.html', s)
 
 ## rest: GET /ui/delete-vurl/VID.html
 ## function: delete_vurl
@@ -108,7 +108,7 @@ def delete_tag(request, tid, *args, **kwargs):
 def delete_vurl(request, vid, *args, **kwargs):
     # punts to confirmation page that calls API
     s = {'vurlId': vid} 
-    return render_to_response('delete-vurl.html', s)
+    return render_to_response('delete/vurl.html', s)
 
 ##################################################################
 
@@ -117,35 +117,35 @@ def delete_vurl(request, vid, *args, **kwargs):
 ## declared args: iid
 def list_comments(request, iid, *args, **kwargs):
     s = api.list_comments(request, iid, *args, **kwargs)
-    return render_to_response('list-comments.html', s)
+    return render_to_response('list/comments.html', s)
 
 ## rest: GET /ui/list-items.html
 ## function: list_items
 ## declared args: 
 def list_items(request, *args, **kwargs):
     s = api.list_items(request, *args, **kwargs)
-    return render_to_response('list-items.html', s)
+    return render_to_response('list/items.html', s)
 
 ## rest: GET /ui/list-relations.html
 ## function: list_relations
 ## declared args: 
 def list_relations(request, *args, **kwargs):
     s = api.list_relations(request, *args, **kwargs)
-    return render_to_response('list-relations.html', s)
+    return render_to_response('list/relations.html', s)
 
 ## rest: GET /ui/list-tags.html
 ## function: list_tags
 ## declared args: 
 def list_tags(request, *args, **kwargs):
     s = api.list_tags(request, *args, **kwargs)
-    return render_to_response('list-tags.html', s)
+    return render_to_response('list/tags.html', s)
 
 ## rest: GET /ui/list-vurls.html
 ## function: list_vurls
 ## declared args: 
 def list_vurls(request, *args, **kwargs):
     s = api.list_vurls(request, *args, **kwargs)
-    return render_to_response('list-vurls.html', s)
+    return render_to_response('list/vurls.html', s)
 
 ##################################################################
 
@@ -154,35 +154,35 @@ def list_vurls(request, *args, **kwargs):
 ## declared args: cid
 def read_comment(request, cid, *args, **kwargs):
     s = api.read_comment(request, cid, *args, **kwargs)
-    return render_to_response('read-comment.html', s)
+    return render_to_response('read/comment.html', s)
 
 ## rest: GET /ui/read-item/IID.html
 ## function: read_item
 ## declared args: iid
 def read_item(request, iid, *args, **kwargs):
     s = api.read_item(request, iid, *args, **kwargs)
-    return render_to_response('read-item.html', s)
+    return render_to_response('read/item.html', s)
 
 ## rest: GET /ui/read-relation/RID.html
 ## function: read_relation
 ## declared args: rid
 def read_relation(request, rid, *args, **kwargs):
     s = api.read_relation(request, rid, *args, **kwargs)
-    return render_to_response('read-relation.html', s)
+    return render_to_response('read/relation.html', s)
 
 ## rest: GET /ui/read-tag/TID.html
 ## function: read_tag
 ## declared args: tid
 def read_tag(request, tid, *args, **kwargs):
     s = api.read_tag(request, tid, *args, **kwargs)
-    return render_to_response('read-tag.html', s)
+    return render_to_response('read/tag.html', s)
 
 ## rest: GET /ui/read-vurl/VID.html
 ## function: read_vurl
 ## declared args: vid
 def read_vurl(request, vid, *args, **kwargs):
     s = api.read_vurl(request, vid, *args, **kwargs)
-    return render_to_response('read-vurl.html', s)
+    return render_to_response('read/vurl.html', s)
 
 ##################################################################
 
@@ -192,7 +192,7 @@ def read_vurl(request, vid, *args, **kwargs):
 def update_comment(request, cid, *args, **kwargs):
     # punts to editor page which calls API
     s = Comment.objects.get(id=cid).to_structure()
-    return render_to_response('update-comment.html', s)
+    return render_to_response('update/comment.html', s)
 
 ## rest: GET /ui/update-item/IID.html
 ## function: update_item
@@ -200,7 +200,7 @@ def update_comment(request, cid, *args, **kwargs):
 def update_item(request, iid, *args, **kwargs):
     # punts to editor page which calls API
     s = Item.objects.get(id=iid).to_structure()
-    return render_to_response('update-item.html', s)
+    return render_to_response('update/item.html', s)
 
 ## rest: GET /ui/update-relation/RID.html
 ## function: update_relation
@@ -208,7 +208,7 @@ def update_item(request, iid, *args, **kwargs):
 def update_relation(request, rid, *args, **kwargs):
     # punts to editor page which calls API
     s = Relation.objects.get(id=rid).to_structure()
-    return render_to_response('update-relation.html', s)
+    return render_to_response('update/relation.html', s)
 
 ## rest: GET /ui/update-tag/TID.html
 ## function: update_tag
@@ -216,7 +216,7 @@ def update_relation(request, rid, *args, **kwargs):
 def update_tag(request, tid, *args, **kwargs):
     # punts to editor page which calls API
     s = Tag.objects.get(id=tid).to_structure()
-    return render_to_response('update-tag.html', s)
+    return render_to_response('update/tag.html', s)
 
 ## rest: GET /ui/update-vurl/VID.html
 ## function: update_vurl
@@ -224,7 +224,7 @@ def update_tag(request, tid, *args, **kwargs):
 def update_vurl(request, vid, *args, **kwargs):
     # punts to editor page which calls API
     s = Vurl.objects.get(id=vid).to_structure()
-    return render_to_response('update-vurl.html', s)
+    return render_to_response('update/vurl.html', s)
 
 ##################################################################
 
@@ -233,7 +233,7 @@ def update_vurl(request, vid, *args, **kwargs):
 ## declared args: 
 def read_version(request, *args, **kwargs):
     s = api.read_version(request, *args, **kwargs)
-    return render_to_response('read-version.html', s)
+    return render_to_response('read/version.html', s)
 
 ##################################################################
 ##################################################################
