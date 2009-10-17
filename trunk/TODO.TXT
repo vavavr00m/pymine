@@ -1,6 +1,14 @@
 todo soon:
 
 
+- move minekey.py into API
+
+- add relation_feed_url() method to Relation()
+
+- put URL for item-zero-comments into feed-description-html
+
+- break the feed-generation SQL query out into a "search" subdiretory and put the other search code in there too?
+
 - Adriana's "Objects" are items without datafile
 - If item has no datafile, don't use the template (obviously) but do add an enclosure SO LONG AS IS text/****
 - If item has no datafile, the /data/iid URL will retreive the item.description
