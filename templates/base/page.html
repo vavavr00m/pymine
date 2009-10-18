@@ -1,21 +1,58 @@
 {% extends "base/base.html" %}
 
 {% block content %}
-pymine page content
-{% endblock %}
-
-{% block sidebar1 %}
-pymine sidebar1
-{% endblock %}
-
-{% block sidebar2 %}
-pymine sidebar2
+hello world.
 {% endblock %}
 
 {% block header %}
-pymine header
+<div class="appname">pymine</div>
 {% endblock %}
 
 {% block footer %}
-pymine footer
+<div class="block">
+<a href="http://code.google.com/p/pymine/">pymine</a>
+is copyright &copy; 2008-2009,
+<br/>
+and is a product of
+<A HREF="http://themineproject.org/">the mine! project</A>,
+<br/>
+and is 
+<A HREF="http://en.wikipedia.org/wiki/Free_and_open_source_software">free and open source software</A>
+<br/>
+licensed under
+<a href="http://www.apache.org/licenses/license-2.0">the apache license, version 2.0</a><br/>
+<p/>
+</div>
+{% endblock %}
+
+{% block sidebar %}
+<DIV class="sheader">your stuff</DIV>
+<DIV><a href="/ui/list-items.html">items</a></DIV>
+<DIV><a href="/ui/list-tags.html">tags</a></DIV>
+<DIV><a href="/ui/list-relations.html">relations</a></DIV>
+<DIV><a href="/ui/list-comments/0.html">comments</a></DIV>
+<DIV><a href="/ui/list-vurls.html">virtual urls</a></DIV>
+
+<DIV class="sheader">administration</DIV>
+<DIV><a href="/">home</a></DIV>
+<DIV><a href="/">activity logs</a></DIV>
+<DIV><a href="/pub/">local files</a></DIV>
+<DIV><a href="/admin/">django backdoor</a></DIV>
+<DIV><a href="/ui/version.html">software version</a></DIV>
+
+<DIV class="sheader">links</DIV>
+<DIV><a href="http://themineproject.org/">the mine! project</a></DIV>
+<DIV><a href="http://themineproject.org/about/">mine! videos</a></DIV>
+<DIV><a href="http://themineproject.org/mine-papers/">mine! papers</a></DIV>
+
+<DIV class="sheader">developer</DIV>
+<DIV><a href="/pub/apidocs/">python docs</a></DIV>
+<DIV><a href="http://code.google.com/p/pymine/w/list">developer wiki</a></DIV>
+
+<DIV class="sheader">hacking</DIV>
+<DIV><a href="/api/">api directory</a></DIV>
+<DIV><a href="/ui/">ui directory</a></DIV>
+<DIV><a href="/get/">get directory</a></DIV>
+
+<DIV class="sheader"></DIV>
 {% endblock %}

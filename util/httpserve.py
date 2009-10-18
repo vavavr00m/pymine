@@ -59,6 +59,7 @@ mime_table = {
     '.gif': 'image/gif',
     '.htm': 'text/html',
     '.html': 'text/html',
+    '.ico': 'image/vnd.microsoft.icon',
     '.jpeg': 'image/jpeg',
     '.jpg': 'image/jpeg',
     '.pdf': 'application/pdf',

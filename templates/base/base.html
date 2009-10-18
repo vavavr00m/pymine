@@ -1,14 +1,14 @@
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" 
-"http://www.w3.org/TR/html4/strict.dtd"> 
-<html> 
-<head> 
-<title>{% block title %}no block title defined{% endblock %}</title> 
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN"
+"http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+<title>{% block title %}no block title defined{% endblock %}</title>
+<link rel="apple-touch-icon" href="/pub/images/mine-final-64.png"/>
 <style type="text/css">
 html, body {
 	background: #ffffff;
 	color: #555555;
 	font-family: Arial, Helvetica, Verdana, Sans-serif;
-	font-size: 14px;
 	margin: 0;
 	padding: 0;
 }
@@ -18,42 +18,64 @@ html, body {
 	width: 100%;
 }
 
-#header {
-	height: 100px;
-	font-size: 20px;
+#pagecontainer a {
+	text-decoration: none;
 }
 
-#sidebar1 {
-	background: pink;
+#header {
+	background: lightblue;
+}
+
+#header .appname {
+	font-size: xx-large;
+	font-weight: bold;
+	padding-top: 1em;
+	padding-left: 0.5em;
+	padding-bottom: 1em;
+}
+
+#sidebar {
+	background: #eeeeee;
 	float: left;
 	width: 20%;
 }
+
+#sidebar .sheader {
+	padding-top: 1em;
+	font-weight: bold;
+}
+
+#sidebar div {
+	margin-left: 1em;
+}
+
 
 #content {
 	float: left;
-	width: 60%;
-}
-
-#sidebar2 {
-	background: lightblue;
-	float: right;
-	width: 20%;
+	width: 80%;
 }
 
 #footer {
+	background: lightgreen;
 	clear: both;
-	font-size: 10px;
-	height: 100px;
+	font-size: small;
+	vertical-align: middle;
 }
+
+#footer .block {
+	padding-top: 1em;
+	padding-left: 1em;
+	padding-bottom: 1em;
+}
+
 </style>
-</head> 
-<body> 
+</head>
+<body>
 <div id="pagecontainer">
 <div id="header">{% block header %} no block header defined {% endblock %}</div>
-<div id="sidebar1">{% block sidebar1 %} no block sidebar1 defined {% endblock %}</div>
-<div id="sidebar2">{% block sidebar2 %} no block sidebar2 defined {% endblock %}</div>
+<div id="sidebar">{% block sidebar %} no block sidebar defined {% endblock %}</div>
 <div id="content">{% block content %} no block content defined {% endblock %}</div>
 <div id="footer">{% block footer %} no block footer defined {% endblock %}</div>
-</div>
-</body> 
-</html> 
+</div><!-- pagecontainer -->
+</body>
+</html>

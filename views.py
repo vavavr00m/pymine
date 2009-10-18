@@ -154,6 +154,15 @@ def root_mine(request, *args, **kwargs):
     s = {}
     return render_to_response('root/mine.html', s)
 
+## rest: GET /favicon.ico
+## function: root_favicon
+## declared args: 
+def root_favicon(request, *args, **kwargs):
+    """
+    a little bit of chrome for fun 
+    """
+    return handle_pub(request, 'images/favicon.ico', *args, **kwargs)
+
 ## rest: GET /pub/
 ## function: root_pub
 ## declared args:

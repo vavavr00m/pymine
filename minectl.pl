@@ -473,7 +473,6 @@ delete-comment-key SUB1EVERY delete /api/comment/CID/KEY.json 42 commentKey ...
 list-comments SUBEVERY read /api/comment/item/IID.json
 create-comment SUB1PASS create /api/comment/item/IID.json commentKey=value ...
 
-
 list-registry PASSARGS read /api/registry.json
 get-registry-key SUB1PASS read /api/registry/IID.json key
 update-registry-key SUB1PASS create /api/registry/IID.json key=value

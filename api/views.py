@@ -211,10 +211,13 @@ def list_comments(request, iid, *args, **kwargs):
 
     item_id = int(iid)
     if item_id == 0:
-	result = [ m.to_structure() for m in Comment.objects.all() ]
+	models = Comment.objects.all
     else:
 	item = Item.objects.get(id=item_id)
-	result = [ m.to_structure() for m in item.comment_set.all() ]
+	models = item.comment_set.all
+
+    result = [ { m.sattr_prefix : m.to_structure() } for m in models() ]
+
     return construct_retval(result)
 
 ##################################################################
