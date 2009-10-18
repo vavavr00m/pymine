@@ -1,15 +1,13 @@
 {% extends "base/api.html" %}
 
-{% block title %} version {% endblock %}
+{% block title %}version{% endblock %}
 
-{% block content %}
-
+{% block api_result %}
 <UL>
 <LI>softwareName {{ result.softwareName }}</LI>
 <LI>softwareRevision {{ result.softwareRevision }}</LI>
 <LI>mineAPIVersion {{ result.mineAPIVersion }}</LI>
 </UL>
-
 {% endblock %}
 
 
