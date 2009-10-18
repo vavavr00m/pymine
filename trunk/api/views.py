@@ -264,12 +264,11 @@ def read_item_data(request, iid, *args, **kwargs):
     """REST function that handles the retreival of actual item data, eg JPEG files"""
 
     id = int(iid)
-
     m = Item.objects.get(id=id)
     ct = m.item_type()
     mk = kwargs.get('minekey', None)
 
-    if mk and ct in ('text/html', 'application/xml+mine'):
+    if mk and ct in ('text/html', 'application/mine+xml'):
         if m.data:
             content = m.data.read()
         else:
@@ -278,7 +277,7 @@ def read_item_data(request, iid, *args, **kwargs):
         response = HttpResponse(rewrite, content_type=ct)
         response['Content-Length'] = len(rewrite)
     elif m.data:
-        fw = m.data.chunks(65536)
+        fw = m.data.chunks()
         response = HttpResponse(fw, content_type=ct)
         response['Content-Length'] = m.data.size
     else:

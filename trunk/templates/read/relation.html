@@ -1,32 +1,15 @@
+{% extends 'base/api.html' %}
+{% block api_result %}
 <UL>
-{% if result.relationCreated %}
-<LI>relationCreated: {{ result.relationCreated }}</LI>
-{% endif %}
-{% if result.relationDescription %}
-<LI>relationDescription: {{ result.relationDescription }}</LI>
-{% endif %}
-{% if result.relationEmbargoAfter %}
-<LI>relationEmbargoAfter: {{ result.relationEmbargoAfter }}</LI>
-{% endif %}
-{% if result.relationEmbargoBefore %}
-<LI>relationEmbargoBefore: {{ result.relationEmbargoBefore }}</LI>
-{% endif %}
-{% if result.relationId %}
-<LI>relationId: {{ result.relationId }}</LI>
-{% endif %}
-{% if result.relationInterests %}
-<LI>relationInterests: {{ result.relationInterests }}</LI>
-{% endif %}
-{% if result.relationLastModified %}
-<LI>relationLastModified: {{ result.relationLastModified }}</LI>
-{% endif %}
-{% if result.relationName %}
-<LI>relationName: {{ result.relationName }}</LI>
-{% endif %}
-{% if result.relationNetworkPattern %}
-<LI>relationNetworkPattern: {{ result.relationNetworkPattern }}</LI>
-{% endif %}
-{% if result.relationVersion %}
-<LI>relationVersion: {{ result.relationVersion }}</LI>
-{% endif %}
+{% if result.relationCreated %} <LI>relationCreated: {{ result.relationCreated }}</LI> {% endif %}
+{% if result.relationDescription %} <LI>relationDescription: {{ result.relationDescription }}</LI> {% endif %}
+{% if result.relationEmbargoAfter %} <LI>relationEmbargoAfter: {{ result.relationEmbargoAfter }}</LI> {% endif %}
+{% if result.relationEmbargoBefore %} <LI>relationEmbargoBefore: {{ result.relationEmbargoBefore }}</LI> {% endif %}
+{% if result.relationId %} <LI>relationId: {{ result.relationId }}</LI> {% endif %}
+{% if result.relationInterests %} <LI>relationInterests: {{ result.relationInterests }}</LI> {% endif %}
+{% if result.relationLastModified %} <LI>relationLastModified: {{ result.relationLastModified }}</LI> {% endif %}
+{% if result.relationName %} <LI>relationName: {{ result.relationName }}</LI> {% endif %}
+{% if result.relationNetworkPattern %} <LI>relationNetworkPattern: {{ result.relationNetworkPattern }}</LI> {% endif %}
+{% if result.relationVersion %} <LI>relationVersion: {{ result.relationVersion }}</LI> {% endif %}
 </UL>
+{% endblock %}

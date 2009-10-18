@@ -1,0 +1,35 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" 
+"http://www.w3.org/TR/html4/strict.dtd"> 
+<html> 
+<head> 
+<title>{% block title %}no block title defined{% endblock %}</title> 
+<link rel="stylesheet" href="http://yui.yahooapis.com/2.7.0/build/reset-fonts-grids/reset-fonts-grids.css" type="text/css"> 
+</head> 
+<body> 
+<div id="doc3" class="yui-t1"> 
+<div id="hd" role="banner">
+{% block header %}no block header defined{% endblock %}
+</div> 
+<div id="bd" role="main"> 
+<div id="yui-main"> 
+<div class="yui-b">
+<div class="yui-gc"> 
+<div role="main" class="yui-u first"> 
+{% block content %}no block content defined{% endblock %}
+</div> 
+<div role="complementary" class="yui-u"> 
+{% block sidebar2 %}no block sidebar2 defined{% endblock %}
+</div> 
+</div> 
+</div> 
+</div> 
+<div role="navigation" class="yui-b">
+{% block sidebar1 %}no block sidebar1 defined{% endblock %}
+</div> 
+</div> 
+<div id="ft" role="contentinfo">
+{% block footer %}no block footer defined{% endblock %}
+</div> 
+</div> 
+</body> 
+</html> 

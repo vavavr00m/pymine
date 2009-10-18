@@ -4,16 +4,17 @@ Format() {
     thing=$1
     sattr=$2
     (
-    echo "{% if result.$sattr %}"
-    echo "<LI>$sattr: {{ result.$sattr }}</LI>" 
-    echo "{% endif %}"
-    ) >> read-$thing.html
+    echo "{% if result.$sattr %} <LI>$sattr: {{ result.$sattr }}</LI> {% endif %}"
+    ) >> $thing.html
 }
 
 for thing in comment item relation tag vurl
 do
-    # echo "{% for $thing in result %}"  > read-$thing.html
-    echo "<UL>" > read-$thing.html
+    (
+    echo "{% extends 'base/api.html' %}" 
+    echo "{% block api_result %}" 
+    echo "<UL>" 
+    ) > $thing.html
 done
 
 Format comment commentBody
@@ -69,8 +70,8 @@ Format vurl vurlName
 
 for thing in comment item relation tag vurl
 do
-    echo "</UL>"  >> read-$thing.html
+    ( 
+	echo "</UL>"  
+	echo "{% endblock %}"
+    ) >> $thing.html
 done
-
-
-
