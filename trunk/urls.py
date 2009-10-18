@@ -34,6 +34,7 @@ urlpatterns = patterns('',
 
                        (r'^pub/(?P<suffix>.+)$', REST, { 'GET': mine.handle_pub }),
                        (r'^pub/$', REST, { 'GET': mine.root_pub }),
+                       (r'^favicon\.ico$', REST, { 'GET': mine.root_favicon }),
                        (r'^$', REST, { 'GET': mine.root_mine }),
 )
 
