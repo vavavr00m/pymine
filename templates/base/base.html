@@ -1,0 +1,17 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN">
+<html lang="en">
+<head>
+<title>{% block title %}no title defined{% endblock %}</title>
+</head>
+<body>
+<div>{% block header %} no block header defined {% endblock %}</div>
+<div>
+<!-- begin middle block -->
+<div>{% block sidebar1 %} no block sidebar1 defined {% endblock %}</div>
+<div>{% block content %} no block content defined {% endblock %}</div>
+<div>{% block sidebar2 %} no block sidebar2 defined {% endblock %}</div>
+<!-- end middle block -->
+</div>
+<div>{% block footer %} no block footer defined {% endblock %}</div>
+</body>
+</html>

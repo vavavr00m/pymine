@@ -1,28 +1,19 @@
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN">
-<html lang="en">
-<head>
-<title>{% block title %}no title defined{% endblock %}</title>
-</head>
-<body>
+{% extends "base/base.html" %}
 
-<A HREF="/ui/">home</A> <P/>
-
-{% block header %}
-{% endblock %}
-
-<span>result:</span> <P/>
-{% if result %}
-<BLOCKQUOTE>
 {% block content %}
-no block content defined <P/>
-{% endblock %}
-</BLOCKQUOTE>
-{% else %}
-no result returned by API call <P/>
-{% endif %}
+<span>result:</span> <P/>
 
-{% block envelope %}
+{% if result %}
+<tt>
+{% block api_result %} no block api_result defined {% endblock %}
+</tt>
+{% else %}
+no result returned by API call
+{% endif %}
+<P/>
+
 <span>envelope:</span> <P/>
+<tt>
 <UL>
 <LI>exit: {{ exit }}</LI>
 <LI>status: {{ status }}</LI>
@@ -34,12 +25,7 @@ no result returned by API call <P/>
 <LI>callback: {{ callback }}</LI>
 <LI>watch: {{ watch }}</LI>
 </UL>
+</tt>
 <P/>
-{% endblock %}
 
-{% block footer %}
-<!-- no footer defined -->
-{% endblock %}
-
-</body>
-</html>
+{% endblock %} <!-- content -->
