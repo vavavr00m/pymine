@@ -1,23 +1,12 @@
+{% extends 'base/api.html' %}
+{% block api_result %}
 <UL>
-{% if result.vurlAbsoluteUrl %}
-<LI>vurlAbsoluteUrl: {{ result.vurlAbsoluteUrl }}</LI>
-{% endif %}
-{% if result.vurlCreated %}
-<LI>vurlCreated: {{ result.vurlCreated }}</LI>
-{% endif %}
-{% if result.vurlId %}
-<LI>vurlId: {{ result.vurlId }}</LI>
-{% endif %}
-{% if result.vurlKey %}
-<LI>vurlKey: {{ result.vurlKey }}</LI>
-{% endif %}
-{% if result.vurlLastModified %}
-<LI>vurlLastModified: {{ result.vurlLastModified }}</LI>
-{% endif %}
-{% if result.vurlLink %}
-<LI>vurlLink: {{ result.vurlLink }}</LI>
-{% endif %}
-{% if result.vurlName %}
-<LI>vurlName: {{ result.vurlName }}</LI>
-{% endif %}
+{% if result.vurlAbsoluteUrl %} <LI>vurlAbsoluteUrl: {{ result.vurlAbsoluteUrl }}</LI> {% endif %}
+{% if result.vurlCreated %} <LI>vurlCreated: {{ result.vurlCreated }}</LI> {% endif %}
+{% if result.vurlId %} <LI>vurlId: {{ result.vurlId }}</LI> {% endif %}
+{% if result.vurlKey %} <LI>vurlKey: {{ result.vurlKey }}</LI> {% endif %}
+{% if result.vurlLastModified %} <LI>vurlLastModified: {{ result.vurlLastModified }}</LI> {% endif %}
+{% if result.vurlLink %} <LI>vurlLink: {{ result.vurlLink }}</LI> {% endif %}
+{% if result.vurlName %} <LI>vurlName: {{ result.vurlName }}</LI> {% endif %}
 </UL>
+{% endblock %}

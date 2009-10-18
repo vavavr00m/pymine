@@ -1,8 +1,7 @@
-{% extends "base/base.html" %}
+{% extends "base/page.html" %}
 
 {% block content %}
-<span>result:</span> <P/>
-
+result:
 {% if result %}
 <tt>
 {% block api_result %} no block api_result defined {% endblock %}
@@ -12,7 +11,7 @@ no result returned by API call
 {% endif %}
 <P/>
 
-<span>envelope:</span> <P/>
+envelope:
 <tt>
 <UL>
 <LI>exit: {{ exit }}</LI>

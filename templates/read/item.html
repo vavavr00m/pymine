@@ -1,44 +1,19 @@
+{% extends 'base/api.html' %}
+{% block api_result %}
 <UL>
-{% if result.itemCreated %}
-<LI>itemCreated: {{ result.itemCreated }}</LI>
-{% endif %}
-{% if result.itemDescription %}
-<LI>itemDescription: {{ result.itemDescription }}</LI>
-{% endif %}
-{% if result.itemFeedLink %}
-<LI>itemFeedLink: {{ result.itemFeedLink }}</LI>
-{% endif %}
-{% if result.itemHasFile %}
-<LI>itemHasFile: {{ result.itemHasFile }}</LI>
-{% endif %}
-{% if result.itemHideAfter %}
-<LI>itemHideAfter: {{ result.itemHideAfter }}</LI>
-{% endif %}
-{% if result.itemHideBefore %}
-<LI>itemHideBefore: {{ result.itemHideBefore }}</LI>
-{% endif %}
-{% if result.itemId %}
-<LI>itemId: {{ result.itemId }}</LI>
-{% endif %}
-{% if result.itemLastModified %}
-<LI>itemLastModified: {{ result.itemLastModified }}</LI>
-{% endif %}
-{% if result.itemName %}
-<LI>itemName: {{ result.itemName }}</LI>
-{% endif %}
-{% if result.itemParent %}
-<LI>itemParent: {{ result.itemParent }}</LI>
-{% endif %}
-{% if result.itemSize %}
-<LI>itemSize: {{ result.itemSize }}</LI>
-{% endif %}
-{% if result.itemStatus %}
-<LI>itemStatus: {{ result.itemStatus }}</LI>
-{% endif %}
-{% if result.itemTags %}
-<LI>itemTags: {{ result.itemTags }}</LI>
-{% endif %}
-{% if result.itemType %}
-<LI>itemType: {{ result.itemType }}</LI>
-{% endif %}
+{% if result.itemCreated %} <LI>itemCreated: {{ result.itemCreated }}</LI> {% endif %}
+{% if result.itemDescription %} <LI>itemDescription: {{ result.itemDescription }}</LI> {% endif %}
+{% if result.itemFeedLink %} <LI>itemFeedLink: {{ result.itemFeedLink }}</LI> {% endif %}
+{% if result.itemHasFile %} <LI>itemHasFile: {{ result.itemHasFile }}</LI> {% endif %}
+{% if result.itemHideAfter %} <LI>itemHideAfter: {{ result.itemHideAfter }}</LI> {% endif %}
+{% if result.itemHideBefore %} <LI>itemHideBefore: {{ result.itemHideBefore }}</LI> {% endif %}
+{% if result.itemId %} <LI>itemId: {{ result.itemId }}</LI> {% endif %}
+{% if result.itemLastModified %} <LI>itemLastModified: {{ result.itemLastModified }}</LI> {% endif %}
+{% if result.itemName %} <LI>itemName: {{ result.itemName }}</LI> {% endif %}
+{% if result.itemParent %} <LI>itemParent: {{ result.itemParent }}</LI> {% endif %}
+{% if result.itemSize %} <LI>itemSize: {{ result.itemSize }}</LI> {% endif %}
+{% if result.itemStatus %} <LI>itemStatus: {{ result.itemStatus }}</LI> {% endif %}
+{% if result.itemTags %} <LI>itemTags: {{ result.itemTags }}</LI> {% endif %}
+{% if result.itemType %} <LI>itemType: {{ result.itemType }}</LI> {% endif %}
 </UL>
+{% endblock %}
