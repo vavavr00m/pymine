@@ -15,6 +15,8 @@
 ## permissions and limitations under the License.
 ##
 
+"""docstring goes here""" # :-)
+
 from models import Tag, Relation, Item, Comment, Vurl
 from models import TagXattr, RelationXattr, ItemXattr, CommentXattr, VurlXattr
 from models import Registry, LogEvent

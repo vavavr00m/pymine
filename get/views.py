@@ -15,6 +15,8 @@
 ## permissions and limitations under the License.
 ##
 
+"""docstring goes here""" # :-)
+
 from datetime import datetime
 from django.core.urlresolvers import reverse
 from django.db.models import Q
@@ -210,7 +212,7 @@ def read_minekey(request, minekey, *args, **kwargs):
 ## declared args: minekey
 def submit_minekey(request, minekey, *args, **kwargs):
     """submit_minekey(minekey) returns ..."""
-    s =
+    s = {}
     return render_to_response('submit/minekey.html', s)
 
 ## rest: GET /get/i/VID

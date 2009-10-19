@@ -1,12 +1,1 @@
-{% extends 'base/api.html' %}
-{% block api_result %}
-<UL>
-{% if result.tagCloud %} <LI>tagCloud: {{ result.tagCloud }}</LI> {% endif %}
-{% if result.tagCreated %} <LI>tagCreated: {{ result.tagCreated }}</LI> {% endif %}
-{% if result.tagDescription %} <LI>tagDescription: {{ result.tagDescription }}</LI> {% endif %}
-{% if result.tagId %} <LI>tagId: {{ result.tagId }}</LI> {% endif %}
-{% if result.tagImplies %} <LI>tagImplies: {{ result.tagImplies }}</LI> {% endif %}
-{% if result.tagLastModified %} <LI>tagLastModified: {{ result.tagLastModified }}</LI> {% endif %}
-{% if result.tagName %} <LI>tagName: {{ result.tagName }}</LI> {% endif %}
-</UL>
-{% endblock %}
+{% extends 'read/base.html' %}

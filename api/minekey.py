@@ -15,6 +15,8 @@
 ## permissions and limitations under the License.
 ##
 
+"""docstring goes here""" # :-)
+
 from django.conf import settings
 import base64
 import hashlib

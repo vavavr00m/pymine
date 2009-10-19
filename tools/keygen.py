@@ -1,5 +1,7 @@
 #!/usr/bin/python
 
+"""docstring goes here""" # :-)
+
 import sys
 import getopt
 import base64

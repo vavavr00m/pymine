@@ -15,6 +15,8 @@
 ## permissions and limitations under the License.
 ##
 
+"""docstring goes here""" # :-)
+
 from django.conf.urls.defaults import *
 from django.contrib import admin
 

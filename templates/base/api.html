@@ -1,10 +1,15 @@
 {% extends "base/page.html" %}
 
 {% block content %}
-result:
+
+<h2>{% block heading %}generic heading{% endblock %}</h2>
+
 {% if result %}
+result: <br/>
 <tt>
-{% block api_result %} no block api_result defined {% endblock %}
+{% block for_results %}
+<UL>{% for key, value in result.items %}<LI>{{key}}={{value}}</LI>{% endfor %}</UL>
+{% endblock %}
 </tt>
 {% else %}
 no result returned by API call
