@@ -1,8 +1,11 @@
-{% extends "list/base.html" %}
+{% extends "base/api-iterate.html" %}
 {% block title %}tags listing{% endblock %}
 {% block heading %}tags listing{% endblock %}
 
 {% block per_hash %}
 '<A HREF="/ui/read/tag/{{hash.tagId}}.html">{{hash.tagName}}</A>'
-{% if hash.tagImplies %}(implies: {{ hash.tagImplies }}){% endif %}
+{% if hash.tagImplies %}(&rarr; {{ hash.tagImplies }}){% endif %}
+<A HREF="/ui/read/tag/{{hash.tagId}}.html"><button>info</button></A>
+<A HREF="/ui/update/tag/{{hash.tagId}}.html"><button>edit</button></A>
+<A HREF="/ui/delete/tag/{{hash.tagId}}.html"><button>delete</button></A>
 {% endblock %}
