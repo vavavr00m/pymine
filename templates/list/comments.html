@@ -1,7 +1,10 @@
-{% extends "list/base.html" %}
+{% extends "base/api-iterate.html" %}
 {% block title %}comments listing{% endblock %}
 {% block heading %}comments listing{% endblock %}
 
 {% block per_hash %}
 '{{hash.commentTitle}}' on item {{hash.commentItem}}
+<A HREF="/ui/read/comment/{{hash.commentId}}.html"><button>info</button></A>
+<A HREF="/ui/update/comment/{{hash.commentId}}.html"><button>edit</button></A>
+<A HREF="/ui/delete/comment/{{hash.commentId}}.html"><button>delete</button></A>
 {% endblock %}

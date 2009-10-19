@@ -1,13 +1,10 @@
 {% extends "base/page.html" %}
-
 {% block content %}
-
 <h2>{% block heading %}generic heading{% endblock %}</h2>
-
 {% if result %}
 {% block for_results %}
 <ul>
-{% for key, value in result.items %}<li>{{key}}={{value}}</li>{% endfor %}
+{% for key, value in result.items %}<li>{{key}}: {{value}}</li>{% endfor %}
 </ul>
 {% endblock %}
 {% else %}
@@ -30,5 +27,4 @@ envelope:
 </ul>
 </tt>
 <p/>
-
 {% endblock %} <!-- content -->
