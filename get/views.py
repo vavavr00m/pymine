@@ -44,9 +44,6 @@ import pymine.api.views as api
 #...(there could be an argument for moving minekey here)...
 # [FEED] intersection of ITEM(PUBLIC).EXPANDEDTAGCLOUD and RELATION.INTERESTS.
 
-def demofeed(request, *args, **kwargs):
-    pass
-
 def generate_feed(request, mk, *args, **kwargs):
 
     slicesize = 100
@@ -175,17 +172,12 @@ def generate_feed(request, mk, *args, **kwargs):
 ##################################################################
 ##################################################################
 
-## rest: GET /get
-## function: root_get
-## declared args:
-def root_get(request, *args, **kwargs):
-    s = {}
-    return render_to_response('root/get.html', s)
-
 ## rest: GET /get/MINEKEY
 ## function: read_minekey
 ## declared args: minekey
 def read_minekey(request, minekey, *args, **kwargs):
+    """read_minekey(minekey) returns ..."""
+
     # log this
     el = LogEvent.open("minekey", )
 
@@ -212,31 +204,36 @@ def read_minekey(request, minekey, *args, **kwargs):
 	el.close_error(str(e))
 	raise
 
+
 ## rest: POST /get/MINEKEY
 ## function: submit_minekey
 ## declared args: minekey
 def submit_minekey(request, minekey, *args, **kwargs):
-    s = {}
-    return render_to_response('submit/comment.html', s)
+    """submit_minekey(minekey) returns ..."""
+    s =
+    return render_to_response('submit/minekey.html', s)
 
 ## rest: GET /get/i/VID
 ## function: redirect_vid
 ## declared args: vid
 def redirect_vid(request, vid, *args, **kwargs):
+    """redirect_vid(vid) returns ..."""
     v = Vurl.objects.get(id=int(vid))
     return HttpResponsePermanentRedirect(v.link.strip()) # issue 301 redirect
 
-## rest: GET /get/r/VURLKEY
+## rest: GET /get/k/VURLKEY
 ## function: redirect_vurlkey
 ## declared args: vurlkey
 def redirect_vurlkey(request, vurlkey, *args, **kwargs):
+    """redirect_vurlkey(vurlkey) returns ..."""
     v = Vurl.get_with_vurlkey(vurlkey.encode('utf-8'))
     return HttpResponsePermanentRedirect(v.link.strip()) # issue 301 redirect
 
-## rest: GET /get/v/SUFFIX
+## rest: GET /get/n/SUFFIX
 ## function: redirect_vurlname
 ## declared args: suffix
 def redirect_vurlname(request, suffix, *args, **kwargs):
+    """redirect_vurlname(suffix) returns ..."""
     v = Vurl.objects.get(name=suffix)
     return HttpResponsePermanentRedirect(v.link.strip()) # issue 301 redirect
 

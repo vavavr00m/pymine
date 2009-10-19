@@ -375,17 +375,6 @@ def s2m_tagimplies(s, sattr, m, mattr):
 
 ##################################################################
 
-# itemParent if a ForeignKey parent, set to non-null for clones
-
-def m2s_itemparent(m, mattr, s, sattr):
-    """ """
-    if mattr != 'parent' or sattr != 'itemParent':
-	raise RuntimeError, "m2s_itemparent is confused by %s and %s" % (sattr, mattr)
-    x = m.parent
-    if x: s[sattr] = x.name
-
-##################################################################
-
 # itemStatus is a multi-choice field; the s-space representation of
 # itemStatus ('public', 'shared', 'private') must be mapped back and
 # forth to the single characters which are held in item.status
@@ -565,7 +554,6 @@ class AbstractThing(AbstractModel):
 (  'itemId',                  'id',               False,  r2s_int,     s2m_copy,        m2s_copy,        ),
 (  'itemLastModified',        'last_modified',    False,  None,        None,            m2s_date,        ),
 (  'itemName',                'name',             False,  r2s_string,  s2m_copy,        m2s_copy,        ),
-(  'itemParent',              'parent',           False,  None,        None,            m2s_itemparent,  ),
 (  'itemSize',                None,               True,   None,        None,            None,            ),  #see:Item()
 (  'itemStatus',              'status',           False,  r2s_string,  s2m_itemstatus,  m2s_itemstatus,  ),
 (  'itemTags',                'tags',             True,   r2s_string,  s2m_itemtags,    m2s_itemtags,    ),
@@ -641,10 +629,8 @@ class AbstractThing(AbstractModel):
     # model, with data that comes from a HttpRequest (ie: that is in
     # r-space)
 
-    # it is used as a backend by new_from_request() [which creates a
-    # blank model instance, then updates it from the request] *and* by
-    # Item.clone_from_request() [which creates a blank Item, clones it
-    # from the old one, then updates it from the request]
+    # it is used as a backend by new_from_request() which creates a
+    # blank model instance, then updates it from the request
 
     @transaction.commit_on_success # <- rollback if it raises an exception
     def update_from_request(self, r, **kwargs):
@@ -1198,7 +1184,6 @@ class Item(AbstractThing):
     hide_before = AbstractModelField.datetime(required=False)
     item_for_relations = AbstractModelField.reflist(Relation, pivot='items_explicitly_for', required=False)
     item_not_relations = AbstractModelField.reflist(Relation, pivot='items_explicitly_not', required=False)
-    parent = AbstractModelField.reference('self', required=False) # only set for clones
     tags = AbstractModelField.reflist(Tag, pivot='items_tagged', required=False)
 
     class Meta:
@@ -1206,28 +1191,6 @@ class Item(AbstractThing):
 
     def __unicode__(self):
 	return self.name
-
-    # cloning an item
-    def clone_from_request(self, r, **kwargs):
-	""" NEEDS REVIEW AND FIXING FOR CLONING PROCESS """
-
-	margs = {
-	    name: self.name,
-	    content_type: self.content,
-	    data: self.data,
-	    description: self.description,
-	    hide_after: self.hide,
-	    hide_before: self.hide,
-	    item_for_relations: self.item,
-	    item_not_relations: self.item,
-	    parent: self,
-	    status: self.status,
-	    tags: self.tags,
-	    }
-
-	m = item(**margs)
-
-	return m.update_from_request(r, **kwargs)
 
     def save_upload_file(self, f):
 	""" """

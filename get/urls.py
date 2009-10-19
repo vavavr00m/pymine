@@ -21,15 +21,13 @@ import views as get
 from pymine.views import REST
 
 urlpatterns = patterns('',
-                       (r'^v/(?P<suffix>.+)$',
+                       (r'^n/(?P<suffix>.+)$',
                         REST, { 'GET': get.redirect_vurlname }),
-                       (r'^r/(?P<vurlkey>[A-Za-z0-9!@]+)$',
+                       (r'^k/(?P<vurlkey>[A-Za-z0-9!@]+)$',
                         REST, { 'GET': get.redirect_vurlkey }),
                        (r'^i/(?P<vid>[1-9]\d*)$',
                         REST, { 'GET': get.redirect_vid }),
                        (r'^(?P<minekey>[A-Za-z0-9!@]+)$',
                         REST, { 'GET': get.read_minekey,
                                 'POST': get.submit_minekey }),
-                       (r'^$',
-                        REST, { 'GET': get.root_get }),
                        )

@@ -1,0 +1,10 @@
+{% extends "base/api.html" %}
+{% block title %}generic listing{% endblock %}
+
+{% block content %}
+<h2>{% block heading %}generic heading{% endblock %}</h2>
+{% for entry in result %}
+{% block entry %} no code for processing entry <p/> {% endblock %}
+<hr>
+{% endfor %}
+{% endblock %}
