@@ -5,31 +5,30 @@
 <h2>{% block heading %}generic heading{% endblock %}</h2>
 
 {% if result %}
-result: <br/>
-<tt>
 {% block for_results %}
-<UL>{% for key, value in result.items %}<LI>{{key}}={{value}}</LI>{% endfor %}</UL>
+<ul>
+{% for key, value in result.items %}<li>{{key}}={{value}}</li>{% endfor %}
+</ul>
 {% endblock %}
-</tt>
 {% else %}
-no result returned by API call
+no result returned by api call
 {% endif %}
-<P/>
-
+<p/>
+<hr/>
 envelope:
 <tt>
-<UL>
-<LI>exit: {{ exit }}</LI>
-<LI>status: {{ status }}</LI>
-<LI>totalsize: {{ totalsize }}</LI>
-<LI>thissize: {{ thissize }}</LI>
-<LI>prevurl: {{ prevurl }}</LI>
-<LI>nexturl: {{ nexturl }}</LI>
-<LI>thisurl: {{ thisurl }}</LI>
-<LI>callback: {{ callback }}</LI>
-<LI>watch: {{ watch }}</LI>
-</UL>
+<ul>
+<li>exit: {{ exit }}</li>
+<li>status: {{ status }}</li>
+<li>totalsize: {{ totalsize }}</li>
+<li>thissize: {{ thissize }}</li>
+<li>prevurl: {{ prevurl }}</li>
+<li>nexturl: {{ nexturl }}</li>
+<li>thisurl: {{ thisurl }}</li>
+<li>callback: {{ callback }}</li>
+<li>watch: {{ watch }}</li>
+</ul>
 </tt>
-<P/>
+<p/>
 
 {% endblock %} <!-- content -->

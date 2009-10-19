@@ -582,6 +582,8 @@ class AbstractThing(AbstractModel):
 (  'vurlId',                  'id',               False,  r2s_int,     s2m_copy,        m2s_copy,        ),
 (  'vurlIsMinekey',           'is_minekey',       False,  r2s_int,     s2m_bool,        m2s_bool,        ),
 (  'vurlKey',                 None,               True,   None,        None,            None,            ),  #see:Vurl()
+(  'vurlPathLong',            None,               True,   None,        None,            None,            ),  #see:Vurl()
+(  'vurlPathShort',           None,               True,   None,        None,            None,            ),  #see:Vurl()
 (  'vurlLastModified',        'last_modified',    False,  None,        None,            m2s_date,        ),
 (  'vurlLink',                'link',             False,  r2s_string,  s2m_copy,        m2s_copy,        ),
 (  'vurlName',                'name',             False,  r2s_string,  s2m_copy,        m2s_copy,        ),
@@ -1370,15 +1372,13 @@ class Vurl(AbstractThing):
     class Meta:
 	ordering = ['-id']
 
-    @classmethod
+    @staticmethod
     def get_with_vurlkey(encoded):
 	""" """
-
 	return Vurl.objects.get(id=base58.b58decode(encoded))
 
     def vurlkey(self):
 	""" """
-
 	return base58.b58encode(self.id)
 
     @transaction.commit_on_success # <- rollback if it raises an exception
@@ -1411,7 +1411,8 @@ class Vurl(AbstractThing):
 	vk = self.vurlkey()
 	s = super(Vurl, self).to_structure()
 	s['vurlKey'] = vk
-	s['vurlPath'] = "/get/r/%s" % vk
+	s['vurlPathShort'] = "/get/k/%s" % vk
+	s['vurlPathLong'] =  "/get/n/%s" % self.name
 	return s
 
 ##################################################################

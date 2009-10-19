@@ -1,3 +1,8 @@
 {% extends "list/base.html" %}
 {% block title %}tags listing{% endblock %}
 {% block heading %}tags listing{% endblock %}
+
+{% block per_hash %}
+'<A HREF="/ui/read/tag/{{hash.tagId}}.html">{{hash.tagName}}</A>'
+{% if hash.tagImplies %}(implies: {{ hash.tagImplies }}){% endif %}
+{% endblock %}

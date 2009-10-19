@@ -1,3 +1,7 @@
 {% extends "list/base.html" %}
 {% block title %}comments listing{% endblock %}
 {% block heading %}comments listing{% endblock %}
+
+{% block per_hash %}
+'{{hash.commentTitle}}' on item {{hash.commentItem}}
+{% endblock %}
