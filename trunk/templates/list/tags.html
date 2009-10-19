@@ -1,23 +1,22 @@
-{% extends "base/api.html" %}
+{% extends "list/base.html" %}
 
 {% block title %}tag listing{% endblock %}
 
-{% block content %}
-<DL>
-{% for entry in result %}
-<DT>
-{{ entry.tag.tagName }}
+{% block heading %}tag listing{% endblock %}
+
+{% block entry %}
+<div class="lheader">{{ entry.tag.tagName }}</div>
+
+{% if entry.tag.tagDescription %}
+<div class="lbody"> description: {{ entry.tag.tagDescription }} </div>
+{% endif %}
+
+<div class="lannotate"> 
 {% if entry.tag.tagImplies %}
 (implies: {{ entry.tag.tagImplies }})
+{% endif %}
+{% if entry.tag.tagCloud %}
 (cloud: {{ entry.tag.tagCloud }})
 {% endif %}
-</DT>
-<DD>
-{{ entry.tag.tagDescription }}
-</DD>
-<P/>
-{% endfor %}
-</DL>
+</div>
 {% endblock %}
-
-

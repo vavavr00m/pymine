@@ -15,6 +15,8 @@
 ## permissions and limitations under the License.
 ##
 
+"""docstring goes here """
+
 from django.conf import settings
 from django.core.urlresolvers import reverse
 from django.http import Http404, HttpResponse, HttpResponseRedirect
@@ -145,12 +147,9 @@ def API_CALL(request, *args, **kwargs):
 
 ## rest: GET /
 ## function: root_mine
-## declared args:
+## declared args: 
 def root_mine(request, *args, **kwargs):
-    """
-    handles the mine 'root' directory
-    """
-
+    """root_mine() returns ..."""
     s = {}
     return render_to_response('root/mine.html', s)
 
@@ -158,25 +157,20 @@ def root_mine(request, *args, **kwargs):
 ## function: root_favicon
 ## declared args: 
 def root_favicon(request, *args, **kwargs):
-    """
-    a little bit of chrome for fun 
-    """
+    """root_favicon() returns ..."""
     return handle_pub(request, 'images/favicon.ico', *args, **kwargs)
 
 ## rest: GET /pub/
 ## function: root_pub
-## declared args:
+## declared args: 
 def root_pub(request, *args, **kwargs):
-    """
-    handles the root of the 'pub' directory
-    """
+    """root_pub() returns ..."""
     return handle_pub(request, '', *args, **kwargs)
 
 ## rest: GET /pub/SUFFIX
 ## function: handle_pub
 ## declared args: suffix
 def handle_pub(request, suffix, *args, **kwargs):
-    """
-    handles stuff out of the 'pub' directory
-    """
+    """handle_pub(suffix) returns ..."""
     return httpserve.httpserve_path(request, suffix)
+
