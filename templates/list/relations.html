@@ -1,3 +1,11 @@
 {% extends "list/base.html" %}
 {% block title %}relations listing{% endblock %}
 {% block heading %}relations listing{% endblock %}
+
+{% block per_hash %}
+<A HREF="/ui/read/relation/{{hash.relationId}}.html">{{hash.relationName}}</A> 
+(version {{ hash.relationVersion }})
+<A HREF="/ui/read/relation/{{hash.relationId}}.html"><button>info</button></A>
+<A HREF="/ui/update/relation/{{hash.relationId}}.html"><button>edit</button></A>
+<A HREF="/ui/delete/relation/{{hash.relationId}}.html"><button>delete</button></A>
+{% endblock %}

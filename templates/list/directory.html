@@ -1,9 +1,6 @@
 {% extends 'base/page.html' %}
-
 {% block title %} directory listing for {{ name }} {% endblock %}
-
 {% block content %}
-
 <UL>
 <LI><A HREF="../"><TT>[parent directory]</TT></A></LI>
 {% for item in list %}
@@ -11,5 +8,4 @@
 {% endfor %}
 </UL>
 <P/>
-
 {% endblock %}

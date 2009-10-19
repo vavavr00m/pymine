@@ -1,9 +1,12 @@
 {% extends "base/api.html" %}
 {% block for_results %}
-{% for hash in result %}
-{% for foo, bar in hash.items %}
-<UL>{% for key, value in bar.items %}<LI>{{key}}={{value}}</LI>{% endfor %}</UL>
-<p/>
+{% for individual in result %}
+{% for type, hash in individual.items %}
+{% block per_hash %}{% endblock %}
+<UL class="diddy">{% for key, value in hash.items %}<LI>{{key}}={{value}}</LI>{% endfor %}</UL><p/>
 {% endfor %}
 {% endfor %}
 {% endblock %}	
+
+
+
