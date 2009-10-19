@@ -28,7 +28,7 @@ from Crypto.Cipher import AES
 
 from pymine.api.models import Relation, LogEvent
 
-class MineKey:
+class Minekey:
     key_magic = 'py1' # recognise these keys
     corefmt = '%s,%d,%d,%d,%d,%s'
     valid_methods = ( 'get', 'put' )
@@ -101,7 +101,7 @@ class MineKey:
 	    raise RuntimeError, 'bad method: ' + str(self.method)
 
     def clone(self):
-	retval = MineKey(method=self.method,
+	retval = Minekey(method=self.method,
 			 rid=self.rid,
 			 rvsn=self.rvsn,
 			 iid=self.iid,
@@ -141,7 +141,7 @@ class MineKey:
 	if Xhash != hash2:
 	    raise RuntimeError, "failed hash validation"
 
-	retval = MineKey(method=Xmethod,
+	retval = Minekey(method=Xmethod,
 			 rid=Xrid,
 			 rvsn=Xrvsn,
 			 iid=Xiid,
@@ -176,7 +176,7 @@ class MineKey:
     @classmethod
     def feed_for(self, rid):
 	rvsn = 1 # TODO: lookup
-	retval = MineKey(method='get',
+	retval = Minekey(method='get',
 			 rid=rid,
 			 rvsn=rvsn,
 			 iid=0,
@@ -253,13 +253,13 @@ class MineKey:
 ##################################################################
 
 if __name__ == '__main__':
-    m1 = MineKey(method='get', rid=1, rvsn=1, iid=1, depth=2)
+    m1 = Minekey(method='get', rid=1, rvsn=1, iid=1, depth=2)
     print "orig: ", m1, m1.key()
 
-    m2 = MineKey.parse(m1.key())
+    m2 = Minekey.parse(m1.key())
     print "parse:", m2, m2.key()
 
-    m3 = MineKey.feed_for(2)
+    m3 = Minekey.feed_for(2)
     print "feed2:", m3, m3.key()
 
     m4 = m3.spawn_iid(69)

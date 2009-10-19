@@ -83,7 +83,7 @@ from django.template.loader import render_to_string
 from django.utils import feedgenerator
 import itertools
 
-#from minekey import MineKey # circular dependency, skip
+#from minekey import Minekey # circular dependency, skip
 import util.base58 as base58
 
 # magic storage for database items
@@ -280,6 +280,24 @@ def s2m_date(s, sattr, m, mattr):
     """TBD: Copy a DateTime from an isoformat string in s, into m"""
     if sattr in s:
 	raise RuntimeError, "not yet integrated the Date parser"
+
+##################################################################
+
+def m2s_bool(m, mattr, s, sattr):
+    """Copy a boolean from m to s"""
+    x = getattr(m, mattr)
+    if x: 
+        s[sattr] = 1
+    else:
+        s[sattr] = 0
+
+def s2m_bool(s, sattr, m, mattr):
+    """Copy a boolean from s to m"""
+    if sattr in s: 
+        if s[sattr] == 0:
+            setattr(m, mattr, False)
+        else:
+            setattr(m, mattr, True)
 
 ##################################################################
 
@@ -558,6 +576,7 @@ class AbstractThing(AbstractModel):
 (  'relationEmbargoBefore',   'embargo_before',   False,  r2s_string,  s2m_date,        m2s_date,        ),
 (  'relationId',              'id',               False,  r2s_int,     s2m_copy,        m2s_copy,        ),
 (  'relationInterests',       'interests',        True,   r2s_string,  s2m_relints,     m2s_relints,     ),
+(  'relationIsDeleted',       'is_deleted',       False,  r2s_int,     s2m_bool,        m2s_bool,        ),
 (  'relationLastModified',    'last_modified',    False,  None,        None,            m2s_date,        ),
 (  'relationName',            'name',             False,  r2s_string,  s2m_copy,        m2s_copy,        ),
 (  'relationNetworkPattern',  'network_pattern',  False,  r2s_string,  s2m_copy,        m2s_copy,        ),
@@ -573,6 +592,7 @@ class AbstractThing(AbstractModel):
 (  'vurlAbsoluteUrl',         None,               True,   None,        None,            None,            ),  #see:Vurl()
 (  'vurlCreated',             'created',          False,  None,        None,            m2s_date,        ),
 (  'vurlId',                  'id',               False,  r2s_int,     s2m_copy,        m2s_copy,        ),
+(  'vurlIsMinekey',           'is_minekey',       False,  r2s_int,     s2m_bool,        m2s_bool,        ),
 (  'vurlKey',                 None,               True,   None,        None,            None,            ),  #see:Vurl()
 (  'vurlLastModified',        'last_modified',    False,  None,        None,            m2s_date,        ),
 (  'vurlLink',                'link',             False,  r2s_string,  s2m_copy,        m2s_copy,        ),
@@ -1120,7 +1140,7 @@ class Relation(AbstractThing):
     name = AbstractModelField.slug(unique=True)
     version = AbstractModelField.integer(1)
 
-    deleted = AbstractModelField.bool(False)
+    is_deleted = AbstractModelField.bool(False)
     description = AbstractModelField.text(required=False)
     embargo_after = AbstractModelField.datetime(required=False)
     embargo_before = AbstractModelField.datetime(required=False)
@@ -1138,7 +1158,7 @@ class Relation(AbstractThing):
     def delete(self):
 	""" """
 
-	self.deleted = True
+	self.is_deleted = True
 	self.save()
 
     def delete_real(self):
@@ -1379,6 +1399,7 @@ class Vurl(AbstractThing):
 
     name = AbstractModelField.slug(unique=True)
     link = AbstractModelField.text(unique=True)
+    is_minekey = AbstractModelField.bool(default=False)
 
     def __unicode__(self):
 	return self.name

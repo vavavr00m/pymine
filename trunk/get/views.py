@@ -23,7 +23,7 @@ from django.shortcuts import render_to_response, get_object_or_404
 from django.template.loader import render_to_string
 from django.utils import feedgenerator
 
-from pymine.api.minekey import MineKey
+from pymine.api.minekey import Minekey
 from pymine.api.models import Tag, Item, Relation, Comment, Vurl, LogEvent
 
 import pymine.api.views as api
@@ -192,7 +192,7 @@ def read_minekey(request, minekey, *args, **kwargs):
     # big wrapper for all possible exceptions
     try:
 	# parse it out (basic validation performed)
-	mk = MineKey.parse(minekey)
+	mk = Minekey.parse(minekey)
 
 	# extended validation
 	mk.validate_against(request, 'get')
