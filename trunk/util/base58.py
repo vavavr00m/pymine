@@ -15,6 +15,8 @@
 ## permissions and limitations under the License.
 ##
 
+"""docstring goes here""" # :-)
+
 # spec: http://www.flickr.com/groups/api/discuss/72157616713786392/
 
 __b58chars = '123456789abcdefghijkmnopqrstuvwxyzABCDEFGHJKLMNPQRSTUVWXYZ'

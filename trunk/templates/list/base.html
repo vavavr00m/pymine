@@ -1,10 +1,9 @@
 {% extends "base/api.html" %}
-{% block title %}generic listing{% endblock %}
-
-{% block content %}
-<h2>{% block heading %}generic heading{% endblock %}</h2>
-{% for entry in result %}
-{% block entry %} no code for processing entry <p/> {% endblock %}
-<hr>
+{% block for_results %}
+{% for hash in result %}
+{% for foo, bar in hash.items %}
+<UL>{% for key, value in bar.items %}<LI>{{key}}={{value}}</LI>{% endfor %}</UL>
+<p/>
 {% endfor %}
-{% endblock %}
+{% endfor %}
+{% endblock %}	

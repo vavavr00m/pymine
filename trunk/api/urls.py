@@ -15,6 +15,8 @@
 ## permissions and limitations under the License.
 ##
 
+"""docstring goes here""" # :-)
+
 from django.conf.urls.defaults import *
 
 import views as api
@@ -99,9 +101,4 @@ urlpatterns = patterns('',
                        (r'^comment/(?P<cid>[1-9]\d*)/(?P<sattr>(__)?[A-Za-z][_A-Za-z]*)\.(?P<fmt>(rdr|xml|json|raw))$',
                         API_CALL, { 'DELETE': api.delete_comment_key,
                                     'GET': api.get_comment_key }),
-                       (r'^clone/(?P<iid>\d+)\.(?P<fmt>(rdr|xml|json|raw))$',
-                        API_CALL, { 'POST': api.create_clone,
-                                    'GET': api.list_clones }),
-                       (r'^$',
-                        REST, { 'GET': api.root_api }),
 		       )

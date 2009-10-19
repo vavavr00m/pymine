@@ -15,7 +15,7 @@
 ## permissions and limitations under the License.
 ##
 
-"""docstring goes here """
+"""docstring goes here""" # :-)
 
 from django.conf import settings
 from django.core.urlresolvers import reverse
