@@ -1,11 +1,11 @@
 <div class="widget">
 <div class="annotation">item creator</div>
-<!-- tinymce -->
+<!-- TinyMCE -->
 <script type="text/javascript" src="/pub/tinymce/jscripts/tiny_mce/tiny_mce.js"></script>
-<script type="text/javascript">tinymce.init({ mode : "textareas", theme : "simple" });</script>
-<!-- /tinymce -->
-<form method="post" enctype="multipart/form-data" action="/api/item.rdr">
+<script type="text/javascript">tinyMCE.init({ mode : "textareas", theme : "simple"});</script>
+<!-- /TinyMCE -->
 
+<form method="post" enctype="multipart/form-data" action="/api/item.rdr">
 <input type="hidden" name="redirect_success" value="/ui/create/item.html">
 
 title:
@@ -15,7 +15,9 @@ title:
 
 text:
 <br/>
-<textarea name="itemDescription" rows="15" cols="80"></textarea>
+<!-- Gets replaced with TinyMCE, remember HTML in a textarea should be encoded -->
+<textarea name="itemDescription" cols="80" rows="24">
+</textarea>
 <p/>
 
 tags:
@@ -39,4 +41,6 @@ publication status:
 <input type="submit" name="save" value="create item" />
 <input type="reset" name="reset" value="reset form" />
 </form>
+
 </div>
+
