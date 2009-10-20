@@ -10,10 +10,9 @@
 {% else %}
 no result returned by api call
 {% endif %}
-<p/>
-<hr/>
+
+<div class="annotation">
 envelope:
-<tt>
 <ul>
 <li>exit: {{ exit }}</li>
 <li>status: {{ status }}</li>
@@ -25,6 +24,5 @@ envelope:
 <li>callback: {{ callback }}</li>
 <li>watch: {{ watch }}</li>
 </ul>
-</tt>
-<p/>
+</div>
 {% endblock %} <!-- content -->

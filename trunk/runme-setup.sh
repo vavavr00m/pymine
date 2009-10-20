@@ -17,8 +17,10 @@ YESNO() {
     done
 }
 
-make clean || exit 1
+(
 make perms || exit 1
+make clean || exit 1
+) >/dev/null 2>&1
 
 if [ -f settings.py ]
 then
@@ -28,7 +30,6 @@ then
 	rm settings.py
     fi
 fi
-
 
 if [ -f $MINE_DB ]
 then

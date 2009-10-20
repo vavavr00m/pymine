@@ -151,7 +151,7 @@ def API_CALL(request, *args, **kwargs):
 def root_mine(request, *args, **kwargs):
     """root_mine() returns ..."""
     s = {}
-    return render_to_response('root/mine.html', s)
+    return render_to_response('dash/root.html', s)
 
 ## rest: GET /favicon.ico
 ## function: root_favicon

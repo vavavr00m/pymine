@@ -2,8 +2,14 @@
 {% block for_results %}
 {% for individual in result %}
 {% for type, hash in individual.items %}
-{% block per_hash %}{% endblock %}
-<UL class="diddy">{% for key, value in hash.items %}<LI>{{key}}={{value}}</LI>{% endfor %}</UL><p/>
+<DIV>
+{% block per_hash %}
+generic per_hash block
+{% endblock %}
+{% block per_hash_debug %}
+<UL class="annotation">{% for key, value in hash.items %}<LI>{{key}}={{value}}</LI>{% endfor %}</UL><p/>
+{% endblock %}
+</DIV>
 {% endfor %}
 {% endfor %}
 {% endblock %}	

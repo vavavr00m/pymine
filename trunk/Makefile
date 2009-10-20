@@ -1,8 +1,11 @@
-IP_ADDRESS=127.0.0.1
-IP_PORT=9862
-IP_TUPLE=$(IP_ADDRESS):$(IP_PORT)
+# configurables
+MY_EMAIL=email.address@mydomain.dom
+IP_ADDRESS_AND_PORT=127.0.0.1:9862
 
-PYDOC=../pydoc/bin/pydoc
+# external code
+PYDOC=pydoc
+
+##################################################################
 
 all: client
 
@@ -22,13 +25,18 @@ perms:
 	chmod 755 `find . -name "*.pl"`
 	chmod 755 `find . -name "*.sh"`
 
+hard-reset: # brute-force rebuild from scratch
+	env MINE_EMAIL=$(MY_EMAIL) ./runme-setup.sh
+	make server
+
 ##################################################################
 
 client:
-	open http://$(IP_TUPLE)/
+	@echo trying to open http://$(IP_ADDRESS_AND_PORT)/
+	open http://$(IP_ADDRESS_AND_PORT)/
 
 server:
-	python manage.py runserver $(IP_TUPLE)
+	python manage.py runserver $(IP_ADDRESS_AND_PORT)
 
 ##################################################################
 
@@ -50,13 +58,6 @@ dbclean:
 
 dbdump:
 	@python manage.py dumpdata
-
-##################################################################
-
-# brute-force rebuild form scratch 
-alecm:
-	env MINE_EMAIL=alec.muffett@gmail.com ./runme-setup.sh
-	make server
 
 ##################################################################
 
