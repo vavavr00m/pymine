@@ -165,12 +165,12 @@ def list_comments(request, iid, *args, **kwargs):
     item_id = int(iid)
 
     if item_id == 0:
-        models = Comment.objects.all
+        models = Comment.objects
     else:
         item = Item.objects.get(id=item_id)
-        models = item.comment_set.all
+        models = item.comment_set
 
-    result = [ { m.sattr_prefix : m.to_structure() } for m in models() ]
+    result = [ { m.sattr_prefix : m.to_structure() } for m in models.filter(is_deleted=False) ]
     return construct_retval(result)
 
 ##################################################################
