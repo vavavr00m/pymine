@@ -222,12 +222,19 @@ class AbstractModel(models.Model):
 
     created = AbstractModelField.created()
     last_modified = AbstractModelField.last_modified()
+    is_deleted = AbstractModelField.bool(False)
 
     class Meta:
 	abstract = True
 
-    def dummy_method(self):
-        pass
+    def delete(self):
+	""" """
+	self.is_deleted = True
+	self.save()
+
+    def delete_for_real(self):
+	""" """
+	pass
 
 ##################################################################
 ##################################################################
@@ -543,6 +550,7 @@ class AbstractThing(AbstractModel):
 (  'commentBody',             'body',             False,  r2s_string,  s2m_copy,        m2s_copy,        ),
 (  'commentCreated',          'created',          False,  None,        None,            m2s_date,        ),
 (  'commentId',               'id',               False,  r2s_int,     s2m_copy,        m2s_copy,        ),
+(  'commentIsDeleted',        'is_deleted',       False,  None,        None,            m2s_bool,        ),
 (  'commentItem',             'item',             False,  r2s_int,     s2m_comitem,     m2s_comitem,     ),
 (  'commentLastModified',     'last_modified',    False,  None,        None,            m2s_date,        ),
 (  'commentRelation',         'relation',         False,  r2s_string,  s2m_comrel,      m2s_comrel,      ),
@@ -555,6 +563,7 @@ class AbstractThing(AbstractModel):
 (  'itemHideAfter',           'hide_after',       False,  r2s_string,  s2m_copy,        m2s_copy,        ),
 (  'itemHideBefore',          'hide_before',      False,  r2s_string,  s2m_date,        m2s_date,        ),
 (  'itemId',                  'id',               False,  r2s_int,     s2m_copy,        m2s_copy,        ),
+(  'itemIsDeleted',           'is_deleted',       False,  None,        None,            m2s_bool,        ),
 (  'itemLastModified',        'last_modified',    False,  None,        None,            m2s_date,        ),
 (  'itemName',                'name',             False,  r2s_string,  s2m_copy,        m2s_copy,        ),
 (  'itemSize',                None,               True,   None,        None,            None,            ),  #see:Item()
@@ -567,6 +576,7 @@ class AbstractThing(AbstractModel):
 (  'relationEmbargoBefore',   'embargo_before',   False,  r2s_string,  s2m_date,        m2s_date,        ),
 (  'relationId',              'id',               False,  r2s_int,     s2m_copy,        m2s_copy,        ),
 (  'relationInterests',       'interests',        True,   r2s_string,  s2m_relints,     m2s_relints,     ),
+(  'relationIsDeleted',       'is_deleted',       False,  None,        None,            m2s_bool,        ),
 (  'relationIsDeleted',       'is_deleted',       False,  r2s_int,     s2m_bool,        m2s_bool,        ),
 (  'relationLastModified',    'last_modified',    False,  None,        None,            m2s_date,        ),
 (  'relationName',            'name',             False,  r2s_string,  s2m_copy,        m2s_copy,        ),
@@ -577,19 +587,21 @@ class AbstractThing(AbstractModel):
 (  'tagDescription',          'description',      False,  r2s_string,  s2m_copy,        m2s_copy,        ),
 (  'tagId',                   'id',               False,  r2s_int,     s2m_copy,        m2s_copy,        ),
 (  'tagImplies',              'implies',          True,   r2s_string,  s2m_tagimplies,  m2s_tagimplies,  ),
+(  'tagIsDeleted',            'is_deleted',       False,  None,        None,            m2s_bool,        ),
 (  'tagLastModified',         'last_modified',    False,  None,        None,            m2s_date,        ),
 (  'tagName',                 'name',             False,  r2s_string,  s2m_copy,        m2s_copy,        ),
 (  'thingId',                 'id',               False,  r2s_int,     s2m_copy,        m2s_copy,        ),
 (  'vurlAbsoluteUrl',         None,               True,   None,        None,            None,            ),  #see:Vurl()
 (  'vurlCreated',             'created',          False,  None,        None,            m2s_date,        ),
 (  'vurlId',                  'id',               False,  r2s_int,     s2m_copy,        m2s_copy,        ),
+(  'vurlIsDeleted',           'is_deleted',       False,  None,        None,            m2s_bool,        ),
 (  'vurlIsMinekey',           'is_minekey',       False,  r2s_int,     s2m_bool,        m2s_bool,        ),
 (  'vurlKey',                 None,               True,   None,        None,            None,            ),  #see:Vurl()
-(  'vurlPathLong',            None,               True,   None,        None,            None,            ),  #see:Vurl()
-(  'vurlPathShort',           None,               True,   None,        None,            None,            ),  #see:Vurl()
 (  'vurlLastModified',        'last_modified',    False,  None,        None,            m2s_date,        ),
 (  'vurlLink',                'link',             False,  r2s_string,  s2m_copy,        m2s_copy,        ),
 (  'vurlName',                'name',             False,  r2s_string,  s2m_copy,        m2s_copy,        ),
+(  'vurlPathLong',            None,               True,   None,        None,            None,            ),  #see:Vurl()
+(  'vurlPathShort',           None,               True,   None,        None,            None,            ),  #see:Vurl()
 )
 
     # A word about deferral: some s2m conversions can only take place
@@ -1143,7 +1155,6 @@ class Relation(AbstractThing):
     name = AbstractModelField.slug(unique=True)
     version = AbstractModelField.integer(1)
 
-    is_deleted = AbstractModelField.bool(False)
     description = AbstractModelField.text(required=False)
     embargo_after = AbstractModelField.datetime(required=False)
     embargo_before = AbstractModelField.datetime(required=False)
@@ -1157,17 +1168,6 @@ class Relation(AbstractThing):
 
     def __unicode__(self):
 	return self.name
-
-    def delete(self):
-	""" """
-
-	self.is_deleted = True
-	self.save()
-
-    def delete_real(self):
-	""" """
-
-	pass
 
 ##################################################################
 

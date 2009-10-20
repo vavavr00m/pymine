@@ -1,1 +1,14 @@
 {% extends 'base/page.html' %}
+{% block title %}delete item{% endblock %}
+
+{% block content %}
+<h3>deleting item {{ itemId }}</h3>
+Please pick one of the following options:
+<P>
+<form method="post" action="/api/item/{{ itemId }}.rdr">
+<input type="hidden" name="redirect_success" value="/ui/list/items.html">
+<input type="hidden" name="_method" value="DELETE">
+<input type="submit" name="save" value="yes! delete item {{ itemId }}!" />
+<A HREF="/ui/list/items.html"><button>no! leave it alone!</button></A>
+</form>
+{% endblock %}
