@@ -289,14 +289,14 @@ def s2m_date(s, sattr, m, mattr):
 def m2s_bool(m, mattr, s, sattr):
     """Copy a boolean from m to s"""
     x = getattr(m, mattr)
-    if x: 
+    if x:
         s[sattr] = 1
     else:
         s[sattr] = 0
 
 def s2m_bool(s, sattr, m, mattr):
     """Copy a boolean from s to m"""
-    if sattr in s: 
+    if sattr in s:
         if s[sattr] == 0:
             setattr(m, mattr, False)
         else:
@@ -669,7 +669,14 @@ class AbstractThing(AbstractModel):
 	    if sattr in ( 'itemData' ): # ...insert others here...
 		if sattr in r.FILES:
 		    uf = r.FILES[sattr]
-		    ct = uf.content_type # TBD: SHOULDN"T I BE DOING SOMETHING WITH THIS???
+
+                    # what does the browser call the content type?
+		    ct = uf.content_type
+
+                    # if one's not already set
+                    if ct and not self.content_type:
+                        self.content_type = ct
+
 		    self.save_upload_file(uf)
 		    needs_save = True
 
@@ -1239,10 +1246,7 @@ class Item(AbstractThing):
 	"""
 
 	s = super(Item, self).to_structure()
-
-        if 'itemType' not in s:
-            s['itemType'] = self.item_type()
-            
+        s['itemType'] = self.item_type() # overrides based on whether item.data is None
         s['itemSize'] = self.item_size()
 
         if self.data:
@@ -1283,10 +1287,10 @@ class Item(AbstractThing):
 
         # work out our enclosures
         iteminfo['enclosure'] = \
-            feedgenerator.Enclosure(url=iteminfo['link'], 
+            feedgenerator.Enclosure(url=iteminfo['link'],
                                     length=str(self.item_size()),
                                     mime_type=self.item_type())
-        
+
         # work out our description
         if not self.data:
             desc = self.item_description()
@@ -1300,7 +1304,7 @@ class Item(AbstractThing):
                 }
             desc = render_to_string('feed/item.html', tmpl)
 
-        # TBD: should we use feed_mk or 
+        # TBD: should we use feed_mk or
         # or item_mk to rewrite, here?
         # i am thinking feed_mk
 

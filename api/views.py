@@ -216,6 +216,7 @@ def read_item_data(request, iid, *args, **kwargs): # <--------------------------
     ct = m.item_type()
     mk = kwargs.get('minekey', None)
 
+    # if it's a minekey fetch, do the right thing
     if mk and ct in ('text/html', 'application/mine+xml'):
         if m.data:
             content = m.data.read()
@@ -224,13 +225,13 @@ def read_item_data(request, iid, *args, **kwargs): # <--------------------------
         rewrite = mk.rewrite_html(content)
         response = HttpResponse(rewrite, content_type=ct)
         response['Content-Length'] = len(rewrite)
-    elif m.data:
+    elif m.data: # else if there's a file
         fw = m.data.chunks()
         response = HttpResponse(fw, content_type=ct)
         response['Content-Length'] = m.data.size
     else:
         response = HttpResponse(m.item_description(), content_type=ct)
-        response['Content-Length'] = m.data.size
+        response['Content-Length'] = m.item_size()
     return response
 
 ## function: delete_item
