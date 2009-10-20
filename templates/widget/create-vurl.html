@@ -1,3 +1,23 @@
-<DIV class="widget">
-<DIV class="annotation">vurl creator</DIV>
-</DIV>
+<div class="widget">
+<div class="annotation">vurl creator</div>
+
+<form method="post" enctype="multipart/form-data" action="/api/vurl.rdr">
+<input type="hidden" name="redirect_success" value="/ui/list/vurls.html">
+
+long url:
+<br/>
+<textarea name="vurlLink" cols="80" rows="5">
+</textarea>
+<p/>
+
+name: (optional)
+<br/>
+<input name="vurlName" value="" size="33" />
+<p/>
+
+<input type="submit" name="save" value="create vurl" />
+<input type="reset" name="reset" value="reset form" />
+</form>
+
+</div>
+

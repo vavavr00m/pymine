@@ -1,3 +1,32 @@
-<DIV class="widget">
-<DIV class="annotation">relation creator</DIV>
-</DIV>
+<div class="widget">
+<div class="annotation">relation creator</div>
+<!-- TinyMCE -->
+<script type="text/javascript" src="/pub/tinymce/jscripts/tiny_mce/tiny_mce.js"></script>
+<script type="text/javascript">tinyMCE.init({ mode : "textareas", theme : "simple"});</script>
+<!-- /TinyMCE -->
+<form method="post" enctype="multipart/form-data" action="/api/relation.rdr">
+<input type="hidden" name="redirect_success" value="/ui/list/relations.html">
+
+new relation:
+<br/>
+<input name="relationName" value="" size="33" />
+<p/>
+
+description: (optional)
+<br/>
+<!-- Gets replaced with TinyMCE, remember HTML in a textarea should be encoded -->
+<textarea name="relationDescription" cols="80" rows="5">
+</textarea>
+<p/>
+
+relationship interests: (ie: tags, space-separated, optional)
+<br/>
+<input name="relationInterests" value="" size="66">
+<p/>
+
+<input type="submit" name="save" value="create relation" />
+<input type="reset" name="reset" value="reset form" />
+</form>
+
+</div>
+

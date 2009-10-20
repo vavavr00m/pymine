@@ -595,7 +595,6 @@ class AbstractThing(AbstractModel):
 (  'vurlCreated',             'created',          False,  None,        None,            m2s_date,        ),
 (  'vurlId',                  'id',               False,  r2s_int,     s2m_copy,        m2s_copy,        ),
 (  'vurlIsDeleted',           'is_deleted',       False,  None,        None,            m2s_bool,        ),
-(  'vurlIsMinekey',           'is_minekey',       False,  r2s_int,     s2m_bool,        m2s_bool,        ),
 (  'vurlKey',                 None,               True,   None,        None,            None,            ),  #see:Vurl()
 (  'vurlLastModified',        'last_modified',    False,  None,        None,            m2s_date,        ),
 (  'vurlLink',                'link',             False,  r2s_string,  s2m_copy,        m2s_copy,        ),
@@ -1376,7 +1375,6 @@ class Vurl(AbstractThing):
 
     name = AbstractModelField.slug(unique=True)
     link = AbstractModelField.text(unique=True)
-    is_minekey = AbstractModelField.bool(default=False)
 
     def __unicode__(self):
 	return self.name
@@ -1388,10 +1386,6 @@ class Vurl(AbstractThing):
     def get_with_vurlkey(encoded):
 	""" """
 	return Vurl.objects.get(id=base58.b58decode(encoded))
-
-    def vurlkey(self):
-	""" """
-	return base58.b58encode(self.id)
 
     @transaction.commit_on_success # <- rollback if it raises an exception
     def save(self):
@@ -1409,6 +1403,10 @@ class Vurl(AbstractThing):
 	    self.name = 'vurl_%s' % self.vurlkey()
 	    s = super(Vurl, self).save()
 
+    def vurlkey(self):
+	""" """
+	return base58.b58encode(self.id)
+    
     def to_structure(self):
 	"""
 	Splices the virtual vurlKey/vurlPath sattrs into the Vurl
