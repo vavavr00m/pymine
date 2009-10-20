@@ -3,7 +3,7 @@
 {% block heading %}items listing{% endblock %}
 
 {% block per_hash %}
-{{hash.itemName}}
+{{hash.itemId}}: '{{hash.itemName}}'
 <A HREF="/ui/read/item/{{hash.itemId}}.html"><button>info</button></A>
 <A HREF="/api/item/{{hash.itemId}}"><button>view</button></A>
 <A HREF="/ui/update/item/{{hash.itemId}}.html"><button>edit</button></A>

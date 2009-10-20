@@ -3,7 +3,7 @@
 {% block heading %}comments listing{% endblock %}
 
 {% block per_hash %}
-'{{hash.commentTitle}}' on item {{hash.commentItem}}
+{{hash.commentId}}: '{{hash.commentTitle}}' on item {{hash.commentItem}}
 <A HREF="/ui/read/comment/{{hash.commentId}}.html"><button>info</button></A>
 <A HREF="/ui/update/comment/{{hash.commentId}}.html"><button>edit</button></A>
 <A HREF="/ui/delete/comment/{{hash.commentId}}.html"><button>delete</button></A>

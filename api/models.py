@@ -751,7 +751,7 @@ class AbstractThing(AbstractModel):
 	    # retreive equivalent model field
 	    x = getattr(self, mattr)
 	    # lookup m2s conversion routine
-	    m2s_func, sattr2 = m2s_table[self.sattr_prefix][mattr]
+	    m2s_func, sattr2 = self.m2s_table[self.sattr_prefix][mattr]
 	    # sanity check
 	    assert sattr == sattr2, "m2s_table corruption, reverse lookup yielded wrong result"
 	    # convert to s-form and return
@@ -1394,7 +1394,7 @@ class Vurl(AbstractThing):
 	s = super(Vurl, self).save()
 
 	if redo:
-	    self.name = '__%s__' % self.vurlkey()
+	    self.name = 'vurl_%s' % self.vurlkey()
 	    s = super(Vurl, self).save()
 
     def to_structure(self):

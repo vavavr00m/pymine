@@ -197,7 +197,7 @@ def read_minekey(request, minekey, *args, **kwargs):
 	    el.close('item ok')
 	    return retval
 	else: # feed
-	    retval = generate_feed(mk)
+	    retval = generate_feed(request, minekey, *args, **kwargs)
 	    el.close('feed ok')
 	    return retval
 
