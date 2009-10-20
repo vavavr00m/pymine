@@ -53,37 +53,37 @@ class Minekey:
 	self.depth = kwargs.get('depth', -1)
 
     @classmethod
-    def b64e(self, x):
-	return base64.b64encode(x, self.b64_alt)
+    def b64e(klass, x):
+	return base64.b64encode(x, klass.b64_alt)
 
     @classmethod
-    def b64d(self, x):
-	return base64.b64decode(x, self.b64_alt)
+    def b64d(klass, x):
+	return base64.b64decode(x, klass.b64_alt)
 
     @classmethod
-    def hashify(self, x):
+    def hashify(klass, x):
 	m = hashlib.md5() # more than adequate
 	m.update(x)
 	h = m.digest()
-	return self.b64e(h).rstrip('=')
+	return klass.b64e(h).rstrip('=')
 
     @classmethod
-    def crypto_engine(self):
-	return AES.new(self.aes_key, self.aes_mode, self.aes_iv)
+    def crypto_engine(klass):
+	return AES.new(klass.aes_key, klass.aes_mode, klass.aes_iv)
 
     @classmethod
-    def encrypt(self, x):
+    def encrypt(klass, x):
 	l = len(x)
 	if (l % 16): # if not a 16-byte message, pad with whitespace
 	    y =  '%*s' % (-(((l // 16) + 1) * 16), x)
 	else: # we got lucky
 	    y = x
-	engine = self.crypto_engine()
+	engine = klass.crypto_engine()
 	return engine.encrypt(y)
 
     @classmethod
-    def decrypt(self, x):
-	engine = self.crypto_engine()
+    def decrypt(klass, x):
+	engine = klass.crypto_engine()
 	return engine.decrypt(x).rstrip() # remove whitespace padding
 
     def validate(self):
@@ -113,13 +113,13 @@ class Minekey:
 	return retval
 
     @classmethod
-    def parse(self, external):
-	encrypted = self.b64d(external.encode('utf-8')) # stuff comes from URLs in UNICODE
-	internal = self.decrypt(encrypted)
+    def parse(klass, external):
+	encrypted = klass.b64d(external.encode('utf-8')) # stuff comes from URLs in UNICODE
+	internal = klass.decrypt(encrypted)
 
 	(Xhash, Xmethod, Xrid, Xrvsn, Xiid, Xdepth, Xkey_magic) = internal.split(',', 7)
 
-	if Xkey_magic != self.key_magic: # eventually switch, here
+	if Xkey_magic != klass.key_magic: # eventually switch, here
 	    raise RuntimeError, 'failed magic validation'
 
 	# Xhash computed string
@@ -131,14 +131,14 @@ class Minekey:
 	# Xkey_magic constant string
 
         # see also __str__()
-	core = self.corefmt % (Xmethod, 
+	core = klass.corefmt % (Xmethod, 
                                Xrid, 
                                Xrvsn, 
                                Xiid, 
                                Xdepth, 
                                Xkey_magic)
 
-	hash2 = self.hashify(core)
+	hash2 = klass.hashify(core)
 
 	if Xhash != hash2:
 	    raise RuntimeError, "failed hash validation"
@@ -162,9 +162,9 @@ class Minekey:
 		self.key_magic, # class
 		)
 
-	core = self.corefmt % args
-	hash = self.hashify(core) # compute hash over core
-	return "%s,%s" % (hash, core)
+	c = self.corefmt % args
+	h = self.hashify(c) # compute hash over core
+	return "%s,%s" % (h, c)
 
     def permalink(self):
         return "%s/get/%s" % (settings.MINE_URL_ROOT, self.key())
@@ -176,7 +176,7 @@ class Minekey:
 	return external
 
     @classmethod
-    def feed_for(self, rid):
+    def feed_for(klass, rid):
 	rvsn = 1 # TODO: lookup
 	retval = Minekey(method='get',
 			 rid=rid,
@@ -208,11 +208,11 @@ class Minekey:
 
         # check get vs put
         if self.method != want_method:
-            raise RuntimeError, "minekey is wrong method: " + str(mk)
+            raise RuntimeError, "minekey is wrong method: " + str(self)
 
         # check depth
         if self.depth <= 0:
-            raise RuntimeError, "minekey has run out of depth: " + str(mk)
+            raise RuntimeError, "minekey has run out of depth: " + str(self)
 
         # check global ToD restrictions
         # TODO
@@ -221,11 +221,11 @@ class Minekey:
         try:
             r = Relation.objects.get(id=self.rid)
         except Relation.DoesNotExist, e:
-            raise RuntimeError, "relation is not valid: " + str(mk)
+            raise RuntimeError, "relation not valid: " + str(self) + str(e)
 
         # check rvsn
         if r.version != self.rvsn:
-            raise RuntimeError, "minekey/relation version mismatch: " + str(mk)
+            raise RuntimeError, "minekey/relation version mismatch: " + str(self)
 
         # check against relation IP address
         if r.network_pattern:

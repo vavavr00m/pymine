@@ -3,7 +3,7 @@
 {% block heading %}tags listing{% endblock %}
 
 {% block per_hash %}
-'<A HREF="/ui/read/tag/{{hash.tagId}}.html">{{hash.tagName}}</A>'
+{{hash.tagId}}: '<A HREF="/ui/read/tag/{{hash.tagId}}.html">{{hash.tagName}}</A>'
 {% if hash.tagImplies %}(&rarr; {{ hash.tagImplies }}){% endif %}
 <A HREF="/ui/read/tag/{{hash.tagId}}.html"><button>info</button></A>
 <A HREF="/ui/update/tag/{{hash.tagId}}.html"><button>edit</button></A>

@@ -2,7 +2,7 @@
 {% block title %}vurls listing{% endblock %}
 {% block heading %}vurls listing{% endblock %}
 {% block per_hash %}
-{{hash.vurlName}}
+{{hash.vurlId}}: '{{hash.vurlName}}'
 <A HREF="/ui/read/vurl/{{hash.vurlId}}.html"><button>info</button></A>
 <A HREF="/ui/update/vurl/{{hash.vurlId}}.html"><button>edit</button></A>
 <A HREF="/ui/delete/vurl/{{hash.vurlId}}.html"><button>delete</button></A>
