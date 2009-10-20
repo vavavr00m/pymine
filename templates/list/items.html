@@ -3,22 +3,25 @@
 {% block heading %}items listing{% endblock %}
 
 {% block per_hash %}
-'{{hash.itemName}}'
+<DIV class="listheader">
+{{ hash.itemName }}
+<SPAN class="buttons">
 <A HREF="/ui/read/item/{{hash.itemId}}.html"><button>info</button></A>
 <A HREF="/api/item/{{hash.itemId}}"><button>view</button></A>
 <A HREF="/ui/update/item/{{hash.itemId}}.html"><button>edit</button></A>
 <A HREF="/ui/list/comments/{{hash.itemId}}.html"><button>comments</button></A>
 <A HREF="/ui/delete/item/{{hash.itemId}}.html"><button>delete</button></A>
-<br/>
-size={{ hash.itemSize}},
-type={{ hash.itemType }},
-id={{hash.itemId}}
-{% if hash.itemDescription %}
-<br/>
-description:
-<br/>
-'{{ hash.itemDescription }}'
-{% endif %}
-<P/>
+</SPAN>
+</DIV>
+
+<DIV class="listbody">
+{{ hash.itemDescription }}
+</DIV>
+
+<UL class="notes">
+<LI>size: {{ hash.itemSize}}</LI>
+<LI>type: {{ hash.itemType }}</LI>
+</UL>
+
 {% endblock %}
 {% block per_hash_debug %}{% endblock %}

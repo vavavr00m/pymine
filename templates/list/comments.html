@@ -3,10 +3,31 @@
 {% block heading %}comments listing{% endblock %}
 
 {% block per_hash %}
-'{{hash.commentTitle}}' on item {{hash.commentItem}}
+
+
+
+<DIV class="listheader">
+{{hash.commentTitle}}
+<SPAN class="buttons">
 <A HREF="/ui/read/comment/{{hash.commentId}}.html"><button>info</button></A>
 <A HREF="/ui/update/comment/{{hash.commentId}}.html"><button>edit</button></A>
 <A HREF="/ui/delete/comment/{{hash.commentId}}.html"><button>delete</button></A>
-<A HREF="/ui/read/item/{{hash.commentItem}}.html"><button>open item</button></A>
+<A HREF="/ui/read/item/{{hash.commentItem}}.html"><button>item {{hash.commentItem}} info</button></A>
+<A HREF="/api/item/{{hash.commentItem}}"><button>open item {{hash.commentItem}}</button></A>
+</SPAN>
+</DIV>
+
+<DIV class="listbody">
+{% if hash.commentBody %}
+{{ hash.commentBody }}
+{% else %}
+-
+{% endif %}
+</DIV>
+
+<UL class="notes">
+<LI>relation: {{hash.commentRelation}}</LI>
+<LI>item: {{hash.commentItem}}</LI>
+</UL>
 {% endblock %}
 {% block per_hash_debug %}{% endblock %}
