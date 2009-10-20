@@ -1,4 +1,7 @@
 {% extends "base/page.html" %}
 {% block title %}tags dashboard{% endblock %}
 {% block heading %}tags dashboard{% endblock %}
-{% block content %}{% include 'widget/tag.html' %}{% endblock %}
+{% block content %}
+{% include 'widget/browse-tag.html' %}
+{% include 'widget/create-tag.html' %}
+{% endblock %}

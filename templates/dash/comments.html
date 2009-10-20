@@ -1,4 +1,7 @@
 {% extends "base/page.html" %}
 {% block title %}comments dashboard{% endblock %}
 {% block heading %}comments dashboard{% endblock %}
-{% block content %}{% include 'widget/comment.html' %}{% endblock %}
+{% block content %}
+{% include 'widget/browse-comment.html' %}
+{% include 'widget/create-comment.html' %}
+{% endblock %}
