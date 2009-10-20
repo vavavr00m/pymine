@@ -115,7 +115,7 @@ class AbstractModelField:
     STRING_SHORT = 256
 
     @classmethod
-    def __defopts(self, **kwargs):
+    def __defopts(klass, **kwargs):
 	"""
 	Standardised argument parser for AbstractModelField methods;
 	implements 'required', 'unique', 'symmetrical' ...
@@ -132,84 +132,84 @@ class AbstractModelField:
 	return opts
 
     @classmethod
-    def last_modified(self):
+    def last_modified(klass):
 	"""implements last_modified date"""
 	return models.DateTimeField(auto_now=True)
 
     @classmethod
-    def created(self):
+    def created(klass):
 	"""implements created date"""
 	return models.DateTimeField(auto_now_add=True)
 
     @classmethod
-    def datetime(self, **kwargs):
+    def datetime(klass, **kwargs):
 	"""implements date/time field"""
-	opts = self.__defopts(**kwargs)
+	opts = klass.__defopts(**kwargs)
 	return models.DateTimeField(**opts)
 
     @classmethod
-    def reference(self, what, **kwargs):
+    def reference(klass, what, **kwargs):
 	"""implements foreign-keys"""
-	opts = self.__defopts(**kwargs)
+	opts = klass.__defopts(**kwargs)
 	return models.ForeignKey(what, **opts)
 
     @classmethod
-    def reflist(self, what, **kwargs):
+    def reflist(klass, what, **kwargs):
 	"""implements list-of-foreign-keys; parses out 'pivot' argument"""
-	opts = self.__defopts(**kwargs)
+	opts = klass.__defopts(**kwargs)
 	pivot = kwargs.get('pivot', None)
 	if pivot: opts['related_name'] = pivot
 	return models.ManyToManyField(what, **opts)
 
     @classmethod
-    def string(self, **kwargs):
+    def string(klass, **kwargs):
 	"""implements string"""
-	opts = self.__defopts(**kwargs)
-	return models.CharField(max_length=self.STRING_SHORT, **opts)
+	opts = klass.__defopts(**kwargs)
+	return models.CharField(max_length=klass.STRING_SHORT, **opts)
 
     @classmethod
-    def text(self, **kwargs):
+    def text(klass, **kwargs):
 	"""implements a text area / text of arbitrary size"""
-	opts = self.__defopts(**kwargs)
+	opts = klass.__defopts(**kwargs)
 	return models.TextField(**opts)
 
     @classmethod
-    def slug(self, **kwargs):
+    def slug(klass, **kwargs):
 	"""implements a slug (alphanumeric string, no spaces)"""
-	opts = self.__defopts(**kwargs)
-	return models.SlugField(max_length=self.STRING_SHORT, **opts)
+	opts = klass.__defopts(**kwargs)
+	return models.SlugField(max_length=klass.STRING_SHORT, **opts)
 
     @classmethod
-    def bool(self, default):
+    def bool(klass, default):
 	"""implements a boolean (true/false)"""
 	return models.BooleanField(default=default)
 
     @classmethod
-    def integer(self, default):
+    def integer(klass, default):
 	"""implements an integer"""
 	return models.PositiveIntegerField(default=default)
 
     @classmethod
-    def choice(self, choices):
+    def choice(klass, choices):
 	"""implements a choices-field (max length of an encoded choice is 1 character)"""
 	return models.CharField(max_length=1, choices=choices)
 
     @classmethod
-    def url(self, **kwargs):
+    def url(klass, **kwargs):
 	"""implements a URL string"""
-	opts = self.__defopts(**kwargs)
-	return models.URLField(max_length=self.STRING_SHORT, **opts)
+	opts = klass.__defopts(**kwargs)
+	return models.URLField(max_length=klass.STRING_SHORT, **opts)
 
     @classmethod
-    def email(self, **kwargs):
+    def email(klass, **kwargs):
 	"""implements an e-mail address"""
-	opts = self.__defopts(**kwargs)
-	return models.EmailField(max_length=self.STRING_SHORT, **opts)
+	opts = klass.__defopts(**kwargs)
+	return models.EmailField(max_length=klass.STRING_SHORT, **opts)
 
     @classmethod
-    def file(self, **kwargs):
+    def file(klass, **kwargs):
 	"""implements a file"""
-	opts = self.__defopts(**kwargs)
+	opts = klass.__defopts(**kwargs)
 	return models.FileField(**kwargs) # TODO
 
 ##################################################################
@@ -225,6 +225,9 @@ class AbstractModel(models.Model):
 
     class Meta:
 	abstract = True
+
+    def dummy_method(self):
+        pass
 
 ##################################################################
 ##################################################################
@@ -710,9 +713,9 @@ class AbstractThing(AbstractModel):
     # creating a new model
 
     @classmethod # <- new_from_request is an alternative constructor, ergo: classmethod
-    def new_from_request(self, r, **kwargs):
+    def new_from_request(klass, r, **kwargs):
 	""" """
-	instantiator = self.s_classes[self.sattr_prefix]
+	instantiator = klass.s_classes[klass.sattr_prefix]
 	margs = {}
 	m = instantiator(**margs)
 	return m.update_from_request(r, **kwargs)
@@ -736,24 +739,29 @@ class AbstractThing(AbstractModel):
     def get_sattr(self, sattr):
 	""" """
 	if sattr.startswith(self.xattr_prefix):
+
 	    # chop out the suffix
 	    k = sattr[len(self.xattr_prefix):]
+
 	    # grab the manager
 	    mgr = getattr(self, self.xattr_manager)
+
 	    # lookup the xattr and return it
 	    xa = mgr.get(key=k)
 	    return xa.value
 
 	# check validity of sattr
 	elif sattr.startswith(self.sattr_prefix):
+
 	    # lookup equivalent model field
 	    r2s_func, s2m_func, mattr = self.lookup_mattr(sattr)
-	    # retreive equivalent model field
-	    x = getattr(self, mattr)
+
 	    # lookup m2s conversion routine
 	    m2s_func, sattr2 = self.m2s_table[self.sattr_prefix][mattr]
+
 	    # sanity check
 	    assert sattr == sattr2, "m2s_table corruption, reverse lookup yielded wrong result"
+
 	    # convert to s-form and return
 	    s = {}
 	    m2s_func(self, mattr, s, sattr)
@@ -839,7 +847,7 @@ class LogEvent(AbstractModel):
     # various faux-constructors that do not return the object
 
     @classmethod
-    def __selfcontained(self, status, type, *args, **kwargs):
+    def __selfcontained(klass, status, type, *args, **kwargs):
 	""" """
 
 	m = " ".join(args)
@@ -847,28 +855,28 @@ class LogEvent(AbstractModel):
 	el.save()
 
     @classmethod
-    def message(self, type, *args, **kwargs):
+    def message(klass, type, *args, **kwargs):
 	""" """
 
-	self.__selfcontained('m', type, *args, **kwargs)
+	klass.__selfcontained('m', type, *args, **kwargs)
 
     @classmethod
-    def error(self, type, *args, **kwargs):
+    def error(klass, type, *args, **kwargs):
 	""" """
 
-	self.__selfcontained('e', type, *args, **kwargs)
+	klass.__selfcontained('e', type, *args, **kwargs)
 
     @classmethod
-    def fatal(self, type, *args, **kwargs):
+    def fatal(klass, type, *args, **kwargs):
 	""" """
 
-	self.__selfcontained('f', type, *args, **kwargs)
-	raise RuntimeError, self.msg # set as side effect
+	klass.__selfcontained('f', type, *args, **kwargs)
+	raise RuntimeError, klass.msg # set as side effect
 
     # next three work together; open-update-close/_error
 
     @classmethod
-    def open(self, type, **kwargs):
+    def open(klass, type, **kwargs):
 	""" """
 
 	el = LogEvent(status='o', type=type, **kwargs)

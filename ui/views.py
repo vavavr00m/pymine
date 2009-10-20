@@ -31,7 +31,7 @@ import pymine.api.views as api
 ## declared args: iid
 def create_comment(request, iid, *args, **kwargs):
     """create_comment(iid) returns ..."""
-    s = {}
+    s = {'itemId': iid}
     return render_to_response('create/comment.html', s)
 
 ## rest: GET /ui/create/item.html
@@ -39,7 +39,7 @@ def create_comment(request, iid, *args, **kwargs):
 ## declared args: 
 def create_item(request, *args, **kwargs):
     """create_item() returns ..."""
-    s = {'itemId': iid}
+    s = {}
     return render_to_response('create/item.html', s)
 
 ## rest: GET /ui/create/relation.html

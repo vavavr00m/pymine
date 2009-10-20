@@ -55,15 +55,23 @@ import re
 ##################################################################
 
 mime_table = {
+    '.avi': 'video/x-msvideo',
     '.css': 'text/css',
+    '.dcr': 'application/x-director',
     '.gif': 'image/gif',
     '.htm': 'text/html',
     '.html': 'text/html',
     '.ico': 'image/vnd.microsoft.icon',
     '.jpeg': 'image/jpeg',
     '.jpg': 'image/jpeg',
+    '.js': 'application/javascript',
+    '.json': 'application/json',
+    '.mov': 'video/quicktime',
     '.pdf': 'application/pdf',
     '.png': 'image/png',
+    '.ram': 'audio/x-pn-realaudio',
+    '.rm': 'application/vnd.rn-realmedia',
+    '.swf': 'application/x-shockwave-flash',
     '.txt': 'text/plain',
 }
 
@@ -139,7 +147,7 @@ def httpserve_error(url_path):
 def httpserve_file(file_path, content_type):
     fw = FileWrapper(file(file_path), 65536)
     if not content_type:
-        content_type = mime_lookup(file_path)
+	content_type = mime_lookup(file_path)
     response = HttpResponse(fw, content_type=content_type)
     response['Content-Length'] = os.path.getsize(file_path)
     return response
@@ -147,10 +155,10 @@ def httpserve_file(file_path, content_type):
 ##################################################################
 
 def httpserve_directory(file_path):
-    s = { 
-        'name' : 'insert dirname here',
-        'list' : [],
-        }
+    s = {
+	'name' : 'insert dirname here',
+	'list' : [],
+	}
 
     list = s['list']
 
@@ -158,14 +166,14 @@ def httpserve_directory(file_path):
     files.sort()
 
     for file in files:
-        if os.path.isdir(os.path.join(file_path, file)):
-            list.append(dict(name=file, 
-                             link='%s/' % file, 
-                             description='[dir]'))
-        else:
-            list.append(dict(name=file, 
-                             link=file, 
-                             description=''))
+	if os.path.isdir(os.path.join(file_path, file)):
+	    list.append(dict(name=file,
+			     link='%s/' % file,
+			     description='[dir]'))
+	else:
+	    list.append(dict(name=file,
+			     link=file,
+			     description=''))
 
     return render_to_response('list/directory.html', s)
 
