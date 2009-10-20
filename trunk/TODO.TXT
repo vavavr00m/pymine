@@ -1,7 +1,9 @@
 todo soon:
 
+- hack a delete_for_real into the AbstractModel, and override delete()
+  in the subclasses to do sensible garbage collection.
 
-- move minekey.py into API
+- if updating an itemData, delete the old one.
 
 - add relation_feed_url() method to Relation()
 
@@ -9,22 +11,21 @@ todo soon:
 
 - break the feed-generation SQL query out into a "search" subdiretory and put the other search code in there too?
 
-- Adriana's "Objects" are items without datafile
-- If item has no datafile, don't use the template (obviously) but do add an enclosure SO LONG AS IS text/****
-- If item has no datafile, the /data/iid URL will retreive the item.description
-- If item has no datafile, fault unless content_type.startswith('text/')
-
-
 - pack out the individual items in the list results with useful metainfo
+
 - add field to LogEvent to break-out RID info
+
 - allow comments on 0bject zero, by permitting NULL value for IID in Comment
+
 - pagination
+
 - add s2m methods to model so that vurlLink gets stripped of whitespace.
+
 - fix sattr deletion in the model
+
 - fix the abstractfield factory argument parser for the file() field
 
 todo after:
-
 
 - what to do about relationship PKs being reusable?  
   ban deletion of Relations?
