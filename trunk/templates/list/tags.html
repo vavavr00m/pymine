@@ -3,10 +3,20 @@
 {% block heading %}tags listing{% endblock %}
 
 {% block per_hash %}
-'<A HREF="/ui/read/tag/{{hash.tagId}}.html">{{hash.tagName}}</A>'
-{% if hash.tagImplies %}(&rarr; {{ hash.tagImplies }}){% endif %}
+<DIV class="listheader">
+<A HREF="/ui/read/tag/{{hash.tagId}}.html">{{hash.tagName}}</A>
+<SPAN class="buttons">
 <A HREF="/ui/read/tag/{{hash.tagId}}.html"><button>info</button></A>
 <A HREF="/ui/update/tag/{{hash.tagId}}.html"><button>edit</button></A>
 <A HREF="/ui/delete/tag/{{hash.tagId}}.html"><button>delete</button></A>
+</SPAN>
+</DIV>
+<DIV class="listbody">
+{% if hash.tagImplies %}
+&rarr; {{ hash.tagImplies }}
+{% else %}
+-
+{% endif %}
+</DIV>
 {% endblock %}
 {% block per_hash_debug %}{% endblock %}

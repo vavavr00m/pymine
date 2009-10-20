@@ -3,11 +3,28 @@
 {% block heading %}relations listing{% endblock %}
 
 {% block per_hash %}
-'<A HREF="/ui/read/relation/{{hash.relationId}}.html">{{hash.relationName}}</A>'
-(version {{ hash.relationVersion }})
+
+<DIV class="listheader">
+<A HREF="/ui/read/relation/{{hash.relationId}}.html">{{hash.relationName}}</A>
+<SPAN class="buttons">
 <A HREF="/ui/read/relation/{{hash.relationId}}.html"><button>info</button></A>
 <A HREF="/ui/update/relation/{{hash.relationId}}.html"><button>edit</button></A>
 <A HREF="/ui/delete/relation/{{hash.relationId}}.html"><button>delete</button></A>
-<p/>
+</SPAN>
+</DIV>
+
+<DIV class="listbody">
+{% if hash.relationDescription %} 
+{{ hash.relationDescription }}
+{% else %}
+-
+{% endif %}
+</DIV>
+
+<UL class="notes">
+<LI>interests: {{ hash.relationInterests }}</LI>
+<LI>version: {{ hash.relationVersion }}</LI>
+</UL>
+
 {% endblock %}
 {% block per_hash_debug %}{% endblock %}
