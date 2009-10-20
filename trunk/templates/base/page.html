@@ -28,54 +28,54 @@ this version of pymine should be considered unstable, "alpha" software.
 
 {% block sidebar %}
 <div class="sheader">your mine</div>
-<div><a href="/">home</a></div>
-<div><a href="/ui/version.html">version</a></div>
-<div><a href="/ui/dash/search.html">search</a></div>
+<div class="sitem"><a href="/">home</a></div>
+<div class="sitem"><a href="/ui/version.html">version</a></div>
+<div class="sitem"><a href="/ui/dash/search.html">search</a></div>
 
 <div class="sheader">dashboards</div>
-<div>
+<div class="sitem">
 <a href="/ui/dash/items.html">items</a>
-<a href="/ui/list/items.html">list</a>
+(<a href="/ui/list/items.html">list</a>, <a href="/ui/create/item.html">create</a>)
 </div>
-<div>
+<div class="sitem">
 <a href="/ui/dash/tags.html">tags</a>
-<a href="/ui/list/tags.html">list</a>
+(<a href="/ui/list/tags.html">list</a>, <a href="/ui/create/tag.html">create</a>)
 </div>
-<div>
+<div class="sitem">
 <a href="/ui/dash/relations.html">relations</a>
-<a href="/ui/list/relations.html">list</a>
+(<a href="/ui/list/relations.html">list</a>, <a href="/ui/create/relation.html">create</a>)
 </div>
-<div>
-<a href="/ui/dash/comments.html">comments</a>
-<a href="/ui/list/comments/0.html">list</a>
-</div>
-<div>
+<div class="sitem">
 <a href="/ui/dash/vurls.html">vurls</a>
-<a href="/ui/list/vurls.html">list</a>
+(<a href="/ui/list/vurls.html">list</a>, <a href="/ui/create/vurl.html">create</a>)
+</div>
+<div class="sitem">
+<a href="/ui/dash/comments.html">comments</a>
+(<a href="/ui/list/comments/0.html">list</a>)
 </div>
 
 <div class="sheader">administration</div>
-<div><a href="/pub/">local files</a></div>
-<div><a href="/admin/">django backdoor</a></div>
-<div><a href="/">activity logs</a></div>
+<div class="sitem"><a href="/pub/">local files</a></div>
+<div class="sitem"><a href="/admin/">django backdoor</a></div>
+<div class="sitem"><a href="/">activity logs</a></div>
 
 <div class="sheader">links</div>
-<div><a href="http://themineproject.org/">the mine! project</a></div>
-<div><a href="http://themineproject.org/about/">mine! videos</a></div>
-<div><a href="http://themineproject.org/mine-papers/">mine! papers</a></div>
-<div><a href="http://groups.google.com/group/themineproject">discussion maillist</a></div>
-<div><a href="http://groups.google.com/group/themineproject-announce">announce maillist</a></div>
+<div class="sitem"><a href="http://themineproject.org/">the mine! project</a></div>
+<div class="sitem"><a href="http://themineproject.org/about/">mine! videos</a></div>
+<div class="sitem"><a href="http://themineproject.org/mine-papers/">mine! papers</a></div>
+<div class="sitem"><a href="http://groups.google.com/group/themineproject">discussion maillist</a></div>
+<div class="sitem"><a href="http://groups.google.com/group/themineproject-announce">announce maillist</a></div>
 
 <div class="sheader">developer</div>
-<div><a href="http://code.google.com/p/pymine/">project home</a></div>
-<div><a href="http://code.google.com/p/pymine/w/list">developer wiki</a></div>
-<div><a href="/pub/apidocs/">programmer docs</a></div>
-<div><a href="http://groups.google.com/group/themineproject-devel">developer maillist</a></div>
+<div class="sitem"><a href="http://code.google.com/p/pymine/">project home</a></div>
+<div class="sitem"><a href="http://code.google.com/p/pymine/w/list">developer wiki</a></div>
+<div class="sitem"><a href="/pub/apidocs/">programmer docs</a></div>
+<div class="sitem"><a href="http://groups.google.com/group/themineproject-devel">developer maillist</a></div>
 
 <div class="sheader">hacking</div>
-<div><a href="/api/">api directory</a></div>
-<div><a href="/ui/">ui directory</a></div>
-<div><a href="/get/">get directory</a></div>
+<div class="sitem"><a href="/api/">api directory</a></div>
+<div class="sitem"><a href="/ui/">ui directory</a></div>
+<div class="sitem"><a href="/get/">get directory</a></div>
 
 <div class="sheader"></div>
 {% endblock %}
