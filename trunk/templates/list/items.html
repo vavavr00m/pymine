@@ -4,7 +4,7 @@
 
 {% block per_hash %}
 <DIV class="listheader">
-{{ hash.itemName }}
+{{hash.itemName}}
 <SPAN class="buttons">
 <A HREF="/ui/read/item/{{hash.itemId}}.html"><button>info</button></A>
 <A HREF="/api/item/{{hash.itemId}}"><button>view</button></A>
@@ -15,12 +15,12 @@
 </DIV>
 
 <DIV class="listbody">
-{{ hash.itemDescription }}
+{{hash.itemDescription}}
 </DIV>
 
 <UL class="notes">
-<LI>size: {{ hash.itemSize}}</LI>
-<LI>type: {{ hash.itemType }}</LI>
+<LI>size: {{hash.itemSize}}</LI>
+<LI>type: {{hash.itemType}}</LI>
 </UL>
 
 {% endblock %}

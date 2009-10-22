@@ -2,13 +2,13 @@
 {% block title %}delete item{% endblock %}
 
 {% block content %}
-<h3>deleting item {{ itemId }}</h3>
+<h3>deleting item {{itemId}}</h3>
 Please pick one of the following options:
 <P>
-<form method="post" action="/api/item/{{ itemId }}.rdr">
+<form method="post" action="/api/item/{{itemId}}.rdr">
 <input type="hidden" name="redirect_success" value="/ui/list/items.html">
 <input type="hidden" name="_method" value="DELETE">
 <A HREF="/ui/list/items.html"><button>no! leave it alone!</button></A>
-<input type="submit" name="save" value="yes! delete item {{ itemId }}!" />
+<input type="submit" name="save" value="yes! delete item {{itemId}}!" />
 </form>
 {% endblock %}

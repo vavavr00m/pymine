@@ -2,13 +2,13 @@
 {% block title %}delete relation{% endblock %}
 
 {% block content %}
-<h3>deleting relation {{ relationId }}</h3>
+<h3>deleting relation {{relationId}}</h3>
 Please pick one of the following options:
 <P>
-<form method="post" action="/api/relation/{{ relationId }}.rdr">
+<form method="post" action="/api/relation/{{relationId}}.rdr">
 <input type="hidden" name="redirect_success" value="/ui/list/relations.html">
 <input type="hidden" name="_method" value="DELETE">
 <A HREF="/ui/list/relations.html"><button>no! leave it alone!</button></A>
-<input type="submit" name="save" value="yes! delete relation {{ relationId }}!" />
+<input type="submit" name="save" value="yes! delete relation {{relationId}}!" />
 </form>
 {% endblock %}
