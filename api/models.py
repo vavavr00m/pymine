@@ -1334,10 +1334,13 @@ class Comment(AbstractThing):
     sattr_prefix = "comment"
 
     title = AbstractModelField.string()
-    relation = AbstractModelField.reference(Relation)
-
     body = AbstractModelField.text(required=False)
-    item = AbstractModelField.reference(Item, required=False) # required=False to permit comments on feed where IID=0
+
+    # required=False to permit comments by mine owner
+    relation = AbstractModelField.reference(Relation, required=False)
+
+    # required=False to permit comments on feed where IID=0
+    item = AbstractModelField.reference(Item, required=False) 
 
     def __unicode__(self):
 	return self.title

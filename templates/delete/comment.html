@@ -2,13 +2,13 @@
 {% block title %}delete comment{% endblock %}
 
 {% block content %}
-<h3>deleting comment {{ commentId }}</h3>
+<h3>deleting comment {{commentId}}</h3>
 Please pick one of the following options:
 <P>
-<form method="post" action="/api/comment/{{ commentId }}.rdr">
+<form method="post" action="/api/comment/{{commentId}}.rdr">
 <input type="hidden" name="redirect_success" value="/ui/list/comments/0.html">
 <input type="hidden" name="_method" value="DELETE">
 <A HREF="/ui/list/comments.html"><button>no! leave it alone!</button></A>
-<input type="submit" name="save" value="yes! delete comment {{ commentId }}!" />
+<input type="submit" name="save" value="yes! delete comment {{commentId}}!" />
 </form>
 {% endblock %}

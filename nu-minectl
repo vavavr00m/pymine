@@ -1,0 +1,163 @@
+#!/usr/bin/python
+
+"""
+minectl - command line client for driving a mine.
+
+syntax: 
+
+    minectl [opts] command args ...
+
+options:
+
+    -v / --verbose
+    run verbosely with more diagnostics
+
+    -e / --errors
+    do not suppress the error page if HTTP status != 200
+
+    -f format / --format format
+    replace "json" suffix on API URL with [format];
+    supported values include: "xml", "raw", "rdr"
+
+    -u url / --url url
+    use [url] as path to mine for control
+
+commands:
+
+    help
+    list all other commands
+
+""" 
+
+import os
+import sys
+import getopt
+
+
+class MineAPI:
+    command_list = (
+        (  'delete-comment',        'DELETE',  '/api/comment/CID.json',         None,  '...',  ),
+        (  'delete-comment-key',    'DELETE',  '/api/comment/CID/SATTR.json',   None,  '...',  ),
+        (  'delete-item',           'DELETE',  '/api/item/IID.json',            None,  '...',  ),
+        (  'delete-item-key',       'DELETE',  '/api/item/IID/SATTR.json',      None,  '...',  ),
+        (  'delete-registry-key',   'DELETE',  '/api/registry/RATTR.json',      None,  '...',  ),
+        (  'delete-relation',       'DELETE',  '/api/relation/RID.json',        None,  '...',  ),
+        (  'delete-relation-key',   'DELETE',  '/api/relation/RID/SATTR.json',  None,  '...',  ),
+        (  'delete-tag',            'DELETE',  '/api/tag/TID.json',             None,  '...',  ),
+        (  'delete-tag-key',        'DELETE',  '/api/tag/TID/SATTR.json',       None,  '...',  ),
+        (  'delete-vurl',           'DELETE',  '/api/vurl/VID.json',            None,  '...',  ),
+        (  'delete-vurl-key',       'DELETE',  '/api/vurl/VID/SATTR.json',      None,  '...',  ),
+        (  'read-comment',          'GET',     '/api/comment/CID.json',         None,  '...',  ),
+        (  'get-comment-key',       'GET',     '/api/comment/CID/SATTR.json',   None,  '...',  ),
+        (  'list-comments',         'GET',     '/api/comment/item/IID.json',    None,  '...',  ),
+        (  'export-mine',           'GET',     '/api/ie/export.json',           None,  '...',  ),
+        (  'import-mine',           'GET',     '/api/ie/import.json',           None,  '...',  ),
+        (  'list-items',            'GET',     '/api/item.json',                None,  '...',  ),
+        (  'read-item-data',        'GET',     '/api/item/IID',                 None,  '...',  ),
+        (  'read-item',             'GET',     '/api/item/IID.json',            None,  '...',  ),
+        (  'get-item-key',          'GET',     '/api/item/IID/SATTR.json',      None,  '...',  ),
+        (  'list-registry',         'GET',     '/api/registry.json',            None,  '...',  ),
+        (  'get-registry-key',      'GET',     '/api/registry/RATTR.json',      None,  '...',  ),
+        (  'list-relations',        'GET',     '/api/relation.json',            None,  '...',  ),
+        (  'read-relation',         'GET',     '/api/relation/RID.json',        None,  '...',  ),
+        (  'get-relation-key',      'GET',     '/api/relation/RID/SATTR.json',  None,  '...',  ),
+        (  'read-select-item',      'GET',     '/api/select/item.json',         None,  '...',  ),
+        (  'read-select-relation',  'GET',     '/api/select/relation.json',     None,  '...',  ),
+        (  'read-select-tag',       'GET',     '/api/select/tag.json',          None,  '...',  ),
+        (  'read-select-vurl',      'GET',     '/api/select/vurl.json',         None,  '...',  ),
+        (  'list-tags',             'GET',     '/api/tag.json',                 None,  '...',  ),
+        (  'read-tag',              'GET',     '/api/tag/TID.json',             None,  '...',  ),
+        (  'get-tag-key',           'GET',     '/api/tag/TID/SATTR.json',       None,  '...',  ),
+        (  'encode-minekey1',       'GET',     '/api/url/RID.json',             None,  '...',  ),
+        (  'encode-minekey2',       'GET',     '/api/url/RID/IID.json',         None,  '...',  ),
+        (  'encode-minekey3',       'GET',     '/api/url/RID/RVSN/IID.json',    None,  '...',  ),
+        (  'read-version',          'GET',     '/api/version.json',             None,  '...',  ),
+        (  'list-vurls',            'GET',     '/api/vurl.json',                None,  '...',  ),
+        (  'read-vurl',             'GET',     '/api/vurl/VID.json',            None,  '...',  ),
+        (  'get-vurl-key',          'GET',     '/api/vurl/VID/SATTR.json',      None,  '...',  ),
+        (  'read-minekey',          'GET',     '/get/MINEKEY',                  None,  '...',  ),
+        (  'redirect-vid',          'GET',     '/get/i/VID',                    None,  '...',  ),
+        (  'redirect-vurlkey',      'GET',     '/get/k/VURLKEY',                None,  '...',  ),
+        (  'redirect-vurlname',     'GET',     '/get/n/SUFFIX',                 None,  '...',  ),
+        (  'update-comment',        'POST',    '/api/comment/CID.json',         None,  '...',  ),
+        (  'create-comment',        'POST',    '/api/comment/item/IID.json',    None,  '...',  ),
+        (  'create-item',           'POST',    '/api/item.json',                None,  '...',  ),
+        (  'update-item',           'POST',    '/api/item/IID.json',            None,  '...',  ),
+        (  'amend-registry-key',    'POST',    '/api/registry/RATTR.json',      None,  '...',  ),
+        (  'create-relation',       'POST',    '/api/relation.json',            None,  '...',  ),
+        (  'update-relation',       'POST',    '/api/relation/RID.json',        None,  '...',  ),
+        (  'create-tag',            'POST',    '/api/tag.json',                 None,  '...',  ),
+        (  'update-tag',            'POST',    '/api/tag/TID.json',             None,  '...',  ),
+        (  'create-vurl',           'POST',    '/api/vurl.json',                None,  '...',  ),
+        (  'update-vurl',           'POST',    '/api/vurl/VID.json',            None,  '...',  ),
+        (  'submit-minekey',        'POST',    '/get/MINEKEY',                  None,  '...',  ),
+        )
+
+    def __init__(**kwargs):
+        self.url = kwargs.get('url', 'http://127.0.0.1:9862')
+        self.format = kwargs.get('format', None)
+        self.errok = kwargs.get('errok', False)
+        self.verbose = kwargs.get('verbose', False)
+
+    def call_api(self):
+        pass
+
+    def subevery(self, full_url, *args):
+        """strip each arg and interpolate it into an API URL, and call that without keys"""
+        pass
+    
+    def iterargs(self, full_url, *args):
+        """apply each foo=bar key to individual API calls"""
+        pass
+
+    def passargs(self, full_url, *args):
+        """apply all foo=bar keys to single API call"""
+        pass
+
+
+    def sub1every(self, full_url, *args):
+        """strip the first arg and interpolate into API URL; strip each remaining arg and interpolate it into the API URL and call that without keys"""
+        pass
+
+    def sub1iter(self, full_url, *args):
+        """strip the first arg and interpolate into API URL; apply each subsequent foo=bar key to it individually"""
+        pass
+
+    def sub1pass(self, full_url, *args):
+        """strip the first arg and interpolate into API URL; pass all subsequent foo=bar keys to it"""
+        pass
+    
+
+    def sub2pass(self, full_url, *args):
+        """strip the first two args (1=ID 2=KEY) and interpolate into API URL; pass all subsequent foo=bar keys to it"""
+        pass
+
+
+    def execute(self, cmd, *args):
+        for known_command, \
+                http_method, \
+                api_url, \
+                method, \
+                helpstr in command_list:
+            if cmd == known_command:
+                break
+        else:
+            raise RuntimeError, 'unrecognised command: %s' % cmd
+
+
+if __name__ == "__main__":
+    def usage():
+        print "!"
+
+    try:
+	opts, args = getopt.getopt(argv, "h", ["verbose"])
+
+    except getopt.GetoptError:
+	usage()
+	sys.exit(1)
+
+    for opt, arg in opts:
+	if opt in ('-v', '--verbose'):
+	    usage()
+	    sys.exit(0)
+

@@ -2,11 +2,10 @@
 
 """docstring goes here""" # :-)
 
+import os
 import sys
 import getopt
 import base64
-
-rngdev = "/dev/urandom"
 
 def usage():
     print "wtf?" # let nobody ever say i don't write documentation
@@ -28,9 +27,7 @@ def main(argv):
 	elif opt in ('-n', '--nbytes'):
 	    nbytes = int(arg)
 
-    rng = open(rngdev, "rb")
-    bytes = rng.read(nbytes)
-    rng.close()
+    bytes = os.urandom(nbytes)
 
     print base64.b64encode(bytes, '!@')
 
