@@ -1,5 +1,8 @@
 todo soon:
 
+-- get VURL to handle HEAD sensibly
+
+
 - hack a delete_for_real into the AbstractModel, and override delete()
   in the subclasses to do sensible garbage collection.
 
