@@ -15,8 +15,8 @@ clean:
 	-rm `find . -name "*.tmp"`
 
 clobber: clean
-	rm database/*/sqlite3.db
 	rm -r database/*/files/
+	rm database/*/sqlite3.db
 
 perms:
 	chmod 644 `find . -type f`

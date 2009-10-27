@@ -1,4 +1,6 @@
 {% extends "base/page.html" %}
+
+
 {% block content %}
 <h3>{% block heading %}generic heading{% endblock %}</h3>
 <p/>
@@ -7,13 +9,23 @@
 <ul>
 {% for key, value in result.items %}<li>{{key}}: {{value}}</li>{% endfor %}
 </ul>
-{% endblock %}
+{% endblock %} <!-- for_results -->
 {% else %}
 no result returned by api call
 {% endif %}
+{% endblock %} <!-- content -->
 
-<div class="annotation">
-envelope:
+
+{% block content_error_status %}
+{% if exit %}
+<p class="error">omg wtf bbq?</p>
+{% else %}
+<p class="success">yay it worked!</p>
+{% endif %}
+{% endblock %}
+
+
+{% block envelope %}
 <ul>
 <li>exit: {{exit}}</li>
 <li>status: {{status}}</li>
@@ -26,4 +38,4 @@ envelope:
 <li>watch: {{watch}}</li>
 </ul>
 </div>
-{% endblock %} <!-- content -->
+{% endblock %} <!-- envelope -->
