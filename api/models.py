@@ -81,10 +81,21 @@ from django.core.files.storage import FileSystemStorage
 from django.db import models, transaction
 from django.template.loader import render_to_string
 from django.utils import feedgenerator
+import base64
+import hashlib
 import itertools
+import re
 
-#from minekey import Minekey # circular dependency, skip
-import util.base58 as base58
+import pymine.util.base58 as base58
+
+##################################################################
+
+# using pycrypto 2.0.1
+# http://www.amk.ca/python/code/crypto (old, tarball, works)
+# http://www.pycrypto.org/ (new)
+from Crypto.Cipher import AES
+
+##################################################################
 
 # magic storage for database items
 
@@ -104,6 +115,314 @@ item_status_choices = (
 status_lookup = {}
 for short, long in item_status_choices: status_lookup[long] = short
 
+##################################################################
+##################################################################
+##################################################################
+
+class Minekey:
+    """ """
+
+    key_magic = 'py1' # recognise these keys
+    corefmt = '%s,%d,%d,%d,%d,%s'
+    valid_methods = ( 'get', 'put' )
+
+    b64_alt = '!@'
+
+    aes_mode = AES.MODE_CBC
+    aes_key = '1234567890123456' # 128 bits
+    aes_iv =  'abcdefghijklmnop' # 128 bits
+
+    # rewriter-regexp; the rewriter will sanitycheck balance of
+    # quotation marks / that they are the same on each side
+    html_re = re.compile(r"""(SRC|HREF)\s*=\s*(['"]?)(\d+)([^\s\>]*)""", re.IGNORECASE)
+
+    def __init__(self, **kwargs):
+        """ """
+
+	# flush through with invalid data
+	self.method = kwargs.get('method', None)
+	self.rid = kwargs.get('rid', -1)
+	self.rvsn = kwargs.get('rvsn', -1)
+	self.iid = kwargs.get('iid', -1)
+	self.depth = kwargs.get('depth', -1)
+
+    @classmethod
+    def b64e(klass, x):
+        """ """
+
+	return base64.b64encode(x, klass.b64_alt)
+
+    @classmethod
+    def b64d(klass, x):
+        """ """
+
+	return base64.b64decode(x, klass.b64_alt)
+
+    @classmethod
+    def hashify(klass, x):
+        """ """
+
+	m = hashlib.md5() # more than adequate
+	m.update(x)
+	h = m.digest()
+	return klass.b64e(h).rstrip('=')
+
+    @classmethod
+    def ivgen(klass, x):
+        """ """
+
+        pass
+
+    @classmethod
+    def crypto_engine(klass):  #------------------------------------------------------------------ TO BE DONE, IV HACKING
+        """ """
+
+	return AES.new(klass.aes_key, klass.aes_mode, klass.aes_iv)
+
+    @classmethod
+    def encrypt(klass, x):
+        """ """
+
+	l = len(x)
+	if (l % 16): # if not a 16-byte message, pad with whitespace
+	    y =  '%*s' % (-(((l // 16) + 1) * 16), x)
+	else: # we got lucky
+	    y = x
+	engine = klass.crypto_engine()
+	return engine.encrypt(y)
+
+    @classmethod
+    def decrypt(klass, x):
+        """ """
+
+	engine = klass.crypto_engine()
+	return engine.decrypt(x).rstrip() # remove whitespace padding
+
+    def validate(self):
+        """ """
+
+	if self.rid <= 0:
+	    raise RuntimeError, 'negative or zero rid: ' + str(self.rid)
+
+	if self.rvsn <= 0:
+	    raise RuntimeError, 'negative or zero rvsn: ' + str(self.rvsn)
+
+	if self.iid < 0:
+	    raise RuntimeError, 'negative iid: ' + str(self.iid)
+
+	if self.depth < 0:
+	    raise RuntimeError, 'negative depth: ' + str(self.depth)
+
+	if self.method not in self.valid_methods:
+	    raise RuntimeError, 'bad method: ' + str(self.method)
+
+    def clone(self):
+        """ """
+
+	retval = Minekey(method=self.method,
+			 rid=self.rid,
+			 rvsn=self.rvsn,
+			 iid=self.iid,
+			 depth=self.depth,
+			 )
+	retval.validate()
+	return retval
+
+    @classmethod
+    def parse(klass, external):
+        """ """
+
+	encrypted = klass.b64d(external.encode('utf-8')) # stuff comes from URLs in UNICODE
+	internal = klass.decrypt(encrypted)
+
+	(Xhash, Xmethod, Xrid, Xrvsn, Xiid, Xdepth, Xkey_magic) = internal.split(',', 7)
+
+	if Xkey_magic != klass.key_magic: # eventually switch, here
+	    raise RuntimeError, 'failed magic validation'
+
+	# Xhash computed string
+	# Xmethod string
+	Xrid = int(Xrid)
+	Xrvsn = int(Xrvsn)
+	Xiid = int(Xiid)
+	Xdepth = int(Xdepth)
+	# Xkey_magic constant string
+
+        # see also __str__()
+	core = klass.corefmt % (Xmethod, 
+                               Xrid, 
+                               Xrvsn, 
+                               Xiid, 
+                               Xdepth, 
+                               Xkey_magic)
+
+	hash2 = klass.hashify(core)
+
+	if Xhash != hash2:
+	    raise RuntimeError, "failed hash validation"
+
+	retval = Minekey(method=Xmethod,
+			 rid=Xrid,
+			 rvsn=Xrvsn,
+			 iid=Xiid,
+			 depth=Xdepth,
+			 )
+	retval.validate()
+	return retval
+
+    def __str__(self):
+        """ """
+	args = (self.method,
+		self.rid,
+		self.rvsn,
+		self.iid,
+		self.depth,
+		self.key_magic, # class
+		)
+	c = self.corefmt % args
+	h = self.hashify(c) # compute hash over core
+	return "%s,%s" % (h, c)
+
+    def key(self):
+        """ """
+	internal = str(self)
+	encrypted = self.encrypt(internal)
+	external = self.b64e(encrypted)
+	return external
+
+    def permalink(self):
+        """ """
+        return "%s/get/%s" % (settings.MINE_URL_ROOT, self.key())
+
+    def spawn_iid(self, iid):
+        """ """
+
+	retval = self.clone()
+	retval.iid = iid
+	retval.depth -= 1
+	retval.validate()
+	return retval
+
+    def rewrite_html(self, html):
+        """ """
+
+        def rewrite_link(mo):
+            action = mo.group(1)
+            fq = mo.group(2)
+            iid = int(mo.group(3))
+            lq = mo.group(4)
+            if fq != lq: return mo.group(0)
+            return '%s="%s"' % (action, self.spawn_iid(iid).permalink())
+        return self.html_re.sub(rewrite_link, html)
+
+    def validate_against(self, request, want_method):
+        """ """
+
+        # check get vs put
+        if self.method != want_method:
+            raise RuntimeError, "minekey is wrong method: " + str(self)
+
+        # check depth
+        if self.depth <= 0:
+            raise RuntimeError, "minekey has run out of depth: " + str(self)
+
+        # check global ToD restrictions
+        # TODO
+
+        # load relation
+        try:
+            r = Relation.objects.get(id=self.rid)
+        except Relation.DoesNotExist, e:
+            raise RuntimeError, "relation not valid: " + str(self) + str(e)
+
+        # check rvsn
+        if r.version != self.rvsn:
+            raise RuntimeError, "minekey/relation version mismatch: " + str(self)
+
+        # check against relation IP address
+        if r.network_pattern:
+            if 'REMOTE_ADDR' not in request.META:
+                raise RuntimeError, "relation specifies network pattern but REMOTE_ADDR unavailable: " + str(r)
+
+            src = request.META.get('REMOTE_ADDR')
+
+            # this is hardly CIDR but can be fixed later
+            if not src.startswith(r.network_pattern):
+                raise RuntimeError, "relation being accessed from illegal REMOTE_ADDR: " + src
+
+        # check ToD against relation embargo time
+
+        if r.embargo_before:
+            pass # TODO
+
+        if r.embargo_after:
+            pass # TODO
+
+        # check if the non-feed item is marked "not:relationName"
+        if self.iid:
+            pass # TODO
+
+        # ok, we're happy.
+
+    @classmethod
+    def feed_for(klass, rid):
+        """ """
+        r = Relation.objects.get(id=rid)
+	retval = Minekey(method='get',
+			 rid=rid,
+			 rvsn=r.version,
+			 iid=0,
+			 depth=3,
+			 )
+	retval.validate()
+	return retval
+
+##################################################################
+
+if __name__ == '__main__':
+    m1 = Minekey(method='get', rid=1, rvsn=1, iid=1, depth=2)
+    print "orig: ", m1, m1.key()
+
+    m2 = Minekey.parse(m1.key())
+    print "parse:", m2, m2.key()
+
+    m3 = Minekey.feed_for(2)
+    print "feed2:", m3, m3.key()
+
+    m4 = m3.spawn_iid(69)
+    print "spawn:", m4, m4.key()
+
+    m5 = m4.spawn_iid(42)
+    print "spawn:", m5, m5.permalink()
+
+    h1 = """
+<A HREF="99">a link to item 99</A> 
+and <A src="99">again</A>
+and <A HREF="99">again</A>
+and <A HREF='99'>again</A>
+and <A HREF=99>again</A>
+and <A HREF=98>again</A>
+
+and <A HREF="99'>this should fail "x'</A>
+and <A HREF='99">this should fail "x'</A>
+
+and <A HREF='99>this should fail 'x</A>
+and <A HREF="99>this should fail "x</A>
+and <A HREF=99'>this should fail x'</A>
+and <A HREF=99">this should fail x"</A>
+and <A HREF=99.xml>this should fail 99.xml</A>
+
+"""
+
+    print m3.rewrite_html(h1)
+
+    m3.validate_against({}, 'get')
+
+
+##################################################################
+##################################################################
+##################################################################
+##################################################################
 ##################################################################
 
 class AbstractModelField:
@@ -1167,6 +1486,17 @@ class Relation(AbstractThing):
 
     def __unicode__(self):
 	return self.name
+
+    def to_structure(self):
+	"""
+	Splices virtual sattrs into the Relation structure
+	"""
+
+	s = super(Relation, self).to_structure()
+        s['relationFeedUrl'] = Minekey(method='get', rid=self.id, rvsn=self.version, depth=3, iid=0).permalink()
+
+	return s
+
 
 ##################################################################
 

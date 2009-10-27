@@ -24,7 +24,7 @@ and simplify porting from Django to Google AppEngine.<table class="fieldTable"><
     
     
     <div id="splitTables">
-      <table class="children sortable" id="id7">
+      <table class="children sortable" id="id6">
   
   
   
@@ -134,7 +134,7 @@ character)</span></td>
         <a name="__defopts"></a>
         <div class="functionHeader">
         @classmethod<br />
-        def __defopts(self, **kwargs):
+        def __defopts(klass, **kwargs):
         
       </div>
         <div class="functionBody">
@@ -147,7 +147,7 @@ character)</span></td>
         <a name="last_modified"></a>
         <div class="functionHeader">
         @classmethod<br />
-        def last_modified(self):
+        def last_modified(klass):
         
       </div>
         <div class="functionBody">
@@ -159,7 +159,7 @@ character)</span></td>
         <a name="created"></a>
         <div class="functionHeader">
         @classmethod<br />
-        def created(self):
+        def created(klass):
         
       </div>
         <div class="functionBody">
@@ -171,7 +171,7 @@ character)</span></td>
         <a name="datetime"></a>
         <div class="functionHeader">
         @classmethod<br />
-        def datetime(self, **kwargs):
+        def datetime(klass, **kwargs):
         
       </div>
         <div class="functionBody">
@@ -183,7 +183,7 @@ character)</span></td>
         <a name="reference"></a>
         <div class="functionHeader">
         @classmethod<br />
-        def reference(self, what, **kwargs):
+        def reference(klass, what, **kwargs):
         
       </div>
         <div class="functionBody">
@@ -195,7 +195,7 @@ character)</span></td>
         <a name="reflist"></a>
         <div class="functionHeader">
         @classmethod<br />
-        def reflist(self, what, **kwargs):
+        def reflist(klass, what, **kwargs):
         
       </div>
         <div class="functionBody">
@@ -207,7 +207,7 @@ character)</span></td>
         <a name="string"></a>
         <div class="functionHeader">
         @classmethod<br />
-        def string(self, **kwargs):
+        def string(klass, **kwargs):
         
       </div>
         <div class="functionBody">
@@ -219,7 +219,7 @@ character)</span></td>
         <a name="text"></a>
         <div class="functionHeader">
         @classmethod<br />
-        def text(self, **kwargs):
+        def text(klass, **kwargs):
         
       </div>
         <div class="functionBody">
@@ -231,7 +231,7 @@ character)</span></td>
         <a name="slug"></a>
         <div class="functionHeader">
         @classmethod<br />
-        def slug(self, **kwargs):
+        def slug(klass, **kwargs):
         
       </div>
         <div class="functionBody">
@@ -243,7 +243,7 @@ character)</span></td>
         <a name="bool"></a>
         <div class="functionHeader">
         @classmethod<br />
-        def bool(self, default):
+        def bool(klass, default):
         
       </div>
         <div class="functionBody">
@@ -255,7 +255,7 @@ character)</span></td>
         <a name="integer"></a>
         <div class="functionHeader">
         @classmethod<br />
-        def integer(self, default):
+        def integer(klass, default):
         
       </div>
         <div class="functionBody">
@@ -267,7 +267,7 @@ character)</span></td>
         <a name="choice"></a>
         <div class="functionHeader">
         @classmethod<br />
-        def choice(self, choices):
+        def choice(klass, choices):
         
       </div>
         <div class="functionBody">
@@ -280,7 +280,7 @@ character)<table class="fieldTable"></table></div>
         <a name="url"></a>
         <div class="functionHeader">
         @classmethod<br />
-        def url(self, **kwargs):
+        def url(klass, **kwargs):
         
       </div>
         <div class="functionBody">
@@ -292,7 +292,7 @@ character)<table class="fieldTable"></table></div>
         <a name="email"></a>
         <div class="functionHeader">
         @classmethod<br />
-        def email(self, **kwargs):
+        def email(klass, **kwargs):
         
       </div>
         <div class="functionBody">
@@ -304,7 +304,7 @@ character)<table class="fieldTable"></table></div>
         <a name="file"></a>
         <div class="functionHeader">
         @classmethod<br />
-        def file(self, **kwargs):
+        def file(klass, **kwargs):
         
       </div>
         <div class="functionBody">

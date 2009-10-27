@@ -1,4 +1,5 @@
 {% extends "base/api.html" %}
+
 {% block for_results %}
 {% for individual in result %}
 {% for type, hash in individual.items %}
@@ -7,9 +8,10 @@
 generic per_hash block
 {% endblock %}
 {% block per_hash_debug %}
-<UL class="annotation">{% for key, value in hash.items %}<LI>{{key}}={{value}}</LI>{% endfor %}</UL><p/>
+<UL>{% for key, value in hash.items %}<LI>{{key}}={{value}}</LI>{% endfor %}</UL><p/>
 {% endblock %}
 </DIV>
 {% endfor %}
 {% endfor %}
 {% endblock %}	
+

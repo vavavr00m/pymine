@@ -1,81 +1,118 @@
 {% extends "base/base.html" %}
 
+<!-- ------------------------------------------------------------------ -->
+
+{% block title %}
+generic title from base.html
+{% endblock %}
+
+<!-- ------------------------------------------------------------------ -->
+
+{% block html_header_extra %}
+{% endblock %}
+
+<!-- ------------------------------------------------------------------ -->
+
+{% block logo_title %}
+pymine!
+{% endblock %}
+
+<!-- ------------------------------------------------------------------ -->
+
+{% block logo_intro %}
+from The Mine! Project at themineproject.org
+{% endblock %}
+
+<!-- ------------------------------------------------------------------ -->
+
+{% block title_searchbox__DISABLED__ %}
+<form id="quick-search" action="/" method="get">
+<p>
+<label for="qsearch">Search:</label>
+<input class="tbox" id="qsearch" type="text" name="qsearch" value="Search..." title="Start typing and hit ENTER" />
+<input class="btn" alt="Search" type="image" name="searchsubmit" title="Search" src="/pub/kisp/images/search.gif" />
+</p>
+</form>
+{% endblock %}
+
+<!-- ------------------------------------------------------------------ -->
+
+{% block navigation %}
+<ul>
+<li id="current"><a href="/" title="Go Home !">Home</a></li>
+<li><a href="/ui/dash/items.html" title="View and manage your store of Mine! items">Objects</a></li>
+<li><a href="/ui/dash/relations.html" title="View and manage the feeds for your relationships">Relations</a></li>
+<li><a href="/ui/dash/comments.html" title="View and manage comments and other feedback">Comments</a></li>
+<li><a href="/ui/dash/tags.html" title="View and manage single word terms to search and retrieve your items">Tags</a></li>
+<li><a href="/ui/dash/vurls.html" title="Virtual URLs for shortening (or lengthening) other addresses">Vurls</a></li>
+<li><a href="/admin/" title="Django database backdoor - non-techies beware!">Admin</a></li>
+</ul>
+{% endblock %}
+
+<!-- ------------------------------------------------------------------ -->
+
+{% block context_sidebar %}
+<h3>listings</h3>
+<ul>
+<li><a href="/ui/list/items.html">items</a></li>
+<li><a href="/ui/list/tags.html">tags</a></li>
+<li><a href="/ui/list/relations.html">relations</a></li>
+<li><a href="/ui/list/vurls.html">vurls</a></li>
+<li><a href="/ui/list/comments.html">comments</a></li>
+</ul>
+{% endblock %}
+
+<!-- ------------------------------------------------------------------ -->
+
+{% block static_sidebar %}
+<h3>your mine</h3>
+<ul>
+<li><a href="/ui/version.html">version</a></li>
+<li><a href="/">activity logs</a></li>
+<li><a href="/pub/">local files</a></li>
+</ul>
+{% endblock %}
+
+<!-- ------------------------------------------------------------------ -->
+
+{% block links_sidebar %}
+<h3>links</h3>
+<ul>
+<li><a href="http://code.google.com/p/pymine/">pymine repository</a></li>
+<li><a href="http://themineproject.org/">the mine! project</a></li>
+<li><a href="http://themineproject.org/about/">mine! videos</a></li>
+<li><a href="http://themineproject.org/mine-papers/">mine! papers</a></li>
+<li><a href="http://groups.google.com/group/themineproject">discussion maillist</a></li>
+<li><a href="http://groups.google.com/group/themineproject-announce">announce maillist</a></li>
+</ul>
+{% endblock %}
+
+<!-- ------------------------------------------------------------------ -->
+
 {% block content %}
-hello world.
+generic block content from base.html
 {% endblock %}
 
-{% block header %}
-<div class="appname">pymine</div>
+<!-- ------------------------------------------------------------------ -->
+
+{% block content_error_status %}
 {% endblock %}
 
-{% block footer %}
-<div class="block">
-this version of pymine should be considered unstable, "alpha" software.
-<br/>
-<a href="http://code.google.com/p/pymine/">pymine</a>
-is copyright &copy; 2008-2009,
-<br/>
-and is a product of
-<a href="http://themineproject.org/">the mine! project</a>,
-<br/>
-and is 
-<a href="http://en.wikipedia.org/wiki/free_and_open_source_software">free and open source software</a>
-<br/>
-licensed under
-<a href="http://www.apache.org/licenses/license-2.0">the apache license, version 2.0</a>.<br>
-</div>
+<!-- ------------------------------------------------------------------ -->
+
+{% block footer_left %}
+&copy;2009 The Mine! Project | Free Software licensed under the Apache License, Version 2.0
 {% endblock %}
 
-{% block sidebar %}
-<div class="sheader">your mine</div>
-<div class="sitem"><a href="/">home</a></div>
-<div class="sitem"><a href="/ui/version.html">version</a></div>
-<div class="sitem"><a href="/ui/dash/search.html">search</a></div>
+<!-- ------------------------------------------------------------------ -->
 
-<div class="sheader">dashboards</div>
-<div class="sitem">
-<a href="/ui/dash/items.html">items</a>
-(<a href="/ui/list/items.html">list</a>, <a href="/ui/create/item.html">create</a>)
-</div>
-<div class="sitem">
-<a href="/ui/dash/tags.html">tags</a>
-(<a href="/ui/list/tags.html">list</a>, <a href="/ui/create/tag.html">create</a>)
-</div>
-<div class="sitem">
-<a href="/ui/dash/relations.html">relations</a>
-(<a href="/ui/list/relations.html">list</a>, <a href="/ui/create/relation.html">create</a>)
-</div>
-<div class="sitem">
-<a href="/ui/dash/vurls.html">vurls</a>
-(<a href="/ui/list/vurls.html">list</a>, <a href="/ui/create/vurl.html">create</a>)
-</div>
-<div class="sitem">
-<a href="/ui/dash/comments.html">comments</a>
-(<a href="/ui/list/comments/0.html">list</a>)
-</div>
-
-<div class="sheader">administration</div>
-<div class="sitem"><a href="/pub/">local files</a></div>
-<div class="sitem"><a href="/admin/">django backdoor</a></div>
-<div class="sitem"><a href="/">activity logs</a></div>
-
-<div class="sheader">links</div>
-<div class="sitem"><a href="http://themineproject.org/">the mine! project</a></div>
-<div class="sitem"><a href="http://themineproject.org/about/">mine! videos</a></div>
-<div class="sitem"><a href="http://themineproject.org/mine-papers/">mine! papers</a></div>
-<div class="sitem"><a href="http://groups.google.com/group/themineproject">discussion maillist</a></div>
-<div class="sitem"><a href="http://groups.google.com/group/themineproject-announce">announce maillist</a></div>
-
-<div class="sheader">developer</div>
-<div class="sitem"><a href="http://code.google.com/p/pymine/">project home</a></div>
-<div class="sitem"><a href="http://code.google.com/p/pymine/w/list">developer wiki</a></div>
-<div class="sitem"><a href="/pub/apidocs/">programmer docs</a></div>
-<div class="sitem"><a href="http://groups.google.com/group/themineproject-devel">developer maillist</a></div>
-
-<div class="sheader">hacking</div>
-<div class="sitem"><a href="/api/">api directory</a></div>
-<div class="sitem"><a href="/ui/">ui directory</a></div>
-<div class="sitem"><a href="/get/">get directory</a></div>
-
-<div class="sheader"></div>
+{% block footer_right %}
+Template design based on KeepItSimple by: <a href="http://www.styleshout.com/">styleshout</a>
 {% endblock %}
+
+<!-- ------------------------------------------------------------------ -->
+
+{% block envelope %}
+{% endblock %}
+
+<!-- ------------------------------------------------------------------ -->

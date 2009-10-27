@@ -25,8 +25,7 @@ from django.shortcuts import render_to_response, get_object_or_404
 from django.template.loader import render_to_string
 from django.utils import feedgenerator
 
-from pymine.api.minekey import Minekey
-from pymine.api.models import Tag, Item, Relation, Comment, Vurl, LogEvent
+from pymine.api.models import Tag, Item, Relation, Comment, Vurl, LogEvent, Minekey
 
 import pymine.api.views as api
 
@@ -46,10 +45,11 @@ import pymine.api.views as api
 #...(there could be an argument for moving minekey here)...
 # [FEED] intersection of ITEM(PUBLIC).EXPANDEDTAGCLOUD and RELATION.INTERESTS.
 
-def generate_feed(request, mk, *args, **kwargs):
+def generate_feed(request, mkencoded, *args, **kwargs):
 
     slicesize = 100
 
+    mk = Minekey.parse(mkencoded)
     rid = mk.rid
 
     # who are we looking at?

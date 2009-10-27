@@ -1,0 +1,22 @@
+#envelope{display: block; background: #EBE0AF; opacity: 0.1; border-width: 0px 2px 2px; border-style: solid; border-color: white; position: absolute; top: 0px; right: 0px; z-index: 50; overflow: hidden; }
+
+#envelope:hover {
+  border-width: 0px 0px 2px 2px; width 200px; opacity: 1; border-color: black;
+}
+
+
+#left-columns{border-width: 0px 0px 0px 1px; border-color: #D3D3D3; border-style: solid;}
+
+
+/* postmeta */
+.success, .error {	
+	padding: 5px; margin: 20px 15px 15px 10px;	
+	border: 1px solid #D3D3D3;
+	 color: #000
+		
+}
+.success a, .error a { background: transparent; }
+.success a:hover , .error a:hover { border: none; }
+
+.success {background: #97F08F;}
+.error {background: #FB505F;}
