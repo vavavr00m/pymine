@@ -77,7 +77,7 @@ def REST(request, *args, **kwargs):
 
 ##################################################################
 
-# @login_required ## TBD
+@login_required
 def API_CALL(request, *args, **kwargs):
     """
     Things that use API_CALL() return a structure that here is
