@@ -32,8 +32,14 @@
     
     
     <td>Function</td>
+    <td><a href="pymine.views.html#REST_NOAUTH">REST_NOAUTH</a></td>
+    <td><span>Things that use REST()/REST_NOAUTH() return their own HTTPResponse</span></td>
+  </tr><tr class="function">
+    
+    
+    <td>Function</td>
     <td><a href="pymine.views.html#REST">REST</a></td>
-    <td><span>Things that use REST() return their own HTTPResponse objects</span></td>
+    <td><span>frontend to REST_NOAUTH() but uses the @login_required decorator</span></td>
   </tr><tr class="function">
     
     
@@ -74,17 +80,30 @@
     
     
     <div class="function">
+        <a name="pymine.views.REST_NOAUTH"></a>
+        <a name="REST_NOAUTH"></a>
+        <div class="functionHeader">
+        
+        def REST_NOAUTH(request, *args, **kwargs):
+        
+      </div>
+        <div class="functionBody">
+          
+          <div>Things that use REST()/REST_NOAUTH() return their own HTTPResponse 
+objects directly; this includes item-data-reads, and most non-API 
+handlers<table class="fieldTable"></table></div>
+        </div>
+      </div><div class="function">
         <a name="pymine.views.REST"></a>
         <a name="REST"></a>
         <div class="functionHeader">
-        
+        @login_required()<br />
         def REST(request, *args, **kwargs):
         
       </div>
         <div class="functionBody">
           
-          <div>Things that use REST() return their own HTTPResponse objects directly; 
-this includes item-data-reads, and most non-API handlers<table class="fieldTable"></table></div>
+          <div>frontend to REST_NOAUTH() but uses the @login_required decorator<table class="fieldTable"></table></div>
         </div>
       </div><div class="function">
         <a name="pymine.views.API_CALL"></a>

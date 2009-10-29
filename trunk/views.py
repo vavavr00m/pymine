@@ -18,6 +18,7 @@
 """docstring goes here""" # :-)
 
 from django.conf import settings
+from django.contrib.auth.decorators import login_required
 from django.core.urlresolvers import reverse
 from django.http import Http404, HttpResponse, HttpResponseRedirect
 from django.shortcuts import render_to_response, get_object_or_404
@@ -32,10 +33,10 @@ import util.httpserve as httpserve
 
 ##################################################################
 
-def REST(request, *args, **kwargs):
+def REST_NOAUTH(request, *args, **kwargs):
 
-    """Things that use REST() return their own HTTPResponse objects
-    directly; this includes item-data-reads, and most non-API
+    """Things that use REST()/REST_NOAUTH() return their own HTTPResponse
+    objects directly; this includes item-data-reads, and most non-API
     handlers"""
 
     el = LogEvent.open("REST",
@@ -66,8 +67,17 @@ def REST(request, *args, **kwargs):
     el.close()
     return response
 
+
 ##################################################################
 
+@login_required()
+def REST(request, *args, **kwargs):
+    """ frontend to REST_NOAUTH() but uses the @login_required decorator"""
+    return REST_NOAUTH(request, *args, **kwargs)
+
+##################################################################
+
+# @login_required ## TBD
 def API_CALL(request, *args, **kwargs):
     """
     Things that use API_CALL() return a structure that here is

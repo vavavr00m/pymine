@@ -29,8 +29,19 @@ urlpatterns = patterns('',
 		       (r'^ui/', include('ui.urls')),
 		       (r'^get/', include('get.urls')),
 		       (r'^api/', include('api.urls')),
-		       (r'^admin/doc/', include('django.contrib.admindocs.urls')),
+
+		       (r'^admin/doc/', \
+                            include('django.contrib.admindocs.urls')),
+
 		       (r'^admin/(.*)', admin.site.root),
+
+                       (r'^login.html$', \
+                            'django.contrib.auth.views.login', \
+                            { 'template_name': 'users/login.html' }),
+
+                       (r'^logout.html$', \
+                            'django.contrib.auth.views.logout', \
+                            { 'template_name': 'users/logout.html' }),
 
 		       #################################
 
