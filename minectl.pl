@@ -43,7 +43,7 @@ sub mime_type {
     return "text/html" if ($filesuffix eq 'htm');
 
     # insert a mime.types lookup here
-    my $mimefile = "etc/mime.types";
+    my $mimefile = "public_html/etc/mime.types";
 
     open(MIME, $mimefile) || die "open: $mimefile: $!\n";
     while (<MIME>) {
@@ -73,7 +73,6 @@ my %FLAGDESC = (
     x => '# XML output, if possible',
     r => '# RAW output, if possible',
     q => '# do NOT quit upon curl returning an error code',
-    u => '[username:password] # authentication',
     v => '# verbose; -vv, -vvv = more verbose',
     );
 
@@ -101,10 +100,6 @@ while ($ARGV[0] =~ m!^-(\w+)!o) {
 	elsif ($switch eq 'e') {
 	    $FLAG{'curlerrs'} = 1;
 	}
-	elsif ($switch eq 'u') {
-	    shift(@ARGV); # dump the -u
-	    $FLAG{'userpass'} = $ARGV[0];
-	}
 	else {
 	    die "$0: unknown option $switch (fatal)\n";
 	}
@@ -123,14 +118,10 @@ unless ($FLAG{'curlerrs'}) {
     push(@curlopts, '--fail');	
 }
 
-if ($FLAG{'userpass'}) {
-    # curl user and pw for authentication
-    push(@curlopts, '--user', $FLAG{'userpass'});
-    push(@curlopts, '--basic');
-}
+# how we plug auth in
+push(@curlopts, '-b', "etc/cookies.txt");
 
 # verbal way to request help
-
 if ($ARGV[0] eq 'help') {
     $FLAG{'help'} = 1;
     shift;

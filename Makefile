@@ -15,15 +15,18 @@ clean:
 	-rm `find . -name "*.tmp"`
 
 clobber: clean
-	rm -r database/*/files/
-	rm database/*/sqlite3.db
+	-rm -r database/*/files/
+	-rm database/*/sqlite3.db
+	-rm etc/cookies.txt
 
 perms:
-	chmod 644 `find . -type f`
 	chmod 755 `find . -type d`
+	chmod 644 `find . -type f`
+	chmod -R go-rwx etc/
 	chmod 755 `find . -name "*.py"`
 	chmod 755 `find . -name "*.pl"`
 	chmod 755 `find . -name "*.sh"`
+
 
 hard-reset: # brute-force rebuild from scratch
 	env MINE_EMAIL=$(MY_EMAIL) ./runme-setup.sh
