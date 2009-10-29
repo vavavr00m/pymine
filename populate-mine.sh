@@ -24,6 +24,9 @@ SAMPLES=public_html/testdata
 exec 2>&1
 set -x
 
+# login
+./mineauth.sh login
+
 # set up some very general tags
 Minectl new-tags themineproject literature photos
 

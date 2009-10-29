@@ -131,6 +131,7 @@ mine   GET    /pub/SUFFIX                    handle-pub
 
 get    GET    /get/MINEKEY                   read-minekey
 get    POST   /get/MINEKEY                   submit-minekey
+get    POST   /get/m                         field-minekey # accept POST for any minekey
 get    GET    /get/i/VID                     redirect-vid # short to long remapping
 get    GET    /get/k/VURLKEY                 redirect-vurlkey # short to long remapping
 get    GET    /get/n/SUFFIX                  redirect-vurlname # long to long remapping

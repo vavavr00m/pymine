@@ -1,7 +1,20 @@
 todo soon:
 
--- get VURL to handle HEAD sensibly
+- urgentish - add a rendezous url to /get/m where people can submit a
+  form for a minekey and get content back, to provide an alternate to
+  the cachable, sniffable, webproxyable REST URLs; make sure to check
+  against the internal get/put semantics:
 
+	  GET-get = ok
+	  POST-get = ok
+	  POST-put = ok
+	  all other combos = bad
+
+- encode minekey get/put semantics a bit shorter
+
+- how does a comment submitter request JSON vs XML ?
+
+- get VURL to handle HEAD sensibly
 
 - hack a delete_for_real into the AbstractModel, and override delete()
   in the subclasses to do sensible garbage collection.
@@ -12,13 +25,15 @@ todo soon:
 
 - put URL for item-zero-comments into feed-description-html
 
-- break the feed-generation SQL query out into a "search" subdiretory and put the other search code in there too?
+- break the feed-generation SQL query out into a "search" subdiretory
+  and put the other search code in there too?
 
 - pack out the individual items in the list results with useful metainfo
 
 - add field to LogEvent to break-out RID info
 
-- allow comments on 0bject zero, by permitting NULL value for IID in Comment
+- allow comments on 0bject zero, by permitting NULL value for IID in
+  Comment
 
 - pagination
 
@@ -38,10 +53,15 @@ todo after:
 todo longer:
 
 - break out vanity urls model into /get?
+
 - hack gen-django-code.pl so that 
+
 	1) the IID==0 regexp is restricted to pertinent URLs
+
 	2) FMT for SATTRs can include "raw", different to FMT elsewhere
+
   ...these are the same problem
+
 - leverage Vurls to create mechanism for Item in Mine to insert
   third-party IRL into list of feed permalinks; first step towards
   distributed mine, and allows your feed to contain references to
