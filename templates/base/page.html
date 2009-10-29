@@ -45,31 +45,32 @@ from The Mine! Project at themineproject.org
 <li><a href="/ui/dash/comments.html" title="View and manage comments and other feedback">Comments</a></li>
 <li><a href="/ui/dash/tags.html" title="View and manage single word terms to search and retrieve your items">Tags</a></li>
 <li><a href="/ui/dash/vurls.html" title="Virtual URLs for shortening (or lengthening) other addresses">Vurls</a></li>
-<li><a href="/admin/" title="Django database backdoor - non-techies beware!">Admin</a></li>
 </ul>
 {% endblock %}
 
 <!-- ------------------------------------------------------------------ -->
 
 {% block context_sidebar %}
-<h3>listings</h3>
+<h3>your stuff</h3>
 <ul>
-<li><a href="/ui/list/items.html">items</a></li>
-<li><a href="/ui/list/tags.html">tags</a></li>
+<li><a href="/ui/list/items.html">objects</a></li>
 <li><a href="/ui/list/relations.html">relations</a></li>
+<li><a href="/ui/list/comments/0.html">comments</a></li>
+<li><a href="/ui/list/tags.html">tags</a></li>
 <li><a href="/ui/list/vurls.html">vurls</a></li>
-<li><a href="/ui/list/comments.html">comments</a></li>
 </ul>
 {% endblock %}
 
 <!-- ------------------------------------------------------------------ -->
 
 {% block static_sidebar %}
-<h3>your mine</h3>
+<h3>admin</h3>
 <ul>
-<li><a href="/ui/version.html">version</a></li>
-<li><a href="/">activity logs</a></li>
-<li><a href="/pub/">local files</a></li>
+<li><a href="/" title="browse mine activity">activity logs</a></li>
+<li><a href="/pub/" title="your mine's internal webserver">local files</a></li>
+<li><a href="/ui/version.html" title="sortware revision">pymine version</a></li>
+<li><a href="/admin/" title="django superuser backdoor">superuser</a></li>
+<li><a href="/logout.html" title="disconnect from your mine">logout</a></li>
 </ul>
 {% endblock %}
 
@@ -78,12 +79,12 @@ from The Mine! Project at themineproject.org
 {% block links_sidebar %}
 <h3>links</h3>
 <ul>
-<li><a href="http://code.google.com/p/pymine/">pymine repository</a></li>
 <li><a href="http://themineproject.org/">the mine! project</a></li>
 <li><a href="http://themineproject.org/about/">mine! videos</a></li>
 <li><a href="http://themineproject.org/mine-papers/">mine! papers</a></li>
 <li><a href="http://groups.google.com/group/themineproject">discussion maillist</a></li>
 <li><a href="http://groups.google.com/group/themineproject-announce">announce maillist</a></li>
+<li><a href="http://code.google.com/p/pymine/">pymine code repository</a></li>
 </ul>
 {% endblock %}
 
@@ -101,7 +102,7 @@ generic block content from base.html
 <!-- ------------------------------------------------------------------ -->
 
 {% block footer_left %}
-&copy;2009 The Mine! Project | Free Software licensed under the Apache License, Version 2.0
+&copy;2009 The Mine! Project | pymine is free software under the Apache License, Version 2.0
 {% endblock %}
 
 <!-- ------------------------------------------------------------------ -->
