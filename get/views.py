@@ -159,7 +159,7 @@ def generate_feed(request, mkencoded, *args, **kwargs):
 	'title': feedinfo['title'],
 	}
 
-    feedinfo['description'] = render_to_string('feed/description.html', fd_tmpl)
+    feedinfo['description'] = render_to_string('feed/feed-description.html', fd_tmpl)
 
     # populate with respect to the minekey
     feed = feedgenerator.Atom1Feed(**feedinfo)

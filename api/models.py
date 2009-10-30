@@ -364,65 +364,7 @@ class Minekey:
 
         # ok, we're happy.
 
-    @classmethod
-    def feed_for(klass, rid):
-        """ """
-        r = Relation.objects.get(id=rid)
-	retval = Minekey(method='get',
-			 rid=rid,
-			 rvsn=r.version,
-			 iid=0,
-			 depth=3,
-			 )
-	retval.validate()
-	return retval
 
-##################################################################
-
-if __name__ == '__main__':
-    m1 = Minekey(method='get', rid=1, rvsn=1, iid=1, depth=2)
-    print "orig: ", m1, m1.key()
-
-    m2 = Minekey.parse(m1.key())
-    print "parse:", m2, m2.key()
-
-    m3 = Minekey.feed_for(2)
-    print "feed2:", m3, m3.key()
-
-    m4 = m3.spawn_iid(69)
-    print "spawn:", m4, m4.key()
-
-    m5 = m4.spawn_iid(42)
-    print "spawn:", m5, m5.permalink()
-
-    h1 = """
-<A HREF="99">a link to item 99</A> 
-and <A src="99">again</A>
-and <A HREF="99">again</A>
-and <A HREF='99'>again</A>
-and <A HREF=99>again</A>
-and <A HREF=98>again</A>
-
-and <A HREF="99'>this should fail "x'</A>
-and <A HREF='99">this should fail "x'</A>
-
-and <A HREF='99>this should fail 'x</A>
-and <A HREF="99>this should fail "x</A>
-and <A HREF=99'>this should fail x'</A>
-and <A HREF=99">this should fail x"</A>
-and <A HREF=99.xml>this should fail 99.xml</A>
-
-"""
-
-    print m3.rewrite_html(h1)
-
-    m3.validate_against({}, 'get')
-
-
-##################################################################
-##################################################################
-##################################################################
-##################################################################
 ##################################################################
 
 class AbstractModelField:
@@ -1487,16 +1429,26 @@ class Relation(AbstractThing):
     def __unicode__(self):
 	return self.name
 
+    def feed_minekey(self):
+        """ """
+	retval = Minekey(method='get',
+			 rid=self.id,
+			 rvsn=self.version,
+			 iid=0,
+			 depth=3,
+			 )
+	retval.validate()
+	return retval
+
     def to_structure(self):
 	"""
 	Splices virtual sattrs into the Relation structure
 	"""
 
 	s = super(Relation, self).to_structure()
-        s['relationFeedUrl'] = Minekey(method='get', rid=self.id, rvsn=self.version, depth=3, iid=0).permalink()
+        s['relationFeedUrl'] = self.feed_minekey().permalink()
 
 	return s
-
 
 ##################################################################
 
@@ -1548,6 +1500,8 @@ class Item(AbstractThing):
 	self.data.save(name, f)
 
     def item_size(self):
+	""" """
+
         if self.data:
             return self.data.size
         elif self.description:
@@ -1556,23 +1510,47 @@ class Item(AbstractThing):
             return 0
 
     def item_type(self):
-        if not self.data:
-            return 'text/html' # forced
-        elif self.content_type:
+	""" """
+
+        if self.content_type: # 
             return self.content_type
-        else:
+        elif not self.data: # 
+            return 'text/html'
+        else: #
             return 'application/octet-stream'
 
-    def item_description(self):
-        if self.description:
+    def item_feed_description(self):
+	""" """
+
+        if self.data: # if there is a file, description IS html
+            return self.description
+        elif self.item_type() == 'text/html': # if we think it's HTML
             return self.description
         else:
-            return ''
+            return '(pymine: no description provided and content is not HTML)'
+
+    def item_minekey_for(self, relation, has_embedded):
+        """ """
+
+        if has_embedded:
+            depth = 2
+        else:
+            depth = 1
+
+	retval = Minekey(method='get',
+			 rid=relation.id,
+			 rvsn=relation.version,
+			 iid=self.id,
+			 depth=depth,
+			 )
+
+	retval.validate()
+	return retval
+
+
 
     def to_structure(self):
-	"""
-	Splices the virtual itemSize sattr into the Item structure
-	"""
+	"""Splices the virtual itemSize sattr into the Item structure"""
 
 	s = super(Item, self).to_structure()
         s['itemType'] = self.item_type() # overrides based on whether item.data is None
@@ -1621,17 +1599,29 @@ class Item(AbstractThing):
                                     mime_type=self.item_type())
 
         # work out our description
-        if not self.data:
-            desc = self.item_description()
+
+
+
+
+BARF BARF OOPS!
+
+        ################################################################## FIX THIS
+
+        if not self.data and self.item_type() == 'text/html': ##### check this is sane for application/mine+xml
+            desc = self.item_feed_description()
         else:
             tmpl = {
                 'link': iteminfo['link'],
                 'title': iteminfo['title'],
                 'size': self.item_size(),
                 'content_type': self.item_type(),
-                'description': self.item_description(),
+                'description': self.item_feed_description(),
                 }
             desc = render_to_string('feed/item.html', tmpl)
+
+
+
+
 
         # TBD: should we use feed_mk or
         # or item_mk to rewrite, here?
