@@ -45,25 +45,37 @@
     
     <td>Method</td>
     <td><a href="pymine.api.models.Item.html#save_upload_file">save_upload_file</a></td>
-    <td><span class="undocumented">Undocumented</span></td>
+    <td><span>tries to save the uploaded file for later access</span></td>
   </tr><tr class="method">
     
     
     <td>Method</td>
     <td><a href="pymine.api.models.Item.html#item_size">item_size</a></td>
-    <td><span class="undocumented">Undocumented</span></td>
+    <td><span>returns the size of the data file; if there is no file,</span></td>
   </tr><tr class="method">
     
     
     <td>Method</td>
     <td><a href="pymine.api.models.Item.html#item_type">item_type</a></td>
-    <td><span class="undocumented">Undocumented</span></td>
+    <td><span>if there is a declared item.type, it is returned;</span></td>
   </tr><tr class="method">
     
     
     <td>Method</td>
-    <td><a href="pymine.api.models.Item.html#item_description">item_description</a></td>
-    <td><span class="undocumented">Undocumented</span></td>
+    <td><a href="pymine.api.models.Item.html#item_feed_description">item_feed_description</a></td>
+    <td><span>if there is a data file, the description *is* HTML and is returned,</span></td>
+  </tr><tr class="method">
+    
+    
+    <td>Method</td>
+    <td><a href="pymine.api.models.Item.html#item_minekey_for">item_minekey_for</a></td>
+    <td><span>given a Relation object (relation) and a depth in the range</span></td>
+  </tr><tr class="method">
+    
+    
+    <td>Method</td>
+    <td><a href="pymine.api.models.Item.html#comment_minekey_for">comment_minekey_for</a></td>
+    <td><span>given a Relation object (relation) create a new minekey to</span></td>
   </tr><tr class="method">
     
     
@@ -179,7 +191,7 @@
       </div>
         <div class="functionBody">
           
-          <div class="undocumented">Undocumented</div>
+          <div>tries to save the uploaded file for later access<table class="fieldTable"></table></div>
         </div>
       </div><div class="function">
         <a name="pymine.api.models.Item.item_size"></a>
@@ -191,7 +203,8 @@
       </div>
         <div class="functionBody">
           
-          <div class="undocumented">Undocumented</div>
+          <div>returns the size of the data file; if there is no file, returns the size
+of self.description, or zero<table class="fieldTable"></table></div>
         </div>
       </div><div class="function">
         <a name="pymine.api.models.Item.item_type"></a>
@@ -203,19 +216,49 @@
       </div>
         <div class="functionBody">
           
-          <div class="undocumented">Undocumented</div>
+          <div>if there is a declared item.type, it is returned; else if there is a 
+data file, return 'application/octet-stream'; else return 'text/html' and 
+assume the description is HTML<table class="fieldTable"></table></div>
         </div>
       </div><div class="function">
-        <a name="pymine.api.models.Item.item_description"></a>
-        <a name="item_description"></a>
+        <a name="pymine.api.models.Item.item_feed_description"></a>
+        <a name="item_feed_description"></a>
         <div class="functionHeader">
         
-        def item_description(self):
+        def item_feed_description(self):
         
       </div>
         <div class="functionBody">
           
-          <div class="undocumented">Undocumented</div>
+          <div>if there is a data file, the description *is* HTML and is returned, else
+if self.item_type() suggests HTML, the description is returned, else a 
+hardcoded default is returned<table class="fieldTable"></table></div>
+        </div>
+      </div><div class="function">
+        <a name="pymine.api.models.Item.item_minekey_for"></a>
+        <a name="item_minekey_for"></a>
+        <div class="functionHeader">
+        
+        def item_minekey_for(self, relation, depth):
+        
+      </div>
+        <div class="functionBody">
+          
+          <div>given a Relation object (relation) and a depth in the range 1..2, create
+a new minekey for this item and return it.<table class="fieldTable"></table></div>
+        </div>
+      </div><div class="function">
+        <a name="pymine.api.models.Item.comment_minekey_for"></a>
+        <a name="comment_minekey_for"></a>
+        <div class="functionHeader">
+        
+        def comment_minekey_for(self, relation):
+        
+      </div>
+        <div class="functionBody">
+          
+          <div>given a Relation object (relation) create a new minekey to permit 
+Comment submission for this item, and return it.<table class="fieldTable"></table></div>
         </div>
       </div><div class="function">
         <a name="pymine.api.models.Item.to_structure"></a>

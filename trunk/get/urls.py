@@ -20,16 +20,18 @@
 from django.conf.urls.defaults import *
 
 import views as get
-from pymine.views import REST
+from pymine.views import REST_NOAUTH
 
 urlpatterns = patterns('',
                        (r'^n/(?P<suffix>.+)$',
-                        REST, { 'GET': get.redirect_vurlname }),
+                        REST_NOAUTH, { 'GET': get.redirect_vurlname }),
+                       (r'^m$',
+                        REST_NOAUTH, { 'POST': get.field_minekey }),
                        (r'^k/(?P<vurlkey>[A-Za-z0-9!@]+)$',
-                        REST, { 'GET': get.redirect_vurlkey }),
+                        REST_NOAUTH, { 'GET': get.redirect_vurlkey }),
                        (r'^i/(?P<vid>[1-9]\d*)$',
-                        REST, { 'GET': get.redirect_vid }),
+                        REST_NOAUTH, { 'GET': get.redirect_vid }),
                        (r'^(?P<minekey>[A-Za-z0-9!@]+)$',
-                        REST, { 'GET': get.read_minekey,
-                                'POST': get.submit_minekey }),
+                        REST_NOAUTH, { 'GET': get.read_minekey,
+                                       'POST': get.submit_minekey }),
                        )

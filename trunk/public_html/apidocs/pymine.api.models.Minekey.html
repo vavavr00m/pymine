@@ -19,7 +19,9 @@
     <div>
       
     </div>
-    <div class="undocumented">No class docstring</div>
+    <div>A Minekey encodes all the data that a subscriber can use to retreive 
+stuff from the user's mine, creating an opaque token that is hopefully 
+unforgable.<table class="fieldTable"></table></div>
     
     
     <div id="splitTables">
@@ -33,109 +35,108 @@
     
     <td>Method</td>
     <td><a href="pymine.api.models.Minekey.html#__init__">__init__</a></td>
-    <td><span class="undocumented">Undocumented</span></td>
+    <td><span>Populates a Minekey with 5 items of information:</span></td>
   </tr><tr class="classmethod">
     
     
     <td>Class Method</td>
     <td><a href="pymine.api.models.Minekey.html#b64e">b64e</a></td>
-    <td><span class="undocumented">Undocumented</span></td>
+    <td><span>mine-base-64 encode x and return the result; the mine uses nonstandard 
+b64 extension characters</span></td>
   </tr><tr class="classmethod">
     
     
     <td>Class Method</td>
     <td><a href="pymine.api.models.Minekey.html#b64d">b64d</a></td>
-    <td><span class="undocumented">Undocumented</span></td>
+    <td><span>mine-base-64 decode x and return the result; the mine uses nonstandard 
+b64 extension characters</span></td>
   </tr><tr class="classmethod">
     
     
     <td>Class Method</td>
     <td><a href="pymine.api.models.Minekey.html#hashify">hashify</a></td>
-    <td><span class="undocumented">Undocumented</span></td>
+    <td><span>return a b64-encoded hash of x with padding removed</span></td>
   </tr><tr class="classmethod">
     
     
     <td>Class Method</td>
     <td><a href="pymine.api.models.Minekey.html#ivgen">ivgen</a></td>
-    <td><span class="undocumented">Undocumented</span></td>
+    <td><span>to be done</span></td>
   </tr><tr class="classmethod">
     
     
     <td>Class Method</td>
     <td><a href="pymine.api.models.Minekey.html#crypto_engine">crypto_engine</a></td>
-    <td><span class="undocumented">Undocumented</span></td>
+    <td><span>return an intialised crypto engine - to be modified</span></td>
   </tr><tr class="classmethod">
     
     
     <td>Class Method</td>
     <td><a href="pymine.api.models.Minekey.html#encrypt">encrypt</a></td>
-    <td><span class="undocumented">Undocumented</span></td>
+    <td><span>encrypt x and return the result; will pad with trailing whitespace as 
+needed to satisfy the crypto algorithm</span></td>
   </tr><tr class="classmethod">
     
     
     <td>Class Method</td>
     <td><a href="pymine.api.models.Minekey.html#decrypt">decrypt</a></td>
-    <td><span class="undocumented">Undocumented</span></td>
-  </tr><tr class="method">
-    
-    
-    <td>Method</td>
-    <td><a href="pymine.api.models.Minekey.html#validate">validate</a></td>
-    <td><span class="undocumented">Undocumented</span></td>
+    <td><span>encrypt x and return the result; will strip trailing whitespace 
+padding</span></td>
   </tr><tr class="method">
     
     
     <td>Method</td>
     <td><a href="pymine.api.models.Minekey.html#clone">clone</a></td>
-    <td><span class="undocumented">Undocumented</span></td>
+    <td><span>clone this minekey for further futzing; if you do futz manually, 
+remember to do minekey.validate()</span></td>
   </tr><tr class="classmethod">
     
     
     <td>Class Method</td>
     <td><a href="pymine.api.models.Minekey.html#parse">parse</a></td>
-    <td><span class="undocumented">Undocumented</span></td>
+    <td><span>classmethod and pseudo-constructor; decrypt the b64-encoded</span></td>
   </tr><tr class="method">
     
     
     <td>Method</td>
     <td><a href="pymine.api.models.Minekey.html#__str__">__str__</a></td>
-    <td><span class="undocumented">Undocumented</span></td>
+    <td><span>calls validate() and then produces a string-representation of the</span></td>
   </tr><tr class="method">
     
     
     <td>Method</td>
     <td><a href="pymine.api.models.Minekey.html#key">key</a></td>
-    <td><span class="undocumented">Undocumented</span></td>
+    <td><span>takes the string representation of this minekey and produces the</span></td>
   </tr><tr class="method">
     
     
     <td>Method</td>
     <td><a href="pymine.api.models.Minekey.html#permalink">permalink</a></td>
-    <td><span class="undocumented">Undocumented</span></td>
+    <td><span>takes the result of self.key() and embeds / returns it in a</span></td>
   </tr><tr class="method">
     
     
     <td>Method</td>
     <td><a href="pymine.api.models.Minekey.html#spawn_iid">spawn_iid</a></td>
-    <td><span class="undocumented">Undocumented</span></td>
+    <td><span>from this minekey, spawn a new minekey object for the same</span></td>
   </tr><tr class="method">
     
     
     <td>Method</td>
     <td><a href="pymine.api.models.Minekey.html#rewrite_html">rewrite_html</a></td>
-    <td><span class="undocumented">Undocumented</span></td>
+    <td><span>using the context of this minekey, rewrite the blob of HTML</span></td>
+  </tr><tr class="method">
+    
+    
+    <td>Method</td>
+    <td><a href="pymine.api.models.Minekey.html#validate">validate</a></td>
+    <td><span>performs basic sanith checks on this minekey:</span></td>
   </tr><tr class="method">
     
     
     <td>Method</td>
     <td><a href="pymine.api.models.Minekey.html#validate_against">validate_against</a></td>
-    <td><span class="undocumented">Undocumented</span></td>
-  </tr><tr class="classmethod">
-    
-    
-    <td>Class Method</td>
-    <td><a href="pymine.api.models.Minekey.html#feed_for">feed_for</a></td>
-    <td><span class="undocumented">Undocumented</span></td>
+    <td><span>validate this minekey against a HTTP request (request),</span></td>
   </tr>
   
 </table>
@@ -155,7 +156,29 @@
       </div>
         <div class="functionBody">
           
-          <div class="undocumented">Undocumented</div>
+          <div>Populates a Minekey with 5 items of information:</p>
+<p>method=, rid=, rvsn=, iid=, depth=</p>
+<p>method = 'get' or 'put'; these are somewhat analogous to GET and POST in
+HTTP, but we override the latter for REST purposes because in the 
+subscriber interface a Minekey can arrive by either GET or POST methods.  
+Note that there is no 'delete' or anything exotic like that.</p>
+<p>rid = id / primary key of the Relation for whom this minekey exists; 
+this provides an identity for the incoming key, against which we can search
+Item tags and so forth in order to generate a feed.</p>
+<p>rvsn = relation.version for rid; this is a security check; if 
+minekey.rvsn != Relation(id=rid).version then the request will fail; by 
+this means you can invalidate all issued minekeys for a given relation 
+without deleting it.</p>
+<p>iid = id / primary key of the Item which this minekey references; if iid
+== 0 then the item is the feed for the Relation.</p>
+<p>depth = integer; this is a value in the range 0..3, although only values
+1..3 are functional.  The 'depth' field tracks how far a subscriber can 
+link-chase into a mine.</p>
+<p>A feed URL will be iid=0 and depth=3</p>
+<p>Item permalinks in the feed will have iid=N and depth=2</p>
+<p>Links in HTML Items will be rewritten as iid=N and depth=1</p>
+<p>Depth=0 is legal precisely so that it can be trapped in the mine 
+auditing records, but it will yield a 404<table class="fieldTable"></table></div>
         </div>
       </div><div class="function">
         <a name="pymine.api.models.Minekey.b64e"></a>
@@ -167,7 +190,8 @@
       </div>
         <div class="functionBody">
           
-          <div class="undocumented">Undocumented</div>
+          <div>mine-base-64 encode x and return the result; the mine uses nonstandard 
+b64 extension characters<table class="fieldTable"></table></div>
         </div>
       </div><div class="function">
         <a name="pymine.api.models.Minekey.b64d"></a>
@@ -179,7 +203,8 @@
       </div>
         <div class="functionBody">
           
-          <div class="undocumented">Undocumented</div>
+          <div>mine-base-64 decode x and return the result; the mine uses nonstandard 
+b64 extension characters<table class="fieldTable"></table></div>
         </div>
       </div><div class="function">
         <a name="pymine.api.models.Minekey.hashify"></a>
@@ -191,7 +216,7 @@
       </div>
         <div class="functionBody">
           
-          <div class="undocumented">Undocumented</div>
+          <div>return a b64-encoded hash of x with padding removed<table class="fieldTable"></table></div>
         </div>
       </div><div class="function">
         <a name="pymine.api.models.Minekey.ivgen"></a>
@@ -203,7 +228,7 @@
       </div>
         <div class="functionBody">
           
-          <div class="undocumented">Undocumented</div>
+          <div>to be done<table class="fieldTable"></table></div>
         </div>
       </div><div class="function">
         <a name="pymine.api.models.Minekey.crypto_engine"></a>
@@ -215,7 +240,7 @@
       </div>
         <div class="functionBody">
           
-          <div class="undocumented">Undocumented</div>
+          <div>return an intialised crypto engine - to be modified<table class="fieldTable"></table></div>
         </div>
       </div><div class="function">
         <a name="pymine.api.models.Minekey.encrypt"></a>
@@ -227,7 +252,8 @@
       </div>
         <div class="functionBody">
           
-          <div class="undocumented">Undocumented</div>
+          <div>encrypt x and return the result; will pad with trailing whitespace as 
+needed to satisfy the crypto algorithm<table class="fieldTable"></table></div>
         </div>
       </div><div class="function">
         <a name="pymine.api.models.Minekey.decrypt"></a>
@@ -239,19 +265,8 @@
       </div>
         <div class="functionBody">
           
-          <div class="undocumented">Undocumented</div>
-        </div>
-      </div><div class="function">
-        <a name="pymine.api.models.Minekey.validate"></a>
-        <a name="validate"></a>
-        <div class="functionHeader">
-        
-        def validate(self):
-        
-      </div>
-        <div class="functionBody">
-          
-          <div class="undocumented">Undocumented</div>
+          <div>encrypt x and return the result; will strip trailing whitespace 
+padding<table class="fieldTable"></table></div>
         </div>
       </div><div class="function">
         <a name="pymine.api.models.Minekey.clone"></a>
@@ -263,7 +278,8 @@
       </div>
         <div class="functionBody">
           
-          <div class="undocumented">Undocumented</div>
+          <div>clone this minekey for further futzing; if you do futz manually, 
+remember to do minekey.validate()<table class="fieldTable"></table></div>
         </div>
       </div><div class="function">
         <a name="pymine.api.models.Minekey.parse"></a>
@@ -275,7 +291,10 @@
       </div>
         <div class="functionBody">
           
-          <div class="undocumented">Undocumented</div>
+          <div>classmethod and pseudo-constructor; decrypt the b64-encoded minekey 
+('external') and parse it, and then validate the results of parsing to 
+permit use in data access.</p>
+<p>throws exception on something being wrong.<table class="fieldTable"></table></div>
         </div>
       </div><div class="function">
         <a name="pymine.api.models.Minekey.__str__"></a>
@@ -287,7 +306,9 @@
       </div>
         <div class="functionBody">
           
-          <div class="undocumented">Undocumented</div>
+          <div>calls validate() and then produces a string-representation of the 
+minekey, including the hash-information and magic number, as well as the 
+standard 5-tuple<table class="fieldTable"></table></div>
         </div>
       </div><div class="function">
         <a name="pymine.api.models.Minekey.key"></a>
@@ -299,7 +320,9 @@
       </div>
         <div class="functionBody">
           
-          <div class="undocumented">Undocumented</div>
+          <div>takes the string representation of this minekey and produces the 
+encrypted-and-base64-encoded minekey token, suitable for web 
+consumption.<table class="fieldTable"></table></div>
         </div>
       </div><div class="function">
         <a name="pymine.api.models.Minekey.permalink"></a>
@@ -311,7 +334,8 @@
       </div>
         <div class="functionBody">
           
-          <div class="undocumented">Undocumented</div>
+          <div>takes the result of self.key() and embeds / returns it in a permalink 
+string for this mine.<table class="fieldTable"></table></div>
         </div>
       </div><div class="function">
         <a name="pymine.api.models.Minekey.spawn_iid"></a>
@@ -323,7 +347,8 @@
       </div>
         <div class="functionBody">
           
-          <div class="undocumented">Undocumented</div>
+          <div>from this minekey, spawn a new minekey object for the same rid/rvsn, but
+for a different iid, decrementing the depth.<table class="fieldTable"></table></div>
         </div>
       </div><div class="function">
         <a name="pymine.api.models.Minekey.rewrite_html"></a>
@@ -335,7 +360,32 @@
       </div>
         <div class="functionBody">
           
-          <div class="undocumented">Undocumented</div>
+          <div>using the context of this minekey, rewrite the blob of HTML (argument) 
+looking for case-insensitive strings of the form:</p>
+<p>HREF=99 HREF='99' HREF=&quot;99&quot; SRC=99 SRC='99' 
+SRC=&quot;99&quot;</p>
+<p>...where 99 is an example iid, replacing the 99 with the results of 
+self.spawn_iid(iid).permalink() - in other words a URL customised to 
+retreive that item/iid with decremented depth.<table class="fieldTable"></table></div>
+        </div>
+      </div><div class="function">
+        <a name="pymine.api.models.Minekey.validate"></a>
+        <a name="validate"></a>
+        <div class="functionHeader">
+        
+        def validate(self):
+        
+      </div>
+        <div class="functionBody">
+          
+          <div>performs basic sanith checks on this minekey:</p>
+<p>method must be in ('get', 'put')</p>
+<p>rid must not be &lt;= 0</p>
+<p>rvsn must not be &lt;= 0</p>
+<p>iid must not be &lt; 0 (remember: item 0 == feed)</p>
+<p>depth must be in range 0..3 (remember: 0 valid but ineffectual)</p>
+<p>Further validation in the specific context of an actual HTTP request is 
+done by the validate_against() routine.<table class="fieldTable"></table></div>
         </div>
       </div><div class="function">
         <a name="pymine.api.models.Minekey.validate_against"></a>
@@ -347,19 +397,19 @@
       </div>
         <div class="functionBody">
           
-          <div class="undocumented">Undocumented</div>
-        </div>
-      </div><div class="function">
-        <a name="pymine.api.models.Minekey.feed_for"></a>
-        <a name="feed_for"></a>
-        <div class="functionHeader">
-        @classmethod<br />
-        def feed_for(klass, rid):
-        
-      </div>
-        <div class="functionBody">
-          
-          <div class="undocumented">Undocumented</div>
+          <div>validate this minekey against a HTTP request (request), manually 
+specifying whether you want the minekey to be a 'get' or a 'put' 
+(want_method)</p>
+<p>this routine traps the 'depth==0' thing; this means attempts to walk 
+over the mine via link-chasing get logged.</p>
+<p>TODO: this routine performs global time-of-day access restriction 
+checks</p>
+<p>this routine performs checking of self.rvsn against 
+Relation(id=rid).version and raises exception on mismatch</p>
+<p>this routine performs relation source-IP-address checking</p>
+<p>TODO: this routine performs relation timed-embargo checking</p>
+<p>TODO: this routine performs &quot;not:relationname&quot; item tag 
+checking<table class="fieldTable"></table></div>
         </div>
       </div>
     

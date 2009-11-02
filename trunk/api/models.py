@@ -120,9 +120,13 @@ for short, long in item_status_choices: status_lookup[long] = short
 ##################################################################
 
 class Minekey:
-    """ """
+    """
+    A Minekey encodes all the data that a subscriber can use to
+    retreive stuff from the user's mine, creating an opaque token that
+    is hopefully unforgable.
+    """
 
-    key_magic = 'py1' # recognise these keys
+    key_magic = 'P1' # PYMINE VERSION 1
     corefmt = '%s,%d,%d,%d,%d,%s'
     valid_methods = ( 'get', 'put' )
 
@@ -137,7 +141,44 @@ class Minekey:
     html_re = re.compile(r"""(SRC|HREF)\s*=\s*(['"]?)(\d+)([^\s\>]*)""", re.IGNORECASE)
 
     def __init__(self, **kwargs):
-        """ """
+	"""
+        Populates a Minekey with 5 items of information:
+
+        method=, rid=, rvsn=, iid=, depth=
+
+        method = 'get' or 'put'; these are somewhat analogous to GET
+        and POST in HTTP, but we override the latter for REST purposes
+        because in the subscriber interface a Minekey can arrive by
+        either GET or POST methods.  Note that there is no 'delete' or
+        anything exotic like that.
+
+        rid = id / primary key of the Relation for whom this minekey
+        exists; this provides an identity for the incoming key,
+        against which we can search Item tags and so forth in order to
+        generate a feed.
+
+        rvsn = relation.version for rid; this is a security check; if
+        minekey.rvsn != Relation(id=rid).version then the request will
+        fail; by this means you can invalidate all issued minekeys for
+        a given relation without deleting it.
+
+        iid = id / primary key of the Item which this minekey
+        references; if iid == 0 then the item is the feed for the
+        Relation.
+
+        depth = integer; this is a value in the range 0..3, although
+        only values 1..3 are functional.  The 'depth' field tracks how
+        far a subscriber can link-chase into a mine.
+
+        A feed URL will be iid=0 and depth=3
+
+        Item permalinks in the feed will have iid=N and depth=2
+
+        Links in HTML Items will be rewritten as iid=N and depth=1
+
+        Depth=0 is legal precisely so that it can be trapped in the
+        mine auditing records, but it will yield a 404
+        """
 
 	# flush through with invalid data
 	self.method = kwargs.get('method', None)
@@ -146,21 +187,24 @@ class Minekey:
 	self.iid = kwargs.get('iid', -1)
 	self.depth = kwargs.get('depth', -1)
 
+        # abort immediately if still illegal
+        self.validate()
+
     @classmethod
     def b64e(klass, x):
-        """ """
+	"""mine-base-64 encode x and return the result; the mine uses nonstandard b64 extension characters"""
 
 	return base64.b64encode(x, klass.b64_alt)
 
     @classmethod
     def b64d(klass, x):
-        """ """
+	"""mine-base-64 decode x and return the result; the mine uses nonstandard b64 extension characters"""
 
 	return base64.b64decode(x, klass.b64_alt)
 
     @classmethod
     def hashify(klass, x):
-        """ """
+	"""return a b64-encoded hash of x with padding removed"""
 
 	m = hashlib.md5() # more than adequate
 	m.update(x)
@@ -169,19 +213,19 @@ class Minekey:
 
     @classmethod
     def ivgen(klass, x):
-        """ """
+	"""to be done"""
 
-        pass
+	pass
 
     @classmethod
     def crypto_engine(klass):  #------------------------------------------------------------------ TO BE DONE, IV HACKING
-        """ """
+	"""return an intialised crypto engine - to be modified"""
 
 	return AES.new(klass.aes_key, klass.aes_mode, klass.aes_iv)
 
     @classmethod
     def encrypt(klass, x):
-        """ """
+	"""encrypt x and return the result; will pad with trailing whitespace as needed to satisfy the crypto algorithm"""
 
 	l = len(x)
 	if (l % 16): # if not a 16-byte message, pad with whitespace
@@ -193,46 +237,33 @@ class Minekey:
 
     @classmethod
     def decrypt(klass, x):
-        """ """
+	"""encrypt x and return the result; will strip trailing whitespace padding"""
 
 	engine = klass.crypto_engine()
-	return engine.decrypt(x).rstrip() # remove whitespace padding
-
-    def validate(self):
-        """ """
-
-	if self.rid <= 0:
-	    raise RuntimeError, 'negative or zero rid: ' + str(self.rid)
-
-	if self.rvsn <= 0:
-	    raise RuntimeError, 'negative or zero rvsn: ' + str(self.rvsn)
-
-	if self.iid < 0:
-	    raise RuntimeError, 'negative iid: ' + str(self.iid)
-
-	if self.depth < 0:
-	    raise RuntimeError, 'negative depth: ' + str(self.depth)
-
-	if self.method not in self.valid_methods:
-	    raise RuntimeError, 'bad method: ' + str(self.method)
+	return engine.decrypt(x).rstrip()
 
     def clone(self):
-        """ """
-
+	"""clone this minekey for further futzing; if you do futz manually, remember to do minekey.validate()"""
 	retval = Minekey(method=self.method,
 			 rid=self.rid,
 			 rvsn=self.rvsn,
 			 iid=self.iid,
 			 depth=self.depth,
 			 )
-	retval.validate()
 	return retval
 
     @classmethod
     def parse(klass, external):
-        """ """
+	"""
+        classmethod and pseudo-constructor; decrypt the b64-encoded
+        minekey ('external') and parse it, and then validate the
+        results of parsing to permit use in data access.
+
+        throws exception on something being wrong.
+        """
 
 	encrypted = klass.b64d(external.encode('utf-8')) # stuff comes from URLs in UNICODE
+
 	internal = klass.decrypt(encrypted)
 
 	(Xhash, Xmethod, Xrid, Xrvsn, Xiid, Xdepth, Xkey_magic) = internal.split(',', 7)
@@ -248,13 +279,13 @@ class Minekey:
 	Xdepth = int(Xdepth)
 	# Xkey_magic constant string
 
-        # see also __str__()
-	core = klass.corefmt % (Xmethod, 
-                               Xrid, 
-                               Xrvsn, 
-                               Xiid, 
-                               Xdepth, 
-                               Xkey_magic)
+	# see also __str__()
+	core = klass.corefmt % (Xmethod,
+			       Xrid,
+			       Xrvsn,
+			       Xiid,
+			       Xdepth,
+			       Xkey_magic)
 
 	hash2 = klass.hashify(core)
 
@@ -267,11 +298,14 @@ class Minekey:
 			 iid=Xiid,
 			 depth=Xdepth,
 			 )
-	retval.validate()
 	return retval
 
     def __str__(self):
-        """ """
+	"""calls validate() and then produces a string-representation of the
+        minekey, including the hash-information and magic number, as
+        well as the standard 5-tuple """
+
+        self.validate()
 	args = (self.method,
 		self.rid,
 		self.rvsn,
@@ -284,85 +318,160 @@ class Minekey:
 	return "%s,%s" % (h, c)
 
     def key(self):
-        """ """
+	"""takes the string representation of this minekey and produces the
+        encrypted-and-base64-encoded minekey token, suitable for web
+        consumption."""
+
 	internal = str(self)
 	encrypted = self.encrypt(internal)
 	external = self.b64e(encrypted)
 	return external
 
     def permalink(self):
-        """ """
-        return "%s/get/%s" % (settings.MINE_URL_ROOT, self.key())
+	"""takes the result of self.key() and embeds / returns it in a
+        permalink string for this mine."""
+
+	return "%s/get/%s" % (settings.MINE_URL_ROOT, self.key())
 
     def spawn_iid(self, iid):
-        """ """
+	"""from this minekey, spawn a new minekey object for the same
+        rid/rvsn, but for a different iid, decrementing the depth."""
 
 	retval = self.clone()
 	retval.iid = iid
 	retval.depth -= 1
-	retval.validate()
+	retval.validate() # if we futz with it, we must validate
 	return retval
 
     def rewrite_html(self, html):
-        """ """
+	"""
+        using the context of this minekey, rewrite the blob of HTML
+        (argument) looking for case-insensitive strings of the form:
 
-        def rewrite_link(mo):
-            action = mo.group(1)
-            fq = mo.group(2)
-            iid = int(mo.group(3))
-            lq = mo.group(4)
-            if fq != lq: return mo.group(0)
-            return '%s="%s"' % (action, self.spawn_iid(iid).permalink())
-        return self.html_re.sub(rewrite_link, html)
+        HREF=99
+        HREF='99'
+        HREF="99"
+        SRC=99
+        SRC='99'
+        SRC="99"
+
+        ...where 99 is an example iid, replacing the 99 with the
+        results of self.spawn_iid(iid).permalink() - in other words a
+        URL customised to retreive that item/iid with decremented
+        depth.
+        """
+
+	def rewrite_link(mo):
+            """backend link rewriter for code clarity"""
+	    action = mo.group(1)
+	    fq = mo.group(2)
+	    iid = int(mo.group(3))
+	    lq = mo.group(4)
+	    if fq != lq: return mo.group(0)
+	    return '%s="%s"' % (action, self.spawn_iid(iid).permalink())
+
+	return self.html_re.sub(rewrite_link, html)
+
+    def validate(self):
+	"""
+        performs basic sanith checks on this minekey:
+
+        method must be in ('get', 'put')
+
+        rid must not be <= 0
+
+        rvsn must not be <= 0
+
+        iid must not be < 0 (remember: item 0 == feed) 
+
+        depth must be in range 0..3 (remember: 0 valid but ineffectual)
+
+        Further validation in the specific context of an actual HTTP
+        request is done by the validate_against() routine.
+        """
+
+	if self.rid <= 0:
+	    raise RuntimeError, 'negative or zero rid: ' + str(self.rid)
+
+	if self.rvsn <= 0:
+	    raise RuntimeError, 'negative or zero rvsn: ' + str(self.rvsn)
+
+	if self.iid < 0:
+	    raise RuntimeError, 'negative iid: ' + str(self.iid)
+
+	if self.depth not in (3, 2, 1, 0): 
+	    raise RuntimeError, 'invalid depth: ' + str(self.depth)
+
+	if self.method not in self.valid_methods:
+	    raise RuntimeError, 'bad method: ' + str(self.method)
 
     def validate_against(self, request, want_method):
-        """ """
+	"""
+        validate this minekey against a HTTP request (request),
+        manually specifying whether you want the minekey to be a 'get'
+        or a 'put' (want_method)
 
-        # check get vs put
-        if self.method != want_method:
-            raise RuntimeError, "minekey is wrong method: " + str(self)
+        this routine traps the 'depth==0' thing; this means attempts
+        to walk over the mine via link-chasing get logged.
 
-        # check depth
-        if self.depth <= 0:
-            raise RuntimeError, "minekey has run out of depth: " + str(self)
+        TODO: this routine performs global time-of-day access
+        restriction checks
 
-        # check global ToD restrictions
-        # TODO
+        this routine performs checking of self.rvsn against
+        Relation(id=rid).version and raises exception on mismatch
 
-        # load relation
-        try:
-            r = Relation.objects.get(id=self.rid)
-        except Relation.DoesNotExist, e:
-            raise RuntimeError, "relation not valid: " + str(self) + str(e)
+        this routine performs relation source-IP-address checking
 
-        # check rvsn
-        if r.version != self.rvsn:
-            raise RuntimeError, "minekey/relation version mismatch: " + str(self)
+        TODO: this routine performs relation timed-embargo checking
 
-        # check against relation IP address
-        if r.network_pattern:
-            if 'REMOTE_ADDR' not in request.META:
-                raise RuntimeError, "relation specifies network pattern but REMOTE_ADDR unavailable: " + str(r)
+        TODO: this routine performs "not:relationname" item tag checking
 
-            src = request.META.get('REMOTE_ADDR')
+        """
 
-            # this is hardly CIDR but can be fixed later
-            if not src.startswith(r.network_pattern):
-                raise RuntimeError, "relation being accessed from illegal REMOTE_ADDR: " + src
+	# check get vs put
+	if self.method != want_method:
+	    raise RuntimeError, "minekey is wrong method: " + str(self)
 
-        # check ToD against relation embargo time
+	# check depth
+	if self.depth <= 0:
+	    raise RuntimeError, "minekey has run out of depth: " + str(self)
 
-        if r.embargo_before:
-            pass # TODO
+	# check global ToD restrictions
+	# TODO
 
-        if r.embargo_after:
-            pass # TODO
+	# load relation
+	try:
+	    r = Relation.objects.get(id=self.rid)
+	except Relation.DoesNotExist, e:
+	    raise RuntimeError, "relation not valid: " + str(self) + str(e)
 
-        # check if the non-feed item is marked "not:relationName"
-        if self.iid:
-            pass # TODO
+	# check rvsn
+	if r.version != self.rvsn:
+	    raise RuntimeError, "minekey/relation version mismatch: " + str(self)
 
-        # ok, we're happy.
+	# check against relation IP address
+	if r.network_pattern:
+	    if 'REMOTE_ADDR' not in request.META:
+		raise RuntimeError, "relation specifies network pattern but REMOTE_ADDR unavailable: " + str(r)
+
+	    src = request.META.get('REMOTE_ADDR')
+
+	    # this is hardly CIDR but can be fixed later
+	    if not src.startswith(r.network_pattern):
+		raise RuntimeError, "relation being accessed from illegal REMOTE_ADDR: " + src
+
+	# check ToD against relation embargo time
+	if r.embargo_before:
+	    pass # TODO
+
+	if r.embargo_after:
+	    pass # TODO
+
+	# check if the non-feed item is marked "not:relationName"
+	if self.iid:
+	    pass # TODO
+
+	# ok, we're happy.
 
 
 ##################################################################
@@ -526,9 +635,13 @@ def m2s_copy(m, mattr, s, sattr):
     x = getattr(m, mattr)
     if x: s[sattr] = x
 
-def s2m_copy(s, sattr, m, mattr):
+def s2m_verbatim(s, sattr, m, mattr):
     """Copy sattr from s to mattr in m"""
     if sattr in s: setattr(m, mattr, s[sattr])
+
+def s2m_stripstr(s, sattr, m, mattr):
+    """Copy sattr from s to mattr in m"""
+    if sattr in s: setattr(m, mattr, s[sattr].strip())
 
 ##################################################################
 
@@ -558,17 +671,17 @@ def m2s_bool(m, mattr, s, sattr):
     """Copy a boolean from m to s"""
     x = getattr(m, mattr)
     if x:
-        s[sattr] = 1
+	s[sattr] = 1
     else:
-        s[sattr] = 0
+	s[sattr] = 0
 
 def s2m_bool(s, sattr, m, mattr):
     """Copy a boolean from s to m"""
     if sattr in s:
-        if s[sattr] == 0:
-            setattr(m, mattr, False)
-        else:
-            setattr(m, mattr, True)
+	if s[sattr] == 0:
+	    setattr(m, mattr, False)
+	else:
+	    setattr(m, mattr, True)
 
 ##################################################################
 
@@ -808,60 +921,70 @@ class AbstractThing(AbstractModel):
     # dictionaries for fast lookup...
 
     sattr_conversion_table = (
-(  'commentBody',             'body',             False,  r2s_string,  s2m_copy,        m2s_copy,        ),
-(  'commentCreated',          'created',          False,  None,        None,            m2s_date,        ),
-(  'commentId',               'id',               False,  r2s_int,     s2m_copy,        m2s_copy,        ),
-(  'commentIsDeleted',        'is_deleted',       False,  None,        None,            m2s_bool,        ),
-(  'commentItem',             'item',             False,  r2s_int,     s2m_comitem,     m2s_comitem,     ),
-(  'commentLastModified',     'last_modified',    False,  None,        None,            m2s_date,        ),
-(  'commentRelation',         'relation',         False,  r2s_string,  s2m_comrel,      m2s_comrel,      ),
-(  'commentTitle',            'title',            False,  r2s_string,  s2m_copy,        m2s_copy,        ),
-(  'itemCreated',             'created',          False,  None,        None,            m2s_date,        ),
-(  'itemData',                'data',             True,   None,        s2m_dummy,       None,            ),
-(  'itemDescription',         'description',      False,  r2s_string,  s2m_copy,        m2s_copy,        ),
-(  'itemFeedLink',            'feed_link',        False,  r2s_string,  s2m_copy,        m2s_copy,        ),
-(  'itemHasFile',             None,               True,   None,        None,            None,            ),  #see:Item()
-(  'itemHideAfter',           'hide_after',       False,  r2s_string,  s2m_copy,        m2s_copy,        ),
-(  'itemHideBefore',          'hide_before',      False,  r2s_string,  s2m_date,        m2s_date,        ),
-(  'itemId',                  'id',               False,  r2s_int,     s2m_copy,        m2s_copy,        ),
-(  'itemIsDeleted',           'is_deleted',       False,  None,        None,            m2s_bool,        ),
-(  'itemLastModified',        'last_modified',    False,  None,        None,            m2s_date,        ),
-(  'itemName',                'name',             False,  r2s_string,  s2m_copy,        m2s_copy,        ),
-(  'itemSize',                None,               True,   None,        None,            None,            ),  #see:Item()
-(  'itemStatus',              'status',           False,  r2s_string,  s2m_itemstatus,  m2s_itemstatus,  ),
-(  'itemTags',                'tags',             True,   r2s_string,  s2m_itemtags,    m2s_itemtags,    ),
-(  'itemType',                'content_type',     False,  r2s_string,  s2m_copy,        m2s_copy,        ),
-(  'relationCreated',         'created',          False,  None,        None,            m2s_date,        ),
-(  'relationDescription',     'description',      False,  r2s_string,  s2m_copy,        m2s_copy,        ),
-(  'relationEmbargoAfter',    'embargo_after',    False,  r2s_string,  s2m_date,        m2s_date,        ),
-(  'relationEmbargoBefore',   'embargo_before',   False,  r2s_string,  s2m_date,        m2s_date,        ),
-(  'relationId',              'id',               False,  r2s_int,     s2m_copy,        m2s_copy,        ),
-(  'relationInterests',       'interests',        True,   r2s_string,  s2m_relints,     m2s_relints,     ),
-(  'relationIsDeleted',       'is_deleted',       False,  None,        None,            m2s_bool,        ),
-(  'relationIsDeleted',       'is_deleted',       False,  r2s_int,     s2m_bool,        m2s_bool,        ),
-(  'relationLastModified',    'last_modified',    False,  None,        None,            m2s_date,        ),
-(  'relationName',            'name',             False,  r2s_string,  s2m_copy,        m2s_copy,        ),
-(  'relationNetworkPattern',  'network_pattern',  False,  r2s_string,  s2m_copy,        m2s_copy,        ),
-(  'relationVersion',         'version',          False,  r2s_string,  s2m_copy,        m2s_copy,        ),
+
+#  SATTR                      MATTR               DEFER?  R2S          S2M              M2S
+
 (  'tagCloud',                'cloud',            True,   None,        None,            m2s_tagcloud,    ),
-(  'tagCreated',              'created',          False,  None,        None,            m2s_date,        ),
-(  'tagDescription',          'description',      False,  r2s_string,  s2m_copy,        m2s_copy,        ),
-(  'tagId',                   'id',               False,  r2s_int,     s2m_copy,        m2s_copy,        ),
+(  'itemData',                'data',             True,   None,        s2m_dummy,       None,            ),
+(  'itemTags',                'tags',             True,   r2s_string,  s2m_itemtags,    m2s_itemtags,    ),
+(  'relationInterests',       'interests',        True,   r2s_string,  s2m_relints,     m2s_relints,     ),
 (  'tagImplies',              'implies',          True,   r2s_string,  s2m_tagimplies,  m2s_tagimplies,  ),
-(  'tagIsDeleted',            'is_deleted',       False,  None,        None,            m2s_bool,        ),
-(  'tagLastModified',         'last_modified',    False,  None,        None,            m2s_date,        ),
-(  'tagName',                 'name',             False,  r2s_string,  s2m_copy,        m2s_copy,        ),
-(  'thingId',                 'id',               False,  r2s_int,     s2m_copy,        m2s_copy,        ),
+
+(  'commentItem',             'item',             False,  r2s_int,     s2m_comitem,     m2s_comitem,     ),
+(  'commentRelation',         'relation',         False,  r2s_string,  s2m_comrel,      m2s_comrel,      ),
+(  'itemStatus',              'status',           False,  r2s_string,  s2m_itemstatus,  m2s_itemstatus,  ),
+
+(  'itemHasFile',             None,               True,   None,        None,            None,            ),  #see:Item()
+(  'itemSize',                None,               True,   None,        None,            None,            ),  #see:Item()
 (  'vurlAbsoluteUrl',         None,               True,   None,        None,            None,            ),  #see:Vurl()
-(  'vurlCreated',             'created',          False,  None,        None,            m2s_date,        ),
-(  'vurlId',                  'id',               False,  r2s_int,     s2m_copy,        m2s_copy,        ),
-(  'vurlIsDeleted',           'is_deleted',       False,  None,        None,            m2s_bool,        ),
 (  'vurlKey',                 None,               True,   None,        None,            None,            ),  #see:Vurl()
-(  'vurlLastModified',        'last_modified',    False,  None,        None,            m2s_date,        ),
-(  'vurlLink',                'link',             False,  r2s_string,  s2m_copy,        m2s_copy,        ),
-(  'vurlName',                'name',             False,  r2s_string,  s2m_copy,        m2s_copy,        ),
 (  'vurlPathLong',            None,               True,   None,        None,            None,            ),  #see:Vurl()
 (  'vurlPathShort',           None,               True,   None,        None,            None,            ),  #see:Vurl()
+
+(  'commentIsDeleted',        'is_deleted',       False,  None,        None,            m2s_bool,        ),
+(  'itemIsDeleted',           'is_deleted',       False,  None,        None,            m2s_bool,        ),
+(  'relationIsDeleted',       'is_deleted',       False,  None,        None,            m2s_bool,        ),
+(  'tagIsDeleted',            'is_deleted',       False,  None,        None,            m2s_bool,        ),
+(  'vurlIsDeleted',           'is_deleted',       False,  None,        None,            m2s_bool,        ),
+
+(  'commentCreated',          'created',          False,  None,        None,            m2s_date,        ),
+(  'commentLastModified',     'last_modified',    False,  None,        None,            m2s_date,        ),
+(  'itemCreated',             'created',          False,  None,        None,            m2s_date,        ),
+(  'itemLastModified',        'last_modified',    False,  None,        None,            m2s_date,        ),
+(  'relationCreated',         'created',          False,  None,        None,            m2s_date,        ),
+(  'relationLastModified',    'last_modified',    False,  None,        None,            m2s_date,        ),
+(  'tagCreated',              'created',          False,  None,        None,            m2s_date,        ),
+(  'tagLastModified',         'last_modified',    False,  None,        None,            m2s_date,        ),
+(  'vurlCreated',             'created',          False,  None,        None,            m2s_date,        ),
+(  'vurlLastModified',        'last_modified',    False,  None,        None,            m2s_date,        ),
+
+(  'commentId',               'id',               False,  r2s_int,     s2m_verbatim,    m2s_copy,        ),
+(  'itemId',                  'id',               False,  r2s_int,     s2m_verbatim,    m2s_copy,        ),
+(  'relationId',              'id',               False,  r2s_int,     s2m_verbatim,    m2s_copy,        ),
+(  'relationVersion',         'version',          False,  r2s_int,     s2m_verbatim,    m2s_copy,        ),
+(  'tagId',                   'id',               False,  r2s_int,     s2m_verbatim,    m2s_copy,        ),
+(  'thingId',                 'id',               False,  r2s_int,     s2m_verbatim,    m2s_copy,        ),
+(  'vurlId',                  'id',               False,  r2s_int,     s2m_verbatim,    m2s_copy,        ),
+
+(  'itemHideAfter',           'hide_after',       False,  r2s_string,  s2m_date,        m2s_date,        ),
+(  'itemHideBefore',          'hide_before',      False,  r2s_string,  s2m_date,        m2s_date,        ),
+(  'relationEmbargoAfter',    'embargo_after',    False,  r2s_string,  s2m_date,        m2s_date,        ),
+(  'relationEmbargoBefore',   'embargo_before',   False,  r2s_string,  s2m_date,        m2s_date,        ),
+
+(  'commentTitle',            'title',            False,  r2s_string,  s2m_stripstr,    m2s_copy,        ),
+(  'itemFeedLink',            'feed_link',        False,  r2s_string,  s2m_stripstr,    m2s_copy,        ),
+(  'itemName',                'name',             False,  r2s_string,  s2m_stripstr,    m2s_copy,        ),
+(  'itemType',                'type',             False,  r2s_string,  s2m_stripstr,    m2s_copy,        ),
+(  'relationName',            'name',             False,  r2s_string,  s2m_stripstr,    m2s_copy,        ),
+(  'relationNetworkPattern',  'network_pattern',  False,  r2s_string,  s2m_stripstr,    m2s_copy,        ),
+(  'tagName',                 'name',             False,  r2s_string,  s2m_stripstr,    m2s_copy,        ),
+(  'vurlLink',                'link',             False,  r2s_string,  s2m_stripstr,    m2s_copy,        ),
+(  'vurlName',                'name',             False,  r2s_string,  s2m_stripstr,    m2s_copy,        ),
+
+(  'commentBody',             'body',             False,  r2s_string,  s2m_verbatim,    m2s_copy,        ),
+(  'itemDescription',         'description',      False,  r2s_string,  s2m_verbatim,    m2s_copy,        ),
+(  'relationDescription',     'description',      False,  r2s_string,  s2m_verbatim,    m2s_copy,        ),
+(  'tagDescription',          'description',      False,  r2s_string,  s2m_verbatim,    m2s_copy,        ),
 )
 
     # A word about deferral: some s2m conversions can only take place
@@ -940,14 +1063,15 @@ class AbstractThing(AbstractModel):
 	    # special case file-saving, assume <model>.save_uploaded_file() works
 	    if sattr in ( 'itemData' ): # ...insert others here...
 		if sattr in r.FILES:
+                    # grab the uploaded file
 		    uf = r.FILES[sattr]
 
-                    # what does the browser call the content type?
+		    # what does the browser call the content type?
 		    ct = uf.content_type
 
-                    # if one's not already set
-                    if ct and not self.content_type:
-                        self.content_type = ct
+		    # if one's not already set
+		    if ct and not self.type:
+			self.type = ct
 
 		    self.save_upload_file(uf)
 		    needs_save = True
@@ -974,12 +1098,13 @@ class AbstractThing(AbstractModel):
 	    k = k[len(self.xattr_prefix):]
 
 	    # get/create the xattr
-	    xa, created = mgr.get_or_create(key=k, defaults={'value': v})
+	    xa, created = mgr.get_or_create(key=k, defaults={ 'value': v })
+
 	    if not created: # then it needs updating
 		xa.value = v
 		xa.save()
 
-	    # mark updates on the item
+	    # mark updates on the item <------------------------------------------------------------------ TBD: IS THIS MEANT TO BE COMMENTED OUT?
 	    #needs_save = True
 
 	# update if we did anything
@@ -1430,14 +1555,13 @@ class Relation(AbstractThing):
 	return self.name
 
     def feed_minekey(self):
-        """ """
+	""" """
 	retval = Minekey(method='get',
 			 rid=self.id,
 			 rvsn=self.version,
 			 iid=0,
 			 depth=3,
 			 )
-	retval.validate()
 	return retval
 
     def to_structure(self):
@@ -1446,7 +1570,7 @@ class Relation(AbstractThing):
 	"""
 
 	s = super(Relation, self).to_structure()
-        s['relationFeedUrl'] = self.feed_minekey().permalink()
+	s['relationFeedUrl'] = self.feed_minekey().permalink()
 
 	return s
 
@@ -1474,7 +1598,7 @@ class Item(AbstractThing):
     name = AbstractModelField.string()
     status = AbstractModelField.choice(item_status_choices) # WHY IS THIS NOT CHECKED ON SAVE? TBD
 
-    content_type = AbstractModelField.string(required=False)
+    type = AbstractModelField.string(required=False)
     data = AbstractModelField.file(storage=item_file_storage, upload_to='%Y/%m/%d', blank=True, null=True) # FIXME!!!
     description = AbstractModelField.text(required=False)
     feed_link = AbstractModelField.url(required=False)
@@ -1491,7 +1615,7 @@ class Item(AbstractThing):
 	return self.name
 
     def save_upload_file(self, f):
-	""" """
+	"""tries to save the uploaded file for later access"""
 
 	if not self.id:
 	    raise RuntimeError, "save_upload_file trying to save a model which has no IID"
@@ -1500,42 +1624,54 @@ class Item(AbstractThing):
 	self.data.save(name, f)
 
     def item_size(self):
-	""" """
+	"""
+        returns the size of the data file; if there is no file,
+        returns the size of self.description, or zero
+        """
 
-        if self.data:
-            return self.data.size
-        elif self.description:
-            return len(self.description)
-        else:
-            return 0
+	if self.data:
+	    return self.data.size
+	elif self.description:
+	    return len(self.description)
+	else:
+	    return 0
 
     def item_type(self):
-	""" """
+	"""
+        if there is a declared item.type, it is returned; 
+        else if there is a data file, return 'application/octet-stream';
+        else return 'text/html' and assume the description is HTML
+        """
 
-        if self.content_type: # 
-            return self.content_type
-        elif not self.data: # 
-            return 'text/html'
-        else: #
-            return 'application/octet-stream'
+	if self.type:
+	    return self.type
+	elif self.data: 
+	    return 'application/octet-stream'
+	else:
+	    return 'text/html'
 
     def item_feed_description(self):
-	""" """
+	""" 
+        if there is a data file, the description *is* HTML and is returned,
+        else if self.item_type() suggests HTML, the description is returned,
+        else a hardcoded default is returned
+        """
 
-        if self.data: # if there is a file, description IS html
-            return self.description
-        elif self.item_type() == 'text/html': # if we think it's HTML
-            return self.description
-        else:
-            return '(pymine: no description provided and content is not HTML)'
+	if self.data:
+	    return self.description
+	elif self.item_type() == 'text/html': # if we think it's HTML
+	    return self.description
+	else:
+	    return 'pymine: no description is provided and the content is not text/html'
 
-    def item_minekey_for(self, relation, has_embedded):
-        """ """
+    def item_minekey_for(self, relation, depth):
+	"""
+        given a Relation object (relation) and a depth in the range
+        1..2, create a new minekey for this item and return it.
+        """
 
-        if has_embedded:
-            depth = 2
-        else:
-            depth = 1
+	if not depth in (1, 2):
+	    raise RuntimeError, 'will not create a minekey for Item %d with depth %d' % (self,iid, depth)
 
 	retval = Minekey(method='get',
 			 rid=relation.id,
@@ -1543,23 +1679,32 @@ class Item(AbstractThing):
 			 iid=self.id,
 			 depth=depth,
 			 )
-
-	retval.validate()
 	return retval
 
-
+    def comment_minekey_for(self, relation):
+	"""
+        given a Relation object (relation) create a new minekey to
+        permit Comment submission for this item, and return it.
+        """
+	retval = Minekey(method='put',
+			 rid=relation.id,
+			 rvsn=relation.version,
+			 iid=self.id,
+			 depth=1,
+			 )
+	return retval
 
     def to_structure(self):
 	"""Splices the virtual itemSize sattr into the Item structure"""
 
 	s = super(Item, self).to_structure()
-        s['itemType'] = self.item_type() # overrides based on whether item.data is None
-        s['itemSize'] = self.item_size()
+	s['itemType'] = self.item_type() # overrides based on whether item.data is None
+	s['itemSize'] = self.item_size()
 
-        if self.data:
-            s['itemHasFile'] = 1
-        else:
-            s['itemHasFile'] = 0
+	if self.data:
+	    s['itemHasFile'] = 1
+	else:
+	    s['itemHasFile'] = 0
 
 	return s
 
@@ -1586,48 +1731,36 @@ class Item(AbstractThing):
 
 	iteminfo['title'] = self.name
 
-        # third-party linkage? # TBD: WHAT TO DO ABOUT SIZE AND CONTENT-TYPE FOR ENCLOSURES?
+        # TBD: WHAT TO DO ABOUT SIZE AND CONTENT-TYPE FOR ENCLOSURES? 
+	# third-party linkage? 
 	if self.feed_link:
 	    iteminfo['link'] = self.feed_link
 	else:
-            iteminfo['link'] = item_mk.permalink()
+	    iteminfo['link'] = item_mk.permalink()
 
-        # work out our enclosures
-        iteminfo['enclosure'] = \
-            feedgenerator.Enclosure(url=iteminfo['link'],
-                                    length=str(self.item_size()),
-                                    mime_type=self.item_type())
+	# work out our enclosure
+	iteminfo['enclosure'] = \
+	    feedgenerator.Enclosure(url=iteminfo['link'],
+				    length=str(self.item_size()),
+				    mime_type=self.item_type())
 
-        # work out our description
+	# work out our description
 
-
-
-
-BARF BARF OOPS!
-
-        ################################################################## FIX THIS
-
-        if not self.data and self.item_type() == 'text/html': ##### check this is sane for application/mine+xml
-            desc = self.item_feed_description()
-        else:
-            tmpl = {
-                'link': iteminfo['link'],
-                'title': iteminfo['title'],
-                'size': self.item_size(),
-                'content_type': self.item_type(),
-                'description': self.item_feed_description(),
-                }
-            desc = render_to_string('feed/item.html', tmpl)
+	if not self.data and self.item_type() == 'text/html': ##### check this is sane for application/mine+xml
+	    desc = self.item_feed_description()
+	else:
+	    tmpl = {
+		'link': iteminfo['link'],
+		'title': iteminfo['title'],
+		'size': self.item_size(),
+		'content_type': self.item_type(),
+		'description': self.item_feed_description(),
+		}
+	    desc = render_to_string('feed/item-description.html', tmpl)
 
 
-
-
-
-        # TBD: should we use feed_mk or
-        # or item_mk to rewrite, here?
-        # i am thinking feed_mk
-
-        iteminfo['description'] = feed_mk.rewrite_html(desc)
+        # rewrite
+	iteminfo['description'] = item_mk.rewrite_html(desc)
 
 	# done
 	return iteminfo
@@ -1660,7 +1793,7 @@ class Comment(AbstractThing):
     relation = AbstractModelField.reference(Relation, required=False)
 
     # required=False to permit comments on feed where IID=0
-    item = AbstractModelField.reference(Item, required=False) 
+    item = AbstractModelField.reference(Item, required=False)
 
     def __unicode__(self):
 	return self.title
@@ -1729,7 +1862,7 @@ class Vurl(AbstractThing):
     def vurlkey(self):
 	""" """
 	return base58.b58encode(self.id)
-    
+
     def to_structure(self):
 	"""
 	Splices the virtual vurlKey/vurlPath sattrs into the Vurl
