@@ -78,12 +78,12 @@ admin.site.register(Relation, RelationAdmin)
 ##################################################################
 
 class ItemAdmin(admin.ModelAdmin):
-    list_display = ('name', 'status', 'content_type', 'last_modified', 'created', 'hide_before', 'hide_after')
+    list_display = ('name', 'status', 'type', 'last_modified', 'created', 'hide_before', 'hide_after')
     search_fields = ['name', 'description']
     list_filter = ['created']
     date_hierarchy = 'created'
     fieldsets = [
-        (None, {'fields': ['name', 'status', 'data', 'content_type', 'description']}), 
+        (None, {'fields': ['name', 'status', 'data', 'type', 'description']}), 
         ('Tags', {'fields': ['tags', 'item_for_relations', 'item_not_relations']}), 
         ('Advanced', {'fields': ['feed_link', 'hide_before', 'hide_after'], 'classes': ['collapse']}), 
         ]

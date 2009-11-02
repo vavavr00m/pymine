@@ -93,6 +93,9 @@ foreach $pattern (sort {$b cmp $a} keys %patterns) {
     if (($class eq 'api') && ($pattern =~ /fmt/)) {
 	$dispatch = "API_CALL";
     }
+    elsif ($class eq 'get') {
+	$dispatch = "REST_NOAUTH";
+    }
     else {
 	$dispatch = "REST";
     }

@@ -170,6 +170,26 @@ def generate_feed(request, mkencoded, *args, **kwargs):
 
     return HttpResponse(feed.writeString('UTF-8'), mimetype='application/atom+xml')
 
+
+
+# TBD TO BE DONE - 
+
+# DOES THE FEED GENERATION BELONG HERE?  SHOULD IT NOT BE SPLIT INTO
+# LIST-OF-ITEMS GENERATION *AND* FEED CREATION *AND* RESPONSE?
+
+# MOST IMPORTANTLY: DOES IT USE REPLICATE THE LOGIC OF
+# VALIDATE_AGAINST() RE: EMBARGOES, ETC...  CAN WE MERGE/COLLATE THE
+# FUNCTIONALITY TO REMOVE REPLICATION?
+
+# SHOULD VALIDATE_AGAINST BECOME VALIDATE_RELATIONSHIP?  
+
+# IS THERE YET NO NOT:RELATION TESTING FOR ITEM FETCHES?
+
+# BREAK SLICESIZE OUT INTO A SETTING?  EVENTUALLY MAKE IT
+# SINCE-LAST-ACCESS BASED RETREIVAL?
+
+
+
 ##################################################################
 ##################################################################
 ##################################################################
@@ -207,6 +227,10 @@ def read_minekey(request, minekey, *args, **kwargs):
 	raise
 
 
+
+
+
+
 ## rest: POST /get/MINEKEY
 ## function: submit_minekey
 ## declared args: minekey
@@ -215,27 +239,50 @@ def submit_minekey(request, minekey, *args, **kwargs):
     s = {}
     return render_to_response('submit/minekey.html', s)
 
+
+
+
+
+
+## rest: POST /get/m
+## function: field_minekey
+## declared args: 
+def field_minekey(request, *args, **kwargs):
+    """field_minekey() returns ..."""
+    # TBD: DELETE THIS COMMENT WHEN THE CODE IS DONE
+    s = api.field_minekey(request, *args, **kwargs)
+    return render_to_response('field/minekey.html', s)
+
+
+
+
+
+
+
 ## rest: GET /get/i/VID
 ## function: redirect_vid
 ## declared args: vid
 def redirect_vid(request, vid, *args, **kwargs):
-    """redirect_vid(vid) returns ..."""
+    """redirect_vid(vid) looks up the Vurl with index VID and issues a HTTP 301 redirect to the target URL"""
     v = Vurl.objects.get(id=int(vid))
-    return HttpResponsePermanentRedirect(v.link.strip()) # issue 301 redirect
+    return HttpResponsePermanentRedirect(v.link) # issue 301 redirect
+
+
 
 ## rest: GET /get/k/VURLKEY
 ## function: redirect_vurlkey
 ## declared args: vurlkey
 def redirect_vurlkey(request, vurlkey, *args, **kwargs):
-    """redirect_vurlkey(vurlkey) returns ..."""
+    """redirect_vurlkey(vurlkey) looks up the Vurl with base58-encoded index VURLKEY and issues a HTTP 301 redirect to the target URL"""
     v = Vurl.get_with_vurlkey(vurlkey.encode('utf-8'))
-    return HttpResponsePermanentRedirect(v.link.strip()) # issue 301 redirect
+    return HttpResponsePermanentRedirect(v.link) # issue 301 redirect
+
+
 
 ## rest: GET /get/n/SUFFIX
 ## function: redirect_vurlname
 ## declared args: suffix
 def redirect_vurlname(request, suffix, *args, **kwargs):
-    """redirect_vurlname(suffix) returns ..."""
+    """redirect_vurlname(suffix) looks up the Vurl with the long pseudo-path SUFFIX and issues a HTTP 301 redirect to the target URL"""
     v = Vurl.objects.get(name=suffix)
-    return HttpResponsePermanentRedirect(v.link.strip()) # issue 301 redirect
-
+    return HttpResponsePermanentRedirect(v.link) # issue 301 redirect

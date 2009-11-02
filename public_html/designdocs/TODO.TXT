@@ -1,8 +1,5 @@
 todo soon:
 
-- check the code that does feed generation (largely Item.to_atom())
-  which handles when item.data==None and item.type!='text/html'
-
 - urgentish - add a rendezous url to /get/m where people can submit a
   form for a minekey and get content back, to provide an alternate to
   the cachable, sniffable, webproxyable REST URLs; make sure to check
@@ -13,11 +10,14 @@ todo soon:
 	  POST-put = ok
 	  all other combos = bad
 
+- check the code that does feed generation (largely Item.to_atom())
+  which handles when item.data==None and item.type!='text/html'
+
 - encode minekey get/put semantics a bit shorter
 
-- how does a comment submitter request JSON vs XML ?
-
 - get VURL to handle HEAD sensibly
+
+- how does a comment submitter request JSON vs XML ?
 
 - hack a delete_for_real into the AbstractModel, and override delete()
   in the subclasses to do sensible garbage collection.
