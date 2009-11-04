@@ -11,14 +11,16 @@ CURLFLAGS=""
 
 case $1 in
     login)
-	if [ "x$2" == "x" ]
+	if [ "x$2" = "x" ]
 	then 
-	    MINEUSER=$USER
+	    echo "enter username for mine at $MINEURL (default: mineroot)"
+	    read MINEUSER
+	    test "x$MINEUSER" = x && MINEUSER="mineroot"
 	else
 	    MINEUSER="$2"
 	fi
 
-	if [ "x$3" == "x" ]
+	if [ "x$3" = "x" ]
 	then
 	    echo enter password for mine user $MINEUSER
 	    read MINEPASS

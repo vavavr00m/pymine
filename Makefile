@@ -7,7 +7,17 @@ PYDOC=pydoc
 
 ##################################################################
 
-all: client
+all:
+	@echo ""
+	@echo make server - launches the server
+	@echo make client - opens a client on $(IP_ADDRESS_AND_PORT)
+	@echo make clean - removes cruft files
+	@echo make clobber - clean, and removes database files
+	@echo make perms - sets sane unix permissions on the installation
+	@echo make hard-reset - automated nuke-and-rebuild for developers
+	@echo ""
+	@echo "...and have you executed runme-setup.sh ?"
+	@echo ""
 
 clean:
 	-rm `find . -name "*~"`
@@ -36,7 +46,8 @@ hard-reset: # brute-force rebuild from scratch
 
 client:
 	@echo trying to open http://$(IP_ADDRESS_AND_PORT)/
-	open http://$(IP_ADDRESS_AND_PORT)/
+	-test -x /usr/bin/gnome-open && gnome-open http://$(IP_ADDRESS_AND_PORT)/
+	-test -d /System/Library && open http://$(IP_ADDRESS_AND_PORT)/
 
 server:
 	python manage.py runserver $(IP_ADDRESS_AND_PORT)

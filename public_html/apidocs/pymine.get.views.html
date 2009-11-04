@@ -45,13 +45,13 @@
     
     <td>Function</td>
     <td><a href="pymine.get.views.html#submit_minekey">submit_minekey</a></td>
-    <td><span>submit_minekey(minekey) returns ...</span></td>
+    <td><span>submit_minekey(minekey) is the hook for mine subscribers to post</span></td>
   </tr><tr class="function">
     
     
     <td>Function</td>
     <td><a href="pymine.get.views.html#field_minekey">field_minekey</a></td>
-    <td><span>field_minekey() returns ...</span></td>
+    <td><span>field_minekey() is a POST-based frontend for both read_minekey()</span></td>
   </tr><tr class="function">
     
     
@@ -116,7 +116,15 @@ SUFFIX and issues a HTTP 301 redirect to the target URL</span></td>
       </div>
         <div class="functionBody">
           
-          <div>submit_minekey(minekey) returns ...<table class="fieldTable"></table></div>
+          <div>submit_minekey(minekey) is the hook for mine subscribers to post 
+comments into the Mine, and is the only mechanism which permits data to 
+come into the Mine by a non-password-authenticated means.</p>
+<p>The code which the rest of the API uses to create and update models is 
+far too trusting to be used here - we trust the contents of the HttpRequest
+too much - so instead we do a tiny, paranoid replica of the API_CALL() 
+functionality and its backend.</p>
+<p>Pass the desired output format in as a 'format' parameter with values in
+('rdr', 'raw', 'xml', 'json')<table class="fieldTable"></table></div>
         </div>
       </div><div class="function">
         <a name="pymine.get.views.field_minekey"></a>
@@ -128,7 +136,19 @@ SUFFIX and issues a HTTP 301 redirect to the target URL</span></td>
       </div>
         <div class="functionBody">
           
-          <div>field_minekey() returns ...<table class="fieldTable"></table></div>
+          <div>field_minekey() is a POST-based frontend for both read_minekey() and 
+submit_minekey() and which switches on the internal get/put method of the 
+decoded minekey to determine what to do.</p>
+<p>Submit with parameter &quot;minekey&quot; set to the target minekey; all
+other parameters and/or responses are as read_minekey or submit_minekey</p>
+<p>From an efficency standpoint there is a double-parse of minekeys for 
+this routine, be aware.</p>
+<p>Code elsewhere in the mine *MAY* be sensitive to whether it was called 
+via HTTP GET/POST; however minekey related code falls mostly into GET 
+(which does not care if it was actually POSTed) with only 
+comment-submission being done by POST; the comment-submission code will be 
+checking that it arrived via POST and since both submit_minekey() and 
+field_minekey() are HTTP POST, this is OK.<table class="fieldTable"></table></div>
         </div>
       </div><div class="function">
         <a name="pymine.get.views.redirect_vid"></a>

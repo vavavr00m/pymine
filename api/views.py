@@ -59,7 +59,6 @@ def create_foo(model, request):
     """
     """
 
-    assert request, "cannot have request=None for create_foo"
     m = model.new_from_request(request)
     return construct_retval(m.to_structure())
 
@@ -82,7 +81,6 @@ def update_foo(model, request, mid):
     """
     """
 
-    assert request, "cannot have request=None for update_foo"
     m = model.objects.get(id=int(mid))
     m = m.update_from_request(request)
     return construct_retval(m.to_structure())
@@ -153,7 +151,6 @@ def get_comment_key(request, cid, sattr, *args, **kwargs):
 ## declared args: iid
 def create_comment(request, iid, *args, **kwargs):
     """create_comment(iid) returns ..."""
-    assert request, "cannot have request=None for create_comment"
     m = Comment.new_from_request(request, commentItem=int(iid)) # use kwargs to push extra information
     return construct_retval(m.to_structure())
 
@@ -221,7 +218,7 @@ def read_item_data(request, iid, *args, **kwargs): # <--------------------------
         if m.data:
             content = m.data.read()
         else:
-            content = m.item_description()
+            content = m.item_feed_description()
         rewrite = mk.rewrite_html(content)
         response = HttpResponse(rewrite, content_type=ct)
         response['Content-Length'] = len(rewrite)
@@ -230,7 +227,7 @@ def read_item_data(request, iid, *args, **kwargs): # <--------------------------
         response = HttpResponse(fw, content_type=ct)
         response['Content-Length'] = m.data.size
     else:
-        response = HttpResponse(m.item_description(), content_type=ct)
+        response = HttpResponse(m.item_feed_description(), content_type=ct)
         response['Content-Length'] = m.item_size()
     return response
 
@@ -297,7 +294,7 @@ def list_registry(request, *args, **kwargs):
 def amend_registry_key(request, rattr, *args, **kwargs):
     """amend_registry_key(rattr) returns ..."""
     v = request.POST[key]
-    m, created = Registry.objects.get_or_create(key=k,defaults={'value':v})
+    m, created = Registry.objects.get_or_create(key=k, defaults={ 'value': v })
     if not created: # then it will need updating
         m.value = v
         m.save();

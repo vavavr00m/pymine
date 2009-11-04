@@ -145,9 +145,6 @@ def API_CALL(request, *args, **kwargs):
     elif desired_format == 'json':
 	mimetype="application/json"
 	data = json.dumps(retval, sort_keys=True, indent=2)
-    elif desired_format == 'py':
-	mimetype="text/plain"
-	data = pickle.dumps(retval)
 
     # else it plain worked
     el.close()
