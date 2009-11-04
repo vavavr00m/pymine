@@ -68,18 +68,6 @@
     
     
     <td>Method</td>
-    <td><a href="pymine.api.models.Item.html#item_minekey_for">item_minekey_for</a></td>
-    <td><span>given a Relation object (relation) and a depth in the range</span></td>
-  </tr><tr class="method">
-    
-    
-    <td>Method</td>
-    <td><a href="pymine.api.models.Item.html#comment_minekey_for">comment_minekey_for</a></td>
-    <td><span>given a Relation object (relation) create a new minekey to</span></td>
-  </tr><tr class="method">
-    
-    
-    <td>Method</td>
     <td><a href="pymine.api.models.Item.html#to_structure">to_structure</a></td>
     <td><span>Splices the virtual itemSize sattr into the Item structure</span></td>
   </tr><tr class="method">
@@ -105,7 +93,7 @@
     
     <td>Method</td>
     <td><a href="pymine.api.models.AbstractThing.html#update_from_request">update_from_request</a></td>
-    <td><span class="undocumented">Undocumented</span></td>
+    <td><span>update_from_request updates a (possibly blank) instance of a</span></td>
   </tr><tr class="baseclassmethod">
     
     
@@ -235,32 +223,6 @@ if self.item_type() suggests HTML, the description is returned, else a
 hardcoded default is returned<table class="fieldTable"></table></div>
         </div>
       </div><div class="function">
-        <a name="pymine.api.models.Item.item_minekey_for"></a>
-        <a name="item_minekey_for"></a>
-        <div class="functionHeader">
-        
-        def item_minekey_for(self, relation, depth):
-        
-      </div>
-        <div class="functionBody">
-          
-          <div>given a Relation object (relation) and a depth in the range 1..2, create
-a new minekey for this item and return it.<table class="fieldTable"></table></div>
-        </div>
-      </div><div class="function">
-        <a name="pymine.api.models.Item.comment_minekey_for"></a>
-        <a name="comment_minekey_for"></a>
-        <div class="functionHeader">
-        
-        def comment_minekey_for(self, relation):
-        
-      </div>
-        <div class="functionBody">
-          
-          <div>given a Relation object (relation) create a new minekey to permit 
-Comment submission for this item, and return it.<table class="fieldTable"></table></div>
-        </div>
-      </div><div class="function">
         <a name="pymine.api.models.Item.to_structure"></a>
         <a name="to_structure"></a>
         <div class="functionHeader">
@@ -277,7 +239,7 @@ Comment submission for this item, and return it.<table class="fieldTable"></tabl
         <a name="to_atom"></a>
         <div class="functionHeader">
         
-        def to_atom(self, feed_mk):
+        def to_atom(self, feed_mk, relation):
         
       </div>
         <div class="functionBody">

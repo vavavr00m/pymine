@@ -1,11 +1,17 @@
-<em>{{title}}</em>
-
-<ul>
-<li>type: {{content_type}}</li>
-<li>size: {{size}}</li>
-<li>link: {{link}}</li>
-</ul>
+({{size}} bytes, {{content_type}})
 
 <blockquote>
 {{description}}
 </blockquote>
+
+<FORM method="POST" action="{{comment_url}}">
+<br/>
+<input type="hidden" name="redirect_success" value="about:blank">
+<input type="hidden" name="format" value="xml">
+<input name="commentTitle" value="comment title" size="40" />
+<br/>
+<textarea name="commentBody" cols="66" rows="2">comment body goes here</textarea>
+<br/>
+<input type="submit" name="submit" value="submit" />
+<input type="reset" name="reset" value="reset" />
+</FORM>

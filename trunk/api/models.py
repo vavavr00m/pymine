@@ -343,6 +343,15 @@ class Minekey:
 	retval.validate() # if we futz with it, we must validate
 	return retval
 
+    def spawn_comment(self):
+	"""from this minekey, spawn a new minekey object for comment submission."""
+
+	retval = self.clone()
+	retval.method = 'put'
+	retval.depth = 1
+	retval.validate() # if we futz with it, we must validate
+	return retval
+
     def rewrite_html(self, html):
 	"""
         using the context of this minekey, rewrite the blob of HTML
@@ -428,13 +437,13 @@ class Minekey:
 
         """
 
-	# check get vs put
-	if self.method != want_method:
-	    raise RuntimeError, "minekey is wrong method: " + str(self)
-
 	# check depth
 	if self.depth <= 0:
 	    raise RuntimeError, "minekey has run out of depth: " + str(self)
+
+	# check get vs put
+	if self.method != want_method:
+	    raise RuntimeError, "minekey is wrong method: " + str(self)
 
 	# check global ToD restrictions
 	# TODO
@@ -473,12 +482,13 @@ class Minekey:
 
 	# ok, we're happy.
 
-
+##################################################################
+##################################################################
 ##################################################################
 
 class AbstractModelField:
     """
-    This is an factory class that is used to abstract-out field
+    This is an factory class that is used to abstract field
     definitions and simplify porting from Django to Google AppEngine.
     """
 
@@ -583,6 +593,8 @@ class AbstractModelField:
 	return models.FileField(**kwargs) # TODO
 
 ##################################################################
+##################################################################
+##################################################################
 
 class AbstractModel(models.Model):
     """
@@ -626,8 +638,6 @@ def r2s_int(r, rname, s):
     """
     s[rname] = int(r.POST[rname])
 
-##################################################################
-##################################################################
 ##################################################################
 
 def m2s_copy(m, mattr, s, sattr):
@@ -691,7 +701,7 @@ def s2m_bool(s, sattr, m, mattr):
 
 # The 'Comment' model has an 'item' field that is a ForeignKey
 # representing the item-being-commented-upon; in s-space this is
-# represented as the itemId being commented upon, an int.
+# represented as the itemId being commented upon, an integer.
 
 def m2s_comitem(m, mattr, s, sattr):
     """ """
@@ -711,7 +721,7 @@ def s2m_comitem(s, sattr, m, mattr):
 
 # The 'Comment' model also has a 'relation' field that is a ForeignKey
 # representing the relation-submitting-the-comment; in s-space this is
-# represented as the relationName, a string
+# represented as the relationId, an integer
 
 def m2s_comrel(m, mattr, s, sattr):
     """ """
@@ -725,7 +735,7 @@ def s2m_comrel(s, sattr, m, mattr):
     if mattr != 'relation' or sattr != 'commentRelation':
 	raise RuntimeError, "s2m_comrel is confused by %s and %s" % (sattr, mattr)
     if sattr in s:
-	m.relation = Relation.objects.get(name=s[sattr]) # RELATION LOOKUP
+	m.relation = Relation.objects.get(id=s[sattr]) # RELATION LOOKUP
 
 ##################################################################
 
@@ -849,6 +859,8 @@ def s2m_relints(s, sattr, m, mattr):
 	    else: m.interests.add(Tag.objects.get(name=x))
 
 ##################################################################
+##################################################################
+##################################################################
 
 class AbstractXattr(AbstractModel):
     """
@@ -863,6 +875,8 @@ class AbstractXattr(AbstractModel):
     class Meta:
 	abstract = True
 
+##################################################################
+##################################################################
 ##################################################################
 
 class AbstractThing(AbstractModel):
@@ -931,7 +945,7 @@ class AbstractThing(AbstractModel):
 (  'tagImplies',              'implies',          True,   r2s_string,  s2m_tagimplies,  m2s_tagimplies,  ),
 
 (  'commentItem',             'item',             False,  r2s_int,     s2m_comitem,     m2s_comitem,     ),
-(  'commentRelation',         'relation',         False,  r2s_string,  s2m_comrel,      m2s_comrel,      ),
+(  'commentRelation',         'relation',         False,  r2s_int,     s2m_comrel,      m2s_comrel,      ),
 (  'itemStatus',              'status',           False,  r2s_string,  s2m_itemstatus,  m2s_itemstatus,  ),
 
 (  'itemHasFile',             None,               True,   None,        None,            None,            ),  #see:Item()
@@ -1025,15 +1039,19 @@ class AbstractThing(AbstractModel):
 	else: # for loop; you can have a else: for a for loop in python, how cool!
 	    raise RuntimeError, "unrecognised prefix in sattr_conversion: " + sattr
 
-    # update_from_request updates a (possibly blank) instance of a
-    # model, with data that comes from a HttpRequest (ie: that is in
-    # r-space)
-
-    # it is used as a backend by new_from_request() which creates a
-    # blank model instance, then updates it from the request
+##################################################################
 
     @transaction.commit_on_success # <- rollback if it raises an exception
     def update_from_request(self, r, **kwargs):
+
+        """
+        update_from_request updates a (possibly blank) instance of a
+        model, with data that comes from a HttpRequest (ie: that is in
+        r-space)
+        
+        it is used as a backend by new_from_request() which creates a
+        blank model instance, then updates it from the request
+        """
 
 	# build a shadow structure: useful for debug/clarity
 	s = {}
@@ -1045,7 +1063,7 @@ class AbstractThing(AbstractModel):
 	    # else rip the attribute out of the request and convert to python int/str
 	    # else skip
 	    if sattr in kwargs: s[sattr] = kwargs[sattr]
-	    elif sattr in r.POST: r2s_func(r, sattr, s)
+	    elif r and sattr in r.POST: r2s_func(r, sattr, s)
 	    else: continue
 
 	    # s2m the value into the appropriate attribute
@@ -1062,7 +1080,7 @@ class AbstractThing(AbstractModel):
 
 	    # special case file-saving, assume <model>.save_uploaded_file() works
 	    if sattr in ( 'itemData' ): # ...insert others here...
-		if sattr in r.FILES:
+		if r and sattr in r.FILES:
                     # grab the uploaded file
 		    uf = r.FILES[sattr]
 
@@ -1079,7 +1097,7 @@ class AbstractThing(AbstractModel):
 	    else:
 		# repeat the above logic
 		if sattr in kwargs: s[sattr] = kwargs[sattr]
-		elif sattr in r.POST: r2s_func(r, sattr, s)
+		elif r and sattr in r.POST: r2s_func(r, sattr, s)
 		else: continue
 		s2m_func(s, sattr, self, mattr)
 		needs_save = True
@@ -1087,12 +1105,12 @@ class AbstractThing(AbstractModel):
 	# xattr processing: grab the manager
 	mgr = getattr(self, self.xattr_manager)
 
-	# scan the request environment for xattrs
-	for k, v in r.POST.iteritems():
-
+        # quick reusable routine
+        def setxattr(k, v):
+            """ """
 	    # is it an xattr?
 	    if not k.startswith(self.xattr_prefix):
-		continue
+                return
 
 	    # chop out the suffix
 	    k = k[len(self.xattr_prefix):]
@@ -1104,10 +1122,16 @@ class AbstractThing(AbstractModel):
 		xa.value = v
 		xa.save()
 
-	    # mark updates on the item <------------------------------------------------------------------ TBD: IS THIS MEANT TO BE COMMENTED OUT?
-	    #needs_save = True
+        # if we have a request, scan the request environment for xattrs
+        if r:
+            for k, v in r.POST.iteritems():
+                setxattr(k, v)
 
-	# update if we did anything
+        # update xattrs from kwargs
+        for k, v in kwargs.iteritems():
+            setxattr(k, v)
+
+	# update if we did anything requiring the model to change
 	if needs_save:
 	    self.save()
 
@@ -1116,6 +1140,8 @@ class AbstractThing(AbstractModel):
 
     # creating a new model
 
+##################################################################
+
     @classmethod # <- new_from_request is an alternative constructor, ergo: classmethod
     def new_from_request(klass, r, **kwargs):
 	""" """
@@ -1123,6 +1149,8 @@ class AbstractThing(AbstractModel):
 	margs = {}
 	m = instantiator(**margs)
 	return m.update_from_request(r, **kwargs)
+
+##################################################################
 
     # looking up a mattr from a sattr is tedious since it has to be
     # done in two places; this wraps that for convenience
@@ -1136,6 +1164,8 @@ class AbstractThing(AbstractModel):
 	else:
 	    raise RuntimeError, "lookup_mattr cannot lookup: " + sattr
 	return t
+
+##################################################################
 
     # get_sattr and delete_sattr methods: supporting
     # /api/relation/42/relationName.json and similar methods.
@@ -1174,6 +1204,8 @@ class AbstractThing(AbstractModel):
 	else:
 	    raise RuntimeError, "get_sattr asked to look up bogus sattr: " + sattr
 
+##################################################################
+
     @transaction.commit_on_success # <- rollback if it raises an exception
     def delete_sattr(self, sattr):
 	""" """
@@ -1198,6 +1230,8 @@ class AbstractThing(AbstractModel):
 	else:
 	    raise RuntimeError, "get_sattr asked to look up bogus sattr: " + sattr
 
+##################################################################
+
     # render a model into a structure suitable for serializing and
     # returning to the user.
 
@@ -1217,6 +1251,8 @@ class AbstractThing(AbstractModel):
 	    s[k] = v
 
 	return s
+
+##################################################################
 
     def get_absolute_url(self):
 	""" """
@@ -1338,6 +1374,8 @@ class LogEvent(AbstractModel):
 	return self.get_status_display()
 
 ##################################################################
+##################################################################
+##################################################################
 
 class Registry(AbstractModel):
     """key/value pairs for Mine configuration"""
@@ -1363,6 +1401,8 @@ class Registry(AbstractModel):
 	return self.key
 
 ##################################################################
+##################################################################
+##################################################################
 
 class TagXattr(AbstractXattr):
     """tag extended attributes"""
@@ -1377,6 +1417,10 @@ class TagXattr(AbstractXattr):
 
     def __unicode__(self):
 	return self.key
+
+##################################################################
+##################################################################
+##################################################################
 
 class Tag(AbstractThing):
     """This is the modelspace representation of the Tag object"""
@@ -1517,6 +1561,8 @@ class Tag(AbstractThing):
 	return retval
 
 ##################################################################
+##################################################################
+##################################################################
 
 class RelationXattr(AbstractXattr):
     """relation extended attributes"""
@@ -1531,6 +1577,10 @@ class RelationXattr(AbstractXattr):
 
     def __unicode__(self):
 	return self.key
+
+##################################################################
+##################################################################
+##################################################################
 
 class Relation(AbstractThing):
     """This is the modelspace representation of the Relation object"""
@@ -1575,6 +1625,8 @@ class Relation(AbstractThing):
 	return s
 
 ##################################################################
+##################################################################
+##################################################################
 
 class ItemXattr(AbstractXattr):
     """item extended attributes"""
@@ -1589,6 +1641,10 @@ class ItemXattr(AbstractXattr):
 
     def __unicode__(self):
 	return self.key
+
+##################################################################
+##################################################################
+##################################################################
 
 class Item(AbstractThing):
     """This is the modelspace representation of the Item object"""
@@ -1662,37 +1718,7 @@ class Item(AbstractThing):
 	elif self.item_type() == 'text/html': # if we think it's HTML
 	    return self.description
 	else:
-	    return 'pymine: no description is provided and the content is not text/html'
-
-    def item_minekey_for(self, relation, depth):
-	"""
-        given a Relation object (relation) and a depth in the range
-        1..2, create a new minekey for this item and return it.
-        """
-
-	if not depth in (1, 2):
-	    raise RuntimeError, 'will not create a minekey for Item %d with depth %d' % (self,iid, depth)
-
-	retval = Minekey(method='get',
-			 rid=relation.id,
-			 rvsn=relation.version,
-			 iid=self.id,
-			 depth=depth,
-			 )
-	return retval
-
-    def comment_minekey_for(self, relation):
-	"""
-        given a Relation object (relation) create a new minekey to
-        permit Comment submission for this item, and return it.
-        """
-	retval = Minekey(method='put',
-			 rid=relation.id,
-			 rvsn=relation.version,
-			 iid=self.id,
-			 depth=1,
-			 )
-	return retval
+	    return 'pymine: no datafile is provided and the description content is not text/html, thus this placwholder is used instead'
 
     def to_structure(self):
 	"""Splices the virtual itemSize sattr into the Item structure"""
@@ -1708,12 +1734,20 @@ class Item(AbstractThing):
 
 	return s
 
-    def to_atom(self, feed_mk):
+    def to_atom(self, feed_mk, relation):
 	"""
 	Creates the structure used in ATOM generation
 
 	See http://docs.djangoproject.com/en/dev/ref/contrib/syndication/#django.contrib.syndication.SyndicationFeed.add_item
 	"""
+
+        # faster to import this as it carries a lot of cached data
+        if not relation: 
+            relation = Relation.objects.get(id=feed_mk.rid)
+
+        # check
+        if feed_mk.rid != relation.id:
+            raise RuntimeError, 'mismatch between argument rids: %d vs %d' % (feed_mk.rid, relation.id)
 
 	item_mk = feed_mk.spawn_iid(self.id)
 
@@ -1731,14 +1765,17 @@ class Item(AbstractThing):
 
 	iteminfo['title'] = self.name
 
-        # TBD: WHAT TO DO ABOUT SIZE AND CONTENT-TYPE FOR ENCLOSURES? 
-	# third-party linkage? 
+        # TBD: what to do about size and content-type for enclosures? 
+
+	# TBD: what to do about size and content-type for third-party linkage? 
+
 	if self.feed_link:
 	    iteminfo['link'] = self.feed_link
 	else:
 	    iteminfo['link'] = item_mk.permalink()
 
 	# work out our enclosure
+
 	iteminfo['enclosure'] = \
 	    feedgenerator.Enclosure(url=iteminfo['link'],
 				    length=str(self.item_size()),
@@ -1746,18 +1783,19 @@ class Item(AbstractThing):
 
 	# work out our description
 
-	if not self.data and self.item_type() == 'text/html': ##### check this is sane for application/mine+xml
+        # if there is no data and we are of HTML type
+	if not self.data and self.item_type() == 'text/html':
 	    desc = self.item_feed_description()
-	else:
+	else: # either there is data, or we are not of HTML type
 	    tmpl = {
 		'link': iteminfo['link'],
 		'title': iteminfo['title'],
 		'size': self.item_size(),
 		'content_type': self.item_type(),
 		'description': self.item_feed_description(),
+                'comment_url': item_mk.spawn_comment().permalink()
 		}
 	    desc = render_to_string('feed/item-description.html', tmpl)
-
 
         # rewrite
 	iteminfo['description'] = item_mk.rewrite_html(desc)
@@ -1765,6 +1803,8 @@ class Item(AbstractThing):
 	# done
 	return iteminfo
 
+##################################################################
+##################################################################
 ##################################################################
 
 class CommentXattr(AbstractXattr):
@@ -1780,6 +1820,10 @@ class CommentXattr(AbstractXattr):
 
     def __unicode__(self):
 	return self.key
+
+##################################################################
+##################################################################
+##################################################################
 
 class Comment(AbstractThing):
     """This is the modelspace representation of the Comment object"""
@@ -1802,6 +1846,8 @@ class Comment(AbstractThing):
 	ordering = ['-id']
 
 ##################################################################
+##################################################################
+##################################################################
 
 class VurlXattr(AbstractXattr):
     """vurl extended attributes"""
@@ -1817,6 +1863,8 @@ class VurlXattr(AbstractXattr):
     def __unicode__(self):
 	return self.key
 
+##################################################################
+##################################################################
 ##################################################################
 
 class Vurl(AbstractThing):
@@ -1885,7 +1933,7 @@ class Vurl(AbstractThing):
 ##################################################################
 ##################################################################
 
-# this is a critical bit of code which registers all thing-classes
+# This is a CRITICAL bit of code which registers all thing-classes
 # back with the parent AbstractThing class, and populates the other
 # Thing-specific fields...
 
