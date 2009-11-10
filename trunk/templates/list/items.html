@@ -3,25 +3,26 @@
 {% block heading %}items listing{% endblock %}
 
 {% block per_hash %}
-<DIV class="listheader">
-{{hash.itemName}}
-<SPAN class="buttons">
-<A HREF="/ui/read/item/{{hash.itemId}}.html"><button>info</button></A>
-<A HREF="/api/item/{{hash.itemId}}"><button>view</button></A>
-<A HREF="/ui/update/item/{{hash.itemId}}.html"><button>edit</button></A>
-<A HREF="/ui/list/comments/{{hash.itemId}}.html"><button>comments</button></A>
-<A HREF="/ui/delete/item/{{hash.itemId}}.html"><button>delete</button></A>
-</SPAN>
-</DIV>
+<div class="listitem">
 
-<DIV class="listbody">
-{{hash.itemDescription}}
-</DIV>
+<h4>{{hash.itemName}}</h4>
 
-<UL class="notes">
-<LI>size: {{hash.itemSize}}</LI>
-<LI>type: {{hash.itemType}}</LI>
-</UL>
+<ul class="actions">
+<li><A HREF="/ui/read/item/{{hash.itemId}}.html"><button>info</button></A></li>
+<li><A HREF="/api/item/{{hash.itemId}}"><button>view</button></A></li>
+<li><A HREF="/ui/update/item/{{hash.itemId}}.html"><button>edit</button></A></li>
+<li><A HREF="/ui/list/comments/{{hash.itemId}}.html"><button>comments</button></A></li>
+<li><A HREF="/ui/delete/item/{{hash.itemId}}.html"><button>delete</button></A></li>
+</ul>
 
+<p class="listdesc">{{hash.itemDescription}}</p>
+
+<ul class="listmeta">
+<li>tags: {{hash.itemTags}}</li>
+<li>size: {{hash.itemSize}}</li>
+<li>type: {{hash.itemType}}</li>
+</ul>
+
+</div>
 {% endblock %}
 {% block per_hash_debug %}{% endblock %}
