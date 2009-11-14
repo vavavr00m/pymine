@@ -3,14 +3,9 @@
 {% block for_results %}
 {% for individual in result %}
 {% for type, hash in individual.items %}
-<DIV>
 {% block per_hash %}
 generic per_hash block
 {% endblock %}
-{% block per_hash_debug %}
-<UL>{% for key, value in hash.items %}<LI>{{key}}={{value}}</LI>{% endfor %}</UL><p/>
-{% endblock %}
-</DIV>
 {% endfor %}
 {% endfor %}
 {% endblock %}	

@@ -735,7 +735,10 @@ def s2m_comrel(s, sattr, m, mattr):
     if mattr != 'relation' or sattr != 'commentRelation':
 	raise RuntimeError, "s2m_comrel is confused by %s and %s" % (sattr, mattr)
     if sattr in s:
-	m.relation = Relation.objects.get(id=s[sattr]) # RELATION LOOKUP
+        if re.match(r'^\d+$', s[sattr]):
+            m.relation = Relation.objects.get(id=int(s[sattr]))
+        else:
+            m.relation = Relation.objects.get(name=s[sattr])
 
 ##################################################################
 
@@ -945,7 +948,7 @@ class AbstractThing(AbstractModel):
 (  'tagImplies',              'implies',          True,   r2s_string,  s2m_tagimplies,  m2s_tagimplies,  ),
 
 (  'commentItem',             'item',             False,  r2s_int,     s2m_comitem,     m2s_comitem,     ),
-(  'commentRelation',         'relation',         False,  r2s_int,     s2m_comrel,      m2s_comrel,      ),
+(  'commentRelation',         'relation',         False,  r2s_string,  s2m_comrel,      m2s_comrel,      ),
 (  'itemStatus',              'status',           False,  r2s_string,  s2m_itemstatus,  m2s_itemstatus,  ),
 
 (  'itemHasFile',             None,               True,   None,        None,            None,            ),  #see:Item()

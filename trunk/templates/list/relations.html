@@ -3,29 +3,27 @@
 {% block heading %}relations listing{% endblock %}
 
 {% block per_hash %}
+<div class=""listrelation>
 
-<DIV class="listheader">
-<A HREF="/ui/read/relation/{{hash.relationId}}.html">{{hash.relationName}}</A>
-<SPAN class="buttons">
-<A HREF="/ui/read/relation/{{hash.relationId}}.html"><button>info</button></A>
-<A HREF="/ui/update/relation/{{hash.relationId}}.html"><button>edit</button></A>
-<A HREF="/ui/delete/relation/{{hash.relationId}}.html"><button>delete</button></A>
-</SPAN>
-</DIV>
+<h4>{{hash.relationName}}</h4>
 
-<DIV class="listbody">
-{% if hash.relationDescription %} 
+<ul class="actions">
+<li><a href="{{hash.relationFeedUrl}}"><button>feed</button></a></li>
+<li><a href="/ui/read/relation/{{hash.relationId}}.html"><button>info</button></a></li>
+<li><a href="/ui/update/relation/{{hash.relationId}}.html"><button>edit</button></a></li>
+<li><a href="/ui/delete/relation/{{hash.relationId}}.html"><button>delete</button></a></li>
+</ul>
+
+{% if hash.relationDescription %}
+<p class="listdesc">
 {{hash.relationDescription}}
-{% else %}
--
+</p>
 {% endif %}
-</DIV>
 
-<UL class="notes">
-<LI>interests: {{hash.relationInterests}}</LI>
-<LI>version: {{hash.relationVersion}}</LI>
-<LI>feed: <A HREF="{{hash.relationFeedUrl}}"><button>click here</button></A></LI>
-</UL>
+<ul class="listmeta">
+<li>interests: {{hash.relationInterests}}</li>
+<li>version: {{hash.relationVersion}}</li>
+</ul>
 
+</div>
 {% endblock %}
-{% block xper_hash_debug %}{% endblock %}
