@@ -1,22 +1,32 @@
 {% extends "base/api-iterate.html" %}
+
 {% block title %}tags listing{% endblock %}
+
 {% block heading %}tags listing{% endblock %}
 
 {% block per_hash %}
-<DIV class="listheader">
-<A HREF="/ui/read/tag/{{hash.tagId}}.html">{{hash.tagName}}</A>
-<SPAN class="buttons">
-<A HREF="/ui/read/tag/{{hash.tagId}}.html"><button>info</button></A>
-<A HREF="/ui/update/tag/{{hash.tagId}}.html"><button>edit</button></A>
-<A HREF="/ui/delete/tag/{{hash.tagId}}.html"><button>delete</button></A>
-</SPAN>
-</DIV>
-<DIV class="listbody">
-{% if hash.tagImplies %}
-&rarr; {{hash.tagImplies}}
-{% else %}
--
+<div class="listtag">
+
+<h4>{{hash.tagName}}</h4>
+
+<ul class="actions">
+<li><a href="/ui/read/tag/{{hash.tagId}}.html"><button>info</button></a></li>
+<li><a href="/ui/update/tag/{{hash.tagId}}.html"><button>edit</button></a></li>
+<li><a href="/ui/delete/tag/{{hash.tagId}}.html"><button>delete</button></a></li>
+</ul>
+
+{% if hash.tagDescription %}
+<p class="listdesc">
+{{hash.tagDescription}}
+</p>
 {% endif %}
-</DIV>
+
+{% if hash.tagImplies %}
+<ul class="listmeta">
+<li>implies: {{hash.tagImplies}}</li>
+<li>clouds: {{hash.tagCloud}}</li>
+</ul>
+{% endif %}
+
+</div>
 {% endblock %}
-{% block per_hash_debug %}{% endblock %}

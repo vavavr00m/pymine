@@ -3,31 +3,28 @@
 {% block heading %}comments listing{% endblock %}
 
 {% block per_hash %}
+<div class="listcomment">
 
+<h4>{{hash.commentTitle}}</h4>
 
+<ul class="actions">
+<li><a href="/ui/read/comment/{{hash.commentId}}.html"><button>info</button></a></li>
+<li><a href="/ui/update/comment/{{hash.commentId}}.html"><button>edit</button></a></li>
+<li><a href="/ui/delete/comment/{{hash.commentId}}.html"><button>delete</button></a></li>
+<li><a href="/ui/read/item/{{hash.commentItem}}.html"><button>item {{hash.commentItem}} info</button></a></li>
+<li><a href="/api/item/{{hash.commentItem}}"><button>open item {{hash.commentItem}}</button></a></li>
+</ul>
 
-<DIV class="listheader">
-{{hash.commentTitle}}
-<SPAN class="buttons">
-<A HREF="/ui/read/comment/{{hash.commentId}}.html"><button>info</button></A>
-<A HREF="/ui/update/comment/{{hash.commentId}}.html"><button>edit</button></A>
-<A HREF="/ui/delete/comment/{{hash.commentId}}.html"><button>delete</button></A>
-<A HREF="/ui/read/item/{{hash.commentItem}}.html"><button>item {{hash.commentItem}} info</button></A>
-<A HREF="/api/item/{{hash.commentItem}}"><button>open item {{hash.commentItem}}</button></A>
-</SPAN>
-</DIV>
-
-<DIV class="listbody">
 {% if hash.commentBody %}
+<p class="listdesc">
 {{hash.commentBody}}
-{% else %}
--
+</p>
 {% endif %}
-</DIV>
 
-<UL class="notes">
-<LI>relation: {{hash.commentRelation}}</LI>
-<LI>item: {{hash.commentItem}}</LI>
-</UL>
+<ul class="listmeta">
+<LI>commentRelation: {{hash.commentRelation}}</LI>
+<LI>commentItem: {{hash.commentItem}}</LI>
+</ul>
+
+</div>
 {% endblock %}
-{% block per_hash_debug %}{% endblock %}

@@ -15,7 +15,11 @@
 <li><A HREF="/ui/delete/item/{{hash.itemId}}.html"><button>delete</button></A></li>
 </ul>
 
-<p class="listdesc">{{hash.itemDescription}}</p>
+{% if hash.itemDescription %}
+<p class="listdesc">
+{{hash.itemDescription}}
+</p>
+{% endif %}
 
 <ul class="listmeta">
 <li>tags: {{hash.itemTags}}</li>
@@ -25,4 +29,3 @@
 
 </div>
 {% endblock %}
-{% block per_hash_debug %}{% endblock %}
