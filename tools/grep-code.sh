@@ -1,3 +1,3 @@
 #!/bin/sh
-
-egrep -in "$1" *.py  */*.py  */*/*.py 
+exec egrep -in "$1" *.py */*.py */*/*.py */*/*/*.py
+exit 1

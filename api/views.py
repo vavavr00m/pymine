@@ -151,7 +151,7 @@ def get_comment_key(request, cid, sattr, *args, **kwargs):
 ## declared args: iid
 def create_comment(request, iid, *args, **kwargs):
     """create_comment(iid) returns ..."""
-    m = Comment.new_from_request(request, commentItem=int(iid)) # use kwargs to push extra information
+    m = Comment.new_from_request(request, commentItemId=int(iid)) # use kwargs to push extra information
     return construct_retval(m.to_structure())
 
 ## rest: GET /api/comment/item/IID.FMT

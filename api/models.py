@@ -703,17 +703,17 @@ def s2m_bool(s, sattr, m, mattr):
 # representing the item-being-commented-upon; in s-space this is
 # represented as the itemId being commented upon, an integer.
 
-def m2s_comitem(m, mattr, s, sattr):
+def m2s_comitemid(m, mattr, s, sattr):
     """ """
-    if mattr != 'item' or sattr != 'commentItem':
-	raise RuntimeError, "m2s_comitem is confused by %s and %s" % (sattr, mattr)
+    if mattr != 'item' or sattr != 'commentItemId':
+	raise RuntimeError, "m2s_comitemid is confused by %s and %s" % (sattr, mattr)
     x = m.item
     if x: s[sattr] = x.id
 
-def s2m_comitem(s, sattr, m, mattr):
+def s2m_comitemid(s, sattr, m, mattr):
     """ """
-    if mattr != 'item' or sattr != 'commentItem':
-	raise RuntimeError, "s2m_comitem is confused by %s and %s" % (sattr, mattr)
+    if mattr != 'item' or sattr != 'commentItemId':
+	raise RuntimeError, "s2m_comitemid is confused by %s and %s" % (sattr, mattr)
     if sattr in s:
 	m.item = Item.objects.get(id=s[sattr]) # ITEM LOOKUP
 
@@ -723,17 +723,17 @@ def s2m_comitem(s, sattr, m, mattr):
 # representing the relation-submitting-the-comment; in s-space this is
 # represented as the relationId, an integer
 
-def m2s_comrel(m, mattr, s, sattr):
+def m2s_comrelid(m, mattr, s, sattr):
     """ """
-    if mattr != 'relation' or sattr != 'commentRelation':
-	raise RuntimeError, "m2s_comrel is confused by %s and %s" % (sattr, mattr)
+    if mattr != 'relation' or sattr != 'commentRelationId':
+	raise RuntimeError, "m2s_comrelid is confused by %s and %s" % (sattr, mattr)
     x = m.relation
-    if x: s[sattr] = x.name
+    if x: s[sattr] = x.id
 
-def s2m_comrel(s, sattr, m, mattr):
+def s2m_comrelid(s, sattr, m, mattr):
     """ """
-    if mattr != 'relation' or sattr != 'commentRelation':
-	raise RuntimeError, "s2m_comrel is confused by %s and %s" % (sattr, mattr)
+    if mattr != 'relation' or sattr != 'commentRelationId':
+	raise RuntimeError, "s2m_comrelid is confused by %s and %s" % (sattr, mattr)
     if sattr in s:
         if re.match(r'^\d+$', s[sattr]):
             m.relation = Relation.objects.get(id=int(s[sattr]))
@@ -947,10 +947,12 @@ class AbstractThing(AbstractModel):
 (  'relationInterests',       'interests',        True,   r2s_string,  s2m_relints,     m2s_relints,     ),
 (  'tagImplies',              'implies',          True,   r2s_string,  s2m_tagimplies,  m2s_tagimplies,  ),
 
-(  'commentItem',             'item',             False,  r2s_int,     s2m_comitem,     m2s_comitem,     ),
-(  'commentRelation',         'relation',         False,  r2s_string,  s2m_comrel,      m2s_comrel,      ),
+(  'commentItemId',           'item',             False,  r2s_int,     s2m_comitemid,   m2s_comitemid,   ),
+(  'commentRelationId',       'relation',         False,  r2s_string,  s2m_comrelid,    m2s_comrelid,    ),
 (  'itemStatus',              'status',           False,  r2s_string,  s2m_itemstatus,  m2s_itemstatus,  ),
 
+(  'commentItemName',         None,               True,   None,        None,            None,            ),  #see:Comment()
+(  'commentRelationName',     None,               True,   None,        None,            None,            ),  #see:Comment()
 (  'itemHasFile',             None,               True,   None,        None,            None,            ),  #see:Item()
 (  'itemSize',                None,               True,   None,        None,            None,            ),  #see:Item()
 (  'vurlAbsoluteUrl',         None,               True,   None,        None,            None,            ),  #see:Vurl()
@@ -1844,6 +1846,14 @@ class Comment(AbstractThing):
 
     def __unicode__(self):
 	return self.title
+
+    def to_structure(self):
+	"""Splices the textual commentRelationName sattr into the Item structure"""
+
+	s = super(Comment, self).to_structure()
+	s['commentRelationName'] = self.relation.name
+	s['commentItemName'] = self.item.name
+	return s
 
     class Meta:
 	ordering = ['-id']
