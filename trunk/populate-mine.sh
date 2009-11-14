@@ -70,7 +70,7 @@ EOF
 # some dummy comments
 while read item who what body
 do
-    Minectl create-comment $item commentRelation=$who commentTitle=$what commentBody="$body"
+    Minectl create-comment $item commentRelationId=$who commentTitle=$what commentBody="$body"
 done <<EOF
 1 1 title1 this is body 1
 1 1 title2 this is body 2

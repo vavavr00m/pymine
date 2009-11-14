@@ -254,8 +254,8 @@ def submit_minekey(request, minekey, *args, **kwargs):
     comment_args = {
         'commentTitle': request.POST.get('commentTitle', None),
         'commentBody': request.POST.get('commentBody', None),
-        'commentItem': mk.iid,
-        'commentRelation': mk.rid,
+        'commentItemId': mk.iid,
+        'commentRelationId': mk.rid,
         }
 
     # create a Comment

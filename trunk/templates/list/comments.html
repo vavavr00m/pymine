@@ -11,8 +11,11 @@
 <li><a href="/ui/read/comment/{{hash.commentId}}.html"><button>info</button></a></li>
 <li><a href="/ui/update/comment/{{hash.commentId}}.html"><button>edit</button></a></li>
 <li><a href="/ui/delete/comment/{{hash.commentId}}.html"><button>delete</button></a></li>
-<li><a href="/ui/read/item/{{hash.commentItem}}.html"><button>item {{hash.commentItem}} info</button></a></li>
-<li><a href="/api/item/{{hash.commentItem}}"><button>open item {{hash.commentItem}}</button></a></li>
+<li><a href="/ui/read/relation/{{hash.commentRelationId}}.html"><button>relation {{hash.commentRelationId}} info</button></a> 
+({{hash.commentRelationName}})</li>
+<li><a href="/ui/read/item/{{hash.commentItemId}}.html"><button>item {{hash.commentItemId}} info</button></a>
+({{hash.commentItemName}})</li>
+<li><a href="/api/item/{{hash.commentItemId}}"><button>open item {{hash.commentItemId}}</button></a></li>
 </ul>
 
 {% if hash.commentBody %}
@@ -22,8 +25,10 @@
 {% endif %}
 
 <ul class="listmeta">
-<LI>commentRelation: {{hash.commentRelation}}</LI>
-<LI>commentItem: {{hash.commentItem}}</LI>
+<LI>commentItemId: {{hash.commentItemId}}</LI>
+<LI>commentItemName: {{hash.commentItemName}}</LI>
+<LI>commentRelationId: {{hash.commentRelationId}}</LI>
+<LI>commentRelationName: {{hash.commentRelationName}}</LI>
 </ul>
 
 </div>
