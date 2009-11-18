@@ -38,6 +38,7 @@ perms:
 
 setup:
 	sh tools/runme-setup.sh
+	make perms
 
 hard-reset: # brute-force rebuild from scratch
 	env MINE_EMAIL=$(MY_EMAIL) tools/runme-setup.sh
