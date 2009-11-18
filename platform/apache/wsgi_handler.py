@@ -22,6 +22,7 @@ import os, sys
 this_directory = os.path.dirname(__file__)
 pymine_parent = os.path.abspath(this_directory + '/../../..')
 sys.path.append(pymine_parent)
+sys.path.append(pymine_parent + '/pymine')
 
 os.environ['DJANGO_SETTINGS_MODULE'] = 'pymine.settings'
 

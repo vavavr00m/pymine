@@ -63,12 +63,12 @@ EOF
 cat > debian/DEBIAN/prerm <<EOF
 #!/bin/sh
 set -e
-if [ \( "$1" = "upgrade" -o "$1" = "remove" \) -a -L /usr/doc/pymine ]
+if [ \( "\$1" = "upgrade" -o "\$1" = "remove" \) -a -L /usr/doc/pymine ]
 then
     rm -f /usr/doc/pymine
 fi
 cd /$PYPARENT/pymine
-make clean
+make clobber
 EOF
 
 ##################################################################
@@ -76,7 +76,7 @@ EOF
 cat > debian/DEBIAN/postinst <<EOF
 #!/bin/sh
 set -e
-if [ "$1" = "configure" ]
+if [ "\$1" = "configure" ]
 then
     if [ -d /usr/doc -a ! -e /usr/doc/pymine -a -d /usr/share/doc/pymine ]; then
 	ln -sf ../share/doc/pymine /usr/doc/pymine
@@ -84,6 +84,8 @@ then
 fi
 cd /$PYPARENT/pymine
 make setup
+chown -R www-data database/
+ln -s /var/mine/pymine/platform/apache/pymine.conf /etc/apache2/sites-enabled/
 EOF
 
 ##################################################################
