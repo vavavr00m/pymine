@@ -28,7 +28,7 @@ DEBUG = True
 TEMPLATE_DEBUG = DEBUG
 
 # where we are
-MINE_PATH = os.path.dirname(__file__)
+MINE_PATH = os.path.dirname(os.path.abspath(__file__))
 
 # whose database shall we use (needs to be selectable)
 MINE_USER = "%%MINE_USER%%"
