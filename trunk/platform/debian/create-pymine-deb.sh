@@ -67,6 +67,7 @@ if [ \( "\$1" = "upgrade" -o "\$1" = "remove" \) -a -L /usr/doc/pymine ]
 then
     rm -f /usr/doc/pymine
 fi
+rm /etc/apache2/sites-enabled/pymine.conf
 cd /$PYPARENT/pymine
 make clobber
 EOF
@@ -82,10 +83,17 @@ then
 	ln -sf ../share/doc/pymine /usr/doc/pymine
     fi
 fi
+echo ""
+echo "setting up..."
 cd /$PYPARENT/pymine
 make setup
+echo ""
+echo "fixing permissions..."
 chown -R www-data database/
+echo ""
+echo "inserting config and restarting apache..."
 ln -s /var/mine/pymine/platform/apache/pymine.conf /etc/apache2/sites-enabled/
+apache2ctl graceful
 EOF
 
 ##################################################################
@@ -138,7 +146,11 @@ sudo dpkg-deb --build debian || exit 1
 
 DATESTAMP=`date "+%Y%m%d%H%M%S"`
 
-mv debian.deb $USERDIR/pymine_${PYMINE_VERSION}_${DATESTAMP}.deb
+FINALDEB=$USERDIR/pymine_${PYMINE_VERSION}-${DATESTAMP}-all.deb
+
+mv debian.deb $FINALDEB
+
+echo "done. output stored in $FINALDEB."
 
 ##################################################################
 
