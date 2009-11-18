@@ -19,7 +19,7 @@ svn checkout $MINE_REPOSITORY pymine
 
 cd pymine
 
-sh ./runme-setup.sh
+make setup
 
 exec make server
 
