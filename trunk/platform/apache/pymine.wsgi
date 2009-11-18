@@ -19,10 +19,14 @@
 
 import os, sys
 
+# everybody else does this the wrong way around...
 this_directory = os.path.dirname(__file__)
 pymine_parent = os.path.abspath(this_directory + '/../../..')
-sys.path.append(pymine_parent)
-sys.path.append(pymine_parent + '/pymine')
+pymine_root = os.path.abspath(pymine_parent + '/pymine')
+
+for x in pymine_parent, pymine_root:
+    if x not in sys.path:
+        sys.path.append(x)
 
 os.environ['DJANGO_SETTINGS_MODULE'] = 'pymine.settings'
 

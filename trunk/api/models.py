@@ -735,7 +735,9 @@ def s2m_comrelid(s, sattr, m, mattr):
     if mattr != 'relation' or sattr != 'commentRelationId':
 	raise RuntimeError, "s2m_comrelid is confused by %s and %s" % (sattr, mattr)
     if sattr in s:
-        if re.match(r'^\d+$', s[sattr]):
+        if isinstance(s[sattr], int):
+            m.relation = Relation.objects.get(id=s[sattr])
+        elif re.match(r'^\d+$', s[sattr]):
             m.relation = Relation.objects.get(id=int(s[sattr]))
         else:
             m.relation = Relation.objects.get(name=s[sattr])

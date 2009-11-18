@@ -52,10 +52,10 @@ Priority: optional
 Architecture: all
 Depends: curl, libapache2-mod-wsgi, make, python, python-beautifulsoup, python-crypto, python-django
 Maintainer: $PYMINE_MAINTAINER
-Description: The Mine Project: Pymine Development Version
- Pymine is a Django/Python tool for implementing a Mine! -
- software which enables personal data sharing via feeds and URLs
- which are different for each subscriber (unlike a traditional blog)
+Description: prototype mine! for personal data storage, hosting and sharing
+ Pymine is a Django/Python tool for implementing a Mine! - software
+ which enables personal data storage, hosting, and sharing via feeds
+ and URLs that are different and distinct for each subscriber.
 EOF
 
 ##################################################################

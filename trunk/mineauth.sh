@@ -13,10 +13,9 @@ case $1 in
     login)
 	if [ "x$2" = "x" ]
 	then 
-	    echo "enter username for mine at $MINEURL (def: pickaxe)"
+	    echo "enter username for mine at $MINEURL (default: 'pickaxe')"
 	    read MINEUSER
 	    test "x$MINEUSER" = x && MINEUSER="pickaxe"
-	    echo "confirmed: your username is '$MINEUSER'"
 	else
 	    MINEUSER="$2"
 	fi
