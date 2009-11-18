@@ -24,9 +24,9 @@ clean:
 	-rm `find . -name "*.tmp"`
 
 clobber: clean
-	-rm -r database/*/files/
-	-rm database/*/sqlite3.db
+	-rm -r database/*
 	-rm etc/cookies.txt
+	-rm settings.py
 
 perms:
 	chmod 755 `find . -type d`
