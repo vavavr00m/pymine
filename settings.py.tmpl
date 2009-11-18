@@ -34,7 +34,7 @@ MINE_PATH = os.path.dirname(os.path.abspath(__file__))
 MINE_USER = "%%MINE_USER%%"
 
 # our root url (no trailing slash)
-MINE_URL_ROOT="http://127.0.0.1:9862"
+MINE_URL_ROOT=''
 
 # A tuple that lists people who get code error notifications. When
 # DEBUG=False and a view raises an exception, Django will e-mail these
@@ -53,7 +53,7 @@ MINE_DBDIR = os.path.join(MINE_PATH, 'database', MINE_USER)
 MINE_DBDIR_FILES = os.path.join(MINE_DBDIR, 'files')
 
 MINE_SOFTWARE_NAME='pymine'
-MINE_SOFTWARE_VERSION='1.5-alpha'
+MINE_SOFTWARE_VERSION='1.6-alpha'
 MINE_API_VERSION=4
 
 LOGIN_REDIRECT_URL='/'
@@ -104,7 +104,7 @@ MEDIA_URL = '/FAKE_MEDIA_URL_DO_NOT_USE/'
 # URL prefix for admin media -- CSS, JavaScript and images. Make sure to use a
 # trailing slash.
 # Examples: "http://foo.com/media/", "/media/".
-ADMIN_MEDIA_PREFIX = '/FAKE_ADMIN_MEDIA_PREFIX_DO_NOT_USE/'
+ADMIN_MEDIA_PREFIX = '/media/'
 
 # Make this unique, and don't share it with anybody.
 SECRET_KEY = '%%MINE_SECRET%%'
