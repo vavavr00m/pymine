@@ -9,14 +9,13 @@ PYDOC=pydoc
 
 all:
 	@echo ""
+	@echo make setup - configures the installation
 	@echo make server - launches the server
 	@echo make client - opens a client on $(IP_ADDRESS_AND_PORT)
 	@echo make clean - removes cruft files
 	@echo make clobber - clean, and removes database files
 	@echo make perms - sets sane unix permissions on the installation
 	@echo make hard-reset - automated nuke-and-rebuild for developers
-	@echo ""
-	@echo "...and have you executed runme-setup.sh ?"
 	@echo ""
 
 clean:
@@ -37,9 +36,11 @@ perms:
 	chmod 755 `find . -name "*.pl"`
 	chmod 755 `find . -name "*.sh"`
 
+setup:
+	sh tools/runme-setup.sh
 
 hard-reset: # brute-force rebuild from scratch
-	env MINE_EMAIL=$(MY_EMAIL) ./runme-setup.sh
+	env MINE_EMAIL=$(MY_EMAIL) tools/runme-setup.sh
 	make server
 
 ##################################################################

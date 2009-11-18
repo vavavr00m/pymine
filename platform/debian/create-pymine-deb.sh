@@ -79,7 +79,7 @@ then
     fi
 fi
 cd /$PYPARENT/pymine
-sh runme-setup.sh
+make setup
 EOF
 
 ##################################################################
