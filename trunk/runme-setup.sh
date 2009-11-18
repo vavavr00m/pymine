@@ -1,7 +1,11 @@
 #!/bin/sh
 
+echo ""
+echo setting up pymine in `pwd` via $0 $@
+echo ""
+
 MINE_USER=$USER
-MINE_SUPERUSER=mineroot
+MINE_SUPERUSER=pickaxe
 MINE_DB=database/$MINE_USER/sqlite3.db
 
 YESNO() {
