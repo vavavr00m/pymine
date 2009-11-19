@@ -1552,18 +1552,25 @@ class Tag(AbstractThing):
 	This method overrides AbstractThing.update_from_request() and
 	acts as a hook to detect changes in the Tag implications that
 	might trigger a recalculation of the Tag cloud.
+
+        There is a performance impact here which needs to be
+        considered; we *ought* to determine whether something has
+        changed that would require the cloud to be recomputed; but
+        maybe slightly overzealous refreshing will be good for a
+        while... having flushed out a bug where an Item with no
+        implications was not clouding itself, the simplicity of just
+        recomputing every time is attractive, especially with the
+        likely shallow hierarchies of implication, if any at all...
+
 	"""
 
-	if 'tagImplies' in r.REQUEST:
-	    tgraph = self.__expand_cloud_graph()
-	else:
-	    tgraph = None
+        tgraph = self.__expand_cloud_graph()
 
 	retval = super(Tag, self).update_from_request(r, **kwargs)
 
-	if tgraph:
-	    self.__update_cloud_graph(tgraph)
-	    retval = Tag.objects.get(id=retval.id) # reload, possibly dirty
+        self.__update_cloud_graph(tgraph)
+
+        retval = Tag.objects.get(id=retval.id) # reload, possibly dirty
 
 	return retval
 

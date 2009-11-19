@@ -21,12 +21,12 @@
 </p>
 {% endif %}
 
-{% if hash.tagImplies %}
 <ul class="listmeta">
+{% if hash.tagImplies %}
 <li>implies: {{hash.tagImplies}}</li>
+{% endif %}
 <li>clouds: {{hash.tagCloud}}</li>
 </ul>
-{% endif %}
 
 </div>
 {% endblock %}
