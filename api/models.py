@@ -349,8 +349,6 @@ class Minekey:
 
         if self.request:
             link = self.request.build_absolute_uri(link)
-        else:
-            print 'generating permalink without request context for %s' % str(self)
 
 	return link
 
@@ -1791,9 +1789,9 @@ class Item(AbstractThing):
 
 	iteminfo = {}
 
-	iteminfo['author_email'] = None # TBD?
-	iteminfo['author_link'] = None # TBD?
-	iteminfo['author_name'] = None # TBD?
+	iteminfo['author_email'] = None # TBD? VALIDATION?
+	iteminfo['author_link'] = None # TBD? VALIDATION?
+	iteminfo['author_name'] = None # TBD? VALIDATION?
 	iteminfo['categories'] = None # TBD?
 	iteminfo['comments'] = None # TBD?
 	iteminfo['item_copyright'] = None # TBD?
