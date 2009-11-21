@@ -55,7 +55,7 @@ def generate_feed(request, mkencoded, *args, **kwargs):
 
     slicesize = 100
 
-    mk = Minekey.parse(mkencoded)
+    mk = Minekey.parse(mkencoded, request=request)
 
     # who are we looking at?
     relation = Relation.objects.select_related(depth=2).get(id=mk.rid)
@@ -150,7 +150,7 @@ def generate_feed(request, mkencoded, *args, **kwargs):
     feedinfo['language'] = None
     feedinfo['link'] = mk.permalink()
     feedinfo['subtitle'] = None
-    feedinfo['title'] = 'test feed'
+    feedinfo['title'] = '%s feed' % relation.name
     feedinfo['ttl'] = None
 
     fd_tmpl = { # not everything/identical
@@ -175,8 +175,6 @@ def generate_feed(request, mkencoded, *args, **kwargs):
 
     return HttpResponse(feed.writeString('UTF-8'), mimetype='application/atom+xml')
 
-
-
 # TBD TO BE DONE - 
 
 # DOES THE FEED GENERATION BELONG HERE?  SHOULD IT NOT BE SPLIT INTO
@@ -193,8 +191,6 @@ def generate_feed(request, mkencoded, *args, **kwargs):
 # BREAK SLICESIZE OUT INTO A SETTING?  EVENTUALLY MAKE IT
 # SINCE-LAST-ACCESS BASED RETREIVAL?
 
-
-
 ##################################################################
 ##################################################################
 ##################################################################
@@ -207,7 +203,7 @@ def read_minekey(request, minekey, *args, **kwargs):
 
     # big wrapper for all possible exceptions
     try:
-	mk = Minekey.parse(minekey)
+	mk = Minekey.parse(minekey, request=request)
 	mk.validate_against(request, 'get')
 
 	# deal with it
@@ -241,7 +237,7 @@ def submit_minekey(request, minekey, *args, **kwargs):
     """
     
     # check the minekey
-    mk = Minekey.parse(minekey)
+    mk = Minekey.parse(minekey, request=request)
     mk.validate_against(request, 'put')
 
     # get/check the output format
@@ -316,7 +312,7 @@ def field_minekey(request, *args, **kwargs):
 
     if not minekey: raise RuntimeError, 'no minekey provided in POST data'
 
-    mk = Minekey.parse(minekey)
+    mk = Minekey.parse(minekey, request=request)
     
     if mk.method == 'get':
         return read_minekey(request, minekey, *args, **kwargs)

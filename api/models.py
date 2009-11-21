@@ -187,8 +187,15 @@ class Minekey:
 	self.iid = kwargs.get('iid', -1)
 	self.depth = kwargs.get('depth', -1)
 
+        # request data is only needed to perform permalink()
+        self.request = kwargs.get('request', None)
+
         # abort immediately if still illegal
         self.validate()
+
+    def set_request(self, request):
+        """Pokes a request into this and all descendent Minekeys, so that they can permalink()"""
+        self.request = request
 
     @classmethod
     def b64e(klass, x):
@@ -249,11 +256,12 @@ class Minekey:
 			 rvsn=self.rvsn,
 			 iid=self.iid,
 			 depth=self.depth,
+                         request=self.request,
 			 )
 	return retval
 
     @classmethod
-    def parse(klass, external):
+    def parse(klass, external, **kwargs):
 	"""
         classmethod and pseudo-constructor; decrypt the b64-encoded
         minekey ('external') and parse it, and then validate the
@@ -292,12 +300,15 @@ class Minekey:
 	if Xhash != hash2:
 	    raise RuntimeError, "failed hash validation"
 
+        # note that we do not do the stupid thing and just splat
+        # "**kwargs" on the end ...
 	retval = Minekey(method=Xmethod,
 			 rid=Xrid,
 			 rvsn=Xrvsn,
 			 iid=Xiid,
 			 depth=Xdepth,
-			 )
+			 request=kwargs.get('request', None), # security
+                         )
 	return retval
 
     def __str__(self):
@@ -328,10 +339,20 @@ class Minekey:
 	return external
 
     def permalink(self):
-	"""takes the result of self.key() and embeds / returns it in a
-        permalink string for this mine."""
 
-	return "%s/get/%s" % (settings.MINE_URL_ROOT, self.key())
+	"""takes the result of self.key() and embeds / returns it in a
+        permalink string for this mine; requires self.request to be
+        set or set_request() to have been performed on this Minekey or
+        one of its ancestors"""
+
+        link = "/get/%s" % self.key()
+
+        if self.request:
+            link = self.request.build_absolute_uri(link)
+        else:
+            print 'generating permalink without request context for %s' % str(self)
+
+	return link
 
     def spawn_iid(self, iid):
 	"""from this minekey, spawn a new minekey object for the same
@@ -1618,16 +1639,19 @@ class Relation(AbstractThing):
     def __unicode__(self):
 	return self.name
 
-    def feed_minekey(self):
+    def feed_minekey(self, **kwargs):
 	""" """
 	retval = Minekey(method='get',
 			 rid=self.id,
 			 rvsn=self.version,
 			 iid=0,
 			 depth=3,
+                         request=kwargs.get('request', None),
 			 )
 	return retval
 
+
+    # TBD: GET A REQUEST INTO HERE IN ORDER TO POPULATE FEED_MINEKEY WITH IT?
     def to_structure(self):
 	"""
 	Splices virtual sattrs into the Relation structure

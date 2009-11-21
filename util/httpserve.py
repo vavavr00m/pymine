@@ -188,7 +188,7 @@ def httpserve_path(request, orig_path):
 
     # if the cleaning has changed anything, force user to go around again
     if url_path != orig_path:
-	redirect_path = "%s/pub/%s" % (settings.MINE_URL_ROOT, url_path)
+	redirect_path = "/pub/%s" % url_path
 	return HttpResponseRedirect(redirect_path)
 
     # if there's a url_path
@@ -206,7 +206,7 @@ def httpserve_path(request, orig_path):
     if os.path.isdir(file_path):
 	# redirect if a trailing slash is missing
 	if not (url_path == '' or url_path.endswith('/')):
-	    redirect_path = "%s/pub/%s/" % (settings.MINE_URL_ROOT, url_path)
+	    redirect_path = "/pub/%s/" % url_path
 	    return HttpResponseRedirect(redirect_path)
 
 	# look for an index
