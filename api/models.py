@@ -136,10 +136,6 @@ class Minekey:
     aes_key = '1234567890123456' # 128 bits
     aes_iv =  'abcdefghijklmnop' # 128 bits
 
-    # rewriter-regexp; the rewriter will sanitycheck balance of
-    # quotation marks / that they are the same on each side
-    html_re = re.compile(r"""(SRC|HREF)\s*=\s*(['"]?)(\d+)([^\s\>]*)""", re.IGNORECASE)
-
     def __init__(self, **kwargs):
 	"""
         Populates a Minekey with 5 items of information:
@@ -371,6 +367,11 @@ class Minekey:
 	retval.validate() # if we futz with it, we must validate
 	return retval
 
+    # rewriter-regexp; the rewriter will sanitycheck balance of
+    # quotation marks / that they are the same on each side
+
+    html_re = re.compile(r"""(SRC|HREF)\s*=\s*(['"]?)((/api/item/)?\d+)([^\s\>]*)""", re.IGNORECASE)
+
     def rewrite_html(self, html):
 	"""
         using the context of this minekey, rewrite the blob of HTML
@@ -394,7 +395,7 @@ class Minekey:
 	    action = mo.group(1)
 	    fq = mo.group(2)
 	    iid = int(mo.group(3))
-	    lq = mo.group(4)
+	    lq = mo.group(5)
 	    if fq != lq: return mo.group(0)
 	    return '%s="%s"' % (action, self.spawn_iid(iid).permalink())
 
