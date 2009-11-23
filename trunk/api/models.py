@@ -969,81 +969,91 @@ class AbstractThing(AbstractModel):
 
     sattr_conversion_table = (
 
+# alec: | cts -k 5
 #  SATTR                          MATTR                        DEFER?  R2S          S2M              M2S
-(  'commentItemName',             None,                        True,   None,        None,            None,            ),  #see:Comment()
-(  'commentRelationName',         None,                        True,   None,        None,            None,            ),  #see:Comment()
-(  'itemHasFile',                 None,                        True,   None,        None,            None,            ),  #see:Item()
-(  'itemSize',                    None,                        True,   None,        None,            None,            ),  #see:Item()
-(  'vurlAbsoluteUrl',             None,                        True,   None,        None,            None,            ),  #see:Vurl()
-(  'vurlKey',                     None,                        True,   None,        None,            None,            ),  #see:Vurl()
-(  'vurlPathLong',                None,                        True,   None,        None,            None,            ),  #see:Vurl()
-(  'vurlPathShort',               None,                        True,   None,        None,            None,            ),  #see:Vurl()
+(  'commentItemName',            None,                       True,   None,        None,            None,            ),  #see:Comment()
+(  'commentRelationName',        None,                       True,   None,        None,            None,            ),  #see:Comment()
+(  'itemHasFile',                None,                       True,   None,        None,            None,            ),  #see:Item()
+(  'itemSize',                   None,                       True,   None,        None,            None,            ),  #see:Item()
+(  'vurlAbsoluteUrl',            None,                       True,   None,        None,            None,            ),  #see:Vurl()
+(  'vurlKey',                    None,                       True,   None,        None,            None,            ),  #see:Vurl()
+(  'vurlPathLong',               None,                       True,   None,        None,            None,            ),  #see:Vurl()
+(  'vurlPathShort',              None,                       True,   None,        None,            None,            ),  #see:Vurl()
 
-(  'commentIsDeleted',            'is_deleted',                False,  None,        None,            m2s_bool,        ),
-(  'itemIsDeleted',               'is_deleted',                False,  None,        None,            m2s_bool,        ),
-(  'relationIsDeleted',           'is_deleted',                False,  None,        None,            m2s_bool,        ),
-(  'relationIsUntrusted',         'is_untrusted',              False,  None,        None,            m2s_bool,        ),
-(  'tagIsDeleted',                'is_deleted',                False,  None,        None,            m2s_bool,        ),
-(  'vurlIsDeleted',               'is_deleted',                False,  None,        None,            m2s_bool,        ),
+(  'commentIsDeleted',           'is_deleted',               False,  None,        None,            m2s_bool,        ),
+(  'itemIsDeleted',              'is_deleted',               False,  None,        None,            m2s_bool,        ),
+(  'relationIsDeleted',          'is_deleted',               False,  None,        None,            m2s_bool,        ),
+(  'relationIsUntrusted',        'is_untrusted',             False,  None,        None,            m2s_bool,        ),
+(  'tagIsDeleted',               'is_deleted',               False,  None,        None,            m2s_bool,        ),
+(  'vurlIsDeleted',              'is_deleted',               False,  None,        None,            m2s_bool,        ),
 
-(  'itemCiphertextDigest',        'ciphertext_digest',         True,   None,        None,            m2s_copy,        ),
-(  'itemCiphertextDigestMethod',  'ciphertext_digest_method',  True,   None,        None,            m2s_copy,        ),
-(  'itemCiphertextKey',           'ciphertext_key',            True,   None,        None,            m2s_copy,        ),
-(  'itemCiphertextMethod',        'ciphertext_method',         True,   None,        None,            m2s_copy,        ),
+(  'commentCiphertextDigest',    'ciphertext_digest',        True,   None,        None,            m2s_copy,        ),
+(  'commentDigestMethod',        'digest_method',            True,   None,        None,            m2s_copy,        ),
+(  'commentEncryptionKey',       'encryption_key',           True,   None,        None,            m2s_copy,        ),
+(  'commentEncryptionMethod',    'encryption_method',        True,   None,        None,            m2s_copy,        ),
+(  'itemCiphertextDigest',       'ciphertext_digest',        True,   None,        None,            m2s_copy,        ),
+(  'itemDigestMethod',           'digest_method',            True,   None,        None,            m2s_copy,        ),
+(  'itemEncryptionKey',          'encryption_key',           True,   None,        None,            m2s_copy,        ),
+(  'itemEncryptionMethod',       'encryption_method',        True,   None,        None,            m2s_copy,        ),
+(  'itemThumbCiphertextDigest',  'thumb_ciphertext_digest',  True,   None,        None,            m2s_copy,        ),
 
-(  'commentCreated',              'created',                   False,  None,        None,            m2s_date,        ),
-(  'commentLastModified',         'last_modified',             False,  None,        None,            m2s_date,        ),
-(  'itemCreated',                 'created',                   False,  None,        None,            m2s_date,        ),
-(  'itemLastModified',            'last_modified',             False,  None,        None,            m2s_date,        ),
-(  'relationCreated',             'created',                   False,  None,        None,            m2s_date,        ),
-(  'relationLastModified',        'last_modified',             False,  None,        None,            m2s_date,        ),
-(  'tagCreated',                  'created',                   False,  None,        None,            m2s_date,        ),
-(  'tagLastModified',             'last_modified',             False,  None,        None,            m2s_date,        ),
-(  'vurlCreated',                 'created',                   False,  None,        None,            m2s_date,        ),
-(  'vurlLastModified',            'last_modified',             False,  None,        None,            m2s_date,        ),
+(  'commentCreated',             'created',                  False,  None,        None,            m2s_date,        ),
+(  'commentLastModified',        'last_modified',            False,  None,        None,            m2s_date,        ),
+(  'itemCreated',                'created',                  False,  None,        None,            m2s_date,        ),
+(  'itemLastModified',           'last_modified',            False,  None,        None,            m2s_date,        ),
+(  'relationCreated',            'created',                  False,  None,        None,            m2s_date,        ),
+(  'relationLastModified',       'last_modified',            False,  None,        None,            m2s_date,        ),
+(  'tagCreated',                 'created',                  False,  None,        None,            m2s_date,        ),
+(  'tagLastModified',            'last_modified',            False,  None,        None,            m2s_date,        ),
+(  'vurlCreated',                'created',                  False,  None,        None,            m2s_date,        ),
+(  'vurlLastModified',           'last_modified',            False,  None,        None,            m2s_date,        ),
 
-(  'tagCloud',                    'cloud',                     True,   None,        None,            m2s_tagcloud,    ),
-(  'itemData',                    'data',                      True,   None,        s2m_dummy,       None,            ),
-(  'itemThumb',                   'thumb',                     True,   None,        s2m_dummy,       None,            ),
+(  'tagCloud',                   'cloud',                    True,   None,        None,            m2s_tagcloud,    ),
 
-(  'commentItemId',               'item',                      False,  r2s_int,     s2m_comitemid,   m2s_comitemid,   ),
-(  'commentId',                   'id',                        False,  r2s_int,     s2m_verbatim,    m2s_copy,        ),
-(  'itemId',                      'id',                        False,  r2s_int,     s2m_verbatim,    m2s_copy,        ),
-(  'relationId',                  'id',                        False,  r2s_int,     s2m_verbatim,    m2s_copy,        ),
-(  'relationVersion',             'version',                   False,  r2s_int,     s2m_verbatim,    m2s_copy,        ),
-(  'tagId',                       'id',                        False,  r2s_int,     s2m_verbatim,    m2s_copy,        ),
-(  'thingId',                     'id',                        False,  r2s_int,     s2m_verbatim,    m2s_copy,        ),
-(  'vurlId',                      'id',                        False,  r2s_int,     s2m_verbatim,    m2s_copy,        ),
+(  'commentData',                'data',                     True,   None,        s2m_dummy,       None,            ),
+(  'itemData',                   'data',                     True,   None,        s2m_dummy,       None,            ),
+(  'itemThumb',                  'thumb',                    True,   None,        s2m_dummy,       None,            ),
 
-(  'commentRelationId',           'relation',                  False,  r2s_string,  s2m_comrelid,    m2s_comrelid,    ),
+(  'commentItemId',              'item',                     False,  r2s_int,     s2m_comitemid,   m2s_comitemid,   ),
 
-(  'itemHideAfter',               'hide_after',                False,  r2s_string,  s2m_date,        m2s_date,        ),
-(  'itemHideBefore',              'hide_before',               False,  r2s_string,  s2m_date,        m2s_date,        ),
-(  'relationEmbargoAfter',        'embargo_after',             False,  r2s_string,  s2m_date,        m2s_date,        ),
-(  'relationEmbargoBefore',       'embargo_before',            False,  r2s_string,  s2m_date,        m2s_date,        ),
+(  'commentId',                  'id',                       False,  r2s_int,     s2m_verbatim,    m2s_copy,        ),
+(  'itemId',                     'id',                       False,  r2s_int,     s2m_verbatim,    m2s_copy,        ),
+(  'relationId',                 'id',                       False,  r2s_int,     s2m_verbatim,    m2s_copy,        ),
+(  'relationVersion',            'version',                  False,  r2s_int,     s2m_verbatim,    m2s_copy,        ),
+(  'tagId',                      'id',                       False,  r2s_int,     s2m_verbatim,    m2s_copy,        ),
+(  'thingId',                    'id',                       False,  r2s_int,     s2m_verbatim,    m2s_copy,        ),
+(  'vurlId',                     'id',                       False,  r2s_int,     s2m_verbatim,    m2s_copy,        ),
 
-(  'itemStatus',                  'status',                    False,  r2s_string,  s2m_itemstatus,  m2s_itemstatus,  ),
+(  'commentRelationId',          'relation',                 False,  r2s_string,  s2m_comrelid,    m2s_comrelid,    ),
 
-(  'itemTags',                    'tags',                      True,   r2s_string,  s2m_itemtags,    m2s_itemtags,    ),
-(  'relationInterests',           'interests',                 True,   r2s_string,  s2m_relints,     m2s_relints,     ),
+(  'itemHideAfter',              'hide_after',               False,  r2s_string,  s2m_date,        m2s_date,        ),
+(  'itemHideBefore',             'hide_before',              False,  r2s_string,  s2m_date,        m2s_date,        ),
+(  'relationEmbargoAfter',       'embargo_after',            False,  r2s_string,  s2m_date,        m2s_date,        ),
+(  'relationEmbargoBefore',      'embargo_before',           False,  r2s_string,  s2m_date,        m2s_date,        ),
 
-(  'commentTitle',                'title',                     False,  r2s_string,  s2m_stripstr,    m2s_copy,        ),
-(  'itemFeedLink',                'feed_link',                 False,  r2s_string,  s2m_stripstr,    m2s_copy,        ),
-(  'itemName',                    'name',                      False,  r2s_string,  s2m_stripstr,    m2s_copy,        ),
-(  'itemThumbType',               'thumb_type',                False,  r2s_string,  s2m_stripstr,    m2s_copy,        ),
-(  'itemType',                    'type',                      False,  r2s_string,  s2m_stripstr,    m2s_copy,        ),
-(  'relationName',                'name',                      False,  r2s_string,  s2m_stripstr,    m2s_copy,        ),
-(  'relationNetworkPattern',      'network_pattern',           False,  r2s_string,  s2m_stripstr,    m2s_copy,        ),
-(  'tagName',                     'name',                      False,  r2s_string,  s2m_stripstr,    m2s_copy,        ),
-(  'vurlLink',                    'link',                      False,  r2s_string,  s2m_stripstr,    m2s_copy,        ),
-(  'vurlName',                    'name',                      False,  r2s_string,  s2m_stripstr,    m2s_copy,        ),
+(  'itemStatus',                 'status',                   False,  r2s_string,  s2m_itemstatus,  m2s_itemstatus,  ),
 
-(  'tagImplies',                  'implies',                   True,   r2s_string,  s2m_tagimplies,  m2s_tagimplies,  ),
+(  'itemTags',                   'tags',                     True,   r2s_string,  s2m_itemtags,    m2s_itemtags,    ),
 
-(  'commentBody',                 'body',                      False,  r2s_string,  s2m_verbatim,    m2s_copy,        ),
-(  'itemDescription',             'description',               False,  r2s_string,  s2m_verbatim,    m2s_copy,        ),
-(  'relationDescription',         'description',               False,  r2s_string,  s2m_verbatim,    m2s_copy,        ),
-(  'tagDescription',              'description',               False,  r2s_string,  s2m_verbatim,    m2s_copy,        ),
+(  'relationInterests',          'interests',                True,   r2s_string,  s2m_relints,     m2s_relints,     ),
+
+(  'commentTitle',               'title',                    False,  r2s_string,  s2m_stripstr,    m2s_copy,        ),
+(  'itemFeedLink',               'feed_link',                False,  r2s_string,  s2m_stripstr,    m2s_copy,        ),
+(  'itemName',                   'name',                     False,  r2s_string,  s2m_stripstr,    m2s_copy,        ),
+(  'itemThumbType',              'thumb_type',               False,  r2s_string,  s2m_stripstr,    m2s_copy,        ),
+(  'itemType',                   'type',                     False,  r2s_string,  s2m_stripstr,    m2s_copy,        ),
+(  'relationName',               'name',                     False,  r2s_string,  s2m_stripstr,    m2s_copy,        ),
+(  'relationNetworkPattern',     'network_pattern',          False,  r2s_string,  s2m_stripstr,    m2s_copy,        ),
+(  'tagName',                    'name',                     False,  r2s_string,  s2m_stripstr,    m2s_copy,        ),
+(  'vurlLink',                   'link',                     False,  r2s_string,  s2m_stripstr,    m2s_copy,        ),
+(  'vurlName',                   'name',                     False,  r2s_string,  s2m_stripstr,    m2s_copy,        ),
+
+(  'tagImplies',                 'implies',                  True,   r2s_string,  s2m_tagimplies,  m2s_tagimplies,  ),
+
+(  'commentBody',                'body',                     False,  r2s_string,  s2m_verbatim,    m2s_copy,        ),
+(  'itemDescription',            'description',              False,  r2s_string,  s2m_verbatim,    m2s_copy,        ),
+(  'relationDescription',        'description',              False,  r2s_string,  s2m_verbatim,    m2s_copy,        ),
+(  'tagDescription',             'description',              False,  r2s_string,  s2m_verbatim,    m2s_copy,        ),
 )
 
     # A word about deferral: some s2m conversions can only take place
@@ -1611,14 +1621,13 @@ class Item(AbstractThing):
     item_for_relations = AbstractModelField.reflist(Relation, pivot='items_explicitly_for', required=False)
     item_not_relations = AbstractModelField.reflist(Relation, pivot='items_explicitly_not', required=False)
 
-    encryption_key = AbstractModelField.text(required=False)
-    encryption_method = AbstractModelField.text(required=False)
-    digest_method = AbstractModelField.text(required=False)
-
     feed_link = AbstractModelField.url(required=False)
 
     data = AbstractModelField.file(storage=item_fss, upload_to=fss_yyyymmdd, required=False)
     type = AbstractModelField.string(required=False)
+    encryption_method = AbstractModelField.text(required=False)
+    encryption_key = AbstractModelField.text(required=False)
+    digest_method = AbstractModelField.text(required=False)
     ciphertext_digest = AbstractModelField.text(required=False)
 
     thumb = AbstractModelField.file(storage=thumb_fss, upload_to=fss_yyyymmdd, required=False) # FOR ONCE CAN WE ASSUME PNG?
@@ -1803,6 +1812,12 @@ class Comment(AbstractThing):
 
     # to permit relation uploads, so long as relation.is_untrusted == false
     data = AbstractModelField.file(storage=comment_fss, upload_to=fss_yyyymmdd, required=False)
+
+    # crypto
+    encryption_method = AbstractModelField.text(required=False)
+    encryption_key = AbstractModelField.text(required=False)
+    digest_method = AbstractModelField.text(required=False)
+    ciphertext_digest = AbstractModelField.text(required=False)
 
     def __unicode__(self):
 	return self.title
