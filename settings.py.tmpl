@@ -47,11 +47,13 @@ ADMINS = (
 ##################################################################
 
 MINE_DBDIR = os.path.join(MINE_PATH, 'database', MINE_USER)
+MINE_DBDIR_COMMENTS = os.path.join(MINE_DBDIR, 'comments')
 MINE_DBDIR_FILES = os.path.join(MINE_DBDIR, 'files')
+MINE_DBDIR_THUMBS = os.path.join(MINE_DBDIR, 'thumbs')
 
 MINE_SOFTWARE_NAME='pymine'
-MINE_SOFTWARE_VERSION='1.6-alpha'
-MINE_API_VERSION=4
+MINE_SOFTWARE_VERSION='1.7a'
+MINE_API_VERSION=5
 
 LOGIN_REDIRECT_URL='/'
 LOGIN_URL='/login.html'

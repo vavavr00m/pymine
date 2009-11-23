@@ -93,13 +93,19 @@ import pymine.util.base58 as base58
 # using pycrypto 2.0.1
 # http://www.amk.ca/python/code/crypto (old, tarball, works)
 # http://www.pycrypto.org/ (new)
+
 from Crypto.Cipher import AES
 
 ##################################################################
 
 # magic storage for database items
 
-item_file_storage = FileSystemStorage(location = settings.MINE_DBDIR_FILES)
+item_fss = FileSystemStorage(location = settings.MINE_DBDIR_FILES)
+thumb_fss = FileSystemStorage(location = settings.MINE_DBDIR_THUMBS)
+comment_fss = FileSystemStorage(location = settings.MINE_DBDIR_COMMENTS)
+fss_yyyymmdd = '%Y-%m/%d'
+
+##################################################################
 
 # choices for the item status
 
@@ -138,43 +144,43 @@ class Minekey:
 
     def __init__(self, **kwargs):
 	"""
-        Populates a Minekey with 5 items of information:
+	Populates a Minekey with 5 items of information:
 
-        method=, rid=, rvsn=, iid=, depth=
+	method=, rid=, rvsn=, iid=, depth=
 
-        method = 'get' or 'put'; these are somewhat analogous to GET
-        and POST in HTTP, but we override the latter for REST purposes
-        because in the subscriber interface a Minekey can arrive by
-        either GET or POST methods.  Note that there is no 'delete' or
-        anything exotic like that.
+	method = 'get' or 'put'; these are somewhat analogous to GET
+	and POST in HTTP, but we override the latter for REST purposes
+	because in the subscriber interface a Minekey can arrive by
+	either GET or POST methods.  Note that there is no 'delete' or
+	anything exotic like that.
 
-        rid = id / primary key of the Relation for whom this minekey
-        exists; this provides an identity for the incoming key,
-        against which we can search Item tags and so forth in order to
-        generate a feed.
+	rid = id / primary key of the Relation for whom this minekey
+	exists; this provides an identity for the incoming key,
+	against which we can search Item tags and so forth in order to
+	generate a feed.
 
-        rvsn = relation.version for rid; this is a security check; if
-        minekey.rvsn != Relation(id=rid).version then the request will
-        fail; by this means you can invalidate all issued minekeys for
-        a given relation without deleting it.
+	rvsn = relation.version for rid; this is a security check; if
+	minekey.rvsn != Relation(id=rid).version then the request will
+	fail; by this means you can invalidate all issued minekeys for
+	a given relation without deleting it.
 
-        iid = id / primary key of the Item which this minekey
-        references; if iid == 0 then the item is the feed for the
-        Relation.
+	iid = id / primary key of the Item which this minekey
+	references; if iid == 0 then the item is the feed for the
+	Relation.
 
-        depth = integer; this is a value in the range 0..3, although
-        only values 1..3 are functional.  The 'depth' field tracks how
-        far a subscriber can link-chase into a mine.
+	depth = integer; this is a value in the range 0..3, although
+	only values 1..3 are functional.  The 'depth' field tracks how
+	far a subscriber can link-chase into a mine.
 
-        A feed URL will be iid=0 and depth=3
+	A feed URL will be iid=0 and depth=3
 
-        Item permalinks in the feed will have iid=N and depth=2
+	Item permalinks in the feed will have iid=N and depth=2
 
-        Links in HTML Items will be rewritten as iid=N and depth=1
+	Links in HTML Items will be rewritten as iid=N and depth=1
 
-        Depth=0 is legal precisely so that it can be trapped in the
-        mine auditing records, but it will yield a 404
-        """
+	Depth=0 is legal precisely so that it can be trapped in the
+	mine auditing records, but it will yield a 404
+	"""
 
 	# flush through with invalid data
 	self.method = kwargs.get('method', None)
@@ -183,15 +189,15 @@ class Minekey:
 	self.iid = kwargs.get('iid', -1)
 	self.depth = kwargs.get('depth', -1)
 
-        # request data is only needed to perform permalink()
-        self.request = kwargs.get('request', None)
+	# request data is only needed to perform permalink()
+	self.request = kwargs.get('request', None)
 
-        # abort immediately if still illegal
-        self.validate()
+	# abort immediately if still illegal
+	self.validate()
 
     def set_request(self, request):
-        """Pokes a request into this and all descendent Minekeys, so that they can permalink()"""
-        self.request = request
+	"""Pokes a request into this and all descendent Minekeys, so that they can permalink()"""
+	self.request = request
 
     @classmethod
     def b64e(klass, x):
@@ -252,19 +258,19 @@ class Minekey:
 			 rvsn=self.rvsn,
 			 iid=self.iid,
 			 depth=self.depth,
-                         request=self.request,
+			 request=self.request,
 			 )
 	return retval
 
     @classmethod
     def parse(klass, external, **kwargs):
 	"""
-        classmethod and pseudo-constructor; decrypt the b64-encoded
-        minekey ('external') and parse it, and then validate the
-        results of parsing to permit use in data access.
+	classmethod and pseudo-constructor; decrypt the b64-encoded
+	minekey ('external') and parse it, and then validate the
+	results of parsing to permit use in data access.
 
-        throws exception on something being wrong.
-        """
+	throws exception on something being wrong.
+	"""
 
 	encrypted = klass.b64d(external.encode('utf-8')) # stuff comes from URLs in UNICODE
 
@@ -296,23 +302,23 @@ class Minekey:
 	if Xhash != hash2:
 	    raise RuntimeError, "failed hash validation"
 
-        # note that we do not do the stupid thing and just splat
-        # "**kwargs" on the end ...
+	# note that we do not do the stupid thing and just splat
+	# "**kwargs" on the end ...
 	retval = Minekey(method=Xmethod,
 			 rid=Xrid,
 			 rvsn=Xrvsn,
 			 iid=Xiid,
 			 depth=Xdepth,
 			 request=kwargs.get('request', None), # security
-                         )
+			 )
 	return retval
 
     def __str__(self):
 	"""calls validate() and then produces a string-representation of the
-        minekey, including the hash-information and magic number, as
-        well as the standard 5-tuple """
+	minekey, including the hash-information and magic number, as
+	well as the standard 5-tuple """
 
-        self.validate()
+	self.validate()
 	args = (self.method,
 		self.rid,
 		self.rvsn,
@@ -326,8 +332,8 @@ class Minekey:
 
     def key(self):
 	"""takes the string representation of this minekey and produces the
-        encrypted-and-base64-encoded minekey token, suitable for web
-        consumption."""
+	encrypted-and-base64-encoded minekey token, suitable for web
+	consumption."""
 
 	internal = str(self)
 	encrypted = self.encrypt(internal)
@@ -337,20 +343,20 @@ class Minekey:
     def permalink(self):
 
 	"""takes the result of self.key() and embeds / returns it in a
-        permalink string for this mine; requires self.request to be
-        set or set_request() to have been performed on this Minekey or
-        one of its ancestors"""
+	permalink string for this mine; requires self.request to be
+	set or set_request() to have been performed on this Minekey or
+	one of its ancestors"""
 
-        link = "/get/%s" % self.key()
+	link = "/get/%s" % self.key()
 
-        if self.request:
-            link = self.request.build_absolute_uri(link)
+	if self.request:
+	    link = self.request.build_absolute_uri(link)
 
 	return link
 
     def spawn_iid(self, iid):
 	"""from this minekey, spawn a new minekey object for the same
-        rid/rvsn, but for a different iid, decrementing the depth."""
+	rid/rvsn, but for a different iid, decrementing the depth."""
 
 	retval = self.clone()
 	retval.iid = iid
@@ -374,24 +380,24 @@ class Minekey:
 
     def rewrite_html(self, html):
 	"""
-        using the context of this minekey, rewrite the blob of HTML
-        (argument) looking for case-insensitive strings of the form:
+	using the context of this minekey, rewrite the blob of HTML
+	(argument) looking for case-insensitive strings of the form:
 
-        HREF=99
-        HREF='99'
-        HREF="99"
-        SRC=99
-        SRC='99'
-        SRC="99"
+	HREF=99
+	HREF='99'
+	HREF="99"
+	SRC=99
+	SRC='99'
+	SRC="99"
 
-        ...where 99 is an example iid, replacing the 99 with the
-        results of self.spawn_iid(iid).permalink() - in other words a
-        URL customised to retreive that item/iid with decremented
-        depth.
-        """
+	...where 99 is an example iid, replacing the 99 with the
+	results of self.spawn_iid(iid).permalink() - in other words a
+	URL customised to retreive that item/iid with decremented
+	depth.
+	"""
 
 	def rewrite_link(mo):
-            """backend link rewriter for code clarity"""
+	    """backend link rewriter for code clarity"""
 	    action = mo.group(1)
 	    fq = mo.group(2)
 	    iid = int(mo.group(3))
@@ -403,21 +409,21 @@ class Minekey:
 
     def validate(self):
 	"""
-        performs basic sanith checks on this minekey:
+	performs basic sanith checks on this minekey:
 
-        method must be in ('get', 'put')
+	method must be in ('get', 'put')
 
-        rid must not be <= 0
+	rid must not be <= 0
 
-        rvsn must not be <= 0
+	rvsn must not be <= 0
 
-        iid must not be < 0 (remember: item 0 == feed) 
+	iid must not be < 0 (remember: item 0 == feed)
 
-        depth must be in range 0..3 (remember: 0 valid but ineffectual)
+	depth must be in range 0..3 (remember: 0 valid but ineffectual)
 
-        Further validation in the specific context of an actual HTTP
-        request is done by the validate_against() routine.
-        """
+	Further validation in the specific context of an actual HTTP
+	request is done by the validate_against() routine.
+	"""
 
 	if self.rid <= 0:
 	    raise RuntimeError, 'negative or zero rid: ' + str(self.rid)
@@ -428,7 +434,7 @@ class Minekey:
 	if self.iid < 0:
 	    raise RuntimeError, 'negative iid: ' + str(self.iid)
 
-	if self.depth not in (3, 2, 1, 0): 
+	if self.depth not in (3, 2, 1, 0):
 	    raise RuntimeError, 'invalid depth: ' + str(self.depth)
 
 	if self.method not in self.valid_methods:
@@ -436,26 +442,26 @@ class Minekey:
 
     def validate_against(self, request, want_method):
 	"""
-        validate this minekey against a HTTP request (request),
-        manually specifying whether you want the minekey to be a 'get'
-        or a 'put' (want_method)
+	validate this minekey against a HTTP request (request),
+	manually specifying whether you want the minekey to be a 'get'
+	or a 'put' (want_method)
 
-        this routine traps the 'depth==0' thing; this means attempts
-        to walk over the mine via link-chasing get logged.
+	this routine traps the 'depth==0' thing; this means attempts
+	to walk over the mine via link-chasing get logged.
 
-        TODO: this routine performs global time-of-day access
-        restriction checks
+	TODO: this routine performs global time-of-day access
+	restriction checks
 
-        this routine performs checking of self.rvsn against
-        Relation(id=rid).version and raises exception on mismatch
+	this routine performs checking of self.rvsn against
+	Relation(id=rid).version and raises exception on mismatch
 
-        this routine performs relation source-IP-address checking
+	this routine performs relation source-IP-address checking
 
-        TODO: this routine performs relation timed-embargo checking
+	TODO: this routine performs relation timed-embargo checking
 
-        TODO: this routine performs "not:relationname" item tag checking
+	TODO: this routine performs "not:relationname" item tag checking
 
-        """
+	"""
 
 	# check depth
 	if self.depth <= 0:
@@ -512,22 +518,24 @@ class AbstractModelField:
     definitions and simplify porting from Django to Google AppEngine.
     """
 
-    STRING_SHORT = 256
+    STRING_SHORT = 256 # bytes
 
     @classmethod
     def __defopts(klass, **kwargs):
 	"""
 	Standardised argument parser for AbstractModelField methods;
-	implements 'required', 'unique', 'symmetrical' ...
+	implements 'required'; imports 'unique', 'symmetrical',
+	'storage', and 'upload_to'
 	"""
+
 	if kwargs.get('required', True):
 	    opts = dict(null=False, blank=False)
 	else:
 	    opts = dict(null=True, blank=True)
 
-	for foo in ('unique', 'symmetrical'):
+	for foo in ('unique', 'symmetrical', 'storage', 'upload_to'):
 	    if foo in kwargs:
-		opts[foo] = kwargs[foo]
+		opts[foo] = kwargs[foo] # import, not set
 
 	return opts
 
@@ -610,7 +618,7 @@ class AbstractModelField:
     def file(klass, **kwargs):
 	"""implements a file"""
 	opts = klass.__defopts(**kwargs)
-	return models.FileField(**kwargs) # TODO
+	return models.FileField(**opts)
 
 ##################################################################
 ##################################################################
@@ -755,12 +763,12 @@ def s2m_comrelid(s, sattr, m, mattr):
     if mattr != 'relation' or sattr != 'commentRelationId':
 	raise RuntimeError, "s2m_comrelid is confused by %s and %s" % (sattr, mattr)
     if sattr in s:
-        if isinstance(s[sattr], int):
-            m.relation = Relation.objects.get(id=s[sattr])
-        elif re.match(r'^\d+$', s[sattr]):
-            m.relation = Relation.objects.get(id=int(s[sattr]))
-        else:
-            m.relation = Relation.objects.get(name=s[sattr])
+	if isinstance(s[sattr], int):
+	    m.relation = Relation.objects.get(id=s[sattr])
+	elif re.match(r'^\d+$', s[sattr]):
+	    m.relation = Relation.objects.get(id=int(s[sattr]))
+	else:
+	    m.relation = Relation.objects.get(name=s[sattr])
 
 ##################################################################
 
@@ -961,71 +969,81 @@ class AbstractThing(AbstractModel):
 
     sattr_conversion_table = (
 
-#  SATTR                      MATTR               DEFER?  R2S          S2M              M2S
+#  SATTR                          MATTR                        DEFER?  R2S          S2M              M2S
+(  'commentItemName',             None,                        True,   None,        None,            None,            ),  #see:Comment()
+(  'commentRelationName',         None,                        True,   None,        None,            None,            ),  #see:Comment()
+(  'itemHasFile',                 None,                        True,   None,        None,            None,            ),  #see:Item()
+(  'itemSize',                    None,                        True,   None,        None,            None,            ),  #see:Item()
+(  'vurlAbsoluteUrl',             None,                        True,   None,        None,            None,            ),  #see:Vurl()
+(  'vurlKey',                     None,                        True,   None,        None,            None,            ),  #see:Vurl()
+(  'vurlPathLong',                None,                        True,   None,        None,            None,            ),  #see:Vurl()
+(  'vurlPathShort',               None,                        True,   None,        None,            None,            ),  #see:Vurl()
 
-(  'tagCloud',                'cloud',            True,   None,        None,            m2s_tagcloud,    ),
-(  'itemData',                'data',             True,   None,        s2m_dummy,       None,            ),
-(  'itemTags',                'tags',             True,   r2s_string,  s2m_itemtags,    m2s_itemtags,    ),
-(  'relationInterests',       'interests',        True,   r2s_string,  s2m_relints,     m2s_relints,     ),
-(  'tagImplies',              'implies',          True,   r2s_string,  s2m_tagimplies,  m2s_tagimplies,  ),
+(  'commentIsDeleted',            'is_deleted',                False,  None,        None,            m2s_bool,        ),
+(  'itemIsDeleted',               'is_deleted',                False,  None,        None,            m2s_bool,        ),
+(  'relationIsDeleted',           'is_deleted',                False,  None,        None,            m2s_bool,        ),
+(  'relationIsUntrusted',         'is_untrusted',              False,  None,        None,            m2s_bool,        ),
+(  'tagIsDeleted',                'is_deleted',                False,  None,        None,            m2s_bool,        ),
+(  'vurlIsDeleted',               'is_deleted',                False,  None,        None,            m2s_bool,        ),
 
-(  'commentItemId',           'item',             False,  r2s_int,     s2m_comitemid,   m2s_comitemid,   ),
-(  'commentRelationId',       'relation',         False,  r2s_string,  s2m_comrelid,    m2s_comrelid,    ),
-(  'itemStatus',              'status',           False,  r2s_string,  s2m_itemstatus,  m2s_itemstatus,  ),
+(  'itemCiphertextDigest',        'ciphertext_digest',         True,   None,        None,            m2s_copy,        ),
+(  'itemCiphertextDigestMethod',  'ciphertext_digest_method',  True,   None,        None,            m2s_copy,        ),
+(  'itemCiphertextKey',           'ciphertext_key',            True,   None,        None,            m2s_copy,        ),
+(  'itemCiphertextMethod',        'ciphertext_method',         True,   None,        None,            m2s_copy,        ),
 
-(  'commentItemName',         None,               True,   None,        None,            None,            ),  #see:Comment()
-(  'commentRelationName',     None,               True,   None,        None,            None,            ),  #see:Comment()
-(  'itemHasFile',             None,               True,   None,        None,            None,            ),  #see:Item()
-(  'itemSize',                None,               True,   None,        None,            None,            ),  #see:Item()
-(  'vurlAbsoluteUrl',         None,               True,   None,        None,            None,            ),  #see:Vurl()
-(  'vurlKey',                 None,               True,   None,        None,            None,            ),  #see:Vurl()
-(  'vurlPathLong',            None,               True,   None,        None,            None,            ),  #see:Vurl()
-(  'vurlPathShort',           None,               True,   None,        None,            None,            ),  #see:Vurl()
+(  'commentCreated',              'created',                   False,  None,        None,            m2s_date,        ),
+(  'commentLastModified',         'last_modified',             False,  None,        None,            m2s_date,        ),
+(  'itemCreated',                 'created',                   False,  None,        None,            m2s_date,        ),
+(  'itemLastModified',            'last_modified',             False,  None,        None,            m2s_date,        ),
+(  'relationCreated',             'created',                   False,  None,        None,            m2s_date,        ),
+(  'relationLastModified',        'last_modified',             False,  None,        None,            m2s_date,        ),
+(  'tagCreated',                  'created',                   False,  None,        None,            m2s_date,        ),
+(  'tagLastModified',             'last_modified',             False,  None,        None,            m2s_date,        ),
+(  'vurlCreated',                 'created',                   False,  None,        None,            m2s_date,        ),
+(  'vurlLastModified',            'last_modified',             False,  None,        None,            m2s_date,        ),
 
-(  'commentIsDeleted',        'is_deleted',       False,  None,        None,            m2s_bool,        ),
-(  'itemIsDeleted',           'is_deleted',       False,  None,        None,            m2s_bool,        ),
-(  'relationIsDeleted',       'is_deleted',       False,  None,        None,            m2s_bool,        ),
-(  'tagIsDeleted',            'is_deleted',       False,  None,        None,            m2s_bool,        ),
-(  'vurlIsDeleted',           'is_deleted',       False,  None,        None,            m2s_bool,        ),
+(  'tagCloud',                    'cloud',                     True,   None,        None,            m2s_tagcloud,    ),
+(  'itemData',                    'data',                      True,   None,        s2m_dummy,       None,            ),
+(  'itemThumb',                   'thumb',                     True,   None,        s2m_dummy,       None,            ),
 
-(  'commentCreated',          'created',          False,  None,        None,            m2s_date,        ),
-(  'commentLastModified',     'last_modified',    False,  None,        None,            m2s_date,        ),
-(  'itemCreated',             'created',          False,  None,        None,            m2s_date,        ),
-(  'itemLastModified',        'last_modified',    False,  None,        None,            m2s_date,        ),
-(  'relationCreated',         'created',          False,  None,        None,            m2s_date,        ),
-(  'relationLastModified',    'last_modified',    False,  None,        None,            m2s_date,        ),
-(  'tagCreated',              'created',          False,  None,        None,            m2s_date,        ),
-(  'tagLastModified',         'last_modified',    False,  None,        None,            m2s_date,        ),
-(  'vurlCreated',             'created',          False,  None,        None,            m2s_date,        ),
-(  'vurlLastModified',        'last_modified',    False,  None,        None,            m2s_date,        ),
+(  'commentItemId',               'item',                      False,  r2s_int,     s2m_comitemid,   m2s_comitemid,   ),
+(  'commentId',                   'id',                        False,  r2s_int,     s2m_verbatim,    m2s_copy,        ),
+(  'itemId',                      'id',                        False,  r2s_int,     s2m_verbatim,    m2s_copy,        ),
+(  'relationId',                  'id',                        False,  r2s_int,     s2m_verbatim,    m2s_copy,        ),
+(  'relationVersion',             'version',                   False,  r2s_int,     s2m_verbatim,    m2s_copy,        ),
+(  'tagId',                       'id',                        False,  r2s_int,     s2m_verbatim,    m2s_copy,        ),
+(  'thingId',                     'id',                        False,  r2s_int,     s2m_verbatim,    m2s_copy,        ),
+(  'vurlId',                      'id',                        False,  r2s_int,     s2m_verbatim,    m2s_copy,        ),
 
-(  'commentId',               'id',               False,  r2s_int,     s2m_verbatim,    m2s_copy,        ),
-(  'itemId',                  'id',               False,  r2s_int,     s2m_verbatim,    m2s_copy,        ),
-(  'relationId',              'id',               False,  r2s_int,     s2m_verbatim,    m2s_copy,        ),
-(  'relationVersion',         'version',          False,  r2s_int,     s2m_verbatim,    m2s_copy,        ),
-(  'tagId',                   'id',               False,  r2s_int,     s2m_verbatim,    m2s_copy,        ),
-(  'thingId',                 'id',               False,  r2s_int,     s2m_verbatim,    m2s_copy,        ),
-(  'vurlId',                  'id',               False,  r2s_int,     s2m_verbatim,    m2s_copy,        ),
+(  'commentRelationId',           'relation',                  False,  r2s_string,  s2m_comrelid,    m2s_comrelid,    ),
 
-(  'itemHideAfter',           'hide_after',       False,  r2s_string,  s2m_date,        m2s_date,        ),
-(  'itemHideBefore',          'hide_before',      False,  r2s_string,  s2m_date,        m2s_date,        ),
-(  'relationEmbargoAfter',    'embargo_after',    False,  r2s_string,  s2m_date,        m2s_date,        ),
-(  'relationEmbargoBefore',   'embargo_before',   False,  r2s_string,  s2m_date,        m2s_date,        ),
+(  'itemHideAfter',               'hide_after',                False,  r2s_string,  s2m_date,        m2s_date,        ),
+(  'itemHideBefore',              'hide_before',               False,  r2s_string,  s2m_date,        m2s_date,        ),
+(  'relationEmbargoAfter',        'embargo_after',             False,  r2s_string,  s2m_date,        m2s_date,        ),
+(  'relationEmbargoBefore',       'embargo_before',            False,  r2s_string,  s2m_date,        m2s_date,        ),
 
-(  'commentTitle',            'title',            False,  r2s_string,  s2m_stripstr,    m2s_copy,        ),
-(  'itemFeedLink',            'feed_link',        False,  r2s_string,  s2m_stripstr,    m2s_copy,        ),
-(  'itemName',                'name',             False,  r2s_string,  s2m_stripstr,    m2s_copy,        ),
-(  'itemType',                'type',             False,  r2s_string,  s2m_stripstr,    m2s_copy,        ),
-(  'relationName',            'name',             False,  r2s_string,  s2m_stripstr,    m2s_copy,        ),
-(  'relationNetworkPattern',  'network_pattern',  False,  r2s_string,  s2m_stripstr,    m2s_copy,        ),
-(  'tagName',                 'name',             False,  r2s_string,  s2m_stripstr,    m2s_copy,        ),
-(  'vurlLink',                'link',             False,  r2s_string,  s2m_stripstr,    m2s_copy,        ),
-(  'vurlName',                'name',             False,  r2s_string,  s2m_stripstr,    m2s_copy,        ),
+(  'itemStatus',                  'status',                    False,  r2s_string,  s2m_itemstatus,  m2s_itemstatus,  ),
 
-(  'commentBody',             'body',             False,  r2s_string,  s2m_verbatim,    m2s_copy,        ),
-(  'itemDescription',         'description',      False,  r2s_string,  s2m_verbatim,    m2s_copy,        ),
-(  'relationDescription',     'description',      False,  r2s_string,  s2m_verbatim,    m2s_copy,        ),
-(  'tagDescription',          'description',      False,  r2s_string,  s2m_verbatim,    m2s_copy,        ),
+(  'itemTags',                    'tags',                      True,   r2s_string,  s2m_itemtags,    m2s_itemtags,    ),
+(  'relationInterests',           'interests',                 True,   r2s_string,  s2m_relints,     m2s_relints,     ),
+
+(  'commentTitle',                'title',                     False,  r2s_string,  s2m_stripstr,    m2s_copy,        ),
+(  'itemFeedLink',                'feed_link',                 False,  r2s_string,  s2m_stripstr,    m2s_copy,        ),
+(  'itemName',                    'name',                      False,  r2s_string,  s2m_stripstr,    m2s_copy,        ),
+(  'itemThumbType',               'thumb_type',                False,  r2s_string,  s2m_stripstr,    m2s_copy,        ),
+(  'itemType',                    'type',                      False,  r2s_string,  s2m_stripstr,    m2s_copy,        ),
+(  'relationName',                'name',                      False,  r2s_string,  s2m_stripstr,    m2s_copy,        ),
+(  'relationNetworkPattern',      'network_pattern',           False,  r2s_string,  s2m_stripstr,    m2s_copy,        ),
+(  'tagName',                     'name',                      False,  r2s_string,  s2m_stripstr,    m2s_copy,        ),
+(  'vurlLink',                    'link',                      False,  r2s_string,  s2m_stripstr,    m2s_copy,        ),
+(  'vurlName',                    'name',                      False,  r2s_string,  s2m_stripstr,    m2s_copy,        ),
+
+(  'tagImplies',                  'implies',                   True,   r2s_string,  s2m_tagimplies,  m2s_tagimplies,  ),
+
+(  'commentBody',                 'body',                      False,  r2s_string,  s2m_verbatim,    m2s_copy,        ),
+(  'itemDescription',             'description',               False,  r2s_string,  s2m_verbatim,    m2s_copy,        ),
+(  'relationDescription',         'description',               False,  r2s_string,  s2m_verbatim,    m2s_copy,        ),
+(  'tagDescription',              'description',               False,  r2s_string,  s2m_verbatim,    m2s_copy,        ),
 )
 
     # A word about deferral: some s2m conversions can only take place
@@ -1071,14 +1089,14 @@ class AbstractThing(AbstractModel):
     @transaction.commit_on_success # <- rollback if it raises an exception
     def update_from_request(self, r, **kwargs):
 
-        """
-        update_from_request updates a (possibly blank) instance of a
-        model, with data that comes from a HttpRequest (ie: that is in
-        r-space)
-        
-        it is used as a backend by new_from_request() which creates a
-        blank model instance, then updates it from the request
-        """
+	"""
+	update_from_request updates a (possibly blank) instance of a
+	model, with data that comes from a HttpRequest (ie: that is in
+	r-space)
+
+	it is used as a backend by new_from_request() which creates a
+	blank model instance, then updates it from the request
+	"""
 
 	# build a shadow structure: useful for debug/clarity
 	s = {}
@@ -1108,7 +1126,7 @@ class AbstractThing(AbstractModel):
 	    # special case file-saving, assume <model>.save_uploaded_file() works
 	    if sattr in ( 'itemData' ): # ...insert others here...
 		if r and sattr in r.FILES:
-                    # grab the uploaded file
+		    # grab the uploaded file
 		    uf = r.FILES[sattr]
 
 		    # what does the browser call the content type?
@@ -1132,12 +1150,12 @@ class AbstractThing(AbstractModel):
 	# xattr processing: grab the manager
 	mgr = getattr(self, self.xattr_manager)
 
-        # quick reusable routine
-        def setxattr(k, v):
-            """ """
+	# quick reusable routine
+	def setxattr(k, v):
+	    """ """
 	    # is it an xattr?
 	    if not k.startswith(self.xattr_prefix):
-                return
+		return
 
 	    # chop out the suffix
 	    k = k[len(self.xattr_prefix):]
@@ -1149,14 +1167,14 @@ class AbstractThing(AbstractModel):
 		xa.value = v
 		xa.save()
 
-        # if we have a request, scan the request environment for xattrs
-        if r:
-            for k, v in r.POST.iteritems():
-                setxattr(k, v)
+	# if we have a request, scan the request environment for xattrs
+	if r:
+	    for k, v in r.POST.iteritems():
+		setxattr(k, v)
 
-        # update xattrs from kwargs
-        for k, v in kwargs.iteritems():
-            setxattr(k, v)
+	# update xattrs from kwargs
+	for k, v in kwargs.iteritems():
+	    setxattr(k, v)
 
 	# update if we did anything requiring the model to change
 	if needs_save:
@@ -1290,120 +1308,6 @@ class AbstractThing(AbstractModel):
 ##################################################################
 ##################################################################
 
-class LogEvent(AbstractModel):
-    """key/value pairs for Mine configuration"""
-
-    logevent_status_choices = (
-	( 'o', 'open' ),
-	( 'u', 'updated' ),
-	( 'c', 'closed' ),
-	( 'e', 'error' ),
-	( 'm', 'message' ),
-	( 'f', 'fatal' ),
-	( 'x', 'corrupted' ),
-	)
-
-    status = AbstractModelField.choice(logevent_status_choices)
-    type = AbstractModelField.string(required=False)
-    msg = AbstractModelField.text(required=False)
-    ip = AbstractModelField.string(required=False)
-    method = AbstractModelField.string(required=False)
-    path = AbstractModelField.string(required=False)
-    key = AbstractModelField.string(required=False)
-
-    # various faux-constructors that do not return the object
-
-    @classmethod
-    def __selfcontained(klass, status, type, *args, **kwargs):
-	""" """
-
-	m = " ".join(args)
-	el = LogEvent(status=status, type=type, msg=m, **kwargs)
-	el.save()
-
-    @classmethod
-    def message(klass, type, *args, **kwargs):
-	""" """
-
-	klass.__selfcontained('m', type, *args, **kwargs)
-
-    @classmethod
-    def error(klass, type, *args, **kwargs):
-	""" """
-
-	klass.__selfcontained('e', type, *args, **kwargs)
-
-    @classmethod
-    def fatal(klass, type, *args, **kwargs):
-	""" """
-
-	klass.__selfcontained('f', type, *args, **kwargs)
-	raise RuntimeError, klass.msg # set as side effect
-
-    # next three work together; open-update-close/_error
-
-    @classmethod
-    def open(klass, type, **kwargs):
-	""" """
-
-	el = LogEvent(status='o', type=type, **kwargs)
-	el.save()
-	return el
-
-    def update(self, *args):
-	""" """
-
-	self.msg = " ".join(args)
-	self.status = 'u'
-	self.save()
-
-    def __close_status(self, status, *args):
-	""" """
-
-	if self.status in 'ou': # legitimate to close
-	    self.msg = " ".join(args)
-	    self.status = status
-	else: # risk of infinite recursion if exception thrown
-	    # leave msg alone
-	    self.status = 'x'
-	self.save()
-
-    def close(self, *args):
-	""" """
-
-	self.__close_status('c', *args)
-
-    def close_error(self, *args):
-	""" """
-
-	self.__close_status('e', *args)
-
-    def to_structure(self):
-	""" """
-
-	s = {}
-	s['eventStatus'] = self.status
-	if self.type: s['eventType'] = self.type
-	if self.msg: s['eventMessage'] = self.msg
-	if self.ip: s['eventIPAddress'] = self.ip
-	if self.method: s['eventMethod'] = self.method
-	if self.path: s['eventPath'] = self.path
-	if self.key: s['eventKey'] = self.key
-	s['eventCreated'] = m2s_date(self.created)
-	s['eventLastModified'] = m2s_date(self.last_modified)
-	return s
-
-    class Meta:
-	ordering = ['-last_modified']
-	verbose_name = 'Event'
-
-    def __unicode__(self):
-	return self.get_status_display()
-
-##################################################################
-##################################################################
-##################################################################
-
 class Registry(AbstractModel):
     """key/value pairs for Mine configuration"""
 
@@ -1455,8 +1359,11 @@ class Tag(AbstractThing):
     sattr_prefix = "tag"
 
     name = AbstractModelField.slug(unique=True)
+
     description = AbstractModelField.text(required=False)
+
     implies = AbstractModelField.reflist('self', symmetrical=False, pivot='implied_by', required=False)
+
     cloud = AbstractModelField.reflist('self', symmetrical=False, pivot='clouded_by', required=False)
 
     class Meta:
@@ -1573,24 +1480,24 @@ class Tag(AbstractThing):
 	acts as a hook to detect changes in the Tag implications that
 	might trigger a recalculation of the Tag cloud.
 
-        There is a performance impact here which needs to be
-        considered; we *ought* to determine whether something has
-        changed that would require the cloud to be recomputed; but
-        maybe slightly overzealous refreshing will be good for a
-        while... having flushed out a bug where an Item with no
-        implications was not clouding itself, the simplicity of just
-        recomputing every time is attractive, especially with the
-        likely shallow hierarchies of implication, if any at all...
+	There is a performance impact here which needs to be
+	considered; we *ought* to determine whether something has
+	changed that would require the cloud to be recomputed; but
+	maybe slightly overzealous refreshing will be good for a
+	while... having flushed out a bug where an Item with no
+	implications was not clouding itself, the simplicity of just
+	recomputing every time is attractive, especially with the
+	likely shallow hierarchies of implication, if any at all...
 
 	"""
 
-        tgraph = self.__expand_cloud_graph()
+	tgraph = self.__expand_cloud_graph()
 
 	retval = super(Tag, self).update_from_request(r, **kwargs)
 
-        self.__update_cloud_graph(tgraph)
+	self.__update_cloud_graph(tgraph)
 
-        retval = Tag.objects.get(id=retval.id) # reload, possibly dirty
+	retval = Tag.objects.get(id=retval.id) # reload, possibly dirty
 
 	return retval
 
@@ -1622,15 +1529,21 @@ class Relation(AbstractThing):
     sattr_prefix = "relation"
 
     name = AbstractModelField.slug(unique=True)
+
     version = AbstractModelField.integer(1)
 
     description = AbstractModelField.text(required=False)
+
     embargo_after = AbstractModelField.datetime(required=False)
     embargo_before = AbstractModelField.datetime(required=False)
+
     interests = AbstractModelField.reflist(Tag, pivot='relations_with_tag', required=False)
     interests_excluded = AbstractModelField.reflist(Tag, pivot='relations_excluding', required=False)
     interests_required = AbstractModelField.reflist(Tag, pivot='relations_requiring', required=False)
+
     network_pattern = AbstractModelField.string(required=False)
+
+    is_untrusted = AbstractModelField.bool(False)
 
     class Meta:
 	ordering = ['name']
@@ -1645,10 +1558,9 @@ class Relation(AbstractThing):
 			 rvsn=self.version,
 			 iid=0,
 			 depth=3,
-                         request=kwargs.get('request', None),
+			 request=kwargs.get('request', None),
 			 )
 	return retval
-
 
     # TBD: GET A REQUEST INTO HERE IN ORDER TO POPULATE FEED_MINEKEY WITH IT?
     def to_structure(self):
@@ -1689,17 +1601,29 @@ class Item(AbstractThing):
     sattr_prefix = "item"
 
     name = AbstractModelField.string()
-    status = AbstractModelField.choice(item_status_choices) # WHY IS THIS NOT CHECKED ON SAVE? TBD
-
-    type = AbstractModelField.string(required=False)
-    data = AbstractModelField.file(storage=item_file_storage, upload_to='%Y/%m/%d', blank=True, null=True) # FIXME!!!
+    status = AbstractModelField.choice(item_status_choices) # WHY IS THIS NOT CHECKED ON SAVE()? TBD
     description = AbstractModelField.text(required=False)
-    feed_link = AbstractModelField.url(required=False)
+
     hide_after = AbstractModelField.datetime(required=False)
     hide_before = AbstractModelField.datetime(required=False)
+
+    tags = AbstractModelField.reflist(Tag, pivot='items_tagged', required=False)
     item_for_relations = AbstractModelField.reflist(Relation, pivot='items_explicitly_for', required=False)
     item_not_relations = AbstractModelField.reflist(Relation, pivot='items_explicitly_not', required=False)
-    tags = AbstractModelField.reflist(Tag, pivot='items_tagged', required=False)
+
+    encryption_key = AbstractModelField.text(required=False)
+    encryption_method = AbstractModelField.text(required=False)
+    digest_method = AbstractModelField.text(required=False)
+
+    feed_link = AbstractModelField.url(required=False)
+
+    data = AbstractModelField.file(storage=item_fss, upload_to=fss_yyyymmdd, required=False)
+    type = AbstractModelField.string(required=False)
+    ciphertext_digest = AbstractModelField.text(required=False)
+
+    thumb = AbstractModelField.file(storage=thumb_fss, upload_to=fss_yyyymmdd, required=False) # FOR ONCE CAN WE ASSUME PNG?
+    thumb_type = AbstractModelField.string(required=False)
+    thumb_ciphertext_digest = AbstractModelField.text(required=False)
 
     class Meta:
 	ordering = ['-last_modified']
@@ -1718,9 +1642,9 @@ class Item(AbstractThing):
 
     def item_size(self):
 	"""
-        returns the size of the data file; if there is no file,
-        returns the size of self.description, or zero
-        """
+	returns the size of the data file; if there is no file,
+	returns the size of self.description, or zero
+	"""
 
 	if self.data:
 	    return self.data.size
@@ -1731,24 +1655,24 @@ class Item(AbstractThing):
 
     def item_type(self):
 	"""
-        if there is a declared item.type, it is returned; 
-        else if there is a data file, return 'application/octet-stream';
-        else return 'text/html' and assume the description is HTML
-        """
+	if there is a declared item.type, it is returned;
+	else if there is a data file, return 'application/octet-stream';
+	else return 'text/html' and assume the description is HTML
+	"""
 
 	if self.type:
 	    return self.type
-	elif self.data: 
+	elif self.data:
 	    return 'application/octet-stream'
 	else:
 	    return 'text/html'
 
     def item_feed_description(self):
-	""" 
-        if there is a data file, the description *is* HTML and is returned,
-        else if self.item_type() suggests HTML, the description is returned,
-        else a hardcoded default is returned
-        """
+	"""
+	if there is a data file, the description *is* HTML and is returned,
+	else if self.item_type() suggests HTML, the description is returned,
+	else a hardcoded default is returned
+	"""
 
 	if self.data:
 	    return self.description
@@ -1778,21 +1702,21 @@ class Item(AbstractThing):
 	See http://docs.djangoproject.com/en/dev/ref/contrib/syndication/#django.contrib.syndication.SyndicationFeed.add_item
 	"""
 
-        # faster to import this as it carries a lot of cached data
-        if not relation: 
-            relation = Relation.objects.get(id=feed_mk.rid)
+	# faster to import this as it carries a lot of cached data
+	if not relation:
+	    relation = Relation.objects.get(id=feed_mk.rid)
 
-        # check
-        if feed_mk.rid != relation.id:
-            raise RuntimeError, 'mismatch between argument rids: %d vs %d' % (feed_mk.rid, relation.id)
+	# check
+	if feed_mk.rid != relation.id:
+	    raise RuntimeError, 'mismatch between argument rids: %d vs %d' % (feed_mk.rid, relation.id)
 
 	item_mk = feed_mk.spawn_iid(self.id)
 
 	iteminfo = {}
 
-	iteminfo['author_email'] = None # TBD? VALIDATION?
-	iteminfo['author_link'] = None # TBD? VALIDATION?
-	iteminfo['author_name'] = None # TBD? VALIDATION?
+	iteminfo['author_email'] = None # TBD?
+	iteminfo['author_link'] = None # TBD?
+	iteminfo['author_name'] = None # TBD?
 	iteminfo['categories'] = None # TBD?
 	iteminfo['comments'] = None # TBD?
 	iteminfo['item_copyright'] = None # TBD?
@@ -1802,9 +1726,9 @@ class Item(AbstractThing):
 
 	iteminfo['title'] = self.name
 
-        # TBD: what to do about size and content-type for enclosures? 
+	# TBD: what to do about size and content-type for enclosures?
 
-	# TBD: what to do about size and content-type for third-party linkage? 
+	# TBD: what to do about size and content-type for third-party linkage?
 
 	if self.feed_link:
 	    iteminfo['link'] = self.feed_link
@@ -1820,7 +1744,7 @@ class Item(AbstractThing):
 
 	# work out our description
 
-        # if there is no data and we are of HTML type
+	# if there is no data and we are of HTML type
 	if not self.data and self.item_type() == 'text/html':
 	    desc = self.item_feed_description()
 	else: # either there is data, or we are not of HTML type
@@ -1830,11 +1754,11 @@ class Item(AbstractThing):
 		'size': self.item_size(),
 		'content_type': self.item_type(),
 		'description': self.item_feed_description(),
-                'comment_url': item_mk.spawn_comment().permalink()
+		'comment_url': item_mk.spawn_comment().permalink()
 		}
 	    desc = render_to_string('feed/item-description.html', tmpl)
 
-        # rewrite
+	# rewrite
 	iteminfo['description'] = item_mk.rewrite_html(desc)
 
 	# done
@@ -1868,6 +1792,7 @@ class Comment(AbstractThing):
     sattr_prefix = "comment"
 
     title = AbstractModelField.string()
+
     body = AbstractModelField.text(required=False)
 
     # required=False to permit comments by mine owner
@@ -1875,6 +1800,9 @@ class Comment(AbstractThing):
 
     # required=False to permit comments on feed where IID=0
     item = AbstractModelField.reference(Item, required=False)
+
+    # to permit relation uploads, so long as relation.is_untrusted == false
+    data = AbstractModelField.file(storage=comment_fss, upload_to=fss_yyyymmdd, required=False)
 
     def __unicode__(self):
 	return self.title
@@ -1973,6 +1901,122 @@ class Vurl(AbstractThing):
 	s['vurlPathShort'] = "/get/k/%s" % vk
 	s['vurlPathLong'] =  "/get/n/%s" % self.name
 	return s
+
+##################################################################
+##################################################################
+##################################################################
+
+class LogEvent(AbstractModel):
+    """key/value pairs for Mine configuration"""
+
+    logevent_status_choices = (
+	( 'o', 'open' ),
+	( 'u', 'updated' ),
+	( 'c', 'closed' ),
+	( 'e', 'error' ),
+	( 'm', 'message' ),
+	( 'f', 'fatal' ),
+	( 'x', 'corrupted' ),
+	)
+
+    status = AbstractModelField.choice(logevent_status_choices)
+    type = AbstractModelField.string(required=False)
+    msg = AbstractModelField.text(required=False)
+    ip = AbstractModelField.string(required=False)
+    method = AbstractModelField.string(required=False)
+    path = AbstractModelField.string(required=False)
+    key = AbstractModelField.string(required=False)
+    item = AbstractModelField.reference(Item, required=False)
+    relation = AbstractModelField.reference(Relation, required=False)
+
+    # various faux-constructors that do not return the object
+
+    @classmethod
+    def __selfcontained(klass, status, type, *args, **kwargs):
+	""" """
+
+	m = " ".join(args)
+	el = LogEvent(status=status, type=type, msg=m, **kwargs)
+	el.save()
+
+    @classmethod
+    def message(klass, type, *args, **kwargs):
+	""" """
+
+	klass.__selfcontained('m', type, *args, **kwargs)
+
+    @classmethod
+    def error(klass, type, *args, **kwargs):
+	""" """
+
+	klass.__selfcontained('e', type, *args, **kwargs)
+
+    @classmethod
+    def fatal(klass, type, *args, **kwargs):
+	""" """
+
+	klass.__selfcontained('f', type, *args, **kwargs)
+	raise RuntimeError, klass.msg # set as side effect
+
+    # next three work together; open-update-close/_error
+
+    @classmethod
+    def open(klass, type, **kwargs):
+	""" """
+
+	el = LogEvent(status='o', type=type, **kwargs)
+	el.save()
+	return el
+
+    def update(self, *args):
+	""" """
+
+	self.msg = " ".join(args)
+	self.status = 'u'
+	self.save()
+
+    def __close_status(self, status, *args):
+	""" """
+
+	if self.status in 'ou': # legitimate to close
+	    self.msg = " ".join(args)
+	    self.status = status
+	else: # risk of infinite recursion if exception thrown
+	    # leave msg alone
+	    self.status = 'x'
+	self.save()
+
+    def close(self, *args):
+	""" """
+
+	self.__close_status('c', *args)
+
+    def close_error(self, *args):
+	""" """
+
+	self.__close_status('e', *args)
+
+    def to_structure(self):
+	""" """
+
+	s = {}
+	s['eventStatus'] = self.status
+	if self.type: s['eventType'] = self.type
+	if self.msg: s['eventMessage'] = self.msg
+	if self.ip: s['eventIPAddress'] = self.ip
+	if self.method: s['eventMethod'] = self.method
+	if self.path: s['eventPath'] = self.path
+	if self.key: s['eventKey'] = self.key
+	s['eventCreated'] = m2s_date(self.created)
+	s['eventLastModified'] = m2s_date(self.last_modified)
+	return s
+
+    class Meta:
+	ordering = ['-last_modified']
+	verbose_name = 'Event'
+
+    def __unicode__(self):
+	return self.get_status_display()
 
 ##################################################################
 ##################################################################
