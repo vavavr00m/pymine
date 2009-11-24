@@ -214,14 +214,21 @@ def read_item_data(request, iid, *args, **kwargs): # <--------------------------
     mk = kwargs.get('minekey', None)
 
     # if it's a minekey fetch, do the right thing
-    if mk and ct in ('text/html', 'application/mine+xml'):
-        if m.data:
-            content = m.data.read()
-        else:
-            content = m.item_feed_description()
-        rewrite = mk.rewrite_html(content)
-        response = HttpResponse(rewrite, content_type=ct)
-        response['Content-Length'] = len(rewrite)
+    if mk:
+        r = mk.get_relation()
+
+        if r in m.item_not_relations:
+            raise RuntimeError, 'relation not permitted to see this item'
+
+        if ct in ('text/html', 'application/mine+xml'):
+            if m.data:
+                content = m.data.read()
+            else:
+                content = m.item_feed_description()
+                rewrite = mk.rewrite_html(content)
+                response = HttpResponse(rewrite, content_type=ct)
+                response['Content-Length'] = len(rewrite)
+
     elif m.data: # else if there's a file
         fw = m.data.chunks()
         response = HttpResponse(fw, content_type=ct)
@@ -364,36 +371,6 @@ def delete_relation_key(request, rid, sattr, *args, **kwargs):
 def get_relation_key(request, rid, sattr, *args, **kwargs):
     """get_relation_key(rid, sattr) returns ..."""
     return get_foo_key(Relation, rid, sattr)
-
-##################################################################
-
-## rest: GET /api/select/item.FMT
-## function: read_select_item
-## declared args: 
-def read_select_item(request, *args, **kwargs):
-    """read_select_item() returns ..."""
-    nyi() 
-
-## rest: GET /api/select/relation.FMT
-## function: read_select_relation
-## declared args: 
-def read_select_relation(request, *args, **kwargs):
-    """read_select_relation() returns ..."""
-    nyi() 
-
-## rest: GET /api/select/tag.FMT
-## function: read_select_tag
-## declared args: 
-def read_select_tag(request, *args, **kwargs):
-    """read_select_tag() returns ..."""
-    nyi() 
-
-## rest: GET /api/select/vurl.FMT
-## function: read_select_vurl
-## declared args: 
-def read_select_vurl(request, *args, **kwargs):
-    """read_select_vurl() returns ..."""
-    nyi() 
 
 ##################################################################
 

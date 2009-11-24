@@ -172,11 +172,6 @@ api    POST   /api/relation/RID.FMT          update-relation
 api    DELETE /api/relation/RID/SATTR.FMT    delete-relation-key
 api    GET    /api/relation/RID/SATTR.FMT    get-relation-key
 
-api    GET    /api/select/item.FMT           read-select-item
-api    GET    /api/select/relation.FMT       read-select-relation
-api    GET    /api/select/tag.FMT            read-select-tag
-api    GET    /api/select/vurl.FMT           read-select-vurl
-
 api    POST   /api/tag.FMT                   create-tag
 api    GET    /api/tag.FMT                   list-tags
 api    DELETE /api/tag/TID.FMT               delete-tag

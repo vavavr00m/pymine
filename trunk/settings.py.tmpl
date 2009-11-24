@@ -115,12 +115,6 @@ TEMPLATE_LOADERS = (
 #   'django.template.loaders.eggs.load_template_source',
 )
 
-MIDDLEWARE_CLASSES = (
-    'django.middleware.common.CommonMiddleware',
-    'django.contrib.sessions.middleware.SessionMiddleware',
-    'django.contrib.auth.middleware.AuthenticationMiddleware',
-)
-
 ROOT_URLCONF = 'pymine.urls'
 
 TEMPLATE_DIRS = (
@@ -130,7 +124,15 @@ TEMPLATE_DIRS = (
     os.path.join(MINE_PATH, 'templates')
 )
 
+MIDDLEWARE_CLASSES = (
+#   'debug_toolbar.middleware.DebugToolbarMiddleware',
+    'django.middleware.common.CommonMiddleware',
+    'django.contrib.sessions.middleware.SessionMiddleware',
+    'django.contrib.auth.middleware.AuthenticationMiddleware',
+)
+
 INSTALLED_APPS = (
+#   'debug_toolbar',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
@@ -139,3 +141,11 @@ INSTALLED_APPS = (
     'django.contrib.admin',
     'django.contrib.admindocs',
 )
+
+INTERNAL_IPS = (
+    '127.0.0.1', 
+)
+
+DEBUG_TOOLBAR_CONFIG = {
+    'INTERCEPT_REDIRECTS': False,
+}

@@ -36,6 +36,13 @@ unforgable.<table class="fieldTable"></table></div>
     <td>Method</td>
     <td><a href="pymine.api.models.Minekey.html#__init__">__init__</a></td>
     <td><span>Populates a Minekey with 5 items of information:</span></td>
+  </tr><tr class="method">
+    
+    
+    <td>Method</td>
+    <td><a href="pymine.api.models.Minekey.html#set_request">set_request</a></td>
+    <td><span>Pokes a request into this and all descendent Minekeys, so that they can 
+permalink()</span></td>
   </tr><tr class="classmethod">
     
     
@@ -136,8 +143,20 @@ submission.</span></td>
     
     
     <td>Method</td>
+    <td><a href="pymine.api.models.Minekey.html#get_relation">get_relation</a></td>
+    <td><span class="undocumented">Undocumented</span></td>
+  </tr><tr class="method">
+    
+    
+    <td>Method</td>
+    <td><a href="pymine.api.models.Minekey.html#get_item">get_item</a></td>
+    <td><span class="undocumented">Undocumented</span></td>
+  </tr><tr class="method">
+    
+    
+    <td>Method</td>
     <td><a href="pymine.api.models.Minekey.html#validate">validate</a></td>
-    <td><span>performs basic sanith checks on this minekey:</span></td>
+    <td><span>performs basic sanity checks on this minekey:</span></td>
   </tr><tr class="method">
     
     
@@ -186,6 +205,19 @@ link-chase into a mine.</p>
 <p>Links in HTML Items will be rewritten as iid=N and depth=1</p>
 <p>Depth=0 is legal precisely so that it can be trapped in the mine 
 auditing records, but it will yield a 404<table class="fieldTable"></table></div>
+        </div>
+      </div><div class="function">
+        <a name="pymine.api.models.Minekey.set_request"></a>
+        <a name="set_request"></a>
+        <div class="functionHeader">
+        
+        def set_request(self, request):
+        
+      </div>
+        <div class="functionBody">
+          
+          <div>Pokes a request into this and all descendent Minekeys, so that they can 
+permalink()<table class="fieldTable"></table></div>
         </div>
       </div><div class="function">
         <a name="pymine.api.models.Minekey.b64e"></a>
@@ -293,7 +325,7 @@ remember to do minekey.validate()<table class="fieldTable"></table></div>
         <a name="parse"></a>
         <div class="functionHeader">
         @classmethod<br />
-        def parse(klass, external):
+        def parse(klass, external, **kwargs):
         
       </div>
         <div class="functionBody">
@@ -342,7 +374,8 @@ consumption.<table class="fieldTable"></table></div>
         <div class="functionBody">
           
           <div>takes the result of self.key() and embeds / returns it in a permalink 
-string for this mine.<table class="fieldTable"></table></div>
+string for this mine; requires self.request to be set or set_request() to 
+have been performed on this Minekey or one of its ancestors<table class="fieldTable"></table></div>
         </div>
       </div><div class="function">
         <a name="pymine.api.models.Minekey.spawn_iid"></a>
@@ -389,6 +422,30 @@ self.spawn_iid(iid).permalink() - in other words a URL customised to
 retreive that item/iid with decremented depth.<table class="fieldTable"></table></div>
         </div>
       </div><div class="function">
+        <a name="pymine.api.models.Minekey.get_relation"></a>
+        <a name="get_relation"></a>
+        <div class="functionHeader">
+        
+        def get_relation(self):
+        
+      </div>
+        <div class="functionBody">
+          
+          <div class="undocumented">Undocumented</div>
+        </div>
+      </div><div class="function">
+        <a name="pymine.api.models.Minekey.get_item"></a>
+        <a name="get_item"></a>
+        <div class="functionHeader">
+        
+        def get_item(self):
+        
+      </div>
+        <div class="functionBody">
+          
+          <div class="undocumented">Undocumented</div>
+        </div>
+      </div><div class="function">
         <a name="pymine.api.models.Minekey.validate"></a>
         <a name="validate"></a>
         <div class="functionHeader">
@@ -398,7 +455,7 @@ retreive that item/iid with decremented depth.<table class="fieldTable"></table>
       </div>
         <div class="functionBody">
           
-          <div>performs basic sanith checks on this minekey:</p>
+          <div>performs basic sanity checks on this minekey:</p>
 <p>method must be in ('get', 'put')</p>
 <p>rid must not be &lt;= 0</p>
 <p>rvsn must not be &lt;= 0</p>
