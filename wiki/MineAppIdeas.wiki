@@ -8,97 +8,95 @@ Quick "one-liner" list of planned mine apps
 
 = finished =
 
-== url shortener ==
+  * url shortener
 
-  * mine essential, builtin ("vurls")
-  * also implements symbolic names for internal/minekey URLs
+    * mine essential, builtin ("vurls")
+    * also implements symbolic names for internal/minekey URLs
 
 = soon =
 
-== urlpoll ==
+  * urlpoll
 
-  * poll a certain URL a configured number of times per day
-  * cache its content and type as a specific, fixed item for retrieval by others
+    * poll a certain URL a configured number of times per day
+    * cache its content and type as a specific, fixed item for retrieval by others
 
-== atom/rss feed importer ==
+  * atom/rss feed importer
 
-  * suck on a feed, caching all of the primary referenced content in the mine
+    * suck on a feed, caching all of the primary referenced content in the mine
 
-== delicious replacement plugin ==
+  * delicious replacement plugin
 
-  * store bookmarks as tags in the mine, replace delicious
+    * store bookmarks as tags in the mine, replace delicious
 
-== last.fm scraper ==
+  * last.fm scraper
 
-  * possibly a special case of atom/rss feed importer
-  * store history of own music prefs
+    * possibly a special case of atom/rss feed importer
+    * store history of own music prefs
 
-== store jpegs/scans of receipts ==
+  * store jpegs/scans of receipts
 
-  * special case of image saver
-  * start of image gallery work
+    * special case of image saver
+    * start of image gallery work
 
+  * store jpegs/scans of recipes pages
 
-== store jpegs/scans of recipes pages ==
-
-  * special case of image saver
-  * start of image gallery work
+    * special case of image saver
+    * start of image gallery work
 
 = midterm =
 
-== "project minemesh" ==
+  * "project minemesh"
 
-  * USENET replacement
-  * requires atom/rss feed importer
-  * auto-replicate
+    * USENET replacement
+    * requires atom/rss feed importer
+    * auto-replicate
 
-== amazon scraper ==
+  * amazon scraper
 
-  * external application (later: webapp)
-  * trawl through amazon account, extract what you can
+    * external application (later: webapp)
+    * trawl through amazon account, extract what you can
 
-== blog replacement plugin ==
+  * blog replacement plugin
 
-  * use mine as blog with a "public" relation
+    * use mine as blog with a "public" relation
 
-== personal image gallery plugin ==
+  * personal image gallery plugin
 
-  * replace flickr
+    * replace flickr
 
-== personal geolocation aggregation plugin ==
+  * personal geolocation aggregation plugin
 
-  * be a point of integration for all major geolocation services about the user
-  * rebroadcast over feed
+    * be a point of integration for all major geolocation services about the user
+    * rebroadcast over feed
 
-== personal scrobbling integration plugin ==
+  * personal scrobbling integration plugin
 
-  * be a point of integration for all major music play services about the user
-  * rebroadcast over feed
+    * be a point of integration for all major music play services about the user
+    * rebroadcast over feed
 
-== identica plugin ==
+  * identica plugin
 
-  * use Mine as backing store for Laconica
-  * replace twitter
+    * use Mine as backing store for Laconica
+    * replace twitter
 
 = longterm =
 
+  * android badcode scanner
 
-== android badcode scanner ==
+    * obvious
 
-  * obvious
+  * android camera image storage & sharing
 
-== android camera image storage & sharing ==
+    * obvious
 
-  * obvious
+  * ocr jpegs/scans of receipts
 
-== ocr jpegs/scans of receipts ==
+    * as per gallery, but with text-analysis placed into item description
 
-  * as per gallery, but with text-analysis placed into item description
+  * ocr jpegs/scans of recipes pages
 
-== ocr jpegs/scans of recipes pages ==
+    * as per gallery, but with text-analysis placed into item description
 
-  * as per gallery, but with text-analysis placed into item description
+  * android mine controller
 
-== android mine controller ==
-
-  * obvious
+    * obvious
