@@ -23,7 +23,7 @@
     
     
     <div id="splitTables">
-      <table class="children sortable" id="id18">
+      <table class="children sortable" id="id16">
   
   
   
@@ -78,7 +78,7 @@ loops.</span></td>
         <p>
           Inherited from <a href="pymine.api.models.AbstractThing.html">AbstractThing</a>:
         </p>
-        <table class="children sortable" id="id19">
+        <table class="children sortable" id="id17">
   
   
   
@@ -120,7 +120,7 @@ loops.</span></td>
         <p>
           Inherited from <a href="pymine.api.models.AbstractModel.html">AbstractModel</a> (via <a href="pymine.api.models.AbstractThing.html">AbstractThing</a>):
         </p>
-        <table class="children sortable" id="id20">
+        <table class="children sortable" id="id18">
   
   
   
@@ -224,7 +224,14 @@ of the Tag cloud.<table class="fieldTable"></table></div>
           <div class="interfaceinfo">overrides <a href="pymine.api.models.AbstractThing.html#update_from_request">pymine.api.models.AbstractThing.update_from_request</a></div>
           <div>This method overrides AbstractThing.update_from_request() and acts as a 
 hook to detect changes in the Tag implications that might trigger a 
-recalculation of the Tag cloud.<table class="fieldTable"></table></div>
+recalculation of the Tag cloud.</p>
+<p>There is a performance impact here which needs to be considered; we 
+*ought* to determine whether something has changed that would require the 
+cloud to be recomputed; but maybe slightly overzealous refreshing will be 
+good for a while... having flushed out a bug where an Item with no 
+implications was not clouding itself, the simplicity of just recomputing 
+every time is attractive, especially with the likely shallow hierarchies of
+implication, if any at all...<table class="fieldTable"></table></div>
         </div>
       </div>
     

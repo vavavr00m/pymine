@@ -192,6 +192,10 @@ class Minekey:
 	# request data is only needed to perform permalink()
 	self.request = kwargs.get('request', None)
 
+        # init some blank fields for caching
+        self.__relation = None
+        self.__item = None
+
 	# abort immediately if still illegal
 	self.validate()
 
@@ -407,9 +411,31 @@ class Minekey:
 
 	return self.html_re.sub(rewrite_link, html)
 
+    def get_relation(self):
+        """ """
+
+        if not self.__relation:
+            try:
+                self.__relation = Relation.objects.get(id=self.rid)
+            except Relation.DoesNotExist, e:
+                raise RuntimeError, "minekey relation does not exist: " + str(self) + str(e)
+            if self.__relation.version != self.rvsn:
+                raise RuntimeError, "minekey/relation version mismatch: " + str(self)
+        return self.__relation
+
+    def get_item(self):
+        """ """
+
+        if not self.__item:
+            try:
+                self.__item = Item.objects.get(id=self.iid)
+            except Item.DoesNotExist, e:
+                raise RuntimeError, "minekey item does not exist: " + str(self) + str(e)
+        return self.__item
+
     def validate(self):
 	"""
-	performs basic sanith checks on this minekey:
+	performs basic sanity checks on this minekey:
 
 	method must be in ('get', 'put')
 
@@ -475,14 +501,7 @@ class Minekey:
 	# TODO
 
 	# load relation
-	try:
-	    r = Relation.objects.get(id=self.rid)
-	except Relation.DoesNotExist, e:
-	    raise RuntimeError, "relation not valid: " + str(self) + str(e)
-
-	# check rvsn
-	if r.version != self.rvsn:
-	    raise RuntimeError, "minekey/relation version mismatch: " + str(self)
+        r = self.get_relation()
 
 	# check against relation IP address
 	if r.network_pattern:
