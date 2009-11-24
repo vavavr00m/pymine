@@ -10,7 +10,7 @@ Quick "one-liner" list of planned mine apps
     * mine essential, builtin ("vurls")
     * also implements symbolic names for internal/minekey URLs
 
-= soon =
+= Soon =
 
   * urlpoll
     * poll a certain URL a configured number of times per day
@@ -34,7 +34,7 @@ Quick "one-liner" list of planned mine apps
     * special case of image saver
     * start of image gallery work
 
-= midterm =
+= Midterm =
 
   * "project minemesh"
     * USENET replacement
@@ -65,7 +65,7 @@ Quick "one-liner" list of planned mine apps
     * use Mine as backing store for Laconica
     * replace twitter
 
-= longterm =
+= Longterm =
 
   * android badcode scanner
     * obvious
