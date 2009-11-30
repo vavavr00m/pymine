@@ -66,7 +66,7 @@ dbtest:
 	python manage.py validate
 	python manage.py sqlall api
 
-dbsync: dbtest
+dbsync:
 	python manage.py syncdb --noinput --traceback
 
 dbclean:
@@ -81,3 +81,4 @@ docs:
 	( cd public_html ; pydoctor --add-package=../../pymine --project-name="pymine" --make-html )
 	( cd public_html/apidocs ; perl -pi~ -e "s/2009-\d{1,2}-\d{1,2} \d\d:\d\d:\d\d/(date elided)/go" *.html )
 	( cd public_html/apidocs ; rm *~ )
+	@echo DID YOU REMEMBER TO DO 'make clobber' FIRST?

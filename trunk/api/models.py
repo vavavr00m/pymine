@@ -81,12 +81,12 @@ from django.core.files.storage import FileSystemStorage
 from django.db import models, transaction
 from django.template.loader import render_to_string
 from django.utils import feedgenerator
-import base64
 import hashlib
 import itertools
 import re
 
 import pymine.util.base58 as base58
+import pymine.util.base64_mine as b64
 
 ##################################################################
 
@@ -125,6 +125,194 @@ for short, long in item_status_choices: status_lookup[long] = short
 ##################################################################
 ##################################################################
 
+class AbstractModelField:
+    """
+    This is an factory class that is used to abstract field
+    definitions and simplify porting from Django to Google AppEngine.
+    """
+
+    STRING_SHORT = 256 # bytes
+
+    @classmethod
+    def __defopts(klass, **kwargs):
+	"""
+	Standardised argument parser for AbstractModelField methods;
+	implements 'required'; imports 'unique', 'symmetrical',
+	'storage', and 'upload_to'
+	"""
+
+	if kwargs.get('required', True):
+	    opts = dict(null=False, blank=False)
+	else:
+	    opts = dict(null=True, blank=True)
+
+	for foo in ('unique', 'symmetrical', 'storage', 'upload_to'):
+	    if foo in kwargs:
+		opts[foo] = kwargs[foo] # import, not set
+
+	return opts
+
+    @classmethod
+    def last_modified(klass):
+	"""implements last_modified date"""
+	return models.DateTimeField(auto_now=True)
+
+    @classmethod
+    def created(klass):
+	"""implements created date"""
+	return models.DateTimeField(auto_now_add=True)
+
+    @classmethod
+    def datetime(klass, **kwargs):
+	"""implements date/time field"""
+	opts = klass.__defopts(**kwargs)
+	return models.DateTimeField(**opts)
+
+    @classmethod
+    def reference(klass, what, **kwargs):
+	"""implements foreign-keys"""
+	opts = klass.__defopts(**kwargs)
+	return models.ForeignKey(what, **opts)
+
+    @classmethod
+    def reflist(klass, what, **kwargs):
+	"""implements list-of-foreign-keys; parses out 'pivot' argument"""
+	opts = klass.__defopts(**kwargs)
+	pivot = kwargs.get('pivot', None)
+	if pivot: opts['related_name'] = pivot
+	return models.ManyToManyField(what, **opts)
+
+    @classmethod
+    def string(klass, **kwargs):
+	"""implements string"""
+	opts = klass.__defopts(**kwargs)
+	return models.CharField(max_length=klass.STRING_SHORT, **opts)
+
+    @classmethod
+    def text(klass, **kwargs):
+	"""implements a text area / text of arbitrary size"""
+	opts = klass.__defopts(**kwargs)
+	return models.TextField(**opts)
+
+    @classmethod
+    def slug(klass, **kwargs):
+	"""implements a slug (alphanumeric string, no spaces)"""
+	opts = klass.__defopts(**kwargs)
+	return models.SlugField(max_length=klass.STRING_SHORT, **opts)
+
+    @classmethod
+    def bool(klass, default):
+	"""implements a boolean (true/false)"""
+	return models.BooleanField(default=default)
+
+    @classmethod
+    def integer(klass, default):
+	"""implements an integer"""
+	return models.PositiveIntegerField(default=default)
+
+    @classmethod
+    def choice(klass, choices):
+	"""implements a choices-field (max length of an encoded choice is 1 character)"""
+	return models.CharField(max_length=1, choices=choices)
+
+    @classmethod
+    def url(klass, **kwargs):
+	"""implements a URL string"""
+	opts = klass.__defopts(**kwargs)
+	return models.URLField(max_length=klass.STRING_SHORT, **opts)
+
+    @classmethod
+    def email(klass, **kwargs):
+	"""implements an e-mail address"""
+	opts = klass.__defopts(**kwargs)
+	return models.EmailField(max_length=klass.STRING_SHORT, **opts)
+
+    @classmethod
+    def file(klass, **kwargs):
+	"""implements a file"""
+	opts = klass.__defopts(**kwargs)
+	return models.FileField(**opts)
+
+##################################################################
+##################################################################
+##################################################################
+
+class AbstractModel(models.Model):
+    """
+    AbstractModel is the parent class for all Models below, providing
+    the common 'created' and 'last_modified' fields.
+    """
+
+    created = AbstractModelField.created()
+    last_modified = AbstractModelField.last_modified()
+    is_deleted = AbstractModelField.bool(False)
+
+    class Meta:
+	abstract = True
+
+    def delete(self):
+	""" """
+	self.is_deleted = True
+	self.save()
+
+    def delete_for_real(self):
+	""" """
+	pass
+
+
+##################################################################
+##################################################################
+##################################################################
+
+class Registry(AbstractModel):
+    """key/value pairs for Mine configuration"""
+
+    key = AbstractModelField.slug(unique=True)
+    value = AbstractModelField.text()
+
+    @classmethod
+    def get(klass, key):
+        """ """
+        return Registry.objects.get(key=key).value
+
+    @classmethod
+    def get_decoded(klass, key):
+        """ """
+        return b64.decode(klass.get(key))
+
+    @classmethod
+    def set(klass, key, value, overwrite_ok):
+        """ """
+        r, created = Registry.objects.get_or_create(key=key, defaults={ 'value': value }) 
+        if not created and not int(overwrite_ok):
+            raise RuntimeError, 'not allowed to overwrite existing Registry key: %s' % key
+        r.save()
+        
+    @classmethod
+    def set_encoded(klass, key, value, overwrite_ok):
+        """ """
+        return klass.set(key, b64.encode(value), overwrite_ok)
+
+    def to_structure(self):
+	""" """
+	s = {}
+	s[self.key] = self.value # this is why it is not a Thing
+	s['keyCreated'] = self.created.isoformat()
+	s['keyLastModified'] = self.last_modified.isoformat()
+	return s
+
+    class Meta:
+	ordering = ['key']
+	verbose_name = 'RegisterEntry'
+	verbose_name_plural = 'Registry'
+
+    def __unicode__(self):
+	return self.key
+
+##################################################################
+##################################################################
+##################################################################
+
 class Minekey:
     """
     A Minekey encodes all the data that a subscriber can use to
@@ -136,11 +324,7 @@ class Minekey:
     corefmt = '%s,%d,%d,%d,%d,%s'
     valid_methods = ( 'get', 'put' )
 
-    b64_alt = '!@'
-
     aes_mode = AES.MODE_CBC
-    aes_key = '1234567890123456' # 128 bits
-    aes_iv =  'abcdefghijklmnop' # 128 bits
 
     def __init__(self, **kwargs):
 	"""
@@ -190,7 +374,7 @@ class Minekey:
 	self.depth = kwargs.get('depth', -1)
 
 	# request data is only needed to perform permalink()
-	self.request = kwargs.get('request', None)
+	self.__request = kwargs.get('request', None)
 
         # init some blank fields for caching
         self.__relation = None
@@ -201,59 +385,50 @@ class Minekey:
 
     def set_request(self, request):
 	"""Pokes a request into this and all descendent Minekeys, so that they can permalink()"""
-	self.request = request
-
-    @classmethod
-    def b64e(klass, x):
-	"""mine-base-64 encode x and return the result; the mine uses nonstandard b64 extension characters"""
-
-	return base64.b64encode(x, klass.b64_alt)
-
-    @classmethod
-    def b64d(klass, x):
-	"""mine-base-64 decode x and return the result; the mine uses nonstandard b64 extension characters"""
-
-	return base64.b64decode(x, klass.b64_alt)
+	self.__request = request
 
     @classmethod
     def hashify(klass, x):
 	"""return a b64-encoded hash of x with padding removed"""
-
-	m = hashlib.md5() # more than adequate
+	m = hashlib.md5()
 	m.update(x)
-	h = m.digest()
-	return klass.b64e(h).rstrip('=')
+	return b64.encode(m.digest()).rstrip('=')
+
+    def ivgen(self):
+	"""from an iid, generate a binary IV string of the appropriate length"""
+        aes_iv_seed = Registry.get_decoded('__MINE_IV_SEED__')
+	m = hashlib.md5()
+	m.update(str(self.iid))
+	m.update('.')
+	m.update(str(self.rid))
+	m.update('.')
+	m.update(str(self.rvsn))
+	m.update('.')
+	m.update(aes_iv_seed)
+	return m.digest()
 
     @classmethod
-    def ivgen(klass, x):
-	"""to be done"""
-
-	pass
-
-    @classmethod
-    def crypto_engine(klass):  #------------------------------------------------------------------ TO BE DONE, IV HACKING
+    def crypto_engine(klass, iv):
 	"""return an intialised crypto engine - to be modified"""
-
-	return AES.new(klass.aes_key, klass.aes_mode, klass.aes_iv)
+        key = Registry.get_decoded('__MINE_KEY__')
+	return AES.new(key, klass.aes_mode, iv)
 
     @classmethod
-    def encrypt(klass, x):
-	"""encrypt x and return the result; will pad with trailing whitespace as needed to satisfy the crypto algorithm"""
+    def decrypt(klass, x, iv):
+	"""decrypt x and return the result; will strip trailing whitespace padding"""
+	engine = klass.crypto_engine(iv)
+	return engine.decrypt(x).rstrip()
 
+    @classmethod
+    def encrypt(klass, x, iv):
+	"""encrypt x and return the result prefixed by the IV; will pad plaintext with trailing whitespace as needed to satisfy the crypto algorithm"""
 	l = len(x)
 	if (l % 16): # if not a 16-byte message, pad with whitespace
 	    y =  '%*s' % (-(((l // 16) + 1) * 16), x)
 	else: # we got lucky
 	    y = x
-	engine = klass.crypto_engine()
+	engine = klass.crypto_engine(iv)
 	return engine.encrypt(y)
-
-    @classmethod
-    def decrypt(klass, x):
-	"""encrypt x and return the result; will strip trailing whitespace padding"""
-
-	engine = klass.crypto_engine()
-	return engine.decrypt(x).rstrip()
 
     def clone(self):
 	"""clone this minekey for further futzing; if you do futz manually, remember to do minekey.validate()"""
@@ -262,7 +437,7 @@ class Minekey:
 			 rvsn=self.rvsn,
 			 iid=self.iid,
 			 depth=self.depth,
-			 request=self.request,
+			 request=self.__request,
 			 )
 	return retval
 
@@ -276,9 +451,14 @@ class Minekey:
 	throws exception on something being wrong.
 	"""
 
-	encrypted = klass.b64d(external.encode('utf-8')) # stuff comes from URLs in UNICODE
+        unpadded = len(external) % 4
+        if unpadded: 
+            external += '=' * (4-unpadded)
 
-	internal = klass.decrypt(encrypted)
+	blob = b64.decode(external)
+        iv = blob[0:16] 
+	encrypted = blob[16:]
+	internal = klass.decrypt(encrypted, iv)
 
 	(Xhash, Xmethod, Xrid, Xrvsn, Xiid, Xdepth, Xkey_magic) = internal.split(',', 7)
 
@@ -339,22 +519,23 @@ class Minekey:
 	encrypted-and-base64-encoded minekey token, suitable for web
 	consumption."""
 
+        iv = self.ivgen()
 	internal = str(self)
-	encrypted = self.encrypt(internal)
-	external = self.b64e(encrypted)
-	return external
+	encrypted = self.encrypt(internal, iv)
+	external = b64.encode(iv + encrypted)
+	return external.rstrip('=') # padding restored by parse()
 
     def permalink(self):
 
 	"""takes the result of self.key() and embeds / returns it in a
-	permalink string for this mine; requires self.request to be
+	permalink string for this mine; requires self.__request to be
 	set or set_request() to have been performed on this Minekey or
 	one of its ancestors"""
 
 	link = "/get/%s" % self.key()
 
-	if self.request:
-	    link = self.request.build_absolute_uri(link)
+	if self.__request:
+	    link = self.__request.build_absolute_uri(link)
 
 	return link
 
@@ -526,144 +707,6 @@ class Minekey:
 	    pass # TODO
 
 	# ok, we're happy.
-
-##################################################################
-##################################################################
-##################################################################
-
-class AbstractModelField:
-    """
-    This is an factory class that is used to abstract field
-    definitions and simplify porting from Django to Google AppEngine.
-    """
-
-    STRING_SHORT = 256 # bytes
-
-    @classmethod
-    def __defopts(klass, **kwargs):
-	"""
-	Standardised argument parser for AbstractModelField methods;
-	implements 'required'; imports 'unique', 'symmetrical',
-	'storage', and 'upload_to'
-	"""
-
-	if kwargs.get('required', True):
-	    opts = dict(null=False, blank=False)
-	else:
-	    opts = dict(null=True, blank=True)
-
-	for foo in ('unique', 'symmetrical', 'storage', 'upload_to'):
-	    if foo in kwargs:
-		opts[foo] = kwargs[foo] # import, not set
-
-	return opts
-
-    @classmethod
-    def last_modified(klass):
-	"""implements last_modified date"""
-	return models.DateTimeField(auto_now=True)
-
-    @classmethod
-    def created(klass):
-	"""implements created date"""
-	return models.DateTimeField(auto_now_add=True)
-
-    @classmethod
-    def datetime(klass, **kwargs):
-	"""implements date/time field"""
-	opts = klass.__defopts(**kwargs)
-	return models.DateTimeField(**opts)
-
-    @classmethod
-    def reference(klass, what, **kwargs):
-	"""implements foreign-keys"""
-	opts = klass.__defopts(**kwargs)
-	return models.ForeignKey(what, **opts)
-
-    @classmethod
-    def reflist(klass, what, **kwargs):
-	"""implements list-of-foreign-keys; parses out 'pivot' argument"""
-	opts = klass.__defopts(**kwargs)
-	pivot = kwargs.get('pivot', None)
-	if pivot: opts['related_name'] = pivot
-	return models.ManyToManyField(what, **opts)
-
-    @classmethod
-    def string(klass, **kwargs):
-	"""implements string"""
-	opts = klass.__defopts(**kwargs)
-	return models.CharField(max_length=klass.STRING_SHORT, **opts)
-
-    @classmethod
-    def text(klass, **kwargs):
-	"""implements a text area / text of arbitrary size"""
-	opts = klass.__defopts(**kwargs)
-	return models.TextField(**opts)
-
-    @classmethod
-    def slug(klass, **kwargs):
-	"""implements a slug (alphanumeric string, no spaces)"""
-	opts = klass.__defopts(**kwargs)
-	return models.SlugField(max_length=klass.STRING_SHORT, **opts)
-
-    @classmethod
-    def bool(klass, default):
-	"""implements a boolean (true/false)"""
-	return models.BooleanField(default=default)
-
-    @classmethod
-    def integer(klass, default):
-	"""implements an integer"""
-	return models.PositiveIntegerField(default=default)
-
-    @classmethod
-    def choice(klass, choices):
-	"""implements a choices-field (max length of an encoded choice is 1 character)"""
-	return models.CharField(max_length=1, choices=choices)
-
-    @classmethod
-    def url(klass, **kwargs):
-	"""implements a URL string"""
-	opts = klass.__defopts(**kwargs)
-	return models.URLField(max_length=klass.STRING_SHORT, **opts)
-
-    @classmethod
-    def email(klass, **kwargs):
-	"""implements an e-mail address"""
-	opts = klass.__defopts(**kwargs)
-	return models.EmailField(max_length=klass.STRING_SHORT, **opts)
-
-    @classmethod
-    def file(klass, **kwargs):
-	"""implements a file"""
-	opts = klass.__defopts(**kwargs)
-	return models.FileField(**opts)
-
-##################################################################
-##################################################################
-##################################################################
-
-class AbstractModel(models.Model):
-    """
-    AbstractModel is the parent class for all Models below, providing
-    the common 'created' and 'last_modified' fields.
-    """
-
-    created = AbstractModelField.created()
-    last_modified = AbstractModelField.last_modified()
-    is_deleted = AbstractModelField.bool(False)
-
-    class Meta:
-	abstract = True
-
-    def delete(self):
-	""" """
-	self.is_deleted = True
-	self.save()
-
-    def delete_for_real(self):
-	""" """
-	pass
 
 ##################################################################
 ##################################################################
@@ -1332,32 +1375,6 @@ class AbstractThing(AbstractModel):
 	""" """
 	fmt = 'raw' # TBD
 	return '/api/%s/%d.%s' % (self.sattr_prefix, self.id, fmt)
-
-##################################################################
-##################################################################
-##################################################################
-
-class Registry(AbstractModel):
-    """key/value pairs for Mine configuration"""
-
-    key = AbstractModelField.slug(unique=True)
-    value = AbstractModelField.text()
-
-    def to_structure(self):
-	""" """
-	s = {}
-	s[self.key] = self.value # this is why it is not a Thing
-	s['keyCreated'] = self.created.isoformat()
-	s['keyLastModified'] = self.last_modified.isoformat()
-	return s
-
-    class Meta:
-	ordering = ['key']
-	verbose_name = 'RegisterEntry'
-	verbose_name_plural = 'Registry'
-
-    def __unicode__(self):
-	return self.key
 
 ##################################################################
 ##################################################################

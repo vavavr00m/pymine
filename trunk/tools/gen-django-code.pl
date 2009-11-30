@@ -13,13 +13,13 @@ $root_path_strip = "/(api|ui|ie|get|r|v)";
 		   'VID',      '?P<vid>[1-9]\d*',
 		   'FMT',      '?P<fmt>(rdr|xml|json|raw)',
 
-		   'VURLKEY',  '?P<vurlkey>[A-Za-z0-9!@]+',
+		   'VURLKEY',  '?P<vurlkey>[-_A-Za-z0-9]+',
 
 		   'SATTR',    '?P<sattr>(__)?[A-Za-z][_A-Za-z]*',  #  f,  foo,  fooBar,  __fooBar
 
 		   'RATTR',    '?P<rattr>[A-Za-z][_A-Za-z]*',       #  f,  foo,  fooBar
 
-		   'MINEKEY',  '?P<minekey>[A-Za-z0-9!@]+',
+		   'MINEKEY',  '?P<minekey>[-_A-Za-z0-9]+=*',
 
 		   'EFMT',     '?P<efmt>(zip|tar)',
 

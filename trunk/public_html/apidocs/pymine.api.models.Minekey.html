@@ -25,7 +25,7 @@ unforgable.<table class="fieldTable"></table></div>
     
     
     <div id="splitTables">
-      <table class="children sortable" id="id5">
+      <table class="children sortable" id="id9">
   
   
   
@@ -47,28 +47,14 @@ permalink()</span></td>
     
     
     <td>Class Method</td>
-    <td><a href="pymine.api.models.Minekey.html#b64e">b64e</a></td>
-    <td><span>mine-base-64 encode x and return the result; the mine uses nonstandard 
-b64 extension characters</span></td>
-  </tr><tr class="classmethod">
-    
-    
-    <td>Class Method</td>
-    <td><a href="pymine.api.models.Minekey.html#b64d">b64d</a></td>
-    <td><span>mine-base-64 decode x and return the result; the mine uses nonstandard 
-b64 extension characters</span></td>
-  </tr><tr class="classmethod">
-    
-    
-    <td>Class Method</td>
     <td><a href="pymine.api.models.Minekey.html#hashify">hashify</a></td>
     <td><span>return a b64-encoded hash of x with padding removed</span></td>
-  </tr><tr class="classmethod">
+  </tr><tr class="method">
     
     
-    <td>Class Method</td>
+    <td>Method</td>
     <td><a href="pymine.api.models.Minekey.html#ivgen">ivgen</a></td>
-    <td><span>to be done</span></td>
+    <td><span>from an iid, generate a binary IV string of the appropriate length</span></td>
   </tr><tr class="classmethod">
     
     
@@ -79,16 +65,16 @@ b64 extension characters</span></td>
     
     
     <td>Class Method</td>
-    <td><a href="pymine.api.models.Minekey.html#encrypt">encrypt</a></td>
-    <td><span>encrypt x and return the result; will pad with trailing whitespace as 
-needed to satisfy the crypto algorithm</span></td>
+    <td><a href="pymine.api.models.Minekey.html#decrypt">decrypt</a></td>
+    <td><span>decrypt x and return the result; will strip trailing whitespace 
+padding</span></td>
   </tr><tr class="classmethod">
     
     
     <td>Class Method</td>
-    <td><a href="pymine.api.models.Minekey.html#decrypt">decrypt</a></td>
-    <td><span>encrypt x and return the result; will strip trailing whitespace 
-padding</span></td>
+    <td><a href="pymine.api.models.Minekey.html#encrypt">encrypt</a></td>
+    <td><span>encrypt x and return the result prefixed by the IV; will pad plaintext 
+with trailing whitespace as needed to satisfy the crypto algorithm</span></td>
   </tr><tr class="method">
     
     
@@ -220,32 +206,6 @@ auditing records, but it will yield a 404<table class="fieldTable"></table></div
 permalink()<table class="fieldTable"></table></div>
         </div>
       </div><div class="function">
-        <a name="pymine.api.models.Minekey.b64e"></a>
-        <a name="b64e"></a>
-        <div class="functionHeader">
-        @classmethod<br />
-        def b64e(klass, x):
-        
-      </div>
-        <div class="functionBody">
-          
-          <div>mine-base-64 encode x and return the result; the mine uses nonstandard 
-b64 extension characters<table class="fieldTable"></table></div>
-        </div>
-      </div><div class="function">
-        <a name="pymine.api.models.Minekey.b64d"></a>
-        <a name="b64d"></a>
-        <div class="functionHeader">
-        @classmethod<br />
-        def b64d(klass, x):
-        
-      </div>
-        <div class="functionBody">
-          
-          <div>mine-base-64 decode x and return the result; the mine uses nonstandard 
-b64 extension characters<table class="fieldTable"></table></div>
-        </div>
-      </div><div class="function">
         <a name="pymine.api.models.Minekey.hashify"></a>
         <a name="hashify"></a>
         <div class="functionHeader">
@@ -261,20 +221,20 @@ b64 extension characters<table class="fieldTable"></table></div>
         <a name="pymine.api.models.Minekey.ivgen"></a>
         <a name="ivgen"></a>
         <div class="functionHeader">
-        @classmethod<br />
-        def ivgen(klass, x):
+        
+        def ivgen(self):
         
       </div>
         <div class="functionBody">
           
-          <div>to be done<table class="fieldTable"></table></div>
+          <div>from an iid, generate a binary IV string of the appropriate length<table class="fieldTable"></table></div>
         </div>
       </div><div class="function">
         <a name="pymine.api.models.Minekey.crypto_engine"></a>
         <a name="crypto_engine"></a>
         <div class="functionHeader">
         @classmethod<br />
-        def crypto_engine(klass):
+        def crypto_engine(klass, iv):
         
       </div>
         <div class="functionBody">
@@ -282,30 +242,30 @@ b64 extension characters<table class="fieldTable"></table></div>
           <div>return an intialised crypto engine - to be modified<table class="fieldTable"></table></div>
         </div>
       </div><div class="function">
-        <a name="pymine.api.models.Minekey.encrypt"></a>
-        <a name="encrypt"></a>
-        <div class="functionHeader">
-        @classmethod<br />
-        def encrypt(klass, x):
-        
-      </div>
-        <div class="functionBody">
-          
-          <div>encrypt x and return the result; will pad with trailing whitespace as 
-needed to satisfy the crypto algorithm<table class="fieldTable"></table></div>
-        </div>
-      </div><div class="function">
         <a name="pymine.api.models.Minekey.decrypt"></a>
         <a name="decrypt"></a>
         <div class="functionHeader">
         @classmethod<br />
-        def decrypt(klass, x):
+        def decrypt(klass, x, iv):
         
       </div>
         <div class="functionBody">
           
-          <div>encrypt x and return the result; will strip trailing whitespace 
+          <div>decrypt x and return the result; will strip trailing whitespace 
 padding<table class="fieldTable"></table></div>
+        </div>
+      </div><div class="function">
+        <a name="pymine.api.models.Minekey.encrypt"></a>
+        <a name="encrypt"></a>
+        <div class="functionHeader">
+        @classmethod<br />
+        def encrypt(klass, x, iv):
+        
+      </div>
+        <div class="functionBody">
+          
+          <div>encrypt x and return the result prefixed by the IV; will pad plaintext 
+with trailing whitespace as needed to satisfy the crypto algorithm<table class="fieldTable"></table></div>
         </div>
       </div><div class="function">
         <a name="pymine.api.models.Minekey.clone"></a>
@@ -374,7 +334,7 @@ consumption.<table class="fieldTable"></table></div>
         <div class="functionBody">
           
           <div>takes the result of self.key() and embeds / returns it in a permalink 
-string for this mine; requires self.request to be set or set_request() to 
+string for this mine; requires self.__request to be set or set_request() to
 have been performed on this Minekey or one of its ancestors<table class="fieldTable"></table></div>
         </div>
       </div><div class="function">
