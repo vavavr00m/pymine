@@ -53,11 +53,9 @@
     </li><li>
       b58encode - <a href="pymine.util.base58.html#b58encode">pymine.util.base58.b58encode</a>
     </li><li>
-      b64d - <a href="pymine.api.models.Minekey.html#b64d">pymine.api.models.Minekey.b64d</a>
-    </li><li>
-      b64e - <a href="pymine.api.models.Minekey.html#b64e">pymine.api.models.Minekey.b64e</a>
-    </li><li>
       base58 - <a href="pymine.util.base58.html">pymine.util.base58</a>
+    </li><li>
+      base64_mine - <a href="pymine.util.base64_mine.html">pymine.util.base64_mine</a>
     </li><li>
       bool - <a href="pymine.api.models.AbstractModelField.html#bool">pymine.api.models.AbstractModelField.bool</a>
     </li>
@@ -118,6 +116,8 @@
     </li><li>
       create_text - <a href="pymine.ui.views.html#create_text">pymine.ui.views.create_text</a>
     </li><li>
+      create_user - <a href="pymine.mineconfig.html#create_user">pymine.mineconfig.create_user</a>
+    </li><li>
       create_vurl
       <ul>
         <li><a href="pymine.api.views.html#create_vurl">pymine.api.views.create_vurl</a></li><li><a href="pymine.ui.views.html#create_vurl">pymine.ui.views.create_vurl</a></li>
@@ -151,6 +151,8 @@
       dash_vurls - <a href="pymine.ui.views.html#dash_vurls">pymine.ui.views.dash_vurls</a>
     </li><li>
       datetime - <a href="pymine.api.models.AbstractModelField.html#datetime">pymine.api.models.AbstractModelField.datetime</a>
+    </li><li>
+      decode - <a href="pymine.util.base64_mine.html#decode">pymine.util.base64_mine.decode</a>
     </li><li>
       decrypt - <a href="pymine.api.models.Minekey.html#decrypt">pymine.api.models.Minekey.decrypt</a>
     </li><li>
@@ -219,6 +221,8 @@
           <li>
       email - <a href="pymine.api.models.AbstractModelField.html#email">pymine.api.models.AbstractModelField.email</a>
     </li><li>
+      encode - <a href="pymine.util.base64_mine.html#encode">pymine.util.base64_mine.encode</a>
+    </li><li>
       encode_minekey1 - <a href="pymine.api.views.html#encode_minekey1">pymine.api.views.encode_minekey1</a>
     </li><li>
       encode_minekey2 - <a href="pymine.api.views.html#encode_minekey2">pymine.api.views.encode_minekey2</a>
@@ -265,11 +269,16 @@
           <li>
       generate - <a href="pymine.get.feed.html#generate">pymine.get.feed.generate</a>
     </li><li>
-      get - <a href="pymine.get.html">pymine.get</a>
+      get
+      <ul>
+        <li><a href="pymine.api.models.Registry.html#get">pymine.api.models.Registry.get</a></li><li><a href="pymine.get.html">pymine.get</a></li>
+      </ul>
     </li><li>
       get_absolute_url - <a href="pymine.api.models.AbstractThing.html#get_absolute_url">pymine.api.models.AbstractThing.get_absolute_url</a>
     </li><li>
       get_comment_key - <a href="pymine.api.views.html#get_comment_key">pymine.api.views.get_comment_key</a>
+    </li><li>
+      get_decoded - <a href="pymine.api.models.Registry.html#get_decoded">pymine.api.models.Registry.get_decoded</a>
     </li><li>
       get_foo_key - <a href="pymine.api.views.html#get_foo_key">pymine.api.views.get_foo_key</a>
     </li><li>
@@ -328,6 +337,8 @@
         <ul>
           <li>
       import_mine - <a href="pymine.api.views.html#import_mine">pymine.api.views.import_mine</a>
+    </li><li>
+      initialise_crypto - <a href="pymine.mineconfig.html#initialise_crypto">pymine.mineconfig.initialise_crypto</a>
     </li><li>
       integer - <a href="pymine.api.models.AbstractModelField.html#integer">pymine.api.models.AbstractModelField.integer</a>
     </li><li>
@@ -441,6 +452,8 @@
     </li><li>
       m2s_tagimplies - <a href="pymine.api.models.html#m2s_tagimplies">pymine.api.models.m2s_tagimplies</a>
     </li><li>
+      main - <a href="pymine.mineconfig.html#main">pymine.mineconfig.main</a>
+    </li><li>
       manage - <a href="pymine.manage.html">pymine.manage</a>
     </li><li>
       message - <a href="pymine.api.models.LogEvent.html#message">pymine.api.models.LogEvent.message</a>
@@ -451,6 +464,8 @@
       </ul>
     </li><li>
       mime_lookup - <a href="pymine.util.httpserve.html#mime_lookup">pymine.util.httpserve.mime_lookup</a>
+    </li><li>
+      mineconfig - <a href="pymine.mineconfig.html">pymine.mineconfig</a>
     </li><li>
       Minekey - <a href="pymine.api.models.Minekey.html">pymine.api.models.Minekey</a>
     </li><li>
@@ -633,9 +648,11 @@
     </li><li>
       search_vurls - <a href="pymine.ui.views.html#search_vurls">pymine.ui.views.search_vurls</a>
     </li><li>
-      set_request - <a href="pymine.api.models.Minekey.html#set_request">pymine.api.models.Minekey.set_request</a>
+      set - <a href="pymine.api.models.Registry.html#set">pymine.api.models.Registry.set</a>
     </li><li>
-      settings - <a href="pymine.settings.html">pymine.settings</a>
+      set_encoded - <a href="pymine.api.models.Registry.html#set_encoded">pymine.api.models.Registry.set_encoded</a>
+    </li><li>
+      set_request - <a href="pymine.api.models.Minekey.html#set_request">pymine.api.models.Minekey.set_request</a>
     </li><li>
       slug - <a href="pymine.api.models.AbstractModelField.html#slug">pymine.api.models.AbstractModelField.slug</a>
     </li><li>
@@ -728,6 +745,8 @@
       <ul>
         <li><a href="pymine.api.urls.html">pymine.api.urls</a></li><li><a href="pymine.get.urls.html">pymine.get.urls</a></li><li><a href="pymine.ui.urls.html">pymine.ui.urls</a></li><li><a href="pymine.urls.html">pymine.urls</a></li>
       </ul>
+    </li><li>
+      usage - <a href="pymine.mineconfig.html#usage">pymine.mineconfig.usage</a>
     </li><li>
       util - <a href="pymine.util.html">pymine.util</a>
     </li>
