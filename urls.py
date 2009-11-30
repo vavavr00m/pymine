@@ -31,22 +31,23 @@ urlpatterns = patterns('',
 		       (r'^api/', include('api.urls')),
 
 		       (r'^admin/doc/', \
-                            include('django.contrib.admindocs.urls')),
+			    include('django.contrib.admindocs.urls')),
 
 		       (r'^admin/(.*)', admin.site.root),
 
-                       (r'^login.html$', \
-                            'django.contrib.auth.views.login', \
-                            { 'template_name': 'users/login.html' }),
+		       (r'^login.html$', \
+			    'django.contrib.auth.views.login', \
+			    { 'template_name': 'users/login.html' }),
 
-                       (r'^logout.html$', \
-                            'django.contrib.auth.views.logout', \
-                            { 'template_name': 'users/logout.html' }),
+		       (r'^logout.html$', \
+			    'django.contrib.auth.views.logout', \
+			    { 'template_name': 'users/logout.html' }),
+
+		       (r'^pub/(?P<suffix>.+)$', mine.handle_pub ),
+		       (r'^pub/$', mine.root_pub ),
 
 		       #################################
 
-		       (r'^pub/(?P<suffix>.+)$', REST, { 'GET': mine.handle_pub }),
-		       (r'^pub/$', REST, { 'GET': mine.root_pub }),
 		       (r'^favicon\.ico$', REST, { 'GET': mine.root_favicon }),
 		       (r'^$', REST, { 'GET': mine.root_mine }),
 )

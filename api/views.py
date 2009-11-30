@@ -208,34 +208,35 @@ def list_items(request, *args, **kwargs):
 def read_item_data(request, iid, *args, **kwargs): # <--------------------------------- THE BIG ONE
     """read_item_data(iid) handles the retreival of actual item data, eg JPEG files"""
 
-    id = int(iid)
-    m = Item.objects.get(id=id)
-    ct = m.item_type()
     mk = kwargs.get('minekey', None)
 
-    # if it's a minekey fetch, do the right thing
-    if mk:
-        r = mk.get_relation()
+    if mk and mk.iid == iid:
+        m = mk.get_item()
+    else:
+        m = Item.objects.get(id=int(iid))
 
-        if r in m.item_not_relations:
-            raise RuntimeError, 'relation not permitted to see this item'
+    ct = m.item_type()
 
-        if ct in ('text/html', 'application/mine+xml'):
-            if m.data:
-                content = m.data.read()
-            else:
-                content = m.item_feed_description()
-                rewrite = mk.rewrite_html(content)
-                response = HttpResponse(rewrite, content_type=ct)
-                response['Content-Length'] = len(rewrite)
+    # if we can have context and we can rewrite
+    if mk and ct in ('text/html', 'application/mine+xml'): 
+        if m.data:
+            content = m.data.read()
+        else:
+            content = m.item_feed_description()
+
+        rewrite = mk.rewrite_html(content)
+        response = HttpResponse(rewrite, content_type=ct)
+        response['Content-Length'] = len(rewrite)
 
     elif m.data: # else if there's a file
         fw = m.data.chunks()
         response = HttpResponse(fw, content_type=ct)
         response['Content-Length'] = m.data.size
-    else:
+
+    else: # default
         response = HttpResponse(m.item_feed_description(), content_type=ct)
         response['Content-Length'] = m.item_size()
+
     return response
 
 ## function: delete_item

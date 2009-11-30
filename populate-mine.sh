@@ -106,41 +106,41 @@ do
 
 done <<EOF
 private for:adriana
-private for:alec
-private for:ben
-private for:carrie
-private for:perry
-public animals
-public food not:carrie
+private not:adriana
 public for:adriana
-public for:alec
-public for:ben
-public for:carrie
-public for:carrie not:ben
-public for:carrie not:carrie
-public for:perry
-public red-burgundy not:perry
-public rioja
+public not:adriana
+public not:adriana themineproject
 shared for:adriana
-shared for:alec
-shared for:ben
-shared for:carrie
-shared for:perry
+shared not:adriana
 EOF
 
-while read name status type tag description
-do
 
+# first iid when we go into this look is 15
+while read status type name description
+do
     Minectl create-item \
-	"itemName=$name" \
 	"itemStatus=$status" \
-	"itemTags=$tag" \
 	"itemType=$type" \
+	"itemName=$name" \
 	"itemDescription=$description"
 
 done <<EOF
-example-dataless-item public text/html themineproject this is an extended description which will turn up as data
+public text/html depth-0 this is a link to <a href="16">item 16</a>
+public text/html depth-1 this is a link to <a href="17">item 17</a>
+public text/html depth-2 this is a link to <a href="18">item 18</a>
+public text/html depth-3 this is a link to <a href="19">item 19</a>
+shared text/html depth-4 this is a link to <a href="20">item 20</a>
+public text/html depth-5 this is a link to <a href="21">item 21</a>
+public text/html depth-6 this is a link to <a href="22">item 22</a>
+private text/html depth-7 this is a link to <a href="23">item 23</a>
+public text/html depth-8 this is a link to <a href="24">item 24</a>
+public text/html loop this is a link to <a href="24">item 24</a>
 EOF
+
+Minectl update-item 15 itemTags=themineproject
+Minectl update-item 18 itemTags=themineproject
+Minectl update-item 21 itemTags=themineproject
+Minectl update-item 24 itemTags=themineproject
 
 # done
 exit 0

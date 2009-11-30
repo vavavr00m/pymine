@@ -77,6 +77,7 @@ will standardise on eventually
 """
 
 from django.conf import settings
+from django.core.cache import cache
 from django.core.files.storage import FileSystemStorage
 from django.db import models, transaction
 from django.template.loader import render_to_string
@@ -85,7 +86,7 @@ import hashlib
 import itertools
 import re
 
-import pymine.util.base58 as base58
+import pymine.util.base58 as b58
 import pymine.util.base64_mine as b64
 
 ##################################################################
@@ -287,7 +288,8 @@ class Registry(AbstractModel):
         if not created and not int(overwrite_ok):
             raise RuntimeError, 'not allowed to overwrite existing Registry key: %s' % key
         r.save()
-        
+        return r
+
     @classmethod
     def set_encoded(klass, key, value, overwrite_ok):
         """ """
@@ -394,9 +396,16 @@ class Minekey:
 	m.update(x)
 	return b64.encode(m.digest()).rstrip('=')
 
-    def ivgen(self):
+    def generate_iv(self):
 	"""from an iid, generate a binary IV string of the appropriate length"""
-        aes_iv_seed = Registry.get_decoded('__MINE_IV_SEED__')
+
+        k = '__MINE_IV_SEED__'
+        iv_seed = cache.get(k)
+
+        if not iv_seed:
+            iv_seed = Registry.get_decoded(k)
+            cache.add(k, iv_seed, 60)
+
 	m = hashlib.md5()
 	m.update(str(self.iid))
 	m.update('.')
@@ -404,14 +413,22 @@ class Minekey:
 	m.update('.')
 	m.update(str(self.rvsn))
 	m.update('.')
-	m.update(aes_iv_seed)
+	m.update(iv_seed)
 	return m.digest()
 
     @classmethod
     def crypto_engine(klass, iv):
 	"""return an intialised crypto engine - to be modified"""
-        key = Registry.get_decoded('__MINE_KEY__')
-	return AES.new(key, klass.aes_mode, iv)
+
+        k = '__MINE_KEY__'
+        aes_key = cache.get(k)
+
+        if not aes_key:
+            aes_key = Registry.get_decoded(k)
+            cache.add(k, aes_key, 60)
+
+        aes_key = Registry.get_decoded('__MINE_KEY__')
+	return AES.new(aes_key, klass.aes_mode, iv)
 
     @classmethod
     def decrypt(klass, x, iv):
@@ -519,7 +536,7 @@ class Minekey:
 	encrypted-and-base64-encoded minekey token, suitable for web
 	consumption."""
 
-        iv = self.ivgen()
+        iv = self.generate_iv()
 	internal = str(self)
 	encrypted = self.encrypt(internal, iv)
 	external = b64.encode(iv + encrypted)
@@ -656,6 +673,8 @@ class Minekey:
 	this routine traps the 'depth==0' thing; this means attempts
 	to walk over the mine via link-chasing get logged.
 
+	TODO: this routine performs relation timed-embargo checking
+
 	TODO: this routine performs global time-of-day access
 	restriction checks
 
@@ -664,9 +683,9 @@ class Minekey:
 
 	this routine performs relation source-IP-address checking
 
-	TODO: this routine performs relation timed-embargo checking
+        this routine checks that the item (if not iid=0) is either public or shared.
 
-	TODO: this routine performs "not:relationname" item tag checking
+	this routine performs "not:relationname" item tag checking
 
 	"""
 
@@ -702,9 +721,17 @@ class Minekey:
 	if r.embargo_after:
 	    pass # TODO
 
-	# check if the non-feed item is marked "not:relationName"
+        # if it's a real item
 	if self.iid:
-	    pass # TODO
+	    i = self.get_item()
+
+            # check if the item is shared/public
+            if i.status not in ('P', 'S'):
+                raise RuntimeError, 'item is not marked public/shared'
+
+            # check if the non-feed item is marked "not:relationName"
+            if r in i.item_not_relations.all():
+                raise RuntimeError, 'item is marked as forbidden to this relation'
 
 	# ok, we're happy.
 
@@ -1912,7 +1939,7 @@ class Vurl(AbstractThing):
     @staticmethod
     def get_with_vurlkey(encoded):
 	""" """
-	return Vurl.objects.get(id=base58.b58decode(encoded))
+	return Vurl.objects.get(id=b58.b58decode(encoded))
 
     @transaction.commit_on_success # <- rollback if it raises an exception
     def save(self):
@@ -1932,7 +1959,7 @@ class Vurl(AbstractThing):
 
     def vurlkey(self):
 	""" """
-	return base58.b58encode(self.id)
+	return b58.b58encode(self.id)
 
     def to_structure(self):
 	"""
