@@ -84,14 +84,22 @@ def generate(request, mk, *args, **kwargs):
     # print "%s hates %s" % (relation.name, str(hates))
     # print "%s needs %s" % (relation.name, str(needs))
 
+    # small cache to try to prevent unnecessary lookups
+    cloud_cache = {}
+
     for item in public_items.all():
 	# print "considering %s" % item.name
 
 	for item_tag in item.tags.all():
-	    item_cloud = item_tag.cloud.all()
+            print "considering", item_tag
+            if item_tag in cloud_cache:
+                print "using cache"
+                item_cloud = cloud_cache[item_tag]
+            else:
+                print "doing query"
+                item_cloud = cloud_cache[item_tag] = item_tag.cloud.all()
 
 	    # print "examining %s -> %s" % (item_tag, str(item_cloud))
-
 	    if hates:
 		if item_cloud & hates: # <-- BITWISE NOT LOGICAL 'AND'
 		    # print "avoiding %s because hates %s" % (item.name, str(hates))
@@ -118,9 +126,6 @@ def generate(request, mk, *args, **kwargs):
     # collate and uniq the above
     qs = qs1 | qs2
     qs = qs.distinct()
-
-    # remove any marked as private (should be none bwtf)
-    qs = qs.exclude(status='X')
 
     # reject items marked not:relation (i wish i could do qs = qs - blacklist)
     blacklist = relation.items_explicitly_not.values_list('id', flat=True)

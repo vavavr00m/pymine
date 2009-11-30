@@ -129,8 +129,8 @@ __END__;
 
 mine   GET    /                              root-mine
 mine   GET    /favicon.ico                   root-favicon
-mine   GET    /pub/                          root-pub
-mine   GET    /pub/SUFFIX                    handle-pub
+#mine   GET    /pub/                          root-pub
+#mine   GET    /pub/SUFFIX                    handle-pub
 
 get    GET    /get/MINEKEY                   read-minekey
 get    POST   /get/MINEKEY                   submit-minekey
