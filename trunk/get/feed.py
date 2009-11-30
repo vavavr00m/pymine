@@ -91,12 +91,9 @@ def generate(request, mk, *args, **kwargs):
 	# print "considering %s" % item.name
 
 	for item_tag in item.tags.all():
-            print "considering", item_tag
             if item_tag in cloud_cache:
-                print "using cache"
                 item_cloud = cloud_cache[item_tag]
             else:
-                print "doing query"
                 item_cloud = cloud_cache[item_tag] = item_tag.cloud.all()
 
 	    # print "examining %s -> %s" % (item_tag, str(item_cloud))
