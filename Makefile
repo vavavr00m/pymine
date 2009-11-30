@@ -37,11 +37,11 @@ perms:
 	chmod 755 `find . -name "*.sh"`
 
 setup:
-	sh tools/runme-setup.sh
+	sh mine-setup.sh
 	make perms
 
-hard-reset: # brute-force rebuild from scratch
-	env MINE_EMAIL=$(MY_EMAIL) tools/runme-setup.sh
+hard-reset: clobber # brute-force rebuild from scratch
+	env MINE_USER_EMAIL=$(MY_EMAIL) make setup
 	make server
 
 ##################################################################

@@ -25,7 +25,7 @@ exec 2>&1
 set -x
 
 # login
-./mineauth.sh login
+./mine-auth-wrapper.sh login
 
 # set up some very general tags
 Minectl new-tags themineproject literature photos

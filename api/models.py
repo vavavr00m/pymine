@@ -1345,7 +1345,6 @@ class Registry(AbstractModel):
 
     def to_structure(self):
 	""" """
-
 	s = {}
 	s[self.key] = self.value # this is why it is not a Thing
 	s['keyCreated'] = self.created.isoformat()
