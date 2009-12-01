@@ -21,6 +21,10 @@
 .success {background: #97F08F;}
 .error {background: #FB505F;}
 
+.odd {background-color:#f4f4f4}
+.even {}
+
+
  /* =ListItem
 ----------------------------------------------------------------------------- */
 .listitem {margin-left: 25px;}

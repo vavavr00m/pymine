@@ -5,7 +5,7 @@
 {% block heading %}tags listing{% endblock %}
 
 {% block per_hash %}
-<div class="listtag">
+<div class="listtag {% cycle 'odd' 'even' %}">
 
 <h4>{{hash.tagName}}</h4>
 

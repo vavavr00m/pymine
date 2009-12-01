@@ -3,7 +3,7 @@
 {% block heading %}comments listing for item {{itemId}}{% endblock %}
 
 {% block per_hash %}
-<div class="listcomment">
+<div class="listcomment {% cycle 'odd' 'even' %}">
 
 <h4>{{hash.commentTitle}}</h4>
 

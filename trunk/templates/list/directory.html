@@ -4,7 +4,7 @@
 <ul>
 <li><a href="../"><tt>[parent directory]</tt></a></li>
 {% for item in list %}
-<li><a href="{{item.link}}"><tt>{{item.name}}</tt></a> <tt>{{item.description}}</tt></li>
+<li class="{% cycle 'odd' 'even' %}"><a href="{{item.link}}"><tt>{{item.name}}</tt></a> <tt>{{item.description}}</tt></li>
 {% endfor %}
 </ul>
 <p/>

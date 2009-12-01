@@ -3,7 +3,7 @@
 {% block heading %}relations listing{% endblock %}
 
 {% block per_hash %}
-<div class="listrelation">
+<div class="listrelation {% cycle 'odd' 'even' %}">
 
 <h4>{{hash.relationName}}</h4>
 
