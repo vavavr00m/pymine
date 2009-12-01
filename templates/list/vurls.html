@@ -2,7 +2,7 @@
 {% block title %}vurls listing{% endblock %}
 {% block heading %}vurls listing{% endblock %}
 {% block per_hash %}
-<div class="listvurl">
+<div class="listvurl {% cycle 'odd' 'even' %}">
 
 <h4>{{hash.vurlName}}</h4>
 
