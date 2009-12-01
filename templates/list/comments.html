@@ -1,6 +1,6 @@
 {% extends "base/api-iterate.html" %}
-{% block title %}comments listing{% endblock %}
-{% block heading %}comments listing{% endblock %}
+{% block title %}comments listing for item {{itemId}}{% endblock %}
+{% block heading %}comments listing for item {{itemId}}{% endblock %}
 
 {% block per_hash %}
 <div class="listcomment">
@@ -11,10 +11,8 @@
 <li><a href="/ui/read/comment/{{hash.commentId}}.html"><button>info</button></a></li>
 <li><a href="/ui/update/comment/{{hash.commentId}}.html"><button>edit</button></a></li>
 <li><a href="/ui/delete/comment/{{hash.commentId}}.html"><button>delete</button></a></li>
-<li><a href="/ui/read/relation/{{hash.commentRelationId}}.html"><button>relation {{hash.commentRelationId}} info</button></a> 
-({{hash.commentRelationName}})</li>
-<li><a href="/ui/read/item/{{hash.commentItemId}}.html"><button>item {{hash.commentItemId}} info</button></a>
-({{hash.commentItemName}})</li>
+<li><a href="/ui/read/relation/{{hash.commentRelationId}}.html"><button>info relation {{hash.commentRelationId}}</button></a></li>
+<li><a href="/ui/read/item/{{hash.commentItemId}}.html"><button>info item {{hash.commentItemId}}</button></a></li>
 <li><a href="/api/item/{{hash.commentItemId}}"><button>open item {{hash.commentItemId}}</button></a></li>
 </ul>
 
@@ -25,6 +23,8 @@
 {% endif %}
 
 <ul class="listmeta">
+<li>relation name: {{hash.commentRelationName}}</li>
+<li>item name: {{hash.commentItemName}}</li>
 </ul>
 
 </div>

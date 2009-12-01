@@ -3,12 +3,13 @@
 {% block heading %}relations listing{% endblock %}
 
 {% block per_hash %}
-<div class=""listrelation>
+<div class="listrelation">
 
 <h4>{{hash.relationName}}</h4>
 
 <ul class="actions">
 <li><a href="{{hash.relationFeedUrl}}"><button>feed</button></a></li>
+
 <li><a href="/ui/read/relation/{{hash.relationId}}.html"><button>info</button></a></li>
 <li><a href="/ui/update/relation/{{hash.relationId}}.html"><button>edit</button></a></li>
 <li><a href="/ui/delete/relation/{{hash.relationId}}.html"><button>delete</button></a></li>

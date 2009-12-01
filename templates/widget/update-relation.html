@@ -1,0 +1,27 @@
+<div class="widget">
+{% include 'widget/tinymce.html' %}
+<form method="post" enctype="multipart/form-data" action="/api/relation/{{relationId}}.rdr">
+
+<input type="hidden" name="redirect_success" value="/ui/list/relations.html">
+
+relation:
+<br/>
+<input name="relationName" value="{{relationName}}" size="33" />
+<p/>
+
+description: (optional)
+<br/>
+<textarea name="relationDescription" cols="80" rows="5">{{relationDescription}}</textarea>
+<p/>
+
+relationship interests: (ie: tags, space-separated, optional)
+<br/>
+<input name="relationInterests" value="{{relationInterests}}" size="66">
+<p/>
+
+<input type="submit" name="save" value="update relation" />
+<input type="reset" name="reset" value="reset form" />
+</form>
+
+</div>
+

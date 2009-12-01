@@ -1,0 +1,37 @@
+<div class="widget">
+{% include 'widget/tinymce.html' %}
+<form method="post" enctype="multipart/form-data" action="/api/item/{{itemId}}.rdr">
+
+<input type="hidden" name="redirect_success" value="/ui/list/items.html">
+
+title:
+<br/>
+<input name="itemName" value="{{itemName}}" size="66" />
+<p/>
+
+file to attach: (optional)
+<br/>
+<input type="file" name="itemData">
+<p/>
+
+text:
+<br/>
+<textarea name="itemDescription" cols="80" rows="15">{{itemDescription}}</textarea>
+<p/>
+
+tags:
+<br/>
+<input name="itemTags" value="itemTags" size="66">
+<p/>
+
+publication status:
+<br/>
+<input type="radio" name="itemStatus" value="private" /> private
+<input type="radio" name="itemStatus" value="shared" /> shared
+<input type="radio" name="itemStatus" value="public" checked /> public
+<p/>
+
+<input type="submit" name="save" value="update item" />
+<input type="reset" name="reset" value="reset form" />
+</form>
+</div>
