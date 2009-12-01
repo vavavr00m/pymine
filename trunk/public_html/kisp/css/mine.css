@@ -21,12 +21,46 @@
 .success {background: #97F08F;}
 .error {background: #FB505F;}
 
-
-
  /* =ListItem
 ----------------------------------------------------------------------------- */
 .listitem {margin-left: 25px;}
 .listitem h4 {font-size: 1.2em;}
 .listitem ul.actions, .listitem ul.listmeta {list-style-type: none;}
-.listitem ul.actions li {display: inline; padding-left: 4px;}
+.listitem ul.actions li {display: inline; padding-left: 2px;}
 .listitem ul.listmeta {list-style-type: none; font-size: 0.7em;}
+
+.listitem.private {background-color:#ffeeee}
+.listitem.shared {background-color:#ffffdd}
+.listitem.public {}
+
+ /* =ListRelation
+----------------------------------------------------------------------------- */
+.listrelation {margin-left: 25px;}
+.listrelation h4 {font-size: 1.2em;}
+.listrelation ul.actions, .listrelation ul.listmeta {list-style-type: none;}
+.listrelation ul.actions li {display: inline; padding-left: 2px;}
+.listrelation ul.listmeta {list-style-type: none; font-size: 0.7em;}
+
+ /* =ListComment
+----------------------------------------------------------------------------- */
+.listcomment {margin-left: 25px;}
+.listcomment h4 {font-size: 1.2em;}
+.listcomment ul.actions, .listcomment ul.listmeta {list-style-type: none;}
+.listcomment ul.actions li {display: inline; padding-left: 2px;}
+.listcomment ul.listmeta {list-style-type: none; font-size: 0.7em;}
+
+ /* =ListTag
+----------------------------------------------------------------------------- */
+.listtag {margin-left: 25px;}
+.listtag h4 {font-size: 1.2em;}
+.listtag ul.actions, .listtag ul.listmeta {list-style-type: none;}
+.listtag ul.actions li {display: inline; padding-left: 2px;}
+.listtag ul.listmeta {list-style-type: none; font-size: 0.7em;}
+
+ /* =ListVurl
+----------------------------------------------------------------------------- */
+.listvurl {margin-left: 25px;}
+.listvurl h4 {font-size: 1.2em;}
+.listvurl ul.actions, .listvurl ul.listmeta {list-style-type: none;}
+.listvurl ul.actions li {display: inline; padding-left: 2px;}
+.listvurl ul.listmeta {list-style-type: none; font-size: 0.7em;}

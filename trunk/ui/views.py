@@ -168,6 +168,7 @@ def delete_vurl(request, vid, *args, **kwargs):
 def list_comments(request, iid, *args, **kwargs):
     """list_comments(iid) returns ..."""
     s = api.list_comments(request, iid, *args, **kwargs)
+    s['itemId'] = iid # HACK TO SUPPORT PAGE
     return render_to_response('list/comments.html', s)
 
 ## rest: GET /ui/list/items.html

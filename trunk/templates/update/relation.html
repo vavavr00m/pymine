@@ -1,4 +1,5 @@
 {% extends 'base/page.html' %}
 {% block content %}
-<a href="/admin/api/relation/{{relationId}}/"><button>work in progress - click here to use the django admin editor for this relation</button></a>
+{% include 'widget/update-relation.html' %}
+<a href="/admin/api/relation/{{relationId}}/"><button>use the django admin editor for this relation</button></a>
 {% endblock %}

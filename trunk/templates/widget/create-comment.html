@@ -1,4 +1,39 @@
 <div class="widget">
-not yet done because requires self-modifying HTML
+{% include 'widget/tinymce.html' %}
+{% if itemId %}
+<form method="post" enctype="multipart/form-data" action="/api/comment/item/{{itemId}}.rdr">
+<input type="hidden" name="redirect_success" value="/ui/list/comments/{{itemId}}.html">
+{% else %}
+<!-- begin comment on feed/item 0, hardcoded -->
+<form method="post" enctype="multipart/form-data" action="/api/comment/item/0.rdr"> 
+<input type="hidden" name="redirect_success" value="/ui/list/comments/0.html">
+<!-- end comment on feed/item 0, hardcoded -->
+{% endif %}
+
+new comment:
+<br/>
+<input name="commentTitle" value="" size="33" />
+<p/>
+
+body: (optional)
+<br/>
+<textarea name="commentBody" cols="80" rows="5">
+</textarea>
+<p/>
+
+relation id: (numeric)
+<br/>
+<input name="commentRelationId" value="" size="5">
+<p/>
+
+item id: (numeric)
+<br/>
+[cannot be set for creation, is implicit in the destination URL for POST]
+<p/>
+
+<input type="submit" name="save" value="create comment" />
+<input type="reset" name="reset" value="reset form" />
+</form>
+
 </div>
 

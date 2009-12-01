@@ -1,4 +1,5 @@
 {% extends 'base/page.html' %}
 {% block content %}
-<a href="/admin/api/item/{{itemId}}/"><button>work in progress - click here to use the django admin editor for this item</button></a>
+{% include 'widget/update-item.html' %}
+<a href="/admin/api/item/{{itemId}}/"><button>use the django admin editor for this item</button></a>
 {% endblock %}

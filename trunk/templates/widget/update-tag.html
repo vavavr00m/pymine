@@ -1,0 +1,27 @@
+<div class="widget">
+{% include 'widget/tinymce.html' %}
+<form method="post" enctype="multipart/form-data" action="/api/tag/{{tagId}}.rdr">
+
+<input type="hidden" name="redirect_success" value="/ui/list/tags.html">
+
+tag:
+<br/>
+<input name="tagName" value="{{tagName}}" size="33" />
+<p/>
+
+implied tags: (space-separated, optional, <em>must already exist</em>)
+<br/>
+<input name="tagImplies" value="{{tagImplies}}" size="66">
+<p/>
+
+description: (optional)
+<br/>
+<textarea name="tagDescription" cols="80" rows="5">{{tagDescription}}</textarea>
+<p/>
+
+<input type="submit" name="save" value="update tag" />
+<input type="reset" name="reset" value="reset form" />
+</form>
+
+</div>
+

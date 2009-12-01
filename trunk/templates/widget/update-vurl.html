@@ -1,0 +1,22 @@
+<div class="widget">
+<!-- no tinymce here, the vurl text doesn't need it. -->
+<form method="post" enctype="multipart/form-data" action="/api/vurl/{{vurlId}}.rdr">
+
+<input type="hidden" name="redirect_success" value="/ui/list/vurls.html">
+
+long url:
+<br/>
+<textarea name="vurlLink" cols="80" rows="5">{{vurlLink}}</textarea>
+<p/>
+
+name: (optional)
+<br/>
+<input name="vurlName" value="{{vurlName}}" size="33" />
+<p/>
+
+<input type="submit" name="save" value="update vurl" />
+<input type="reset" name="reset" value="reset form" />
+</form>
+
+</div>
+
