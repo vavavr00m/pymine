@@ -30,7 +30,6 @@ import django.utils.simplejson as json
 import pickle
 
 from pymine.api.models import Tag, Item, Relation, Comment, Vurl, LogEvent, Minekey
-from pymine.api.views import construct_retval, read_item_data
 from pymine.views import API_CALL
 
 import util.cheatxml as cheatxml

@@ -26,10 +26,14 @@ from django.shortcuts import render_to_response, get_object_or_404
 
 from models import Tag, Item, Relation, Comment, Vurl, Registry
 
-def construct_retval(result=None, **kwargs):
+def construct_retval(request, result, **kwargs):
     """
     constructs an 'envelope' structure around the results of an API
     call, providing metainformation to be rendered into XML, JSON, etc
+
+    request may be None
+
+    result may be None
     """
 
     template = {}
@@ -37,53 +41,58 @@ def construct_retval(result=None, **kwargs):
     template['exit'] = kwargs.get('exit', 0)
     template['status'] = kwargs.get('status', 'ok')
 
-    if result: template['result'] = result
+    if result: 
+        template['result'] = result
 
-    for k in ( 'prevurl', 'nexturl', 'thisurl',
-	       'count', 'span', 'page',
-	       ):
-	v = kwargs.get(k, None)
+    # inputs:
+    # query (dealt with elsewhere)
+    # span (pagination off, if zero)
+    # page (ie: desired)
 
-	if v: template[k] = v
+    # outputs:
+    # page (ie: current)
+    # query (ie: same as input)
+    # span
+    # first
+    # prev
+    # next
+    # last
+    # firsturl
+    # prevurl
+    # nexturl
+    # lasturl
 
     return template
 
-def list_foos(model):
-    """
-    """
-
-    result = [ { m.sattr_prefix : m.to_structure() } for m in model.objects.filter(is_deleted=False) ]
-    return construct_retval(result)
-
-def create_foo(model, request):
+def create_foo(request, model):
     """
     """
 
     m = model.new_from_request(request)
-    return construct_retval(m.to_structure())
+    return construct_retval(request, m.to_structure())
 
-def delete_foo(model, mid):
+def delete_foo(request, model, mid):
     """
     """
 
     m = model.objects.get(id=int(mid))
     m.delete()
-    return construct_retval()
+    return construct_retval(request, None)
 
-def read_foo(model, mid):
+def read_foo(request, model, mid):
     """
     """
 
     m = model.objects.get(id=int(mid))
-    return construct_retval(m.to_structure())
+    return construct_retval(request, m.to_structure())
 
-def update_foo(model, request, mid):
+def update_foo(request, model, mid):
     """
     """
 
     m = model.objects.get(id=int(mid))
     m = m.update_from_request(request)
-    return construct_retval(m.to_structure())
+    return construct_retval(request, m.to_structure())
 
 def delete_foo_key(model, mid, sattr):
     """
@@ -91,7 +100,7 @@ def delete_foo_key(model, mid, sattr):
 
     m = model.objects.get(id=int(mid))
     m.delete_sattr(sattr)
-    return construct_retval(m.to_structure())
+    return construct_retval(request, m.to_structure())
 
 def get_foo_key(model, mid, sattr):
     """
@@ -101,7 +110,7 @@ def get_foo_key(model, mid, sattr):
     s = m.to_structure()
     if not sattr in s:
 	raise RuntimeError, "sattr not found: " + sattr
-    return construct_retval(s[sattr])
+    return construct_retval(request, s[sattr])
 
 def nyi():
     """
@@ -117,21 +126,21 @@ def nyi():
 ## declared args: cid
 def delete_comment(request, cid, *args, **kwargs):
     """delete_comment(cid) returns ..."""
-    return delete_foo(Comment, cid)
+    return delete_foo(request, Comment, cid)
 
 ## rest: GET /api/comment/CID.FMT
 ## function: read_comment
 ## declared args: cid
 def read_comment(request, cid, *args, **kwargs):
     """read_comment(cid) returns ..."""
-    return read_foo(Comment, cid)
+    return read_foo(request, Comment, cid)
 
 ## rest: POST /api/comment/CID.FMT
 ## function: update_comment
 ## declared args: cid
 def update_comment(request, cid, *args, **kwargs):
     """update_comment(cid) returns ..."""
-    return update_foo(Comment, request, cid)
+    return update_foo(request, Comment, cid)
 
 ## function: delete_comment_key
 ## declared args: cid sattr
@@ -152,7 +161,7 @@ def get_comment_key(request, cid, sattr, *args, **kwargs):
 def create_comment(request, iid, *args, **kwargs):
     """create_comment(iid) returns ..."""
     m = Comment.new_from_request(request, commentItemId=int(iid)) # use kwargs to push extra information
-    return construct_retval(m.to_structure())
+    return construct_retval(request, m.to_structure())
 
 ## rest: GET /api/comment/item/IID.FMT
 ## function: list_comments
@@ -167,8 +176,13 @@ def list_comments(request, iid, *args, **kwargs):
         item = Item.objects.get(id=item_id)
         models = item.comment_set
 
-    result = [ { m.sattr_prefix : m.to_structure() } for m in models.filter(is_deleted=False) ]
-    return construct_retval(result)
+    qs = models.filter(is_deleted=False)
+
+    if 'query' in request.REQUEST:
+        qs = Comment.filter_queryset(qs, request.REQUEST['query'])
+
+    result = [ { m.sattr_prefix : m.to_structure() } for m in qs ]
+    return construct_retval(request, result)
 
 ##################################################################
 
@@ -193,14 +207,21 @@ def import_mine(request, efmt, *args, **kwargs):
 ## declared args: 
 def create_item(request, *args, **kwargs):
     """create_item() returns ..."""
-    return create_foo(Item, request)
+    return create_foo(request, Item)
 
 ## rest: GET /api/item.FMT
 ## function: list_items
 ## declared args: 
 def list_items(request, *args, **kwargs):
     """list_items() returns ..."""
-    return list_foos(Item)
+    qs = Item.objects.filter(is_deleted=False)
+
+    if 'query' in request.REQUEST:
+        qs = Item.filter_queryset(qs, request.REQUEST['query'])
+
+    result = [ { m.sattr_prefix : m.to_structure() } for m in qs ]
+    return construct_retval(request, result)
+
 
 ## rest: GET /api/item/IID
 ## function: read_item_data
@@ -243,21 +264,21 @@ def read_item_data(request, iid, *args, **kwargs): # <--------------------------
 ## declared args: iid
 def delete_item(request, iid, *args, **kwargs):
     """delete_item(iid) returns ..."""
-    return delete_foo(Item, iid)
+    return delete_foo(request, Item, iid)
 
 ## rest: GET /api/item/IID.FMT
 ## function: read_item
 ## declared args: iid
 def read_item(request, iid, *args, **kwargs):
     """read_item(iid) returns ..."""
-    return read_foo(Item, iid)
+    return read_foo(request, Item, iid)
 
 ## rest: POST /api/item/IID.FMT
 ## function: update_item
 ## declared args: iid
 def update_item(request, iid, *args, **kwargs):
     """update_item(iid) returns ..."""
-    return update_foo(Item, request, iid)
+    return update_foo(request, Item, iid)
 
 ## function: delete_item_key
 ## declared args: iid sattr
@@ -293,8 +314,9 @@ def get_item_key(request, iid, sattr, *args, **kwargs):
 ## declared args: 
 def list_registry(request, *args, **kwargs):
     """list_registry() returns ..."""
-    result = [ m.to_structure() for m in Registry.objects.all() ]
-    return construct_retval(result)
+    qs = Registry.objects.all()
+    result = [ m.to_structure() for m in qs ]
+    return construct_retval(request, result)
 
 ## rest: POST /api/registry/RATTR.FMT
 ## function: amend_registry_key
@@ -306,7 +328,7 @@ def amend_registry_key(request, rattr, *args, **kwargs):
     if not created: # then it will need updating
         m.value = v
         m.save();
-    return construct_retval(m.to_structure())
+    return construct_retval(request, m.to_structure())
 
 ## function: delete_registry_key
 ## declared args: rattr
@@ -314,7 +336,7 @@ def delete_registry_key(request, rattr, *args, **kwargs):
     """delete_registry_key(rattr) returns ..."""
     m = Registry.objects.get(key=rattr)
     m.delete()
-    return construct_retval()
+    return construct_retval(request, None)
 
 ## rest: GET /api/registry/RATTR.FMT
 ## function: get_registry_key
@@ -322,7 +344,7 @@ def delete_registry_key(request, rattr, *args, **kwargs):
 def get_registry_key(request, rattr, *args, **kwargs):
     """get_registry_key(rattr) returns ..."""
     m = Registry.objects.get(key=rattr)
-    return construct_retval(m.value)
+    return construct_retval(request, m.value)
 
 ##################################################################
 
@@ -331,34 +353,40 @@ def get_registry_key(request, rattr, *args, **kwargs):
 ## declared args: 
 def create_relation(request, *args, **kwargs):
     """create_relation() returns ..."""
-    return create_foo(Relation, request)
+    return create_foo(request, Relation)
 
 ## rest: GET /api/relation.FMT
 ## function: list_relations
 ## declared args: 
 def list_relations(request, *args, **kwargs):
     """list_relations() returns ..."""
-    return list_foos(Relation)
+    qs = Relation.objects.filter(is_deleted=False)
+
+    if 'query' in request.REQUEST:
+        qs = Relation.filter_queryset(qs, request.REQUEST['query'])
+
+    result = [ { m.sattr_prefix : m.to_structure() } for m in qs ]
+    return construct_retval(request, result)
 
 ## function: delete_relation
 ## declared args: rid
 def delete_relation(request, rid, *args, **kwargs):
     """delete_relation(rid) returns ..."""
-    return delete_foo(Relation, rid)
+    return delete_foo(request, Relation, rid)
 
 ## rest: GET /api/relation/RID.FMT
 ## function: read_relation
 ## declared args: rid
 def read_relation(request, rid, *args, **kwargs):
     """read_relation(rid) returns ..."""
-    return read_foo(Relation, rid)
+    return read_foo(request, Relation, rid)
 
 ## rest: POST /api/relation/RID.FMT
 ## function: update_relation
 ## declared args: rid
 def update_relation(request, rid, *args, **kwargs):
     """update_relation(rid) returns ..."""
-    return update_foo(Relation, request, rid)
+    return update_foo(request, Relation, rid)
 
 ## function: delete_relation_key
 ## declared args: rid sattr
@@ -380,34 +408,40 @@ def get_relation_key(request, rid, sattr, *args, **kwargs):
 ## declared args: 
 def create_tag(request, *args, **kwargs):
     """create_tag() returns ..."""
-    return create_foo(Tag, request)
+    return create_foo(request, Tag)
 
 ## rest: GET /api/tag.FMT
 ## function: list_tags
 ## declared args: 
 def list_tags(request, *args, **kwargs):
     """list_tags() returns ..."""
-    return list_foos(Tag)
+    qs = Tag.objects.filter(is_deleted=False)
+
+    if 'query' in request.REQUEST:
+        qs = Tag.filter_queryset(qs, request.REQUEST['query'])
+
+    result = [ { m.sattr_prefix : m.to_structure() } for m in qs ]
+    return construct_retval(request, result)
 
 ## function: delete_tag
 ## declared args: tid
 def delete_tag(request, tid, *args, **kwargs):
     """delete_tag(tid) returns ..."""
-    return delete_foo(Tag, tid)
+    return delete_foo(request, Tag, tid)
 
 ## rest: GET /api/tag/TID.FMT
 ## function: read_tag
 ## declared args: tid
 def read_tag(request, tid, *args, **kwargs):
     """read_tag(tid) returns ..."""
-    return read_foo(Tag, tid)
+    return read_foo(request, Tag, tid)
 
 ## rest: POST /api/tag/TID.FMT
 ## function: update_tag
 ## declared args: tid
 def update_tag(request, tid, *args, **kwargs):
     """update_tag(tid) returns ..."""
-    return update_foo(Tag, request, tid)
+    return update_foo(request, Tag, tid)
 
 ## function: delete_tag_key
 ## declared args: tid sattr
@@ -457,7 +491,7 @@ def read_version(request, *args, **kwargs):
         'softwareRevision': settings.MINE_SOFTWARE_VERSION,
         'mineApiVersion': settings.MINE_API_VERSION,
         }
-    return construct_retval(result)
+    return construct_retval(request, result)
 
 ##################################################################
 
@@ -466,34 +500,40 @@ def read_version(request, *args, **kwargs):
 ## declared args: 
 def create_vurl(request, *args, **kwargs):
     """create_vurl() returns ..."""
-    return create_foo(Vurl, request)
+    return create_foo(request, Vurl)
 
 ## rest: GET /api/vurl.FMT
 ## function: list_vurls
 ## declared args: 
 def list_vurls(request, *args, **kwargs):
     """list_vurls() returns ..."""
-    return list_foos(Vurl)
+    qs = Vurl.objects.filter(is_deleted=False)
+
+    if 'query' in request.REQUEST:
+        qs = Vurl.filter_queryset(qs, request.REQUEST['query'])
+
+    result = [ { m.sattr_prefix : m.to_structure() } for m in qs ]
+    return construct_retval(request, result)
 
 ## function: delete_vurl
 ## declared args: vid
 def delete_vurl(request, vid, *args, **kwargs):
     """delete_vurl(vid) returns ..."""
-    return delete_foo(Vurl, vid)
+    return delete_foo(request, Vurl, vid)
 
 ## rest: GET /api/vurl/VID.FMT
 ## function: read_vurl
 ## declared args: vid
 def read_vurl(request, vid, *args, **kwargs):
     """read_vurl(vid) returns ..."""
-    return read_foo(Vurl, vid)
+    return read_foo(request, Vurl, vid)
 
 ## rest: POST /api/vurl/VID.FMT
 ## function: update_vurl
 ## declared args: vid
 def update_vurl(request, vid, *args, **kwargs):
     """update_vurl(vid) returns ..."""
-    return update_foo(Vurl, request, vid)
+    return update_foo(request, Vurl, vid)
 
 ## function: delete_vurl_key
 ## declared args: vid sattr

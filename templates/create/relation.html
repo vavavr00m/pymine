@@ -1,3 +1,9 @@
 {% extends 'base/page.html' %}
+
 {% block content %}{% include 'widget/create-relation.html' %}{% endblock %}
+
 {% block title %}create relation{% endblock %}
+
+{% block context_sidebar %}
+{% include "sidebar/relations.html" %}
+{% endblock %}

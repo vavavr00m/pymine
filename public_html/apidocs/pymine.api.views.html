@@ -38,12 +38,6 @@
     
     
     <td>Function</td>
-    <td><a href="pymine.api.views.html#list_foos">list_foos</a></td>
-    <td><span class="undocumented">Undocumented</span></td>
-  </tr><tr class="function">
-    
-    
-    <td>Function</td>
     <td><a href="pymine.api.views.html#create_foo">create_foo</a></td>
     <td><span class="undocumented">Undocumented</span></td>
   </tr><tr class="function">
@@ -373,32 +367,22 @@ files</span></td>
         <a name="construct_retval"></a>
         <div class="functionHeader">
         
-        def construct_retval(result=None, **kwargs):
+        def construct_retval(request, result, **kwargs):
         
       </div>
         <div class="functionBody">
           
           <div>constructs an 'envelope' structure around the results of an API call, 
-providing metainformation to be rendered into XML, JSON, etc<table class="fieldTable"></table></div>
-        </div>
-      </div><div class="function">
-        <a name="pymine.api.views.list_foos"></a>
-        <a name="list_foos"></a>
-        <div class="functionHeader">
-        
-        def list_foos(model):
-        
-      </div>
-        <div class="functionBody">
-          
-          <div class="undocumented">Undocumented</div>
+providing metainformation to be rendered into XML, JSON, etc</p>
+<p>request may be None</p>
+<p>result may be None<table class="fieldTable"></table></div>
         </div>
       </div><div class="function">
         <a name="pymine.api.views.create_foo"></a>
         <a name="create_foo"></a>
         <div class="functionHeader">
         
-        def create_foo(model, request):
+        def create_foo(request, model):
         
       </div>
         <div class="functionBody">
@@ -410,7 +394,7 @@ providing metainformation to be rendered into XML, JSON, etc<table class="fieldT
         <a name="delete_foo"></a>
         <div class="functionHeader">
         
-        def delete_foo(model, mid):
+        def delete_foo(request, model, mid):
         
       </div>
         <div class="functionBody">
@@ -422,7 +406,7 @@ providing metainformation to be rendered into XML, JSON, etc<table class="fieldT
         <a name="read_foo"></a>
         <div class="functionHeader">
         
-        def read_foo(model, mid):
+        def read_foo(request, model, mid):
         
       </div>
         <div class="functionBody">
@@ -434,7 +418,7 @@ providing metainformation to be rendered into XML, JSON, etc<table class="fieldT
         <a name="update_foo"></a>
         <div class="functionHeader">
         
-        def update_foo(model, request, mid):
+        def update_foo(request, model, mid):
         
       </div>
         <div class="functionBody">

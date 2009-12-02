@@ -80,6 +80,7 @@ from django.conf import settings
 from django.core.cache import cache
 from django.core.files.storage import FileSystemStorage
 from django.db import models, transaction
+from django.db.models import Q
 from django.template.loader import render_to_string
 from django.utils import feedgenerator
 import hashlib
@@ -248,9 +249,6 @@ class AbstractModel(models.Model):
     last_modified = AbstractModelField.last_modified()
     is_deleted = AbstractModelField.bool(False)
 
-    class Meta:
-	abstract = True
-
     def delete(self):
 	""" """
 	self.is_deleted = True
@@ -260,6 +258,8 @@ class AbstractModel(models.Model):
 	""" """
 	pass
 
+    class Meta:
+	abstract = True
 
 ##################################################################
 ##################################################################
@@ -1027,39 +1027,15 @@ class AbstractThing(AbstractModel):
     file.
     """
 
-    # continuing the chain of inheritance
-    class Meta:
-	abstract = True
+    # enormous table of all sattrs and what their corresponding mattr
+    # is; the model is implied by the prefix to the sattr name.  don't
+    # worry about linear lookup overhead because this table gets
+    # compiled into dicts for instant lookup
 
-    # all these will be overridden in subclasses
-    id = -1
-    sattr_prefix = None
-    xattr_prefix = None
-    xattr_manager = None
-
-    # IMPORTANT: see s_classes registration at the bottom of this
-    # file; there *is* slight replication of code but it's unavoidable
-    # since this is essentially a linker issue.  For the
-    # initialisation of Thing() it ie enough to have the keys in place
-    # and then have the registration code populate them for runtime.
-
-    s_classes = {
-	'thing': None, # will be populated later
-	'comment': None, # will be populated later
-	'item': None, # will be populated later
-	'relation': None, # will be populated later
-	'tag': None, # will be populated later
-	'vurl': None, # will be populated later
-	}
-
-    # enormous table of things to make and do; don't worry about
-    # linear lookup overhead because this table gets compiled into
-    # dictionaries for fast lookup...
+    # note to alec: | cts -k 5
 
     sattr_conversion_table = (
-
-# alec: | cts -k 5
-#  SATTR                          MATTR                        DEFER?  R2S          S2M              M2S
+#  SATTR                         MATTR                       DEFER?  R2S          S2M              M2S
 (  'commentItemName',            None,                       True,   None,        None,            None,            ),  #see:Comment()
 (  'commentRelationName',        None,                       True,   None,        None,            None,            ),  #see:Comment()
 (  'itemHasFile',                None,                       True,   None,        None,            None,            ),  #see:Item()
@@ -1145,17 +1121,58 @@ class AbstractThing(AbstractModel):
 (  'tagDescription',             'description',              False,  r2s_string,  s2m_verbatim,    m2s_copy,        ),
 )
 
-    # A word about deferral: some s2m conversions can only take place
-    # after the model has been written to the database; this is
-    # because ManyToMany keys (and perhaps other ForeignKeys?) can
-    # only be created once a id/primary key has been created for a new
-    # entry; therefore some of the translations have been flagged for
-    # "deferral", ie: a second round of processing after the first
-    # m.save(); this is OK because there is a rollback set up around
-    # the model-alteration method in case an exception is thrown.
+    # all these will be overridden in subclasses
+
+    id = -1
+    sattr_prefix = None
+    xattr_prefix = None
+    xattr_manager = None
+
+    # IMPORTANT: see the s_classes registration code at the bottom of
+    # this file; there *is* slight replication but it's unavoidable
+    # since this essentially solves a linker issue. for the
+    # initialisation of Thing() it is enough to have the keys in place
+    # and then have the registration code populate them for runtime.
+
+    # SUMMARY: most of the functionality of the major pymine models
+    # (called "Things" in protomine) is defined here in AbstractThing;
+    # we precompute all the lookup tables here as *class* information,
+    # not *instance* information, because the latter has per-instance
+    # overhead.  Some class attributes such as 'sattr_prefix' are
+    # *set* in subclasses but are *used* here, so the s_classes table
+    # is provided to lookup the appropriate class at runtime.
+
+    # (because otherwise you hit the forward-reference problem or take
+    # a massively wasteful hit with instance-data computation)
+
+    # this will all eventually be simplified, but although arcane it
+    # works surprisingly well for now; if you need to add new fields
+    # to methods, you register them in the table above, and that is
+    # all which is needed to get uni/bidirectional transfer between
+    # Requestspace, Structurespace and Modelspace.
+
+    s_classes = {
+	'thing': None, # will be populated later
+	'comment': None, # will be populated later
+	'item': None, # will be populated later
+	'relation': None, # will be populated later
+	'tag': None, # will be populated later
+	'vurl': None, # will be populated later
+	}
 
     # these tables get used to map sattr and mattr names to the tuples
     # of how-to-convert from one to the other.
+
+    # DEFERRAL: some s2m conversions can only take place after the
+    # model has been written to the database; this is because
+    # ManyToMany fields and ForeignKeys can only be created once a
+    # primary key has been created for the new model; therefore some
+    # translations have been flagged for "deferral", ie: a second
+    # round of processing after the first m.save().  this is OK
+    # because there is a rollback set up around the model-alteration
+    # method in case an exception is thrown.
+
+    # deferral is also done to get an IID for itemData filename creation
 
     m2s_table = {}
     s2m_table = {}
@@ -1182,8 +1199,6 @@ class AbstractThing(AbstractModel):
 		break # for loop
 	else: # for loop; you can have a else: for a for loop in python, how cool!
 	    raise RuntimeError, "unrecognised prefix in sattr_conversion: " + sattr
-
-##################################################################
 
     @transaction.commit_on_success # <- rollback if it raises an exception
     def update_from_request(self, r, **kwargs):
@@ -1282,10 +1297,6 @@ class AbstractThing(AbstractModel):
 	# return it
 	return self
 
-    # creating a new model
-
-##################################################################
-
     @classmethod # <- new_from_request is an alternative constructor, ergo: classmethod
     def new_from_request(klass, r, **kwargs):
 	""" """
@@ -1293,8 +1304,6 @@ class AbstractThing(AbstractModel):
 	margs = {}
 	m = instantiator(**margs)
 	return m.update_from_request(r, **kwargs)
-
-##################################################################
 
     # looking up a mattr from a sattr is tedious since it has to be
     # done in two places; this wraps that for convenience
@@ -1308,8 +1317,6 @@ class AbstractThing(AbstractModel):
 	else:
 	    raise RuntimeError, "lookup_mattr cannot lookup: " + sattr
 	return t
-
-##################################################################
 
     # get_sattr and delete_sattr methods: supporting
     # /api/relation/42/relationName.json and similar methods.
@@ -1348,8 +1355,6 @@ class AbstractThing(AbstractModel):
 	else:
 	    raise RuntimeError, "get_sattr asked to look up bogus sattr: " + sattr
 
-##################################################################
-
     @transaction.commit_on_success # <- rollback if it raises an exception
     def delete_sattr(self, sattr):
 	""" """
@@ -1374,8 +1379,6 @@ class AbstractThing(AbstractModel):
 	else:
 	    raise RuntimeError, "get_sattr asked to look up bogus sattr: " + sattr
 
-##################################################################
-
     # render a model into a structure suitable for serializing and
     # returning to the user.
 
@@ -1396,12 +1399,18 @@ class AbstractThing(AbstractModel):
 
 	return s
 
-##################################################################
-
     def get_absolute_url(self):
 	""" """
 	fmt = 'raw' # TBD
 	return '/api/%s/%d.%s' % (self.sattr_prefix, self.id, fmt)
+
+    @classmethod
+    def filter_queryset(klass, qs, query):
+        return qs
+
+    # continuing the chain of inheritance
+    class Meta:
+	abstract = True
 
 ##################################################################
 ##################################################################
@@ -1573,6 +1582,13 @@ class Tag(AbstractThing):
 
 	return retval
 
+    @classmethod
+    def filter_queryset(klass, qs, query):
+        for word in query.split():
+            qs = qs.filter(Q(name__icontains=word) |
+                           Q(description__icontains=word))
+        return qs
+
 ##################################################################
 ##################################################################
 ##################################################################
@@ -1644,6 +1660,13 @@ class Relation(AbstractThing):
 	s['relationFeedUrl'] = self.feed_minekey().permalink()
 
 	return s
+
+    @classmethod
+    def filter_queryset(klass, qs, query):
+        for word in query.split():
+            qs = qs.filter(Q(name__icontains=word) |
+                           Q(description__icontains=word))
+        return qs
 
 ##################################################################
 ##################################################################
@@ -1835,6 +1858,13 @@ class Item(AbstractThing):
 	# done
 	return iteminfo
 
+    @classmethod
+    def filter_queryset(klass, qs, query):
+        for word in query.split():
+            qs = qs.filter(Q(name__icontains=word) |
+                           Q(description__icontains=word))
+        return qs
+
 ##################################################################
 ##################################################################
 ##################################################################
@@ -1891,6 +1921,13 @@ class Comment(AbstractThing):
 	s['commentRelationName'] = self.relation.name
 	s['commentItemName'] = self.item.name
 	return s
+
+    @classmethod
+    def filter_queryset(klass, qs, query):
+        for word in query.split():
+            qs = qs.filter(Q(title__icontains=word) |
+                           Q(body__icontains=word))
+        return qs
 
     class Meta:
 	ordering = ['-id']
@@ -1978,6 +2015,13 @@ class Vurl(AbstractThing):
 	s['vurlPathShort'] = "/get/k/%s" % vk
 	s['vurlPathLong'] =  "/get/n/%s" % self.name
 	return s
+
+    @classmethod
+    def filter_queryset(klass, qs, query):
+        for word in query.split():
+            qs = qs.filter(Q(link__icontains=word) |
+                           Q(name__icontains=word))
+        return qs
 
 ##################################################################
 ##################################################################
