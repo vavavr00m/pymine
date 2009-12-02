@@ -21,6 +21,8 @@
 .success {background: #97F08F;}
 .error {background: #FB505F;}
 
+
+/* alternate row colouring for most API list calls */
 .odd {background-color:#f4f4f4}
 .even {}
 
@@ -35,7 +37,7 @@
 
 .listitem.private {background-color:#ffeeee}
 .listitem.shared {background-color:#ffffdd}
-.listitem.public {}
+.listitem.public {background-color:#f4f4f4}
 
  /* =ListRelation
 ----------------------------------------------------------------------------- */
