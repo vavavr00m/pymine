@@ -53,7 +53,7 @@ permalink()</span></td>
     
     
     <td>Method</td>
-    <td><a href="pymine.api.models.Minekey.html#ivgen">ivgen</a></td>
+    <td><a href="pymine.api.models.Minekey.html#generate_iv">generate_iv</a></td>
     <td><span>from an iid, generate a binary IV string of the appropriate length</span></td>
   </tr><tr class="classmethod">
     
@@ -218,11 +218,11 @@ permalink()<table class="fieldTable"></table></div>
           <div>return a b64-encoded hash of x with padding removed<table class="fieldTable"></table></div>
         </div>
       </div><div class="function">
-        <a name="pymine.api.models.Minekey.ivgen"></a>
-        <a name="ivgen"></a>
+        <a name="pymine.api.models.Minekey.generate_iv"></a>
+        <a name="generate_iv"></a>
         <div class="functionHeader">
         
-        def ivgen(self):
+        def generate_iv(self):
         
       </div>
         <div class="functionBody">
@@ -439,14 +439,15 @@ specifying whether you want the minekey to be a 'get' or a 'put'
 (want_method)</p>
 <p>this routine traps the 'depth==0' thing; this means attempts to walk 
 over the mine via link-chasing get logged.</p>
+<p>TODO: this routine performs relation timed-embargo checking</p>
 <p>TODO: this routine performs global time-of-day access restriction 
 checks</p>
 <p>this routine performs checking of self.rvsn against 
 Relation(id=rid).version and raises exception on mismatch</p>
 <p>this routine performs relation source-IP-address checking</p>
-<p>TODO: this routine performs relation timed-embargo checking</p>
-<p>TODO: this routine performs &quot;not:relationname&quot; item tag 
-checking<table class="fieldTable"></table></div>
+<p>this routine checks that the item (if not iid=0) is either public or 
+shared.</p>
+<p>this routine performs &quot;not:relationname&quot; item tag checking<table class="fieldTable"></table></div>
         </div>
       </div>
     

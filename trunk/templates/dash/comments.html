@@ -1,10 +1,14 @@
 {% extends "base/page.html" %}
+
 {% block title %}comments dashboard{% endblock %}
+
 {% block heading %}comments dashboard{% endblock %}
+
 {% block content %}
 {% include 'widget/browse-comment.html' %}
-<!--
-remove until commenting on feed is viable
-% include 'widget/create-comment.html' %
--->
+{% include 'widget/create-comment.html' %}
+{% endblock %}
+
+{% block context_sidebar %}
+{% include "sidebar/search-comments.html" %}
 {% endblock %}

@@ -1,20 +1,19 @@
 {% extends "base/page.html" %}
 
-
 {% block content %}
+
 <h3>{% block heading %}generic heading{% endblock %}</h3>
-<p/>
+
 {% if result %}
-{% block for_results %}
+{% block listing_iterate_results %}
 <ul>
 {% for key, value in result.items %}<li>{{key}}: {{value}}</li>{% endfor %}
 </ul>
-{% endblock %} <!-- for_results -->
+{% endblock %} <!-- listing_iterate_results -->
 {% else %}
 no result returned by api call
 {% endif %}
 {% endblock %} <!-- content -->
-
 
 {% block content_error_status %}
 {% if exit %}
@@ -23,7 +22,6 @@ no result returned by api call
 <p class="success">yay it worked!</p>
 {% endif %}
 {% endblock %}
-
 
 {% block envelope %}
 <ul>

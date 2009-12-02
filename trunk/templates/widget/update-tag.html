@@ -1,6 +1,6 @@
 <div class="widget">
 {% include 'widget/tinymce.html' %}
-<form method="post" enctype="multipart/form-data" action="/api/tag/{{tagId}}.rdr">
+<form method="POST" enctype="multipart/form-data" action="/api/tag/{{tagId}}.rdr">
 
 <input type="hidden" name="redirect_success" value="/ui/list/tags.html">
 
