@@ -5,11 +5,12 @@
 {% block heading %}tags listing{% endblock %}
 
 {% block context_sidebar %}
-{% include "sidebar/search-tags.html" %}
+{% include "sidebar/tags.html" %}
 {% endblock %}
 
 {% block listing_per_hash %}
 <div class="listtag {% cycle 'odd' 'even' %}">
+
 <h4>{{hash.tagName}}</h4>
 
 <ul class="actions">
@@ -32,4 +33,8 @@
 </ul>
 
 </div>
+{% endblock %}
+
+{% block context_sidebar %}
+{% include "sidebar/tags.html" %}
 {% endblock %}
