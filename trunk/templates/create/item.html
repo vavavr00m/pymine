@@ -1,3 +1,9 @@
 {% extends 'base/page.html' %}
+
 {% block content %}{% include 'widget/create-item.html' %}{% endblock %}
+
 {% block title %}create item{% endblock %}
+
+{% block context_sidebar %}
+{% include "sidebar/items.html" %}
+{% endblock %}

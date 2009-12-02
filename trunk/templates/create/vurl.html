@@ -1,3 +1,9 @@
 {% extends 'base/page.html' %}
+
 {% block content %}{% include 'widget/create-vurl.html' %}{% endblock %}
+
 {% block title %}create vurl{% endblock %}
+
+{% block context_sidebar %}
+{% include "sidebar/vurls.html" %}
+{% endblock %}

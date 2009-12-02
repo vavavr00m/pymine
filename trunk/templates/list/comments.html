@@ -1,11 +1,11 @@
 {% extends "base/api-iterate.html" %}
 
 {% block title %}
-comments for item {{itemId}}
+comments{% ifnotequal itemId "0" %} for item {{itemId}}{% endifnotequal %}
 {% endblock %}
 
 {% block heading %}
-comments for item {{itemId}}
+comments{% ifnotequal itemId "0" %} for item {{itemId}}{% endifnotequal %}
 {% endblock %}
 
 {% block listing_per_hash %}
@@ -38,4 +38,5 @@ comments for item {{itemId}}
 
 {% block context_sidebar %}
 {% include "sidebar/comments.html" %}
+{% include "sidebar/comment-search.html" %}
 {% endblock %}

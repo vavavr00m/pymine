@@ -107,7 +107,7 @@ def submit_minekey(request, minekey, *args, **kwargs):
     m.save()
 
     # grab the structure
-    retval = construct_retval(m.to_structure())
+    retval = construct_retval(None, m.to_structure())
 
     # coersce to output format - copied from API_CALL()
     if desired_format == 'rdr':
