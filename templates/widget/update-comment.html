@@ -1,6 +1,6 @@
 <div class="widget">
 {% include 'widget/tinymce.html' %}
-<form method="post" enctype="multipart/form-data" action="/api/comment/{{commentId}}.rdr">
+<form method="POST" enctype="multipart/form-data" action="/api/comment/{{commentId}}.rdr">
 <input type="hidden" name="redirect_success" value="/ui/list/comments/0.html">
 
 comment:

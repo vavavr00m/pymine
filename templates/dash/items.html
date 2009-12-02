@@ -1,7 +1,14 @@
 {% extends "base/page.html" %}
+
 {% block title %}items dashboard{% endblock %}
+
 {% block heading %}items dashboard{% endblock %}
+
 {% block content %}
 {% include 'widget/browse-item.html' %}
 {% include 'widget/create-item.html' %}
+{% endblock %}
+
+{% block context_sidebar %}
+{% include "sidebar/search-items.html" %}
 {% endblock %}

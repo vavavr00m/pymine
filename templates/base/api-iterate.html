@@ -1,11 +1,9 @@
 {% extends "base/api.html" %}
 
-{% block for_results %}
+{% block listing_iterate_results %}
 {% for individual in result %}
 {% for type, hash in individual.items %}
-{% block per_hash %}
-generic per_hash block
-{% endblock %}
+{% block listing_per_hash %}generic listing_per_hash block{% endblock %}
 {% endfor %}
 {% endfor %}
 {% endblock %}	

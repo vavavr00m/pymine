@@ -1,7 +1,14 @@
 {% extends "base/page.html" %}
+
 {% block title %}tags dashboard{% endblock %}
+
 {% block heading %}tags dashboard{% endblock %}
+
 {% block content %}
 {% include 'widget/browse-tag.html' %}
 {% include 'widget/create-tag.html' %}
+{% endblock %}
+
+{% block context_sidebar %}
+{% include "sidebar/search-tags.html" %}
 {% endblock %}

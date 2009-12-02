@@ -4,9 +4,12 @@
 
 {% block heading %}tags listing{% endblock %}
 
-{% block per_hash %}
-<div class="listtag {% cycle 'odd' 'even' %}">
+{% block context_sidebar %}
+{% include "sidebar/search-tags.html" %}
+{% endblock %}
 
+{% block listing_per_hash %}
+<div class="listtag {% cycle 'odd' 'even' %}">
 <h4>{{hash.tagName}}</h4>
 
 <ul class="actions">

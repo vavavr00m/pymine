@@ -1,6 +1,6 @@
 <div class="widget">
 {% include 'widget/tinymce.html' %}
-<form method="post" enctype="multipart/form-data" action="/api/item/{{itemId}}.rdr">
+<form method="POST" enctype="multipart/form-data" action="/api/item/{{itemId}}.rdr">
 
 <input type="hidden" name="redirect_success" value="/ui/list/items.html">
 

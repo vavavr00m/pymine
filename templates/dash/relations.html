@@ -1,7 +1,14 @@
 {% extends "base/page.html" %}
+
 {% block title %}relations dashboard{% endblock %}
+
 {% block heading %}relations dashboard{% endblock %}
+
 {% block content %}
 {% include 'widget/browse-relation.html' %}
 {% include 'widget/create-relation.html' %}
+{% endblock %}
+
+{% block context_sidebar %}
+{% include "sidebar/search-relations.html" %}
 {% endblock %}
