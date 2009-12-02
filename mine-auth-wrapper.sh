@@ -1,43 +1,65 @@
 #!/bin/sh
 
 MINEURL=http://127.0.0.1:9862
-
 MINEDIR=`dirname $0`
 MINEDIR=`( cd $MINEDIR ; pwd )`
-
 MINECOOKIEJAR="${MINEDIR}/etc/cookies.txt"
 
 CURLFLAGS=""
+
+PROMPT() {
+    echo "$* \c"
+}
+
+YESNO() {
+    while :
+    do
+	PROMPT "$@ ? (y/n)"
+
+	read answer
+
+	case "$answer" in
+	    [Yy]*) return 0 ;;
+	    [Nn]*) return 1 ;;
+	    *) echo "please answer yes or no."
+	esac
+    done
+}
+
+DEFAULT_USER=pickaxe
 
 case $1 in
     login)
 	if [ "x$2" = "x" ]
 	then 
-	    echo "enter username for mine at $MINEURL (default: 'pickaxe')"
-	    read MINEUSER
-	    test "x$MINEUSER" = x && MINEUSER="pickaxe"
+	    PROMPT "Enter a login name for your mine (default: $DEFAULT_USER)"
+	    read MINE_USER
+	    test "x$MINE_USER" = "x" && MINE_USER=$DEFAULT_USER
 	else
-	    MINEUSER="$2"
+	    MINE_USER="$2"
 	fi
 
 	if [ "x$3" = "x" ]
 	then
-	    echo enter password for mine user $MINEUSER
-	    read MINEPASS
+	    PROMPT "$MINE_USER password:"
+	    trap "stty echo ; exit" 1 2 3 15
+	    stty -echo
+	    read MINE_USER_PASSWORD
+	    stty echo
+	    echo ""
+	    trap "" 1 2 3 15
 	else
-	    MINEPASS="$3"
+	    MINE_USER_PASSWORD="$3"
 	fi
 
-	curl --request POST $CURLFLAGS --fail -c $MINECOOKIEJAR ${MINEURL}/login.html -F "username=${MINEUSER}" -F "password=${MINEPASS}"
-	echo "login status: $?"
-
+	curl --request POST $CURLFLAGS --fail -c $MINECOOKIEJAR ${MINEURL}/login.html -F "username=${MINE_USER}" -F "password=${MINE_USER_PASSWORD}"
+	echo "curl exit status: $?"
 	;;
 
     logout)
 
 	curl --request GET $CURLFLAGS --fail -b $MINECOOKIEJAR ${MINEURL}/logout.html
-	echo "logout status: $?"
-
+	echo "curl exit status: $?"
 	;;
 
     *)

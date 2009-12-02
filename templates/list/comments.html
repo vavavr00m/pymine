@@ -1,6 +1,12 @@
 {% extends "base/api-iterate.html" %}
-{% block title %}comments listing for item {{itemId}}{% endblock %}
-{% block heading %}comments listing for item {{itemId}}{% endblock %}
+
+{% block title %}
+comments for item {{itemId}}
+{% endblock %}
+
+{% block heading %}
+comments for item {{itemId}}
+{% endblock %}
 
 {% block listing_per_hash %}
 <div class="listcomment {% cycle 'odd' 'even' %}">
@@ -28,4 +34,8 @@
 </ul>
 
 </div>
+{% endblock %}
+
+{% block context_sidebar %}
+{% include "sidebar/comments.html" %}
 {% endblock %}

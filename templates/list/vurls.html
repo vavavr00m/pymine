@@ -1,6 +1,9 @@
 {% extends "base/api-iterate.html" %}
+
 {% block title %}vurls listing{% endblock %}
+
 {% block heading %}vurls listing{% endblock %}
+
 {% block listing_per_hash %}
 <div class="listvurl {% cycle 'odd' 'even' %}">
 
@@ -11,16 +14,20 @@
 <A HREF="/ui/update/vurl/{{hash.vurlId}}.html"><button>edit</button></A>
 <A HREF="/ui/delete/vurl/{{hash.vurlId}}.html"><button>delete</button></A>
 
-<A HREF="{{hash.vurlPathShort}}"><button>short</button></A>
-<A HREF="{{hash.vurlPathLong}}"><button>long</button></A>
-<A HREF="{{hash.vurlLink}}"><button>link</button></A>
+<A HREF="{{hash.vurlPathShort}}"><button>short link</button></A>
+<A HREF="{{hash.vurlPathLong}}"><button>named link</button></A>
+<A HREF="{{hash.vurlLink}}"><button>original url</button></A>
 </ul>
 
 <ul class="listmeta">
-<li>short: {{hash.vurlPathShort}}</li>
-<li>long: {{hash.vurlPathLong}}</li>
-<li>link: {{hash.vurlLink}}</li>
+<li>short link: {{hash.vurlPathShort}}</li>
+<li>named link: {{hash.vurlPathLong}}</li>
+<li>original url: {{hash.vurlLink}}</li>
 </ul>
 
 </div>
+{% endblock %}
+
+{% block context_sidebar %}
+{% include "sidebar/vurls.html" %}
 {% endblock %}
