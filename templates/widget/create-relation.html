@@ -1,10 +1,10 @@
 <div class="widget">
+create relation:
+<br/>
 {% include 'widget/tinymce.html' %}
 <form method="POST" enctype="multipart/form-data" action="/api/relation.rdr">
-
 <input type="hidden" name="redirect_success" value="/ui/list/relations.html">
-
-new relation:
+relation name:
 <br/>
 <input name="relationName" value="" size="33" />
 <p/>
@@ -15,7 +15,7 @@ description: (optional)
 </textarea>
 <p/>
 
-relationship interests: (ie: tags, space-separated, optional)
+relationship tags/interests: (ie: tags, space-separated, optional)
 <br/>
 <input name="relationInterests" value="" size="66">
 <p/>
@@ -23,6 +23,4 @@ relationship interests: (ie: tags, space-separated, optional)
 <input type="submit" name="save" value="create relation" />
 <input type="reset" name="reset" value="reset form" />
 </form>
-
 </div>
-

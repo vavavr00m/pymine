@@ -1,9 +1,9 @@
 <div class="widget">
+update tag:
+<br/>
 {% include 'widget/tinymce.html' %}
 <form method="POST" enctype="multipart/form-data" action="/api/tag/{{tagId}}.rdr">
-
 <input type="hidden" name="redirect_success" value="/ui/list/tags.html">
-
 tag:
 <br/>
 <input name="tagName" value="{{tagName}}" size="33" />

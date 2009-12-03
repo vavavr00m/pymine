@@ -1,9 +1,9 @@
 <div class="widget">
+update relation:
+<br/>
 {% include 'widget/tinymce.html' %}
 <form method="POST" enctype="multipart/form-data" action="/api/relation/{{relationId}}.rdr">
-
 <input type="hidden" name="redirect_success" value="/ui/list/relations.html">
-
 relation:
 <br/>
 <input name="relationName" value="{{relationName}}" size="33" />

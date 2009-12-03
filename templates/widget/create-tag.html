@@ -1,15 +1,15 @@
 <div class="widget">
+create tag:
+<br/>
 {% include 'widget/tinymce.html' %}
 <form method="POST" enctype="multipart/form-data" action="/api/tag.rdr">
-
 <input type="hidden" name="redirect_success" value="/ui/list/tags.html">
-
-new tag:
+tag name:
 <br/>
 <input name="tagName" value="" size="33" />
 <p/>
 
-implied tags: (space-separated, optional, <em>must already exist</em>)
+implied tags: (optional, space-separated, <em>must already exist</em>)
 <br/>
 <input name="tagImplies" value="" size="66">
 <p/>
@@ -23,6 +23,4 @@ description: (optional)
 <input type="submit" name="save" value="create tag" />
 <input type="reset" name="reset" value="reset form" />
 </form>
-
 </div>
-
