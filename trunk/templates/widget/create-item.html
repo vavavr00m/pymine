@@ -1,10 +1,10 @@
 <div class="widget">
+create item:
+<br/>
 {% include 'widget/tinymce.html' %}
 <form method="POST" enctype="multipart/form-data" action="/api/item.rdr">
-
 <input type="hidden" name="redirect_success" value="/ui/list/items.html">
-
-new item title:
+item title:
 <br/>
 <input name="itemName" value="" size="66" />
 <p/>
@@ -14,7 +14,7 @@ file to attach: (optional)
 <input type="file" name="itemData">
 <p/>
 
-new item text:
+item text:
 <br/>
 <textarea name="itemDescription" cols="66" rows="15">
 </textarea>
