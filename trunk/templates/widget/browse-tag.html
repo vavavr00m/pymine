@@ -1,1 +1,9 @@
-<div class="widget">recent tag browser goes here</div>
+<div class="widget">
+tag quick index:
+<br/>
+<p class="cloud">
+{% for individual in result %}
+{% for type, hash in individual.items %}<a href="/ui/read/tag/{{hash.tagId}}.html">{{hash.tagName}}</a>{% endfor %}
+{% endfor %}
+</p>
+</div>
