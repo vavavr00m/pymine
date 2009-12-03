@@ -1,1 +1,9 @@
-<div class="widget">recent relation browser goes here</div>
+<div class="widget">
+relation quick index:
+<br/>
+<p class="cloud">
+{% for individual in result %}
+{% for type, hash in individual.items %}<a href="/ui/read/relation/{{hash.relationId}}.html">{{hash.relationName}}</a>{% endfor %}
+{% endfor %}
+</p>
+</div>

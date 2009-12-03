@@ -79,7 +79,9 @@ def create_vurl(request, *args, **kwargs):
 ## declared args: 
 def dash_comments(request, *args, **kwargs):
     """dash_comments() returns ..."""
-    s = {}
+    iid = 0
+    s = api.list_comments(request, iid, *args, **kwargs)
+    s['itemId'] = iid # HACK TO SUPPORT PAGE
     return render_to_response('dash/comments.html', s)
 
 ## rest: GET /ui/dash/items.html
@@ -87,7 +89,7 @@ def dash_comments(request, *args, **kwargs):
 ## declared args: 
 def dash_items(request, *args, **kwargs):
     """dash_items() returns ..."""
-    s = {}
+    s = api.list_items(request, *args, **kwargs)
     return render_to_response('dash/items.html', s)
 
 ## rest: GET /ui/dash/relations.html
@@ -95,7 +97,7 @@ def dash_items(request, *args, **kwargs):
 ## declared args: 
 def dash_relations(request, *args, **kwargs):
     """dash_relations() returns ..."""
-    s = {}
+    s = api.list_relations(request, *args, **kwargs)
     return render_to_response('dash/relations.html', s)
 
 ## rest: GET /ui/dash/search.html
@@ -111,7 +113,7 @@ def dash_search(request, *args, **kwargs):
 ## declared args: 
 def dash_tags(request, *args, **kwargs):
     """dash_tags() returns ..."""
-    s = {}
+    s = api.list_tags(request, *args, **kwargs)
     return render_to_response('dash/tags.html', s)
 
 ## rest: GET /ui/dash/vurls.html
@@ -119,7 +121,7 @@ def dash_tags(request, *args, **kwargs):
 ## declared args: 
 def dash_vurls(request, *args, **kwargs):
     """dash_vurls() returns ..."""
-    s = {}
+    s = api.list_vurls(request, *args, **kwargs)
     return render_to_response('dash/vurls.html', s)
 
 ## rest: GET /ui/delete/comment/CID.html

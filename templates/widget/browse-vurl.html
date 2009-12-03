@@ -1,1 +1,14 @@
-<div class="widget">recent vurl browser goes here</div>
+<div class="widget">
+most recently modified 5 vurls:
+<p class="cloud">
+{% for individual in result|slice:":5" %}
+{% for type, hash in individual.items %}
+{{hash.vurlName}} | 
+{{hash.vurlLink}}
+<A HREF="/ui/read/vurl/{{hash.vurlId}}.html">[info]</A>
+<A HREF="/ui/update/vurl/{{hash.vurlId}}.html">[edit]</A>
+<br/>
+{% endfor %}
+{% endfor %}
+</p>
+</div>
