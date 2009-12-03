@@ -68,6 +68,7 @@ def generate(request, mk, *args, **kwargs):
     # first, deal with the 'interests' - this means public objects.
     # TBD: add a constraint in here that nothing > N days old is
     # considered for the feed?
+
     public_items = Item.objects.filter(status='P').select_related(depth=2)
 
     # where we will stash the IIDs of candidate items
@@ -78,6 +79,9 @@ def generate(request, mk, *args, **kwargs):
     # if relation hates things in the cloud, drop item
     # if relation needs things and any of them are missing, drop item
     # else mark item as candidate
+
+    # TBD: THIS IS ALL GOING TO GET REWRITTEN AS THE INTERSECTION AND
+    # JOINING OF THREE QUERIES AT SOME POINT IN THE FUTURE.
 
     # print "%s interests %s" % (relation.name, str(interests))
     # print "%s hates %s" % (relation.name, str(hates))
