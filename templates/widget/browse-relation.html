@@ -1,9 +1,9 @@
 <div class="widget">
-relation quick index:
+relation quick index: <A HREF="/ui/list/relations.html">[list all]</A>
 <br/>
 <p class="cloud">
-{% for individual in result %}
-{% for type, hash in individual.items %}<a href="/ui/read/relation/{{hash.relationId}}.html">{{hash.relationName}}</a>{% endfor %}
+|{% for individual in result %}
+{% for type, hash in individual.items %}<a href="/ui/read/relation/{{hash.relationId}}.html">{{hash.relationName}}</a> |{% endfor %}
 {% endfor %}
 </p>
 </div>

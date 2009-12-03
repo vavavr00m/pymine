@@ -1,10 +1,10 @@
 <div class="widget">
-most recently modified 5 items:
+most recently modified 5 items: <A HREF="/ui/list/items.html">[list all]</A>
 <p class="cloud">
 {% for individual in result|slice:":5" %}
 {% for type, hash in individual.items %}
 {{hash.itemName}} | 
-{{hash.itemDescription|truncatewords:10}}
+{{hash.itemDescription|removetags:"a p"|truncatewords:10}} |
 <A HREF="/api/item/{{hash.itemId}}">[open]</A>
 <A HREF="/ui/read/item/{{hash.itemId}}.html">[info]</A>
 <A HREF="/ui/update/item/{{hash.itemId}}.html">[edit]</A>
