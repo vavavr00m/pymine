@@ -108,6 +108,14 @@ def dash_search(request, *args, **kwargs):
     s = {}
     return render_to_response('dash/search.html', s)
 
+## rest: GET /ui/dash/settings.html
+## function: dash_settings
+## declared args: 
+def dash_settings(request, *args, **kwargs):
+    """dash_settings() returns ..."""
+    s = {}
+    return render_to_response('dash/settings.html', s)
+
 ## rest: GET /ui/dash/tags.html
 ## function: dash_tags
 ## declared args: 

@@ -1,16 +1,14 @@
 <div class="widget">
-update comment:
-<br/>
 {% include 'widget/tinymce.html' %}
 <form method="POST" enctype="multipart/form-data" action="/api/comment/{{commentId}}.rdr">
 <input type="hidden" name="redirect_success" value="/ui/list/comments/0.html">
 
-comment:
+comment title:
 <br/>
 <input name="commentTitle" value="{{commentTitle}}" size="33" />
 <p/>
 
-body: (optional)
+comment body: (optional)
 <br/>
 <textarea name="commentBody" cols="66" rows="5">{{commentBody}}</textarea>
 <p/>

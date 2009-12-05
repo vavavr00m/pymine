@@ -1,22 +1,23 @@
 <div class="widget">
-update relation:
-<br/>
 {% include 'widget/tinymce.html' %}
 <form method="POST" enctype="multipart/form-data" action="/api/relation/{{relationId}}.rdr">
 <input type="hidden" name="redirect_success" value="/ui/list/relations.html">
-relation:
+
+relation name:
 <br/>
 <input name="relationName" value="{{relationName}}" size="33" />
 <p/>
 
-description: (optional)
+relation description: (optional)
 <br/>
 <textarea name="relationDescription" cols="66" rows="5">{{relationDescription}}</textarea>
 <p/>
 
-relationship interests: (ie: tags, space-separated, optional)
+relation tags/interests: (ie: tags, space-separated, optional)
 <br/>
 <input name="relationInterests" value="{{relationInterests}}" size="66">
+<br/>
+<input type="checkbox" name="auto_tag" checked> create any tags that don't already exist
 <p/>
 
 <input type="submit" name="save" value="update relation" />

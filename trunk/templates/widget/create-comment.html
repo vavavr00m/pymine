@@ -1,6 +1,4 @@
 <div class="widget">
-create comment:
-<br/>
 {% include 'widget/tinymce.html' %}
 {% if itemId %}
 <form method="POST" enctype="multipart/form-data" action="/api/comment/item/{{itemId}}.rdr">
@@ -12,30 +10,28 @@ create comment:
 <!-- end comment on feed/item 0, hardcoded -->
 {% endif %}
 
-title:
+comment title:
 <br/>
 <input name="commentTitle" value="" size="33" />
-<p/>
+<br/>
 
-body: (optional)
+comment body: (optional)
 <br/>
 <textarea name="commentBody" cols="66" rows="5">
 </textarea>
-<p/>
+<br/>
 
 relation id: (numeric)
 <br/>
 <input name="commentRelationId" value="" size="5">
-<p/>
+<br/>
 
 item id: (numeric)
 <br/>
 [cannot be set during creation, this is implicit in the destination URL for POST]
-<p/>
+<br/>
 
 <input type="submit" name="save" value="create comment" />
 <input type="reset" name="reset" value="reset form" />
 </form>
-
 </div>
-

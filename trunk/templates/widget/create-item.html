@@ -1,9 +1,8 @@
 <div class="widget">
-create item:
-<br/>
 {% include 'widget/tinymce.html' %}
 <form method="POST" enctype="multipart/form-data" action="/api/item.rdr">
 <input type="hidden" name="redirect_success" value="/ui/list/items.html">
+
 item title:
 <br/>
 <input name="itemName" value="" size="66" />
@@ -20,9 +19,11 @@ item text:
 </textarea>
 <p/>
 
-tags:
+item tags:
 <br/>
 <input name="itemTags" value="" size="66">
+<br/>
+<input type="checkbox" name="auto_tag" checked> create any tags that don't already exist
 <p/>
 
 publication status:

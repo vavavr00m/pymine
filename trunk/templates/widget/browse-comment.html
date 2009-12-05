@@ -1,14 +1,15 @@
 <div class="widget">
-most recently modified 5 comments: <A HREF="/ui/list/comments/0.html">[list all]</A>
+10 most recently modified comments: <A HREF="/ui/list/comments/0.html">[list all]</A>
 <p class="cloud">
-{% for individual in result|slice:":5" %}
+{% for individual in result|slice:":10" %}
 {% for type, hash in individual.items %}
-{{hash.commentRelationName}} on
-{{hash.commentItemName|truncatewords:5}} | 
-{{hash.commentTitle}} |
-{{hash.commentBody|removetags:"a p"|truncatewords:10}} |
-<A HREF="/ui/read/comment/{{hash.commentId}}.html">[info]</A>
-<A HREF="/ui/update/comment/{{hash.commentId}}.html">[edit]</A>
+<A HREF="/ui/update/relation/{{hash.commentRelationId}}.html">{{hash.commentRelationName}}</A>
+on
+<A HREF="/ui/update/item/{{hash.commentItemId}}.html">{{hash.commentItemName|truncatewords:8}}</A>
+|
+<A HREF="/ui/update/comment/{{hash.commentId}}.html">{{hash.commentTitle}}</A>
+|
+<A HREF="/ui/update/comment/{{hash.commentId}}.html">{{hash.commentBody|removetags:"a p"|truncatewords:10}}</A>
 <br/>
 {% endfor %}
 {% endfor %}
