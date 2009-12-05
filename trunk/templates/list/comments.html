@@ -14,12 +14,12 @@ comments{% ifnotequal itemId "0" %} for item {{itemId}}{% endifnotequal %}
 <h4>{{hash.commentTitle}}</h4>
 
 <ul class="actions">
-<li><a href="/ui/read/comment/{{hash.commentId}}.html"><button>info</button></a></li>
-<li><a href="/ui/update/comment/{{hash.commentId}}.html"><button>edit</button></a></li>
-<li><a href="/ui/delete/comment/{{hash.commentId}}.html"><button>delete</button></a></li>
-<li><a href="/ui/read/relation/{{hash.commentRelationId}}.html"><button>info relation {{hash.commentRelationId}}</button></a></li>
-<li><a href="/ui/read/item/{{hash.commentItemId}}.html"><button>info item {{hash.commentItemId}}</button></a></li>
-<li><a href="/api/item/{{hash.commentItemId}}"><button>open item {{hash.commentItemId}}</button></a></li>
+<li><a href="/ui/read/comment/{{hash.commentId}}.html">info</a></li>
+<li><a href="/ui/update/comment/{{hash.commentId}}.html">edit</a></li>
+<li><a href="/ui/delete/comment/{{hash.commentId}}.html">delete</a></li>
+<li><a href="/ui/read/relation/{{hash.commentRelationId}}.html">info relation {{hash.commentRelationId}}</a></li>
+<li><a href="/ui/read/item/{{hash.commentItemId}}.html">info item {{hash.commentItemId}}</a></li>
+<li><a href="/api/item/{{hash.commentItemId}}">open item {{hash.commentItemId}}</a></li>
 </ul>
 
 {% if hash.commentBody %}
