@@ -6,31 +6,31 @@
 item title:
 <br/>
 <input name="itemName" value="{{itemName}}" size="66" />
-<p/>
-
-file to attach: (optional)
 <br/>
-<input type="file" name="itemData">
-<p/>
-
-item text:
-<br/>
-<textarea name="itemDescription" cols="66" rows="15">{{itemDescription}}</textarea>
-<p/>
 
 item tags:
 <br/>
 <input name="itemTags" value="{{itemTags}}" size="66">
 <br/>
 <input type="checkbox" name="auto_tag" checked> create any tags that don't already exist
-<p/>
+<br/>
+
+item text:
+<br/>
+<textarea name="itemDescription" cols="66" rows="15">{{itemDescription}}</textarea>
+<br/>
+
+file(s) to attach: (optional, one/multiple)
+<br/>
+<input type="file" name="itemData">
+<br/>
 
 publication status:
 <br/>
 <input type="radio" name="itemStatus" value="private" {% ifequal itemStatus "private" %}checked{% endifequal %} /> private
 <input type="radio" name="itemStatus" value="shared" {% ifequal itemStatus "shared" %}checked{% endifequal %}/> shared
 <input type="radio" name="itemStatus" value="public" {% ifequal itemStatus "public" %}checked{% endifequal %}/> public
-<p/>
+<br/>
 
 <input type="submit" name="save" value="update item" />
 <input type="reset" name="reset" value="reset form" />

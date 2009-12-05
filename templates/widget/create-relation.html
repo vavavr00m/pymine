@@ -6,20 +6,24 @@
 relation name:
 <br/>
 <input name="relationName" value="" size="33" />
-<p/>
-
-relation description: (optional)
 <br/>
-<textarea name="relationDescription" cols="66" rows="5">
-</textarea>
-<p/>
 
 relation tags/interests: (ie: tags, space-separated, optional)
 <br/>
 <input name="relationInterests" value="" size="66">
 <br/>
-<input type="checkbox" name="auto_tag" checked>	create any tags	that don't already exist
-<p/>
+<input type="checkbox" name="auto_tag" checked> create any tags that don't already exist
+<br/>
+
+relation description: (optional)
+<br/>
+<textarea name="relationDescription" cols="66" rows="5"></textarea>
+<br/>
+
+relation feed-content restriction: (optional)
+<br/>
+<input name="relationFeedConstraints" value="" size="33" />
+<br/>
 
 <input type="submit" name="save" value="create relation" />
 <input type="reset" name="reset" value="reset form" />
