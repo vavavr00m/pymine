@@ -1,17 +1,39 @@
-<p>
-{{description|safe}}
-</p>
+<!-- BEGIN ITEM DESCRIPTION TEMPLATE -->
 <hr/>
-({{size}} bytes, {{content_type}})
+<div>
+{{description|safe}}
+</div>
+<hr/>
+
+<!-- METAINFO -->
+size: {{size}} bytes
 <br/>
-<FORM method="POST" action="{{comment_url}}">
+type: {{content_type}}
 <br/>
+
+<!-- MEDIA PLAYER -->
+{% ifequal type "audio/mp3" %}
+<script type='text/javascript' src='/pub/mediaplayer/swfobject.js'></script>
+<div id='mediaplayer{{id}}'></div>
+<script type='text/javascript'>
+  var so = new SWFObject('/pub/mediaplayer/player.swf','ply','470','20','9','#ffffff');
+  so.addParam('allowfullscreen','true');
+  so.addParam('allowscriptaccess','always');
+  so.addParam('wmode','opaque');
+  so.addVariable('file','{{link}}');
+  so.write('mediaplayer{{id}}');
+</script></p>
+{% endifequal %}
+
+<!-- COMMENT SUBMISSION -->
+<form method="POST" action="{{comment_url}}">
 <input type="hidden" name="redirect_success" value="about:blank">
-<input type="hidden" name="format" value="xml">
+<input type="hidden" name="format" value="rdr">
 <input name="commentTitle" value="comment title" size="40" />
 <br/>
 <textarea name="commentBody" cols="66" rows="2">comment body goes here</textarea>
 <br/>
 <input type="submit" name="submit" value="submit" />
 <input type="reset" name="reset" value="reset" />
-</FORM>
+</form>
+<!-- END ITEM DESCRIPTION TEMPLATE -->

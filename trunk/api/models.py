@@ -1845,12 +1845,14 @@ class Item(AbstractThing):
 	    desc = self.item_feed_description()
 	else: # either there is data, or we are not of HTML type
 	    tmpl = {
-		'link': iteminfo['link'],
-		'title': iteminfo['title'],
-		'size': self.item_size(),
+		'comment_url': item_mk.spawn_comment().permalink(),
 		'content_type': self.item_type(),
 		'description': self.item_feed_description(),
-		'comment_url': item_mk.spawn_comment().permalink()
+		'link': iteminfo['link'],
+		'size': self.item_size(),
+		'title': iteminfo['title'],
+                'id': self.id, 
+                'type': self.item_type(), 
 		}
 	    desc = render_to_string('feed/item-description.html', tmpl)
 

@@ -6,23 +6,26 @@
 relation name:
 <br/>
 <input name="relationName" value="{{relationName}}" size="33" />
-<p/>
-
-relation description: (optional)
 <br/>
-<textarea name="relationDescription" cols="66" rows="5">{{relationDescription}}</textarea>
-<p/>
 
 relation tags/interests: (ie: tags, space-separated, optional)
 <br/>
 <input name="relationInterests" value="{{relationInterests}}" size="66">
 <br/>
 <input type="checkbox" name="auto_tag" checked> create any tags that don't already exist
-<p/>
+<br/>
+
+relation description: (optional)
+<br/>
+<textarea name="relationDescription" cols="66" rows="5">{{relationDescription}}</textarea>
+<br/>
+
+relation feed-content restriction: (optional)
+<br/>
+<input name="relationFeedConstraints" value="{{relationFeedConstraints}}" size="33" />
+<br/>
 
 <input type="submit" name="save" value="update relation" />
 <input type="reset" name="reset" value="reset form" />
 </form>
-
 </div>
-

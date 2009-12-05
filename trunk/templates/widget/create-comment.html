@@ -5,7 +5,7 @@
 <input type="hidden" name="redirect_success" value="/ui/list/comments/{{itemId}}.html">
 {% else %}
 <!-- begin comment on feed/item 0, hardcoded -->
-<form method="POST" enctype="multipart/form-data" action="/api/comment/item/0.rdr"> 
+<form method="POST" enctype="multipart/form-data" action="/api/comment/item/0.rdr">
 <input type="hidden" name="redirect_success" value="/ui/list/comments/0.html">
 <!-- end comment on feed/item 0, hardcoded -->
 {% endif %}
@@ -17,8 +17,7 @@ comment title:
 
 comment body: (optional)
 <br/>
-<textarea name="commentBody" cols="66" rows="5">
-</textarea>
+<textarea name="commentBody" cols="66" rows="5"></textarea>
 <br/>
 
 relation id: (numeric)

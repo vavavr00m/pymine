@@ -4,7 +4,7 @@
 {% for individual in result|slice:":10" %}
 {% for type, hash in individual.items %}
 <A HREF="/ui/update/vurl/{{hash.vurlId}}.html">{{hash.vurlName}}</A>
-| 
+|
 <A HREF="{{hash.vurlLink}}">{{hash.vurlLink}}</A>
 <br/>
 {% endfor %}
