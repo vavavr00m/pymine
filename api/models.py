@@ -1118,6 +1118,7 @@ class AbstractThing(AbstractModel):
 (  'commentBody',                'body',                     False,  r2s_string,  s2m_verbatim,    m2s_copy,        ),
 (  'itemDescription',            'description',              False,  r2s_string,  s2m_verbatim,    m2s_copy,        ),
 (  'relationDescription',        'description',              False,  r2s_string,  s2m_verbatim,    m2s_copy,        ),
+(  'relationFeedConstraints',    'feed_constraints',         False,  r2s_string,  s2m_verbatim,    m2s_copy,        ),
 (  'tagDescription',             'description',              False,  r2s_string,  s2m_verbatim,    m2s_copy,        ),
 )
 
@@ -1631,6 +1632,7 @@ class Relation(AbstractThing):
 
     network_pattern = AbstractModelField.string(required=False)
 
+    feed_constraints = AbstractModelField.string(required=False)
     is_untrusted = AbstractModelField.bool(False)
 
     class Meta:
@@ -1839,7 +1841,7 @@ class Item(AbstractThing):
 	# work out our description
 
 	# if there is no data and we are of HTML type
-	if not self.data and self.item_type() == 'text/html':
+	if False: # not self.data and self.item_type() == 'text/html':
 	    desc = self.item_feed_description()
 	else: # either there is data, or we are not of HTML type
 	    tmpl = {

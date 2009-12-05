@@ -205,6 +205,7 @@ ui     GET    /ui/dash/comments.html         dash-comments
 ui     GET    /ui/dash/items.html            dash-items
 ui     GET    /ui/dash/relations.html        dash-relations
 ui     GET    /ui/dash/search.html           dash-search
+ui     GET    /ui/dash/settings.html         dash-settings
 ui     GET    /ui/dash/tags.html             dash-tags
 ui     GET    /ui/dash/vurls.html            dash-vurls
 

@@ -16,11 +16,7 @@ no result returned by api call
 {% endblock %} <!-- content -->
 
 {% block content_error_status %}
-{% if exit %}
-<p class="error">omg wtf bbq?</p>
-{% else %}
-<p class="success">yay it worked!</p>
-{% endif %}
+{% if exit %}<p class="error">omg wtf bbq?</p>{% endif %}
 {% endblock %}
 
 {% block envelope %}
