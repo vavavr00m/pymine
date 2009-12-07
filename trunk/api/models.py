@@ -1874,7 +1874,10 @@ class Item(AbstractThing):
 		'title': iteminfo['title'],
                 'id': self.id, 
                 'type': self.item_type(), 
+                'has_file': 0,
 		}
+            if self.data:
+                tmpl['has_file'] = 1
 	    desc = render_to_string('feed/item-description.html', tmpl)
 
 	# rewrite
