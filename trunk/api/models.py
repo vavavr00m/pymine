@@ -762,11 +762,11 @@ def m2s_copy(m, mattr, s, sattr):
     x = getattr(m, mattr)
     if x: s[sattr] = x
 
-def s2m_verbatim(s, sattr, m, mattr):
+def s2m_verbatim(request, s, sattr, m, mattr):
     """Copy sattr from s to mattr in m"""
     if sattr in s: setattr(m, mattr, s[sattr])
 
-def s2m_stripstr(s, sattr, m, mattr):
+def s2m_stripstr(request, s, sattr, m, mattr):
     """Copy sattr from s to mattr in m"""
     if sattr in s: setattr(m, mattr, s[sattr].strip())
 
@@ -776,7 +776,7 @@ def m2s_dummy(m, mattr, s, sattr):
     """m2s routine which raises an exception if it is ever invoked"""
     raise RuntimeError, 'something invoked m2s_dummy on %s and %s' % (sattr, mattr)
 
-def s2m_dummy(s, sattr, m, mattr):
+def s2m_dummy(request, s, sattr, m, mattr):
     """s2m routine which raises an exception if it is ever invoked"""
     raise RuntimeError, 'something invoked s2m_dummy on %s and %s' % (sattr, mattr)
 
@@ -787,7 +787,7 @@ def m2s_date(m, mattr, s, sattr):
     x = getattr(m, mattr)
     if x: s[sattr] = x.isoformat()
 
-def s2m_date(s, sattr, m, mattr):
+def s2m_date(request, s, sattr, m, mattr):
     """TBD: Copy a DateTime from an isoformat string in s, into m"""
     if sattr in s:
 	raise RuntimeError, "not yet integrated the Date parser"
@@ -802,7 +802,7 @@ def m2s_bool(m, mattr, s, sattr):
     else:
 	s[sattr] = 0
 
-def s2m_bool(s, sattr, m, mattr):
+def s2m_bool(request, s, sattr, m, mattr):
     """Copy a boolean from s to m"""
     if sattr in s:
 	if s[sattr] == 0:
@@ -827,7 +827,7 @@ def m2s_comitemid(m, mattr, s, sattr):
     x = m.item
     if x: s[sattr] = x.id
 
-def s2m_comitemid(s, sattr, m, mattr):
+def s2m_comitemid(request, s, sattr, m, mattr):
     """ """
     if mattr != 'item' or sattr != 'commentItemId':
 	raise RuntimeError, "s2m_comitemid is confused by %s and %s" % (sattr, mattr)
@@ -847,7 +847,7 @@ def m2s_comrelid(m, mattr, s, sattr):
     x = m.relation
     if x: s[sattr] = x.id
 
-def s2m_comrelid(s, sattr, m, mattr):
+def s2m_comrelid(request, s, sattr, m, mattr):
     """ """
     if mattr != 'relation' or sattr != 'commentRelationId':
 	raise RuntimeError, "s2m_comrelid is confused by %s and %s" % (sattr, mattr)
@@ -880,7 +880,7 @@ def m2s_tagimplies(m, mattr, s, sattr):
     x = ' '.join([ x.name for x in m.implies.all() ])
     if x: s[sattr] = x
 
-def s2m_tagimplies(s, sattr, m, mattr):
+def s2m_tagimplies(request, s, sattr, m, mattr):
     """ """
     if mattr != 'implies' or sattr != 'tagImplies':
 	raise RuntimeError, "s2m_tagimplies is confused by %s and %s" % (sattr, mattr)
@@ -902,7 +902,7 @@ def m2s_itemstatus(m, mattr, s, sattr):
     x = m.get_status_display()
     if x: s[sattr] = x
 
-def s2m_itemstatus(s, sattr, m, mattr):
+def s2m_itemstatus(request, s, sattr, m, mattr):
     """ """
     if mattr != 'status' or sattr != 'itemStatus':
 	raise RuntimeError, "s2m_itemstatus is confused by %s and %s" % (sattr, mattr)
@@ -933,7 +933,7 @@ def m2s_itemtags(m, mattr, s, sattr):
 					    [ "not:%s" % i.name for i in m.item_not_relations.all() ]))
     if x: s[sattr] = x
 
-def s2m_itemtags(s, sattr, m, mattr):
+def s2m_itemtags(request, s, sattr, m, mattr):
     """ """
     if mattr != 'tags' or sattr != 'itemTags':
 	raise RuntimeError, "s2m_itemtags is confused by %s and %s" % (sattr, mattr)
@@ -966,7 +966,7 @@ def m2s_relints(m, mattr, s, sattr):
 					    [ "exclude:%s" % i.name for i in m.interests_excluded.all() ]))
     if x: s[sattr] = x
 
-def s2m_relints(s, sattr, m, mattr):
+def s2m_relints(request, s, sattr, m, mattr):
     """ """
     if mattr != 'interests' or sattr != 'relationInterests':
 	raise RuntimeError, "s2m_relints is confused by %s and %s" % (sattr, mattr)
@@ -1227,7 +1227,7 @@ class AbstractThing(AbstractModel):
 	    else: continue
 
 	    # s2m the value into the appropriate attribute
-	    s2m_func(s, sattr, self, mattr)
+	    s2m_func(r, s, sattr, self, mattr)
 
 	# save the model
 	self.save() # -> creates an id if there was not one before
@@ -1259,7 +1259,7 @@ class AbstractThing(AbstractModel):
 		if sattr in kwargs: s[sattr] = kwargs[sattr]
 		elif r and sattr in r.POST: r2s_func(r, sattr, s)
 		else: continue
-		s2m_func(s, sattr, self, mattr)
+		s2m_func(r, s, sattr, self, mattr)
 		needs_save = True
 
 	# xattr processing: grab the manager
@@ -1775,7 +1775,7 @@ class Item(AbstractThing):
 	elif self.item_type() == 'text/html': # if we think it's HTML
 	    return self.description
 	else:
-	    return 'pymine: no datafile is provided and the description content is not text/html, thus this placwholder is used instead'
+	    return 'pymine: no datafile is provided and the description content is not text/html, thus this placeholder is used instead'
 
     def to_structure(self):
 	"""Splices the virtual itemSize sattr into the Item structure"""
