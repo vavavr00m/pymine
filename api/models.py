@@ -556,6 +556,13 @@ class Minekey:
 
 	return link
 
+    def http_path(self):
+        """returns the http://host.domain:port/ for this mine"""
+	link = "/"
+	if self.__request:
+	    link = self.__request.build_absolute_uri(link)
+	return link
+
     def spawn_iid(self, iid):
 	"""from this minekey, spawn a new minekey object for the same
 	rid/rvsn, but for a different iid, decrementing the depth."""
@@ -1587,6 +1594,11 @@ class Tag(AbstractThing):
     def get_or_auto_tag(klass, request, name):
         if 'auto_tag' in request.POST and request.POST['auto_tag']:
             t, created = Tag.objects.get_or_create(name=name, defaults={}) 
+
+            if created:
+                tgraph = t.__expand_cloud_graph()
+                t.__update_cloud_graph(tgraph)
+                t.save()
         else:
             t = Tag.objects.get(name=name)
         return t
@@ -1853,6 +1865,7 @@ class Item(AbstractThing):
 	    desc = self.item_feed_description()
 	else: # either there is data, or we are not of HTML type
 	    tmpl = {
+		'http_path': item_mk.http_path(),
 		'comment_url': item_mk.spawn_comment().permalink(),
 		'content_type': self.item_type(),
 		'description': self.item_feed_description(),
