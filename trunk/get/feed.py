@@ -85,15 +85,15 @@ def generate(request, mk, *args, **kwargs):
     # TBD: THIS IS ALL GOING TO GET REWRITTEN AS THE INTERSECTION AND
     # JOINING OF THREE QUERIES AT SOME POINT IN THE FUTURE.
 
-    # print "%s interests %s" % (relation.name, str(interests))
-    # print "%s hates %s" % (relation.name, str(hates))
-    # print "%s needs %s" % (relation.name, str(needs))
+    print "%s interests %s" % (relation.name, str(interests))
+    print "%s hates %s" % (relation.name, str(hates))
+    print "%s needs %s" % (relation.name, str(needs))
 
     # small cache to try to prevent unnecessary lookups
     cloud_cache = {}
 
     for item in public_items.all():
-	# print "considering %s" % item.name
+	print "considering %s" % item.name
 
 	for item_tag in item.tags.all():
             if item_tag in cloud_cache:
@@ -101,21 +101,21 @@ def generate(request, mk, *args, **kwargs):
             else:
                 item_cloud = cloud_cache[item_tag] = item_tag.cloud.all()
 
-	    # print "examining %s -> %s" % (item_tag, str(item_cloud))
+	    print "examining %s -> %s" % (item_tag, str(item_cloud))
 	    if hates:
 		if item_cloud & hates: # <-- BITWISE NOT LOGICAL 'AND'
-		    # print "avoiding %s because hates %s" % (item.name, str(hates))
+		    print "avoiding %s because hates %s" % (item.name, str(hates))
 		    break
 
 	    if needs:
 		obtained = item_cloud.values_list('id', flat=True)
 		unobtained = needs.exclude(id__in=obtained)
 		if unobtained:
-		    # print "avoiding %s because needs %s" % (item.name, str(unobtained))
+		    print "avoiding %s because needs %s" % (item.name, str(unobtained))
 		    break
 
 	    if item_cloud & interests: # <-- BITWISE NOT LOGICAL 'AND'
-		# print "candidate %s" % item.name
+		print "candidate %s" % item.name
 		candidates.append(item.id)
 		break
 
@@ -129,6 +129,8 @@ def generate(request, mk, *args, **kwargs):
     qs = qs1 | qs2
     qs = qs.distinct()
 
+    print ">>", str(qs.all())
+
     # reject items marked not:relation (i wish i could do qs = qs - blacklist)
     blacklist = relation.items_explicitly_not.values_list('id', flat=True)
     qs = qs.exclude(id__in=blacklist)
@@ -140,8 +142,10 @@ def generate(request, mk, *args, **kwargs):
     # sort MRF (TBD: artificially promote hidden-but-revealed into sort order)
     qs = qs.order_by('-last_modified')
 
+    print ">>", str(qs.all())
+
     # per-relationship constraints
-    if constraints:
+    if False and constraints:
         rules = minesearch.parse(constraints)
 
         if len(rules['query']):

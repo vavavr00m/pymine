@@ -1,22 +1,23 @@
-<!-- BEGIN ITEM DESCRIPTION TEMPLATE -->
+<!-- METAINFO -->
+size: {{size}} bytes <br/>
+type: {{content_type}} <br/>
+description:<br/>
 <hr/>
 <div>
 {{description|safe}}
 </div>
 <hr/>
 
-<!-- METAINFO -->
-size: {{size}} bytes
-<br/>
-type: {{content_type}}
-<br/>
-
-<!-- MEDIA PLAYER -->
-{% ifequal type "audio/mp3" %}
-<script type='text/javascript' src='/pub/mediaplayer/swfobject.js'></script>
+<!-- RENDERING -->
+rendering:<br/>
+{% ifequal type 'image/jpeg' %}<IMG SRC='{{link}}' />{% endifequal %}
+{% ifequal type 'image/gif' %}<IMG SRC='{{link}}' />{% endifequal %}
+{% ifequal type 'image/png' %}<IMG SRC='{{link}}' />{% endifequal %}
+{% ifequal type 'audio/mpeg' %}
+<script type='text/javascript' src='{{http_path}}pub/mediaplayer/swfobject.js'></script>
 <div id='mediaplayer{{id}}'></div>
 <script type='text/javascript'>
-  var so = new SWFObject('/pub/mediaplayer/player.swf','ply','470','20','9','#ffffff');
+  var so = new SWFObject('{{http_path}}pub/mediaplayer/player.swf','ply','470','20','9','#ffffff');
   so.addParam('allowfullscreen','true');
   so.addParam('allowscriptaccess','always');
   so.addParam('wmode','opaque');
@@ -24,16 +25,17 @@ type: {{content_type}}
   so.write('mediaplayer{{id}}');
 </script></p>
 {% endifequal %}
+<hr/>
 
-<!-- COMMENT SUBMISSION -->
-<form method="POST" action="{{comment_url}}">
-<input type="hidden" name="redirect_success" value="about:blank">
-<input type="hidden" name="format" value="rdr">
-<input name="commentTitle" value="" size="40" />
+<!-- COMMENTING -->
+comment title and body:<br/>
+<form method='POST' action='{{comment_url}}'>
+<input type='hidden' name='redirect_success' value='about:blank'>
+<input type='hidden' name='format' value='rdr'>
+<input name='commentTitle' value='' size='66' />
 <br/>
-<textarea name="commentBody" cols="66" rows="2"></textarea>
+<textarea name='commentBody' cols='66' rows='4'></textarea>
 <br/>
-<input type="submit" name="submit" value="submit" />
-<input type="reset" name="reset" value="reset" />
+<input type='submit' name='submit' value='submit' />
+<input type='reset' name='reset' value='reset' />
 </form>
-<!-- END ITEM DESCRIPTION TEMPLATE -->
