@@ -33,6 +33,7 @@ from pymine.api.models import Tag, Item, Relation, Comment, Vurl, LogEvent, Mine
 from pymine.views import API_CALL
 
 import util.cheatxml as cheatxml
+import util.minesearch as minesearch
 
 ##################################################################
 ##################################################################
@@ -64,6 +65,7 @@ def generate(request, mk, *args, **kwargs):
     interests = relation.interests.all()
     needs = relation.interests_required.all()
     hates = relation.interests_excluded.all()
+    constraints = relation.feed_constraints
 
     # first, deal with the 'interests' - this means public objects.
     # TBD: add a constraint in here that nothing > N days old is
@@ -137,6 +139,39 @@ def generate(request, mk, *args, **kwargs):
 
     # sort MRF (TBD: artificially promote hidden-but-revealed into sort order)
     qs = qs.order_by('-last_modified')
+
+    # per-relationship constraints
+    if constraints:
+        rules = minesearch.parse(constraints)
+
+        if len(rules['query']):
+            q = Q()
+            for key, value in rules['query']:
+                if key == 'token':
+                    q = q | Q(name__icontains=value) | Q(description__icontains=value)
+                elif key == 'type':
+                    q = q | Q(type__iexact=value)
+                else:
+                    raise RuntimeError, 'do not understand feed query: %s' % key
+            qs = qs.filter(q)
+
+        if len(rules['require']):
+            for key, value in rules['require']:
+                if key == 'token':
+                    qs = qs.filter(Q(name__icontains=value) | Q(description__icontains=value))
+                elif key == 'type':
+                    qs = qs.filter(type__iexact=value)
+                else:
+                    raise RuntimeError, 'do not understand feed requirement: %s' % key
+
+        if len(rules['exclude']):
+            for key, value in rules['exclude']:
+                if key == 'token':
+                    qs = qs.exclude(Q(name__icontains=value) | Q(description__icontains=value))
+                elif key == 'type':
+                    qs = qs.exclude(type__iexact=value)
+                else:
+                    raise RuntimeError, 'do not understand feed exclusion: %s' % key
 
     # slice it
     qs = qs[:slicesize]

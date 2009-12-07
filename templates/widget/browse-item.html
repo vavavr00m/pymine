@@ -5,7 +5,7 @@
 {% for type, hash in individual.items %}
 <A HREF="/api/item/{{hash.itemId}}">{{hash.itemName}}</A>
 |
-<A HREF="/ui/update/item/{{hash.itemId}}.html">{{hash.itemDescription|removetags:"a p"|truncatewords:8}}</A>
+<A HREF="/ui/update/item/{{hash.itemId}}.html">{{hash.itemDescription|removetags:"a p"|truncatewords:8}} ...</A>
 <br/>
 {% endfor %}
 {% endfor %}
