@@ -142,5 +142,8 @@ Minectl update-item 18 itemTags=themineproject
 Minectl update-item 21 itemTags=themineproject
 Minectl update-item 24 itemTags=themineproject
 
+# audio
+Minectl upload -t themineproject -s public $SAMPLES/*.mp3
+
 # done
 exit 0

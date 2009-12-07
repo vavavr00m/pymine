@@ -21,15 +21,16 @@ code to parse mine search queries and return a useful structure
 
 def parse(input):
     """
-    tokenises string and create a dict of lists of dicts.
+    tokenises string and create a dict of lists of tuple.
 
-    the outer dict has three keys: 'require', 'want', 'exclude'
+    the dict has three keys: 'require', 'query', 'exclude'
 
-    the inner dicts parse stuff like "foo:bar" yielding {'foo':'bar'};
-    where no 'foo:' is given, the default 'token' is used.
+    the inner tuples parse stuff like "foo:bar" yielding ('foo','bar')
+
+    where no 'foo:' is given, the 'token' is used.
     """
     retval = {
-        'want': [],
+        'query': [],
         'require': [],
         'exclude': [],
         }
@@ -42,7 +43,7 @@ def parse(input):
             destination = 'exclude'
             token = token[1:]
         else:
-            destination = 'want'
+            destination = 'query'
 
         i = token.find(':')
 
@@ -53,7 +54,7 @@ def parse(input):
             key = 'token'
             value = token
 
-        retval[destination].append({key:value})
+        retval[destination].append((key,value))
 
     return retval
 
