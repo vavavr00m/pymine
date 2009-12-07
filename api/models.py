@@ -887,7 +887,7 @@ def s2m_tagimplies(request, s, sattr, m, mattr):
     if sattr in s:
 	m.implies.clear()
 	for x in s[sattr].split():
-	    m.implies.add(Tag.objects.get(name=x))
+	    m.implies.add(Tag.get_or_auto_tag(request, x))
 
 ##################################################################
 
@@ -944,7 +944,7 @@ def s2m_itemtags(request, s, sattr, m, mattr):
 	for x in s[sattr].split():
 	    if x.startswith('for:'): m.item_for_relations.add(Relation.objects.get(name=x[4:]))
 	    elif x.startswith('not:'): m.item_not_relations.add(Relation.objects.get(name=x[4:]))
-	    else: m.tags.add(Tag.objects.get(name=x))
+	    else: m.tags.add(Tag.get_or_auto_tag(request, x))
 
 ##################################################################
 
@@ -975,10 +975,10 @@ def s2m_relints(request, s, sattr, m, mattr):
 	m.interests_required.clear()
 	m.interests_excluded.clear()
 	for x in s[sattr].split():
-	    if x.startswith('require:'): m.interests_required.add(Tag.objects.get(name=x[8:]))
-	    elif x.startswith('exclude:'): m.interests_excluded.add(Tag.objects.get(name=x[8:]))
-	    elif x.startswith('except:'): m.interests_excluded.add(Tag.objects.get(name=x[7:])) # common typo
-	    else: m.interests.add(Tag.objects.get(name=x))
+	    if x.startswith('require:'): m.interests_required.add(Tag.get_or_auto_tag(request, x[8:]))
+	    elif x.startswith('exclude:'): m.interests_excluded.add(Tag.get_or_auto_tag(request, x[8:]))
+	    elif x.startswith('except:'): m.interests_excluded.add(Tag.get_or_auto_tag(request, x[7:])) # common typo
+	    else: m.interests.add(Tag.get_or_auto_tag(request, x))
 
 ##################################################################
 ##################################################################
@@ -1582,6 +1582,14 @@ class Tag(AbstractThing):
 	retval = Tag.objects.get(id=retval.id) # reload, possibly dirty
 
 	return retval
+
+    @classmethod
+    def get_or_auto_tag(klass, request, name):
+        if 'auto_tag' in request.POST and request.POST['auto_tag']:
+            t, created = Tag.objects.get_or_create(name=name, defaults={}) 
+        else:
+            t = Tag.objects.get(name=name)
+        return t
 
     @classmethod
     def filter_queryset(klass, qs, query):

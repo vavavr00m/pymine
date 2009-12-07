@@ -2,5 +2,6 @@
 {% block content %}
 {% include 'widget/update-comment.html' %}
 <a href="/admin/api/comment/{{commentId}}/"><button>use the django admin editor for this comment</button></a>
+<a href="/ui/delete/comment/{{commentId}}.html"><button>delete this comment</button></a>
 {% endblock %}
 {% block nav_comments %}id=current{% endblock %}
