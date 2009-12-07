@@ -14,14 +14,14 @@ rendering:<br/>
 {% ifequal type 'image/gif' %}<IMG SRC='{{link}}' />{% endifequal %}
 {% ifequal type 'image/png' %}<IMG SRC='{{link}}' />{% endifequal %}
 {% ifequal type 'audio/mpeg' %}
-<script type='text/javascript' src='{{http_path}}pub/mediaplayer/swfobject.js'></script>
 <div id='mediaplayer{{id}}'></div>
+<script type='text/javascript' src='{{http_path}}pub/mediaplayer/swfobject.js'></script>
 <script type='text/javascript'>
   var so = new SWFObject('{{http_path}}pub/mediaplayer/player.swf','ply','470','20','9','#ffffff');
   so.addParam('allowfullscreen','true');
   so.addParam('allowscriptaccess','always');
   so.addParam('wmode','opaque');
-  so.addVariable('file','{{link}}');
+  so.addVariable('file','{{link}}?fake=type.mp3');
   so.write('mediaplayer{{id}}');
 </script></p>
 {% endifequal %}
