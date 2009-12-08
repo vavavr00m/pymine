@@ -1830,9 +1830,9 @@ class Item(AbstractThing):
 
 	iteminfo = {}
 
-	iteminfo['author_email'] = 'nobody@themineproject.org' # tbd: fix this
+	iteminfo['author_email'] = 'nobody-item@themineproject.org' # tbd: fix this
 	iteminfo['author_link'] = None # TBD?
-	iteminfo['author_name'] = None # TBD?
+	iteminfo['author_name'] = iteminfo['author_email']
 	iteminfo['categories'] = None # TBD?
 	iteminfo['comments'] = None # TBD?
 	iteminfo['item_copyright'] = None # TBD?
