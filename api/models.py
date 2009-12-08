@@ -273,27 +273,27 @@ class Registry(AbstractModel):
 
     @classmethod
     def get(klass, key):
-        """ """
-        return Registry.objects.get(key=key).value
+	""" """
+	return Registry.objects.get(key=key).value
 
     @classmethod
     def get_decoded(klass, key):
-        """ """
-        return b64.decode(klass.get(key))
+	""" """
+	return b64.decode(klass.get(key))
 
     @classmethod
     def set(klass, key, value, overwrite_ok):
-        """ """
-        r, created = Registry.objects.get_or_create(key=key, defaults={ 'value': value }) 
-        if not created and not int(overwrite_ok):
-            raise RuntimeError, 'not allowed to overwrite existing Registry key: %s' % key
-        r.save()
-        return r
+	""" """
+	r, created = Registry.objects.get_or_create(key=key, defaults={ 'value': value })
+	if not created and not int(overwrite_ok):
+	    raise RuntimeError, 'not allowed to overwrite existing Registry key: %s' % key
+	r.save()
+	return r
 
     @classmethod
     def set_encoded(klass, key, value, overwrite_ok):
-        """ """
-        return klass.set(key, b64.encode(value), overwrite_ok)
+	""" """
+	return klass.set(key, b64.encode(value), overwrite_ok)
 
     def to_structure(self):
 	""" """
@@ -378,9 +378,9 @@ class Minekey:
 	# request data is only needed to perform permalink()
 	self.__request = kwargs.get('request', None)
 
-        # init some blank fields for caching
-        self.__relation = None
-        self.__item = None
+	# init some blank fields for caching
+	self.__relation = None
+	self.__item = None
 
 	# abort immediately if still illegal
 	self.validate()
@@ -399,12 +399,12 @@ class Minekey:
     def generate_iv(self):
 	"""from an iid, generate a binary IV string of the appropriate length"""
 
-        k = '__MINE_IV_SEED__'
-        iv_seed = cache.get(k)
+	k = '__MINE_IV_SEED__'
+	iv_seed = cache.get(k)
 
-        if not iv_seed:
-            iv_seed = Registry.get_decoded(k)
-            cache.add(k, iv_seed, 60)
+	if not iv_seed:
+	    iv_seed = Registry.get_decoded(k)
+	    cache.add(k, iv_seed, 60)
 
 	m = hashlib.md5()
 	m.update(str(self.iid))
@@ -420,14 +420,14 @@ class Minekey:
     def crypto_engine(klass, iv):
 	"""return an intialised crypto engine - to be modified"""
 
-        k = '__MINE_KEY__'
-        aes_key = cache.get(k)
+	k = '__MINE_KEY__'
+	aes_key = cache.get(k)
 
-        if not aes_key:
-            aes_key = Registry.get_decoded(k)
-            cache.add(k, aes_key, 60)
+	if not aes_key:
+	    aes_key = Registry.get_decoded(k)
+	    cache.add(k, aes_key, 60)
 
-        aes_key = Registry.get_decoded('__MINE_KEY__')
+	aes_key = Registry.get_decoded('__MINE_KEY__')
 	return AES.new(aes_key, klass.aes_mode, iv)
 
     @classmethod
@@ -468,12 +468,12 @@ class Minekey:
 	throws exception on something being wrong.
 	"""
 
-        unpadded = len(external) % 4
-        if unpadded: 
-            external += '=' * (4-unpadded)
+	unpadded = len(external) % 4
+	if unpadded:
+	    external += '=' * (4-unpadded)
 
 	blob = b64.decode(external)
-        iv = blob[0:16] 
+	iv = blob[0:16]
 	encrypted = blob[16:]
 	internal = klass.decrypt(encrypted, iv)
 
@@ -536,7 +536,7 @@ class Minekey:
 	encrypted-and-base64-encoded minekey token, suitable for web
 	consumption."""
 
-        iv = self.generate_iv()
+	iv = self.generate_iv()
 	internal = str(self)
 	encrypted = self.encrypt(internal, iv)
 	external = b64.encode(iv + encrypted)
@@ -557,7 +557,7 @@ class Minekey:
 	return link
 
     def http_path(self):
-        """returns the http://host.domain:port/ for this mine"""
+	"""returns the http://host.domain:port/ for this mine"""
 	link = "/"
 	if self.__request:
 	    link = self.__request.build_absolute_uri(link)
@@ -617,26 +617,26 @@ class Minekey:
 	return self.html_re.sub(rewrite_link, html)
 
     def get_relation(self):
-        """ """
+	""" """
 
-        if not self.__relation:
-            try:
-                self.__relation = Relation.objects.get(id=self.rid)
-            except Relation.DoesNotExist, e:
-                raise RuntimeError, "minekey relation does not exist: " + str(self) + str(e)
-            if self.__relation.version != self.rvsn:
-                raise RuntimeError, "minekey/relation version mismatch: " + str(self)
-        return self.__relation
+	if not self.__relation:
+	    try:
+		self.__relation = Relation.objects.get(id=self.rid)
+	    except Relation.DoesNotExist, e:
+		raise RuntimeError, "minekey relation does not exist: " + str(self) + str(e)
+	    if self.__relation.version != self.rvsn:
+		raise RuntimeError, "minekey/relation version mismatch: " + str(self)
+	return self.__relation
 
     def get_item(self):
-        """ """
+	""" """
 
-        if not self.__item:
-            try:
-                self.__item = Item.objects.get(id=self.iid)
-            except Item.DoesNotExist, e:
-                raise RuntimeError, "minekey item does not exist: " + str(self) + str(e)
-        return self.__item
+	if not self.__item:
+	    try:
+		self.__item = Item.objects.get(id=self.iid)
+	    except Item.DoesNotExist, e:
+		raise RuntimeError, "minekey item does not exist: " + str(self) + str(e)
+	return self.__item
 
     def validate(self):
 	"""
@@ -690,7 +690,7 @@ class Minekey:
 
 	this routine performs relation source-IP-address checking
 
-        this routine checks that the item (if not iid=0) is either public or shared.
+	this routine checks that the item (if not iid=0) is either public or shared.
 
 	this routine performs "not:relationname" item tag checking
 
@@ -708,7 +708,7 @@ class Minekey:
 	# TODO
 
 	# load relation
-        r = self.get_relation()
+	r = self.get_relation()
 
 	# check against relation IP address
 	if r.network_pattern:
@@ -728,17 +728,17 @@ class Minekey:
 	if r.embargo_after:
 	    pass # TODO
 
-        # if it's a real item
+	# if it's a real item
 	if self.iid:
 	    i = self.get_item()
 
-            # check if the item is shared/public
-            if i.status not in ('P', 'S'):
-                raise RuntimeError, 'item is not marked public/shared'
+	    # check if the item is shared/public
+	    if i.status not in ('P', 'S'):
+		raise RuntimeError, 'item is not marked public/shared'
 
-            # check if the non-feed item is marked "not:relationName"
-            if r in i.item_not_relations.all():
-                raise RuntimeError, 'item is marked as forbidden to this relation'
+	    # check if the non-feed item is marked "not:relationName"
+	    if r in i.item_not_relations.all():
+		raise RuntimeError, 'item is marked as forbidden to this relation'
 
 	# ok, we're happy.
 
@@ -1414,7 +1414,7 @@ class AbstractThing(AbstractModel):
 
     @classmethod
     def filter_queryset(klass, qs, query):
-        return qs
+	return qs
 
     # continuing the chain of inheritance
     class Meta:
@@ -1592,23 +1592,23 @@ class Tag(AbstractThing):
 
     @classmethod
     def get_or_auto_tag(klass, request, name):
-        if 'auto_tag' in request.POST and request.POST['auto_tag']:
-            t, created = Tag.objects.get_or_create(name=name, defaults={}) 
+	if 'auto_tag' in request.POST and request.POST['auto_tag']:
+	    t, created = Tag.objects.get_or_create(name=name, defaults={})
 
-            if created:
-                tgraph = t.__expand_cloud_graph()
-                t.__update_cloud_graph(tgraph)
-                t.save()
-        else:
-            t = Tag.objects.get(name=name)
-        return t
+	    if created:
+		tgraph = t.__expand_cloud_graph()
+		t.__update_cloud_graph(tgraph)
+		t.save()
+	else:
+	    t = Tag.objects.get(name=name)
+	return t
 
     @classmethod
     def filter_queryset(klass, qs, query):
-        for word in query.split():
-            qs = qs.filter(Q(name__icontains=word) |
-                           Q(description__icontains=word))
-        return qs
+	for word in query.split():
+	    qs = qs.filter(Q(name__icontains=word) |
+			   Q(description__icontains=word))
+	return qs
 
 ##################################################################
 ##################################################################
@@ -1685,10 +1685,10 @@ class Relation(AbstractThing):
 
     @classmethod
     def filter_queryset(klass, qs, query):
-        for word in query.split():
-            qs = qs.filter(Q(name__icontains=word) |
-                           Q(description__icontains=word))
-        return qs
+	for word in query.split():
+	    qs = qs.filter(Q(name__icontains=word) |
+			   Q(description__icontains=word))
+	return qs
 
 ##################################################################
 ##################################################################
@@ -1830,7 +1830,7 @@ class Item(AbstractThing):
 
 	iteminfo = {}
 
-	iteminfo['author_email'] = None # TBD?
+	iteminfo['author_email'] = 'nobody@themineproject.org' # tbd: fix this
 	iteminfo['author_link'] = None # TBD?
 	iteminfo['author_name'] = None # TBD?
 	iteminfo['categories'] = None # TBD?
@@ -1838,8 +1838,7 @@ class Item(AbstractThing):
 	iteminfo['item_copyright'] = None # TBD?
 	iteminfo['pubdate'] = None # TBD?
 	iteminfo['ttl'] = None # TBD?
-	iteminfo['unique_id'] = None # TBD?
-
+	iteminfo['unique_id'] = "tag:%s,2009:%s" % (iteminfo['author_email'], item_mk.key())
 	iteminfo['title'] = self.name
 
 	# TBD: what to do about size and content-type for enclosures?
@@ -1865,19 +1864,19 @@ class Item(AbstractThing):
 	    desc = self.item_feed_description()
 	else: # either there is data, or we are not of HTML type
 	    tmpl = {
-		'http_path': item_mk.http_path(),
 		'comment_url': item_mk.spawn_comment().permalink(),
 		'content_type': self.item_type(),
 		'description': self.item_feed_description(),
+		'has_file': 0,
+		'http_path': item_mk.http_path(),
+		'id': self.id,
 		'link': iteminfo['link'],
 		'size': self.item_size(),
 		'title': iteminfo['title'],
-                'id': self.id, 
-                'type': self.item_type(), 
-                'has_file': 0,
+		'type': self.item_type(),
 		}
-            if self.data:
-                tmpl['has_file'] = 1
+	    if self.data:
+		tmpl['has_file'] = 1
 	    desc = render_to_string('feed/item-description.html', tmpl)
 
 	# rewrite
@@ -1888,10 +1887,10 @@ class Item(AbstractThing):
 
     @classmethod
     def filter_queryset(klass, qs, query):
-        for word in query.split():
-            qs = qs.filter(Q(name__icontains=word) |
-                           Q(description__icontains=word))
-        return qs
+	for word in query.split():
+	    qs = qs.filter(Q(name__icontains=word) |
+			   Q(description__icontains=word))
+	return qs
 
 ##################################################################
 ##################################################################
@@ -1952,10 +1951,10 @@ class Comment(AbstractThing):
 
     @classmethod
     def filter_queryset(klass, qs, query):
-        for word in query.split():
-            qs = qs.filter(Q(title__icontains=word) |
-                           Q(body__icontains=word))
-        return qs
+	for word in query.split():
+	    qs = qs.filter(Q(title__icontains=word) |
+			   Q(body__icontains=word))
+	return qs
 
     class Meta:
 	ordering = ['-id']
@@ -2046,10 +2045,10 @@ class Vurl(AbstractThing):
 
     @classmethod
     def filter_queryset(klass, qs, query):
-        for word in query.split():
-            qs = qs.filter(Q(link__icontains=word) |
-                           Q(name__icontains=word))
-        return qs
+	for word in query.split():
+	    qs = qs.filter(Q(link__icontains=word) |
+			   Q(name__icontains=word))
+	return qs
 
 ##################################################################
 ##################################################################
