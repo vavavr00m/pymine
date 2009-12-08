@@ -182,9 +182,9 @@ def generate(request, mk, *args, **kwargs):
 
     # feed information
     feedinfo = {}
-    feedinfo['author_email'] = None
+    feedinfo['author_email'] = 'nobody-feed@themineproject.org'
     feedinfo['author_link'] = None
-    feedinfo['author_name'] = None
+    feedinfo['author_name'] = feedinfo['author_email']
     feedinfo['categories'] = None
     feedinfo['feed_copyright'] = None
     feedinfo['feed_guid'] = None
