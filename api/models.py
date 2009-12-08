@@ -1836,7 +1836,7 @@ class Item(AbstractThing):
 	iteminfo['categories'] = None # TBD?
 	iteminfo['comments'] = None # TBD?
 	iteminfo['item_copyright'] = None # TBD?
-	iteminfo['pubdate'] = None # TBD?
+	iteminfo['pubdate'] = self.last_modified
 	iteminfo['ttl'] = None # TBD?
 	iteminfo['unique_id'] = "tag:%s,2009:%s" % (iteminfo['author_email'], item_mk.key())
 	iteminfo['title'] = self.name
