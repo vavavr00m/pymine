@@ -3,6 +3,8 @@
 <p class="cloud">
 {% for individual in result|slice:":5" %}
 {% for type, hash in individual.items %}
+{{hash.itemId}}
+|
 <A HREF="/api/item/{{hash.itemId}}">{{hash.itemName}}</A>
 |
 <A HREF="/ui/update/item/{{hash.itemId}}.html">{{hash.itemDescription|removetags:"a p"|truncatewords:8}} ...</A>
