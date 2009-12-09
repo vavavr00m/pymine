@@ -92,7 +92,7 @@ def generate(request, mk, *args, **kwargs):
     # small cache to try to prevent unnecessary lookups
     cloud_cache = {}
 
-    for item in public_items.all():
+    for item in public_items.filter(is_deleted__exact=False):
 	#print "considering %s" % item.name
 
 	for item_tag in item.tags.all():
@@ -123,7 +123,7 @@ def generate(request, mk, *args, **kwargs):
     qs1 = public_items.filter(id__in=candidates)
 
     # and rip out those extra "public" or "shared" items explicitly for us
-    qs2 = relation.items_explicitly_for.filter( Q(status='P') | Q(status='S') )
+    qs2 = relation.items_explicitly_for.filter( Q(status='P') | Q(status='S') ).filter(is_deleted__exact=False)
 
     # collate and uniq the above
     qs = qs1 | qs2
