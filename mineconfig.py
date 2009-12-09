@@ -31,9 +31,9 @@ def initialise_crypto():
     mine_hmac_key = b64.encode(os.urandom(nbytes))
     mine_iv_seed = b64.encode(os.urandom(nbytes))
     mine_secret_key = b64.encode(os.urandom(nbytes))
-    Registry.set_encoded('__MINE_HMAC_KEY__', mine_key, False)
+    Registry.set_encoded('__MINE_HMAC_KEY__', mine_hmac_key, False)
     Registry.set_encoded('__MINE_IV_SEED__', mine_iv_seed, False)
-    Registry.set_encoded('__MINE_SECRET_KEY__', mine_key, False)
+    Registry.set_encoded('__MINE_SECRET_KEY__', mine_secret_key, False)
  
 def create_user(username, password):
     u = User()

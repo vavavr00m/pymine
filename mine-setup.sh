@@ -114,7 +114,7 @@ python manage.py createsuperuser --username $MINE_SUPERUSER --email $MINE_USER_E
 
 echo ""
 echo setting up crypto seeds and keys...
-DJANGO ./mineconfig.py init-crypto
+DJANGO ./mineconfig.py init-crypto || exit 1
 
 echo ""
 echo done.
