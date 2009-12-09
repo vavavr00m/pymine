@@ -420,14 +420,14 @@ class Minekey:
     def crypto_engine(klass, iv):
 	"""return an intialised crypto engine - to be modified"""
 
-	k = '__MINE_KEY__'
+	k = '__MINE_SECRET_KEY__'
 	aes_key = cache.get(k)
 
 	if not aes_key:
 	    aes_key = Registry.get_decoded(k)
 	    cache.add(k, aes_key, 60)
 
-	aes_key = Registry.get_decoded('__MINE_KEY__')
+	aes_key = Registry.get_decoded(k)
 	return AES.new(aes_key, klass.aes_mode, iv)
 
     @classmethod
