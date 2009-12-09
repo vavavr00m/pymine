@@ -72,12 +72,12 @@ while read item who what body
 do
     Minectl create-comment $item commentRelationId=$who commentTitle=$what commentBody="$body"
 done <<EOF
-1 1 title1 this is body 1
-1 1 title2 this is body 2
-1 carrie title3 this is body 3
-2 perry title4 this is body 4
-2 perry title5 this is body 5
-3 ben title6 this is body 5
+1  1       comment-title-1  comment body  1
+1  1       comment-title-2  comment body  2
+1  carrie  comment-title-3  comment body  3
+2  perry   comment-title-4  comment body  4
+2  perry   comment-title-5  comment body  5
+3  ben     comment-title-6  comment body  6
 EOF
 
 # some vurls
