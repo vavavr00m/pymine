@@ -125,16 +125,16 @@ do
 	"itemDescription=$description"
 
 done <<EOF
-public text/html depth-0 this is a link to <a href="16">item 16</a>
-public text/html depth-1 this is a link to <a href="17">item 17</a>
-public text/html depth-2 this is a link to <a href="18">item 18</a>
-public text/html depth-3 this is a link to <a href="19">item 19</a>
-shared text/html depth-4 this is a link to <a href="20">item 20</a>
-public text/html depth-5 this is a link to <a href="21">item 21</a>
-public text/html depth-6 this is a link to <a href="22">item 22</a>
-private text/html depth-7 this is a link to <a href="23">item 23</a>
-public text/html depth-8 this is a link to <a href="24">item 24</a>
-public text/html loop this is a link to <a href="24">item 24</a>
+public text/html depth-0 this is a link to <a href="/api/item/16">item 16</a>
+public text/html depth-1 this is a link to <a href="/api/item/17">item 17</a>
+public text/html depth-2 this is a link to <a href="/api/item/18">item 18</a>
+public text/html depth-3 this is a link to <a href="/api/item/19">item 19</a>
+shared text/html depth-4 this is a link to <a href="/api/item/20">item 20</a>
+public text/html depth-5 this is a link to <a href="/api/item/21">item 21</a>
+public text/html depth-6 this is a link to <a href="/api/item/22">item 22</a>
+private text/html depth-7 this is a link to <a href="/api/item/23">item 23</a>
+public text/html depth-8 this is a link to <a href="/api/item/24">item 24</a>
+public text/html loop this is a link to <a href="/api/item/24">item 24</a>
 EOF
 
 Minectl update-item 15 itemTags=themineproject
