@@ -585,7 +585,7 @@ class Minekey:
     # rewriter-regexp; the rewriter will sanitycheck balance of
     # quotation marks / that they are the same on each side
 
-    html_re = re.compile(r"""(SRC|HREF)\s*=\s*(['"]?)((/api/item/)?\d+)([^\s\>]*)""", re.IGNORECASE)
+    html_re = re.compile(r"""(SRC|HREF)\s*=\s*(['"]?)/api/item/(\d+)([^\s\>]*)""", re.IGNORECASE)
 
     def rewrite_html(self, html):
 	"""
@@ -610,7 +610,7 @@ class Minekey:
 	    action = mo.group(1)
 	    fq = mo.group(2)
 	    iid = int(mo.group(3))
-	    lq = mo.group(5)
+	    lq = mo.group(4)
 	    if fq != lq: return mo.group(0)
 	    return '%s="%s"' % (action, self.spawn_iid(iid).permalink())
 
