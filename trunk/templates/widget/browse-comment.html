@@ -5,12 +5,15 @@
 <li>
 <A HREF="/ui/update/relation/{{hash.commentRelationId}}.html">{{hash.commentRelationName}}</A>
 on
-<A HREF="/ui/update/item/{{hash.commentItemId}}.html">{{hash.commentItemName|truncatewords:8}}</A>
-<A HREF="/api/item/{{hash.commentItemId}}">(view)</A>
-<br/>
-<A HREF="/ui/update/comment/{{hash.commentId}}.html">{{hash.commentTitle}}</A>
+<A HREF="/api/item/{{hash.commentItemId}}">{{hash.commentItemName|truncatewords:8}}</A>
 |
-<A HREF="/ui/update/comment/{{hash.commentId}}.html">{{hash.commentBody|removetags:"a p"|truncatewords:10}}</A>
+<A HREF="/ui/read/item/{{hash.commentItemId}}.html">info</A>
+|
+<A HREF="/ui/update/item/{{hash.commentItemId}}.html">edit</A>
+<br/>
+<A HREF="/ui/update/comment/{{hash.commentId}}.html">
+{{hash.commentTitle}} | {{hash.commentBody|removetags:"a p"|truncatewords:10}}
+</A>
 </li>
 {% endfor %}
 </ul>
