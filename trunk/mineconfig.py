@@ -28,10 +28,12 @@ from api.models import Registry
 
 def initialise_crypto():
     nbytes = 128/8
-    mine_key = b64.encode(os.urandom(nbytes))
+    mine_hmac_key = b64.encode(os.urandom(nbytes))
     mine_iv_seed = b64.encode(os.urandom(nbytes))
-    Registry.set_encoded('__MINE_KEY__', mine_key, False)
+    mine_secret_key = b64.encode(os.urandom(nbytes))
+    Registry.set_encoded('__MINE_HMAC_KEY__', mine_key, False)
     Registry.set_encoded('__MINE_IV_SEED__', mine_iv_seed, False)
+    Registry.set_encoded('__MINE_SECRET_KEY__', mine_key, False)
  
 def create_user(username, password):
     u = User()
