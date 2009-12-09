@@ -1,7 +1,8 @@
 {% extends 'base/page.html' %}
 {% block content %}
-<a href="/ui/delete/vurl/{{vurlId}}.html"><button>delete this vurl</button></a>
+<h3>updating {{result.vurlId}} | {{result.vurlName}}</h3>
+{% include 'widget/action-vurl.html' %}
 {% include 'widget/update-vurl.html' %}
-<a href="/admin/api/vurl/{{vurlId}}/"><button>use the django admin editor for this vurl</button></a>
+<a href="/admin/api/vurl/{{result.vurlId}}/"><button>use the django admin editor for this vurl</button></a>
 {% endblock %}
 {% block nav_vurls %}id=current{% endblock %}

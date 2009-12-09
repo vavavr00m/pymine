@@ -1,16 +1,22 @@
 {% extends "base/page.html" %}
 
+{% block nav_items %}id="current"{% endblock %}
+
 {% block title %}pymine items{% endblock %}
 
 {% block heading %}items{% endblock %}
 
 {% block content %}
+<h3>browse recent items</h3>
 <p>{% include 'widget/browse-item.html' %}</p>
+
+<h3>search items</h3>
 {% include 'widget/search-item.html' %}
+
+<h3>create an item</h3>
 {% include 'widget/create-item.html' %}
 {% endblock %}
 
 {% block context_sidebar %}
 {% include "sidebar/items.html" %}
 {% endblock %}
-{% block nav_items %}id=current{% endblock %}

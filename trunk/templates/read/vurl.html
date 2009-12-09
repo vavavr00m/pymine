@@ -1,3 +1,23 @@
 {% extends 'base/api.html' %}
-{% block heading %}reading vurl{% endblock %}
-{% block nav_vurls %}id=current{% endblock %}
+
+{% block heading %}vurl {{result.vurlId}}{% endblock %}
+
+{% block content %}
+<h3>viewing vurl {{result.vurlId}}</h3>
+
+{% include 'widget/action-vurl.html' %}
+
+{% if result %}
+<ul>
+{% for key, value in result.items %}<li>{{key}}: {{value}}</li>{% endfor %}
+</ul>
+{% else %}
+no result returned by api call
+{% endif %}
+{% endblock %} <!-- content -->
+
+{% block content_error_status %}
+{% if exit %}<p class="error">omg wtf bbq?</p>{% endif %}
+{% endblock %}
+
+{% block nav_comments %}id=current{% endblock %}

@@ -1,3 +1,23 @@
 {% extends 'base/api.html' %}
-{% block heading %}reading tag{% endblock %}
-{% block nav_tags %}id=current{% endblock %}
+
+{% block heading %}tag {{result.tagId}}{% endblock %}
+
+{% block content %}
+<h3>viewing tag {{result.tagId}}</h3>
+
+{% include 'widget/action-tag.html' %}
+
+{% if result %}
+<ul>
+{% for key, value in result.items %}<li>{{key}}: {{value}}</li>{% endfor %}
+</ul>
+{% else %}
+no result returned by api call
+{% endif %}
+{% endblock %} <!-- content -->
+
+{% block content_error_status %}
+{% if exit %}<p class="error">omg wtf bbq?</p>{% endif %}
+{% endblock %}
+
+{% block nav_comments %}id=current{% endblock %}

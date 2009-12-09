@@ -1,8 +1,8 @@
 {% extends 'base/page.html' %}
 {% block content %}
-<a href="{{relationFeedUrl}}"><button>relation feed</button></a>
-<a href="/ui/delete/relation/{{relationId}}.html"><button>delete this relation</button></a>
+<h3>updating {{result.relationId}} | {{result.relationName}}</h3>
+{% include 'widget/action-relation.html' %}
 {% include 'widget/update-relation.html' %}
-<a href="/admin/api/relation/{{relationId}}/"><button>use the django admin editor for this relation</button></a>
+<a href="/admin/api/relation/{{result.relationId}}/"><button>use the django admin editor for this relation</button></a>
 {% endblock %}
 {% block nav_relations %}id=current{% endblock %}

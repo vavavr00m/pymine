@@ -9,12 +9,7 @@
 
 <h4>{{hash.relationName}}</h4>
 
-<ul class="actions">
-<li><a href="{{hash.relationFeedUrl}}">feed</a></li>
-<li><a href="/ui/read/relation/{{hash.relationId}}.html">info</a></li>
-<li><a href="/ui/update/relation/{{hash.relationId}}.html">edit</a></li>
-<li><a href="/ui/delete/relation/{{hash.relationId}}.html">delete</a></li>
-</ul>
+{% include 'widget/action2-relation.html' %}
 
 {% if hash.relationDescription %}
 <p class="listdesc">
