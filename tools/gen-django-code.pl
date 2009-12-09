@@ -5,25 +5,20 @@ $root_path_strip = "/(api|ui|ie|get|r|v)";
 
 # $value text in <anglebrackets> must be same as lcase($key)
 %regexp_lookup = (
-		   'IID',      '?P<iid>\d+', # iid may be '0' sometimes
-		   'TID',      '?P<tid>[1-9]\d*',
-		   'RID',      '?P<rid>[1-9]\d*',
-		   'RVSN',     '?P<rvsn>[1-9]\d*',
-		   'CID',      '?P<cid>[1-9]\d*',
-		   'VID',      '?P<vid>[1-9]\d*',
-		   'FMT',      '?P<fmt>(rdr|xml|json|raw)',
-
-		   'VURLKEY',  '?P<vurlkey>[-_A-Za-z0-9]+',
-
-		   'SATTR',    '?P<sattr>(__)?[A-Za-z][_A-Za-z]*',  #  f,  foo,  fooBar,  __fooBar
-
-		   'RATTR',    '?P<rattr>[A-Za-z][_A-Za-z]*',       #  f,  foo,  fooBar
-
-		   'MINEKEY',  '?P<minekey>[-_A-Za-z0-9]+=*',
-
-		   'EFMT',     '?P<efmt>(zip|tar)',
-
-		   'SUFFIX',   '?P<suffix>.+',
+    'IID',      '?P<iid>\d+', # iid may be '0' sometimes
+    'TID',      '?P<tid>[1-9]\d*',
+    'RID',      '?P<rid>[1-9]\d*',
+    'RVSN',     '?P<rvsn>[1-9]\d*',
+    'CID',      '?P<cid>[1-9]\d*',
+    'VID',      '?P<vid>[1-9]\d*',
+    'FMT',      '?P<fmt>(rdr|xml|json|raw)',
+    'VURLKEY',  '?P<vurlkey>[-_A-Za-z0-9]+',
+    'SATTR',    '?P<sattr>(__)?[A-Za-z][_A-Za-z]*',  #  f,  foo,  fooBar,  __fooBar
+    'RATTR',    '?P<rattr>[A-Za-z][_A-Za-z]*',       #  f,  foo,  fooBar
+    'MINEKEY',  '?P<minekey>[-_A-Za-z0-9]+=*',
+    'EFMT',     '?P<efmt>(zip|tar)',
+    'SUFFIX',   '?P<suffix>.+',
+    'TRASH',    '.*',
     );
 
 
@@ -52,7 +47,7 @@ while (<DATA>) {
 
     @kwds = grep(/^[A-Z]+$/o, split(/\b/o, $url));
 
-    @kwds = map { lc($_) } grep(!/^(FMT)$/o, @kwds); # exclude .FMT which is handled elsewhere
+    @kwds = map { lc($_) } grep(!/^(FMT|TRASH)$/o, @kwds); # exclude .FMT/TRASH which is handled elsewhere/ignored
 
     $aaa = join(", ", 'request', @kwds, '*args', '**kwargs');
     $aaa2 = join(", ", @kwds);
@@ -132,8 +127,8 @@ mine   GET    /favicon.ico                   root-favicon
 #mine   GET    /pub/                          root-pub
 #mine   GET    /pub/SUFFIX                    handle-pub
 
-get    GET    /get/MINEKEY                   read-minekey
-get    POST   /get/MINEKEY                   submit-minekey
+get    GET    /get/MINEKEY(/TRASH)?          read-minekey
+get    POST   /get/MINEKEY(/TRASH)?          submit-minekey
 get    POST   /get/m                         field-minekey # accept POST for any minekey
 get    GET    /get/i/VID                     redirect-vid # short to long remapping
 get    GET    /get/k/VURLKEY                 redirect-vurlkey # short to long remapping
