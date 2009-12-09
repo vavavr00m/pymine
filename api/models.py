@@ -438,7 +438,9 @@ class Minekey:
 
     @classmethod
     def encrypt(klass, x, iv):
-	"""encrypt x and return the result prefixed by the IV; will pad plaintext with trailing whitespace as needed to satisfy the crypto algorithm"""
+	"""encrypt x and return the result prefixed by the IV; will pad
+        plaintext with trailing whitespace as needed to satisfy the
+        crypto algorithm"""
 	l = len(x)
 	if (l % 16): # if not a 16-byte message, pad with whitespace
 	    y =  '%*s' % (-(((l // 16) + 1) * 16), x)
@@ -448,7 +450,8 @@ class Minekey:
 	return engine.encrypt(y)
 
     def clone(self):
-	"""clone this minekey for further futzing; if you do futz manually, remember to do minekey.validate()"""
+	"""clone this minekey for further futzing; if you do futz manually,
+        remember to do minekey.validate()"""
 	retval = Minekey(method=self.method,
 			 rid=self.rid,
 			 rvsn=self.rvsn,
@@ -710,6 +713,10 @@ class Minekey:
 	# load relation
 	r = self.get_relation()
 
+        # check if deleted
+        if r.is_deleted:
+            raise RuntimeError, "relation is deleted: " + str(r)
+
 	# check against relation IP address
 	if r.network_pattern:
 	    if 'REMOTE_ADDR' not in request.META:
@@ -731,6 +738,10 @@ class Minekey:
 	# if it's a real item
 	if self.iid:
 	    i = self.get_item()
+
+            # check deleted
+            if i.is_deleted:
+                raise RuntimeError, 'item is deleted'
 
 	    # check if the item is shared/public
 	    if i.status not in ('P', 'S'):
