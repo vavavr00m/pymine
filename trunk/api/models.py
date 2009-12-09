@@ -1852,8 +1852,18 @@ class Item(AbstractThing):
 
 	# work out our enclosure
 
+        # tbd: truncate the url down to a fake filename + valid
+        # extension, and check that it makes any sense at all; ie:
+        # fake up a replacement or self.file.name and use here and
+        # below?
+
+        if self.data:
+            fake_filename = self.data.name
+        else:
+            fake_filename = 'enclosure.bin'
+
 	iteminfo['enclosure'] = \
-	    feedgenerator.Enclosure(url=iteminfo['link'],
+	    feedgenerator.Enclosure(url='%s/%s' % (iteminfo['link'], fake_filename),
 				    length=str(self.item_size()),
 				    mime_type=self.item_type())
 
@@ -1868,6 +1878,7 @@ class Item(AbstractThing):
 		'content_type': self.item_type(),
 		'description': self.item_feed_description(),
 		'has_file': 0,
+		'filename': fake_filename,
 		'http_path': item_mk.http_path(),
 		'id': self.id,
 		'link': iteminfo['link'],
