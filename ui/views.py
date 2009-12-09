@@ -298,7 +298,7 @@ def search_vurls(request, *args, **kwargs):
 ## declared args: cid
 def update_comment(request, cid, *args, **kwargs):
     """update_comment(cid) returns ..."""
-    s = Comment.objects.get(id=cid).to_structure()
+    s = api.read_comment(request, cid, *args, **kwargs)
     return render_to_response('update/comment.html', s)
 
 ## rest: GET /ui/update/item/IID.html
@@ -306,7 +306,7 @@ def update_comment(request, cid, *args, **kwargs):
 ## declared args: iid
 def update_item(request, iid, *args, **kwargs):
     """update_item(iid) returns ..."""
-    s = Item.objects.get(id=iid).to_structure()
+    s = api.read_item(request, iid, *args, **kwargs)
     return render_to_response('update/item.html', s)
 
 ## rest: GET /ui/update/relation/RID.html
@@ -314,7 +314,7 @@ def update_item(request, iid, *args, **kwargs):
 ## declared args: rid
 def update_relation(request, rid, *args, **kwargs):
     """update_relation(rid) returns ..."""
-    s = Relation.objects.get(id=rid).to_structure()
+    s = api.read_relation(request, rid, *args, **kwargs)
     return render_to_response('update/relation.html', s)
 
 ## rest: GET /ui/update/tag/TID.html
@@ -322,7 +322,7 @@ def update_relation(request, rid, *args, **kwargs):
 ## declared args: tid
 def update_tag(request, tid, *args, **kwargs):
     """update_tag(tid) returns ..."""
-    s = Tag.objects.get(id=tid).to_structure()
+    s = api.read_tag(request, tid, *args, **kwargs)
     return render_to_response('update/tag.html', s)
 
 ## rest: GET /ui/update/vurl/VID.html
@@ -330,7 +330,7 @@ def update_tag(request, tid, *args, **kwargs):
 ## declared args: vid
 def update_vurl(request, vid, *args, **kwargs):
     """update_vurl(vid) returns ..."""
-    s = Vurl.objects.get(id=vid).to_structure()
+    s = api.read_vurl(request, vid, *args, **kwargs)
     return render_to_response('update/vurl.html', s)
 
 ## rest: GET /ui/version.html

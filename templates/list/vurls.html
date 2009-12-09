@@ -9,14 +9,7 @@
 
 <h4>{{hash.vurlName}}</h4>
 
-<ul class="actions">
-<A HREF="/ui/read/vurl/{{hash.vurlId}}.html">info</A>
-<A HREF="/ui/update/vurl/{{hash.vurlId}}.html">edit</A>
-<A HREF="/ui/delete/vurl/{{hash.vurlId}}.html">delete</A>
-<A HREF="{{hash.vurlPathShort}}">short url</A>
-<A HREF="{{hash.vurlPathLong}}">named url</A>
-<A HREF="{{hash.vurlLink}}">original url</A>
-</ul>
+{% include 'widget/action2-vurl.html' %}
 
 <ul class="listmeta">
 <li>short link: {{hash.vurlPathShort}}</li>

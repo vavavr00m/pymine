@@ -7,8 +7,13 @@
 {% block heading %}tags{% endblock %}
 
 {% block content %}
+<h3>browse tags</h3>
 <p>{% include 'widget/browse-tag.html' %}</p>
+
+<h3>search tags</h3>
 {% include 'widget/search-tag.html' %}
+
+<h3>create a tag</h3>
 {% include 'widget/create-tag.html' %}
 {% endblock %}
 

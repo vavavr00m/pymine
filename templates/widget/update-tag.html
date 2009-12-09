@@ -1,16 +1,16 @@
 <div class="widget">
 {% include 'widget/tinymce.html' %}
-<form method="POST" enctype="multipart/form-data" action="/api/tag/{{tagId}}.rdr">
+<form method="POST" enctype="multipart/form-data" action="/api/tag/{{result.tagId}}.rdr">
 <input type="hidden" name="redirect_success" value="/ui/list/tags.html">
 
 tag name:
 <br/>
-<input name="tagName" value="{{tagName}}" size="33" />
+<input name="tagName" value="{{result.tagName}}" size="33" />
 <br/>
 
 implied/parent tags: (space-separated, optional, <em>must already exist</em>)
 <br/>
-<input name="tagImplies" value="{{tagImplies}}" size="66">
+<input name="tagImplies" value="{{result.tagImplies}}" size="66">
 <br/>
 <input type="checkbox" name="auto_tag" checked> create any implied/parent tags that don't already exist
 <br/>
@@ -18,7 +18,7 @@ implied/parent tags: (space-separated, optional, <em>must already exist</em>)
 tag description: (optional)
 <a href="javascript:toggleEditor('tagDescription');">(add/remove editor)</a>
 <br/>
-<textarea name="tagDescription" cols="66" rows="5">{{tagDescription}}</textarea>
+<textarea name="tagDescription" cols="66" rows="5">{{result.tagDescription}}</textarea>
 <br/>
 
 <input type="submit" name="save" value="update tag" />

@@ -1,16 +1,16 @@
 <div class="widget">
 <!-- no tinymce here, the vurl text doesn't need it. -->
-<form method="POST" enctype="multipart/form-data" action="/api/vurl/{{vurlId}}.rdr">
+<form method="POST" enctype="multipart/form-data" action="/api/vurl/{{result.vurlId}}.rdr">
 <input type="hidden" name="redirect_success" value="/ui/list/vurls.html">
 
 long url:
 <br/>
-<textarea name="vurlLink" cols="66" rows="5">{{vurlLink}}</textarea>
+<textarea name="vurlLink" cols="66" rows="5">{{result.vurlLink}}</textarea>
 <br/>
 
 vurl name: (optional)
 <br/>
-<input name="vurlName" value="{{vurlName}}" size="33" />
+<input name="vurlName" value="{{result.vurlName}}" size="33" />
 <br/>
 
 <input type="submit" name="save" value="update vurl" />

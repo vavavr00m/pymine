@@ -1,27 +1,27 @@
 <div class="widget">
 {% include 'widget/tinymce.html' %}
-<form method="POST" enctype="multipart/form-data" action="/api/comment/{{commentId}}.rdr">
+<form method="POST" enctype="multipart/form-data" action="/api/comment/{{result.commentId}}.rdr">
 <input type="hidden" name="redirect_success" value="/ui/list/comments/0.html">
 
 comment title:
 <br/>
-<input name="commentTitle" value="{{commentTitle}}" size="33" />
+<input name="commentTitle" value="{{result.commentTitle}}" size="33" />
 <br/>
 
 comment body: (optional)
 <a href="javascript:toggleEditor('commentBody');">(add/remove editor)</a>
 <br/>
-<textarea name="commentBody" cols="66" rows="5">{{commentBody}}</textarea>
+<textarea name="commentBody" cols="66" rows="5">{{result.commentBody}}</textarea>
 <br/>
 
 relation id: (numeric)
 <br/>
-<input name="commentRelationId" value="{{commentRelationId}}" size="5">
+<input name="commentRelationId" value="{{result.commentRelationId}}" size="5">
 <br/>
 
 item id: (numeric)
 <br/>
-<input name="commentItemId" value="{{commentItemId}}" size="5">
+<input name="commentItemId" value="{{result.commentItemId}}" size="5">
 <br/>
 
 <input type="submit" name="save" value="update comment" />

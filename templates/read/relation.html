@@ -1,3 +1,23 @@
 {% extends 'base/api.html' %}
-{% block heading %}reading relation{% endblock %}
-{% block nav_relations %}id=current{% endblock %}
+
+{% block heading %}relation {{result.relationId}}{% endblock %}
+
+{% block content %}
+<h3>viewing relation {{result.relationId}}</h3>
+
+{% include 'widget/action-relation.html' %}
+
+{% if result %}
+<ul>
+{% for key, value in result.items %}<li>{{key}}: {{value}}</li>{% endfor %}
+</ul>
+{% else %}
+no result returned by api call
+{% endif %}
+{% endblock %} <!-- content -->
+
+{% block content_error_status %}
+{% if exit %}<p class="error">omg wtf bbq?</p>{% endif %}
+{% endblock %}
+
+{% block nav_comments %}id=current{% endblock %}
