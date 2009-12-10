@@ -11,29 +11,30 @@
 
 {% include 'widget/action2-item.html' %}
 
+{% if hash.itemHasFile %}
+{% ifequal hash.itemType 'image/jpeg' %}
+<a href="/api/item/{{hash.itemId}}"><img src='/pub/images/thumbnail.png'/></a>
+{% else %}
+{% ifequal hash.itemType 'image/gif' %}
+<a href="/api/item/{{hash.itemId}}"><img src='/pub/images/thumbnail.png'/></a>
+{% else %}
+{% ifequal hash.itemType 'image/png' %}
+<a href="/api/item/{{hash.itemId}}"><img src='/pub/images/thumbnail.png'/></a>
+{% else %}
+{% ifequal hash.itemType 'application/pdf' %}
+<a href="/api/item/{{hash.itemId}}"><img src='/pub/images/thumbnail.png'/></a>
+{% else %}
+[no thumbnail]
+{% endifequal %}
+{% endifequal %}
+{% endifequal %}
+{% endifequal %}
+{% endif %}
+
 {% if hash.itemDescription %}
 <p class="listdesc">
 {{hash.itemDescription|safe}}
 </p>
-{% endif %}
-
-{% if hash.itemHasFile %}
-rendering:<br/>
-{% ifequal hash.itemType 'image/jpeg' %}
-<center><IMG SRC='/pub/images/thumbnail.png' /></center>
-{% else %}
-{% ifequal hash.itemType 'image/gif' %}
-<center><IMG SRC='/pub/images/thumbnail.png' /></center>
-{% else %}
-{% ifequal hash.itemType 'image/png' %}
-<center><IMG SRC='/pub/images/thumbnail.png' /></center>
-{% else %}
-{% ifequal hash.itemType 'application/pdf' %}
-<center><IMG SRC='/pub/images/thumbnail.png' /></center>
-{% endifequal %}
-{% endifequal %}
-{% endifequal %}
-{% endifequal %}
 {% endif %}
 
 <ul class="listmeta">
