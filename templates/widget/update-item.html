@@ -33,9 +33,9 @@ file type: (optional, browser should populate)
 
 publication status:
 <br/>
-<input type="radio" name="itemStatus" value="private" {% ifequal itemStatus "private" %}checked{% endifequal %} /> private
-<input type="radio" name="itemStatus" value="shared" {% ifequal itemStatus "shared" %}checked{% endifequal %}/> shared
-<input type="radio" name="itemStatus" value="public" {% ifequal itemStatus "public" %}checked{% endifequal %}/> public
+<input type="radio" name="itemStatus" value="private" {% ifequal result.itemStatus "private" %}checked{% endifequal %} /> private
+<input type="radio" name="itemStatus" value="shared" {% ifequal result.itemStatus "shared" %}checked{% endifequal %}/> shared
+<input type="radio" name="itemStatus" value="public" {% ifequal result.itemStatus "public" %}checked{% endifequal %}/> public
 <br/>
 
 <input type="submit" name="save" value="update item" />
