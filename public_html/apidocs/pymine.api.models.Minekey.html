@@ -73,15 +73,13 @@ padding</span></td>
     
     <td>Class Method</td>
     <td><a href="pymine.api.models.Minekey.html#encrypt">encrypt</a></td>
-    <td><span>encrypt x and return the result prefixed by the IV; will pad plaintext 
-with trailing whitespace as needed to satisfy the crypto algorithm</span></td>
+    <td><span>encrypt x and return the result prefixed by the IV; will pad</span></td>
   </tr><tr class="method">
     
     
     <td>Method</td>
     <td><a href="pymine.api.models.Minekey.html#clone">clone</a></td>
-    <td><span>clone this minekey for further futzing; if you do futz manually, 
-remember to do minekey.validate()</span></td>
+    <td><span>clone this minekey for further futzing; if you do futz manually,</span></td>
   </tr><tr class="classmethod">
     
     
@@ -106,6 +104,12 @@ remember to do minekey.validate()</span></td>
     <td>Method</td>
     <td><a href="pymine.api.models.Minekey.html#permalink">permalink</a></td>
     <td><span>takes the result of self.key() and embeds / returns it in a</span></td>
+  </tr><tr class="method">
+    
+    
+    <td>Method</td>
+    <td><a href="pymine.api.models.Minekey.html#http_path">http_path</a></td>
+    <td><span>returns the http://host.domain:port/ for this mine</span></td>
   </tr><tr class="method">
     
     
@@ -336,6 +340,18 @@ consumption.<table class="fieldTable"></table></div>
           <div>takes the result of self.key() and embeds / returns it in a permalink 
 string for this mine; requires self.__request to be set or set_request() to
 have been performed on this Minekey or one of its ancestors<table class="fieldTable"></table></div>
+        </div>
+      </div><div class="function">
+        <a name="pymine.api.models.Minekey.http_path"></a>
+        <a name="http_path"></a>
+        <div class="functionHeader">
+        
+        def http_path(self):
+        
+      </div>
+        <div class="functionBody">
+          
+          <div>returns the http://host.domain:port/ for this mine<table class="fieldTable"></table></div>
         </div>
       </div><div class="function">
         <a name="pymine.api.models.Minekey.spawn_iid"></a>
