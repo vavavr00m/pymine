@@ -17,6 +17,25 @@
 </p>
 {% endif %}
 
+{% if hash.itemHasFile %}
+rendering:<br/>
+{% ifequal hash.itemType 'image/jpeg' %}
+<center><IMG SRC='/pub/images/thumbnail.png' /></center>
+{% else %}
+{% ifequal hash.itemType 'image/gif' %}
+<center><IMG SRC='/pub/images/thumbnail.png' /></center>
+{% else %}
+{% ifequal hash.itemType 'image/png' %}
+<center><IMG SRC='/pub/images/thumbnail.png' /></center>
+{% else %}
+{% ifequal hash.itemType 'application/pdf' %}
+<center><IMG SRC='/pub/images/thumbnail.png' /></center>
+{% endifequal %}
+{% endifequal %}
+{% endifequal %}
+{% endifequal %}
+{% endif %}
+
 <ul class="listmeta">
 <li>id: {{hash.itemId}}</li>
 <li>status: {{hash.itemStatus}}</li>
