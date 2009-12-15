@@ -1,0 +1,19 @@
+#summary A quick synopsis of how to install pymine on Debian and Ubuntu
+
+= Introduction =
+
+First:
+
+  # visit `http://code.google.com/p/pymine/downloads/list`
+  # download `http://pymine.googlecode.com/files/pymine_$LATESTVERSION.deb`
+
+Then:
+
+  # `sudo gdebi pymine_$LATESTVERSION.deb`
+  # `cd /var/mine/pymine`
+  # `sudo sh populate-mine.sh`
+  # `gnome-open http://localhost:9862/`
+
+If you hit a permissions issue:
+
+  # `cd /var/mine/pymine ; make perms`
