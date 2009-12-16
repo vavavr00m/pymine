@@ -4,8 +4,8 @@
 
 First:
 
-  # visit `http://code.google.com/p/pymine/downloads/list`
-  # download `http://pymine.googlecode.com/files/pymine_$LATESTVERSION.deb`
+  * visit `http://code.google.com/p/pymine/downloads/list`
+  * download `http://pymine.googlecode.com/files/pymine_$LATESTVERSION.deb`
 
 Then:
 
@@ -16,4 +16,8 @@ Then:
 
 If you hit a permissions issue:
 
-  # `cd /var/mine/pymine ; make perms`
+  * `cd /var/mine/pymine ; make perms`
+
+If you want to see a worked example, there's a Youtube video at 
+
+  * http://www.youtube.com/watch?v=v_KIXQqlHwE
