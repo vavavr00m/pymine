@@ -1,6 +1,7 @@
 #summary A quick synopsis of how to install pymine on Debian and Ubuntu
+#labels Featured,Phase-Deploy,Phase-Implementation
 
-= Introduction =
+== Installation for End-Users ==
 
 First:
 
@@ -21,3 +22,10 @@ If you hit a permissions issue:
 If you want to see a worked example, there's a Youtube video at 
 
   * http://www.youtube.com/watch?v=v_KIXQqlHwE
+
+== Installation for Django Developers ==
+
+  # download http://pymine.googlecode.com/svn/trunk/platform/debian/developer-setup.sh
+  # read the script so you work out what it does
+  # run the script
+  # review the contents of `platform/apache` and `platform/debian` if you want to enable WSGI rather than use the Django development server.
