@@ -10,13 +10,12 @@
 I'm trying to setup pymine on our server. I've checkouted svn code and installed missing packages. After running make setup in code root I've got the following:
 
 {{{
-Entering directory `/svn/pymine-read-only'
+Entering directory '/svn/pymine-read-only'
 python manage.py syncdb --noinput --traceback
 Error: No module named pymine.api
 make[1]: *** [dbsync] Error 1
-make[1]: Leaving directory `/svn/pymine-read-only'
+make[1]: Leaving directory '/svn/pymine-read-only'
 make: *** [setup] Error 1
-[17/12/2009 11:53:48] Anton Kudris: what have I done wrong ?
 }}}
 
 what have I done wrong ?
