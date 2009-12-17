@@ -323,8 +323,8 @@ def list_registry(request, *args, **kwargs):
 ## declared args: rattr
 def amend_registry_key(request, rattr, *args, **kwargs):
     """amend_registry_key(rattr) returns ..."""
-    v = request.POST[key]
-    m, created = Registry.objects.get_or_create(key=k, defaults={ 'value': v })
+    v = request.POST[rattr]
+    m, created = Registry.objects.get_or_create(key=rattr, defaults={ 'value': v })
     if not created: # then it will need updating
         m.value = v
         m.save();
