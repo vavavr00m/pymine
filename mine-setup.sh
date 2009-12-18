@@ -31,6 +31,11 @@ YESNO() {
 DEFAULT_SUPERUSER=pickaxe
 DEFAULT_USER=$USER
 
+if [ $DEFAULT_USER = root ]
+then
+    DEFAULT_USER=pymine # anything but root, it's too confusing
+fi
+
 make perms >/dev/null 2>&1
 
 while  [ "x$MINE_USER_EMAIL" = "x" ]
