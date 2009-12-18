@@ -53,7 +53,7 @@ def REST_NOAUTH(request, *args, **kwargs):
 
     if ((request.method == 'DELETE') or
 	(request.method == 'POST' and
-	 request.REQUEST.get('_method', None) == 'DELETE')) and \
+	 request.POST.get('_method', None) == 'DELETE')) and \
 	delete_view is not None:
 	response = delete_view(request, *args, **kwargs)
     elif request.method == 'POST' and post_view is not None:
@@ -113,7 +113,7 @@ def API_CALL(request, *args, **kwargs):
 
     if ((request.method == 'DELETE') or
 	(request.method == 'POST' and
-	 request.REQUEST.get('_method', None) == 'DELETE')) and \
+	 request.POST.get('_method', None) == 'DELETE')) and \
 	delete_view is not None:
 	retval = delete_view(request, *args, **kwargs)
     elif request.method == 'POST' and post_view is not None:
