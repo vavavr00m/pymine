@@ -62,6 +62,8 @@ class MineAPI:
 	self.url_prefix = kwargs.get('url_prefix', 'http://127.0.0.1:9862')
 	self.username = kwargs.get('username', None)
 	self.password = kwargs.get('password', None)
+	self.verbose = kwargs.get('verbose', False)
+
 
 	self.cookie_file = kwargs.get('cookie_file', 'etc/cookies2.txt')
 	self.cookie_jar = cookielib.LWPCookieJar(self.cookie_file)
@@ -183,7 +185,8 @@ class MineAPI:
 	url = "%s/%s" % (self.url_prefix, url_suffix)
 	encoded_data = None
 
-	print "> %s %s %s" % (method, url, str(form_data))
+        if self.verbose:
+            print "> %s %s %s" % (method, url, str(form_data))
 
 	if method == 'DELETE':
             form_data['_method'] = 'DELETE'
@@ -313,6 +316,35 @@ class MineAPI:
 
     def __getattr__(self, attr):
 	"""
+        this getattr overrides the default and via a clever and
+        slightly evil kludge implements the following virtual methods:
+
+        create_comment() create_item() create_relation() create_tag()
+        create_vurl() delete_comment() delete_comment_key()
+        delete_item() delete_item_key() delete_registry_key()
+        delete_relation() delete_relation_key() delete_tag()
+        delete_tag_key() delete_vurl() delete_vurl_key()
+        list_comments() list_items() list_registry() list_relations()
+        list_tags() list_vurls() read_comment() read_comment_key()
+        read_data() read_item() read_item_key() read_registry_key()
+        read_relation() read_relation_key() read_tag() read_tag_key()
+        read_vurl() read_vurl_key() update_comment() update_item()
+        update_registry_key() update_relation() update_tag()
+        update_vurl() version()
+
+        so you can do stuff like:
+
+            m = MineAPI(username='fred, ...')
+            tags = m.list_tags()
+
+        ...even though no list_tags() method is defined; this works
+        because __getattr__() traps the attempt to access the
+        nonexistent list_tags method, converts underscores to hyphens
+        and then returns a lambda that frontends call_decode() with
+        the properly 'command' inserted.
+
+        The net result is: any 'foo-bar' API call is also available as
+        api.foo_bar() yielding python structures.
 	"""
 
 	command = attr.replace('_', '-')
@@ -322,7 +354,7 @@ class MineAPI:
 
 	if command in self.command_list:
 	    function, method, template, multibool = self.command_list[command]
-	    self.lambda_cache[command] = lambda *args, **kwargs: [ simplejson.loads(i) for i in function(method, template, *args, **kwargs) ]
+	    self.lambda_cache[command] = lambda *args, **kwargs: self.call_decode(command, *args, **kwargs)
 	    return self.lambda_cache[command]
 
 	raise AttributeError, 'unknown attribute %s (command %s)' % (attr, command)
@@ -334,6 +366,23 @@ class MineAPI:
 
     def command_execute(self, command, *arglist):
 	"""
+        takes a command and an argument list, and executes it
+
+        any arguments not containing the '=' character go into a
+        dictionary of kwargs that are passed into the followup
+        methods, and eventually into POST data
+
+        example: create-tag tagName="foo" tagDescription="example tag"
+
+        any arguments not containing the '=' character are appended to
+        a plain list that is supplied to the wrapper around the REST
+        API invocation, which may (if you are doing it right) iterate
+        over those arguments and do something useful.
+
+        example: delete-tag 1 2 5 7 9 ...
+
+        these concepts probably can mix-and-match, but it'd be deeply
+        advanced for anyone to try doing so at the moment.
 	"""
 
 	args = []
@@ -356,14 +405,25 @@ class MineAPI:
 ##################################################################
 ##################################################################
 
+# miner.py [opts ...] command [args ...]
+# options:
+# -u / --user username
+# -p / --password password
+# -v / --verbose
+# -m / --mine http://site.domain:port
+# TODO: GETOPT THIS
+
+
 if __name__ == "__main__":
-    username = 'pickaxe'
-    password = getpass.getpass()
 
-    m = MineAPI(username=username, password=password)
-
+    u = 'pickaxe'
+    p = getpass.getpass()
+    v = False
+    root = os.environ['MINE_ROOT_URL']
     command = sys.argv[1]
     arglist = sys.argv[2:]
+
+    m = MineAPI(url_prefix=root, username=u, verbose=v, password=p)
 
     try:
 	retlist = m.command_execute(command, *arglist)
@@ -376,13 +436,3 @@ if __name__ == "__main__":
     except HTTPError as e:
 	print e
 	print e.read()
-
-
-if __name__ == "__example__":
-    m = MineAPI(url_prefix='http://127.0.0.1:9862')
-    m.login(username='alecm', password='fred')
-    print m.version()
-    taglist = m.list_tags()
-    status = m.delete.relation(1)
-    newitem = m.create_item(itemName='foo', itemDescription='bar')
-
