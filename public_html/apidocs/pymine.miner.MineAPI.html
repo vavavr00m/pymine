@@ -116,13 +116,19 @@
     
     
     <td>Method</td>
-    <td><a href="pymine.miner.MineAPI.html#parse">parse</a></td>
+    <td><a href="pymine.miner.MineAPI.html#call_decode">call_decode</a></td>
     <td><span class="undocumented">Undocumented</span></td>
-  </tr><tr class="classmethod">
+  </tr><tr class="method">
     
     
-    <td>Class Method</td>
-    <td><a href="pymine.miner.MineAPI.html#batch">batch</a></td>
+    <td>Method</td>
+    <td><a href="pymine.miner.MineAPI.html#__getattr__">__getattr__</a></td>
+    <td><span class="undocumented">Undocumented</span></td>
+  </tr><tr class="method">
+    
+    
+    <td>Method</td>
+    <td><a href="pymine.miner.MineAPI.html#command_execute">command_execute</a></td>
     <td><span class="undocumented">Undocumented</span></td>
   </tr>
   
@@ -316,11 +322,11 @@ resulting url with method using kwargs as POST data if appropriate.<table class=
 become POST data (if applicable and not overridden)<table class="fieldTable"></table></div>
         </div>
       </div><div class="function">
-        <a name="pymine.miner.MineAPI.parse"></a>
-        <a name="parse"></a>
+        <a name="pymine.miner.MineAPI.call_decode"></a>
+        <a name="call_decode"></a>
         <div class="functionHeader">
         
-        def parse(self, command, *arglist):
+        def call_decode(self, command, *args, **kwargs):
         
       </div>
         <div class="functionBody">
@@ -328,11 +334,23 @@ become POST data (if applicable and not overridden)<table class="fieldTable"></t
           <div class="undocumented">Undocumented</div>
         </div>
       </div><div class="function">
-        <a name="pymine.miner.MineAPI.batch"></a>
-        <a name="batch"></a>
+        <a name="pymine.miner.MineAPI.__getattr__"></a>
+        <a name="__getattr__"></a>
         <div class="functionHeader">
-        @classmethod<br />
-        def batch(klass, filename):
+        
+        def __getattr__(self, attr):
+        
+      </div>
+        <div class="functionBody">
+          
+          <div class="undocumented">Undocumented</div>
+        </div>
+      </div><div class="function">
+        <a name="pymine.miner.MineAPI.command_execute"></a>
+        <a name="command_execute"></a>
+        <div class="functionHeader">
+        
+        def command_execute(self, command, *arglist):
         
       </div>
         <div class="functionBody">
