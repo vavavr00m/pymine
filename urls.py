@@ -21,7 +21,7 @@ from django.conf.urls.defaults import *
 from django.contrib import admin
 
 import views as mine
-from views import REST
+from views import REST, REST_NOAUTH
 
 admin.autodiscover()
 
@@ -48,6 +48,6 @@ urlpatterns = patterns('',
 
 		       #################################
 
-		       (r'^favicon\.ico$', REST, { 'GET': mine.root_favicon }),
+		       (r'^favicon\.ico$', REST_NOAUTH, { 'GET': mine.root_favicon }),
 		       (r'^$', REST, { 'GET': mine.root_mine }),
 )
