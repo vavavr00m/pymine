@@ -25,7 +25,12 @@ u = 'alecm'
 p = getpass.getpass()
 
 api = miner.MineAPI(username=u, password=p, url_prefix=url)
-items = api.list_items()
-
 print api.version()
-print items
+print api.list_items()
+
+x = api.create_item(itemName='api test demo', itemStatus='public')
+print x
+
+iid = x['result']['itemId']
+y = api.update_item(iid, itemStatus='private')
+print y

@@ -405,7 +405,7 @@ class MineAPI:
 	Replaces '{1}' in url_template with arg[0]; invokes resulting
 	url with method using kwargs as POST data if appropriate.
 	"""
-	url_suffix = url_template.replace('{1}', args[0])
+	url_suffix = url_template.replace('{1}', str(args[0]))
 	return self.url_call(method, url_suffix, kwargs)
 
     def apply_sub1_regkey(self, method, url_template, *args, **kwargs):
@@ -429,7 +429,7 @@ class MineAPI:
 	url_template with arg[1]; invokes resulting url with method
 	using kwargs as POST data if appropriate.
 	"""
-	url_suffix = url_template.replace('{1}', args[0]).replace('{2}', args[1])
+	url_suffix = url_template.replace('{1}', str(args[0])).replace('{2}', str(args[1]))
 	return self.url_call(method, url_suffix, kwargs)
 
     ##################################################################
