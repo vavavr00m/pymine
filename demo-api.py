@@ -27,4 +27,5 @@ p = getpass.getpass()
 api = miner.MineAPI(username=u, password=p, url_prefix=url)
 items = api.list_items()
 
+print api.version()
 print items
