@@ -107,12 +107,12 @@ admin.site.register(Comment, CommentAdmin)
 ##################################################################
 
 class VurlAdmin(admin.ModelAdmin):
-    list_display = ('name', 'link', 'last_modified', 'created')
+    list_display = ('name', 'link', 'is_temporary_redirect', 'last_modified', 'created')
     search_fields = ['name']
     list_filter = ['created']
     date_hierarchy = 'created'
     fieldsets = [
-        (None, {'fields': ['name', 'link']}), 
+        (None, {'fields': ['name', 'link', 'is_temporary_redirect']}), 
         ]
 
 admin.site.register(Vurl, VurlAdmin)

@@ -12,6 +12,7 @@
 {% include 'widget/action2-vurl.html' %}
 
 <ul class="listmeta">
+<li>type: {% if hash.vurlIsTemporaryRedirect %}temporary{% else %}permanent{% endif %}</li>
 <li>short link: {{hash.vurlPathShort}}</li>
 <li>named link: {{hash.vurlPathLong}}</li>
 <li>original url: {{hash.vurlLink}}</li>

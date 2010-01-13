@@ -13,6 +13,11 @@ vurl name: (optional)
 <input name="vurlName" value="{{result.vurlName}}" size="33" />
 <br/>
 
+temporary redirect:
+<br/>
+<input type="checkbox" name="vurlIsTemporaryRedirect" {% if result.vurlIsTemporaryRedirect %}checked{% endif %} />
+<br/>
+
 <input type="submit" name="save" value="update vurl" />
 <input type="reset" name="reset" value="reset form" />
 </form>
