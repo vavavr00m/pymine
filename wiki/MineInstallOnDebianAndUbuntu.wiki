@@ -1,6 +1,10 @@
 #summary A quick synopsis of how to install pymine on Debian and Ubuntu
 #labels Featured,Phase-Deploy,Phase-Implementation
 
+= Software Pre-requisites and Requirements =
+
+See the MineInstallRequirements page.
+
 = Installation Methods =
 
 == Installation for End-Users ==
