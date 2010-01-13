@@ -1,0 +1,21 @@
+#summary stuff you need to run pymine
+#labels Featured
+
+= Software Requirements =
+
+The goal is to support the latest cut of Django, plus the version previous.
+
+At the time of writing (Jan 2010) this means support for Django 1.1 and 1.0 series software; please use the latest versions if possible, and track security bugs and issues closely.
+
+= Software Dependencies =
+
+The dependencies for pymine are approximately:
+
+  # curl
+  # python-beautifulsoup
+  # python-crypto
+  # python-django
+  # subversion
+  # libapache2-mod-wsgi (if running from Apache in production)
+
+...to use their Ubuntu package names; please mail the project maillist if you're having problems identifying your dependencies.
