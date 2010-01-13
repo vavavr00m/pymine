@@ -83,6 +83,8 @@ from django.db import models, transaction
 from django.db.models import Q
 from django.template.loader import render_to_string
 from django.utils import feedgenerator
+from django.http import HttpResponsePermanentRedirect, HttpResponseRedirect
+
 import hashlib
 import itertools
 import re
@@ -773,6 +775,17 @@ def r2s_int(r, rname, s):
     """
     s[rname] = int(r.POST[rname])
 
+def r2s_bool(r, rname, s):
+    """
+    get rname from HttpRequest r's r.POST and populate structure s
+    with it after converting to True/False; assume something else
+    checked existence in the first place
+    """
+    if r.POST[rname] == '':
+        s[rname] = False
+    else:
+        s[rname] = True
+
 ##################################################################
 
 def m2s_copy(m, mattr, s, sattr):
@@ -823,10 +836,10 @@ def m2s_bool(m, mattr, s, sattr):
 def s2m_bool(request, s, sattr, m, mattr):
     """Copy a boolean from s to m"""
     if sattr in s:
-	if s[sattr] == 0:
-	    setattr(m, mattr, False)
-	else:
+	if s[sattr]:
 	    setattr(m, mattr, True)
+	else:
+	    setattr(m, mattr, False)
 
 ##################################################################
 
@@ -1097,8 +1110,9 @@ class AbstractThing(AbstractModel):
 (  'itemData',                   'data',                     True,   None,        s2m_dummy,       None,            ),
 (  'itemThumb',                  'thumb',                    True,   None,        s2m_dummy,       None,            ),
 
-(  'commentItemId',              'item',                     False,  r2s_int,     s2m_comitemid,   m2s_comitemid,   ),
+(  'vurlIsTemporaryRedirect',    'is_temporary_redirect',    False,  r2s_bool,    s2m_bool,        m2s_bool,        ),
 
+(  'commentItemId',              'item',                     False,  r2s_int,     s2m_comitemid,   m2s_comitemid,   ),
 (  'commentId',                  'id',                       False,  r2s_int,     s2m_verbatim,    m2s_copy,        ),
 (  'itemId',                     'id',                       False,  r2s_int,     s2m_verbatim,    m2s_copy,        ),
 (  'relationId',                 'id',                       False,  r2s_int,     s2m_verbatim,    m2s_copy,        ),
@@ -1108,18 +1122,13 @@ class AbstractThing(AbstractModel):
 (  'vurlId',                     'id',                       False,  r2s_int,     s2m_verbatim,    m2s_copy,        ),
 
 (  'commentRelationId',          'relation',                 False,  r2s_string,  s2m_comrelid,    m2s_comrelid,    ),
-
 (  'itemHideAfter',              'hide_after',               False,  r2s_string,  s2m_date,        m2s_date,        ),
 (  'itemHideBefore',             'hide_before',              False,  r2s_string,  s2m_date,        m2s_date,        ),
 (  'relationEmbargoAfter',       'embargo_after',            False,  r2s_string,  s2m_date,        m2s_date,        ),
 (  'relationEmbargoBefore',      'embargo_before',           False,  r2s_string,  s2m_date,        m2s_date,        ),
-
 (  'itemStatus',                 'status',                   False,  r2s_string,  s2m_itemstatus,  m2s_itemstatus,  ),
-
 (  'itemTags',                   'tags',                     True,   r2s_string,  s2m_itemtags,    m2s_itemtags,    ),
-
 (  'relationInterests',          'interests',                True,   r2s_string,  s2m_relints,     m2s_relints,     ),
-
 (  'commentTitle',               'title',                    False,  r2s_string,  s2m_stripstr,    m2s_copy,        ),
 (  'itemFeedLink',               'feed_link',                False,  r2s_string,  s2m_stripstr,    m2s_copy,        ),
 (  'itemName',                   'name',                     False,  r2s_string,  s2m_stripstr,    m2s_copy,        ),
@@ -1130,9 +1139,7 @@ class AbstractThing(AbstractModel):
 (  'tagName',                    'name',                     False,  r2s_string,  s2m_stripstr,    m2s_copy,        ),
 (  'vurlLink',                   'link',                     False,  r2s_string,  s2m_stripstr,    m2s_copy,        ),
 (  'vurlName',                   'name',                     False,  r2s_string,  s2m_stripstr,    m2s_copy,        ),
-
 (  'tagImplies',                 'implies',                  True,   r2s_string,  s2m_tagimplies,  m2s_tagimplies,  ),
-
 (  'commentBody',                'body',                     False,  r2s_string,  s2m_verbatim,    m2s_copy,        ),
 (  'itemDescription',            'description',              False,  r2s_string,  s2m_verbatim,    m2s_copy,        ),
 (  'relationDescription',        'description',              False,  r2s_string,  s2m_verbatim,    m2s_copy,        ),
@@ -2015,6 +2022,7 @@ class Vurl(AbstractThing):
 
     name = AbstractModelField.slug(unique=True)
     link = AbstractModelField.text(unique=True)
+    is_temporary_redirect = AbstractModelField.bool(False)
 
     def __unicode__(self):
 	return self.name
@@ -2064,6 +2072,12 @@ class Vurl(AbstractThing):
 	s['vurlPathShort'] = "/get/k/%s" % vk
 	s['vurlPathLong'] =  "/get/n/%s" % self.name
 	return s
+
+    def http_response(self):
+        if self.is_temporary_redirect:
+            return HttpResponseRedirect(self.link)
+        else:
+            return HttpResponsePermanentRedirect(self.link)
 
     @classmethod
     def filter_queryset(klass, qs, query):

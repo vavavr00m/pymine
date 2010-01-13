@@ -171,24 +171,22 @@ def field_minekey(request, *args, **kwargs):
 ## function: redirect_vid
 ## declared args: vid
 def redirect_vid(request, vid, *args, **kwargs):
-    """redirect_vid(vid) looks up the Vurl with index VID and issues a HTTP 301 redirect to the target URL"""
+    """redirect_vid(vid) looks up the Vurl with index VID and issues a redirect to the target URL"""
     v = Vurl.objects.get(id=int(vid))
-    return HttpResponsePermanentRedirect(v.link) # issue 301 redirect
+    return v.http_response()
 
 ## rest: GET /get/k/VURLKEY
 ## function: redirect_vurlkey
 ## declared args: vurlkey
 def redirect_vurlkey(request, vurlkey, *args, **kwargs):
-    """redirect_vurlkey(vurlkey) looks up the Vurl with base58-encoded index VURLKEY and issues a HTTP 301 redirect to the target URL"""
+    """redirect_vurlkey(vurlkey) looks up the Vurl with base58-encoded index VURLKEY and issues a redirect to the target URL"""
     v = Vurl.get_with_vurlkey(vurlkey.encode('utf-8'))
-    return HttpResponsePermanentRedirect(v.link) # issue 301 redirect
-
-
+    return v.http_response()
 
 ## rest: GET /get/n/SUFFIX
 ## function: redirect_vurlname
 ## declared args: suffix
 def redirect_vurlname(request, suffix, *args, **kwargs):
-    """redirect_vurlname(suffix) looks up the Vurl with the long pseudo-path SUFFIX and issues a HTTP 301 redirect to the target URL"""
+    """redirect_vurlname(suffix) looks up the Vurl with the long pseudo-path SUFFIX and issues a redirect to the target URL"""
     v = Vurl.objects.get(name=suffix)
-    return HttpResponsePermanentRedirect(v.link) # issue 301 redirect
+    return v.http_response()
