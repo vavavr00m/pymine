@@ -1,0 +1,52 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+	<head>
+		<script type="text/javascript" language="javascript" src="jquery.min.js"></script>
+		<script type="text/javascript" language="javascript" src="jquery.miner.js"></script>
+		<script type="text/javascript" language="javascript" src="jquery.miner.autocomplete.js"></script>
+		<script type="text/javascript" language="javascript" src="jquery.miner.taglist.js"></script>
+		<link rel="stylesheet" type="text/css" href="jquery.autocomplete.css"/>
+		<style>
+			html, body { margin:0, border:0, font-family:Arial,Helvetica,sans-serif }
+			.taglist { border:2px solid #ccc; width:300px }
+				.ac_results .tag.cloud { color:#999 }
+		</style>
+		<script>
+			$(function($){
+				// pass in a reference to the function that provides the data (just a dummy so far)
+				$("input").taglist();
+			});
+		</script>
+	</head>
+	<body>
+		<h1>Test page for Mine tag UI widget</h1>
+		<div style="width:400px; margin:20px auto; border:1px solid #ccc;padding:50px">
+			<h2>Widget</h2>
+			<div>Start typing</div>
+			<input type="text" class="taglist" outputid="sampleTagOutput"/>
+			<div id="sampleTagOutput"></div>
+		</div>
+		<div style="width:48%;float:left">
+			<h3>To Do: coding</h3>
+			<ul>
+				<li>take out the remaining assumptions about the data structure made by the autocomplete widget</li>
+				<li>get the result cache working</li>
+				<li>provide additional event hooks</li>
+				<li>decide how to structure input data</li>
+				<li>stop inferred tags being highlighted</li>
+				<li>provide output formatter</li>
+				<li>implement inferred tag display area</li>
+				<li>initialise cleanly any tags already present</li>
+			</ul>
+		</div>
+		<div style="width:48%;float:left;background:#eeeeff">
+			<h3>To Do: ui</h3>
+			<ul>
+				<li>decide on paging behaviour</li>
+				<li>decide how to remove tags, if applicable</li>
+				<li>decide cosmetic stuff (colours, sizes, borders, backgrounds)</li>
+				<li>review against use cases (add, delete, discover?)</li>
+			</ul>
+		</div>
+	</body>
+</html>
