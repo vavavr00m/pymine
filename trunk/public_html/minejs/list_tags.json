@@ -1,0 +1,262 @@
+{
+  "exit": 0, 
+  "result": [
+    {
+      "tag": {
+        "tagCloud": "animals", 
+        "tagCreated": "2010-01-15T07:33:27.133176", 
+        "tagId": 4, 
+        "tagIsDeleted": 0, 
+        "tagLastModified": "2010-01-15T07:33:27.152220", 
+        "tagName": "animals"
+      }
+    }, 
+    {
+      "tag": {
+        "tagCloud": "beer booze drink", 
+        "tagCreated": "2010-01-15T07:33:44.022072", 
+        "tagId": 16, 
+        "tagImplies": "booze", 
+        "tagIsDeleted": 0, 
+        "tagLastModified": "2010-01-15T07:33:44.044542", 
+        "tagName": "beer"
+      }
+    }, 
+    {
+      "tag": {
+        "tagCloud": "booze drink", 
+        "tagCreated": "2010-01-15T07:33:39.796889", 
+        "tagId": 13, 
+        "tagImplies": "drink", 
+        "tagIsDeleted": 0, 
+        "tagLastModified": "2010-01-15T07:33:39.821626", 
+        "tagName": "booze"
+      }
+    }, 
+    {
+      "tag": {
+        "tagCloud": "booze burgundy drink red-wine white-wine wine", 
+        "tagCreated": "2010-01-15T07:33:54.592156", 
+        "tagId": 24, 
+        "tagImplies": "red-wine white-wine", 
+        "tagIsDeleted": 0, 
+        "tagLastModified": "2010-01-15T07:33:54.662364", 
+        "tagName": "burgundy"
+      }
+    }, 
+    {
+      "tag": {
+        "tagCloud": "animals cats", 
+        "tagCreated": "2010-01-15T07:33:28.186651", 
+        "tagId": 5, 
+        "tagImplies": "animals", 
+        "tagIsDeleted": 0, 
+        "tagLastModified": "2010-01-15T07:33:28.216907", 
+        "tagName": "cats"
+      }
+    }, 
+    {
+      "tag": {
+        "tagCloud": "booze chardonnay drink white-wine wine", 
+        "tagCreated": "2010-01-15T07:33:49.290506", 
+        "tagId": 20, 
+        "tagImplies": "white-wine", 
+        "tagIsDeleted": 0, 
+        "tagLastModified": "2010-01-15T07:33:49.323405", 
+        "tagName": "chardonnay"
+      }
+    }, 
+    {
+      "tag": {
+        "tagCloud": "animals dogs", 
+        "tagCreated": "2010-01-15T07:33:29.250881", 
+        "tagId": 6, 
+        "tagImplies": "animals", 
+        "tagIsDeleted": 0, 
+        "tagLastModified": "2010-01-15T07:33:29.279857", 
+        "tagName": "dogs"
+      }
+    }, 
+    {
+      "tag": {
+        "tagCloud": "drink", 
+        "tagCreated": "2010-01-15T07:33:32.471956", 
+        "tagId": 9, 
+        "tagIsDeleted": 0, 
+        "tagLastModified": "2010-01-15T07:33:32.496586", 
+        "tagName": "drink"
+      }
+    }, 
+    {
+      "tag": {
+        "tagCloud": "food", 
+        "tagCreated": "2010-01-15T07:33:31.395437", 
+        "tagId": 8, 
+        "tagIsDeleted": 0, 
+        "tagLastModified": "2010-01-15T07:33:31.416721", 
+        "tagName": "food"
+      }
+    }, 
+    {
+      "tag": {
+        "tagCloud": "animals hippos", 
+        "tagCreated": "2010-01-15T07:33:30.313686", 
+        "tagId": 7, 
+        "tagImplies": "animals", 
+        "tagIsDeleted": 0, 
+        "tagLastModified": "2010-01-15T07:33:30.341238", 
+        "tagName": "hippos"
+      }
+    }, 
+    {
+      "tag": {
+        "tagCloud": "drink juice", 
+        "tagCreated": "2010-01-15T07:33:40.855282", 
+        "tagId": 14, 
+        "tagImplies": "drink", 
+        "tagIsDeleted": 0, 
+        "tagLastModified": "2010-01-15T07:33:40.878735", 
+        "tagName": "juice"
+      }
+    }, 
+    {
+      "tag": {
+        "tagCloud": "literature", 
+        "tagCreated": "2010-01-15T07:33:23.948727", 
+        "tagId": 2, 
+        "tagIsDeleted": 0, 
+        "tagLastModified": "2010-01-15T07:33:23.995544", 
+        "tagName": "literature"
+      }
+    }, 
+    {
+      "tag": {
+        "tagCloud": "motorcycles", 
+        "tagCreated": "2010-01-15T07:33:34.540846", 
+        "tagId": 10, 
+        "tagIsDeleted": 0, 
+        "tagLastModified": "2010-01-15T07:33:34.560189", 
+        "tagName": "motorcycles"
+      }
+    }, 
+    {
+      "tag": {
+        "tagCloud": "photos", 
+        "tagCreated": "2010-01-15T07:33:25.042574", 
+        "tagId": 3, 
+        "tagIsDeleted": 0, 
+        "tagLastModified": "2010-01-15T07:33:25.058668", 
+        "tagName": "photos"
+      }
+    }, 
+    {
+      "tag": {
+        "tagCloud": "booze drink red-burgundy red-wine wine", 
+        "tagCreated": "2010-01-15T07:33:51.430242", 
+        "tagId": 22, 
+        "tagImplies": "red-wine", 
+        "tagIsDeleted": 0, 
+        "tagLastModified": "2010-01-15T07:33:51.465616", 
+        "tagName": "red-burgundy"
+      }
+    }, 
+    {
+      "tag": {
+        "tagCloud": "booze drink red-wine wine", 
+        "tagCreated": "2010-01-15T07:33:48.218393", 
+        "tagId": 19, 
+        "tagImplies": "wine", 
+        "tagIsDeleted": 0, 
+        "tagLastModified": "2010-01-15T07:33:48.247863", 
+        "tagName": "red-wine"
+      }
+    }, 
+    {
+      "tag": {
+        "tagCloud": "booze drink red-wine rioja wine", 
+        "tagCreated": "2010-01-15T07:33:50.358151", 
+        "tagId": 21, 
+        "tagImplies": "red-wine", 
+        "tagIsDeleted": 0, 
+        "tagLastModified": "2010-01-15T07:33:50.386900", 
+        "tagName": "rioja"
+      }
+    }, 
+    {
+      "tag": {
+        "tagCloud": "shoes", 
+        "tagCreated": "2010-01-15T07:33:35.654392", 
+        "tagId": 11, 
+        "tagIsDeleted": 0, 
+        "tagLastModified": "2010-01-15T07:33:35.669304", 
+        "tagName": "shoes"
+      }
+    }, 
+    {
+      "tag": {
+        "tagCloud": "shoes sneakers", 
+        "tagCreated": "2010-01-15T07:33:37.706276", 
+        "tagId": 12, 
+        "tagImplies": "shoes", 
+        "tagIsDeleted": 0, 
+        "tagLastModified": "2010-01-15T07:33:37.735253", 
+        "tagName": "sneakers"
+      }
+    }, 
+    {
+      "tag": {
+        "tagCloud": "booze drink spirits", 
+        "tagCreated": "2010-01-15T07:33:46.077663", 
+        "tagId": 17, 
+        "tagImplies": "booze", 
+        "tagIsDeleted": 0, 
+        "tagLastModified": "2010-01-15T07:33:46.104422", 
+        "tagName": "spirits"
+      }
+    }, 
+    {
+      "tag": {
+        "tagCloud": "themineproject", 
+        "tagCreated": "2010-01-15T07:33:21.898197", 
+        "tagId": 1, 
+        "tagIsDeleted": 0, 
+        "tagLastModified": "2010-01-15T07:33:21.911884", 
+        "tagName": "themineproject"
+      }
+    }, 
+    {
+      "tag": {
+        "tagCloud": "booze drink white-burgundy white-wine wine", 
+        "tagCreated": "2010-01-15T07:33:52.517283", 
+        "tagId": 23, 
+        "tagImplies": "white-wine", 
+        "tagIsDeleted": 0, 
+        "tagLastModified": "2010-01-15T07:33:52.552394", 
+        "tagName": "white-burgundy"
+      }
+    }, 
+    {
+      "tag": {
+        "tagCloud": "booze drink white-wine wine", 
+        "tagCreated": "2010-01-15T07:33:47.147529", 
+        "tagId": 18, 
+        "tagImplies": "wine", 
+        "tagIsDeleted": 0, 
+        "tagLastModified": "2010-01-15T07:33:47.182876", 
+        "tagName": "white-wine"
+      }
+    }, 
+    {
+      "tag": {
+        "tagCloud": "booze drink wine", 
+        "tagCreated": "2010-01-15T07:33:41.923031", 
+        "tagId": 15, 
+        "tagImplies": "booze", 
+        "tagIsDeleted": 0, 
+        "tagLastModified": "2010-01-15T07:33:41.959789", 
+        "tagName": "wine"
+      }
+    }
+  ], 
+  "status": "ok"
+}
