@@ -26,6 +26,7 @@ clean:
 clobber: clean
 	-rm -r database/*
 	-rm etc/cookies.txt
+	-rm etc/cookies2.txt
 	-rm settings.py
 
 perms:
