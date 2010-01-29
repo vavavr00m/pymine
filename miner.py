@@ -83,10 +83,10 @@ class MineAPI:
                 'url_template': 'api/item.json',
                 'multipart': True,
                 },
-            'create-relation': {
+            'create-feed': {
                 'function': self.apply,
                 'method': 'POST',
-                'url_template': 'api/relation.json',
+                'url_template': 'api/feed.json',
                 },
             'create-tag': {
                 'function': self.apply,
@@ -128,16 +128,16 @@ class MineAPI:
                 'url_template': 'api/registry/{1}.json',
                 'ITERATION_HACK': 1,
                 },
-            'delete-relation': {
+            'delete-feed': {
                 'function': self.apply_sub1,
                 'method': 'DELETE',
-                'url_template': 'api/relation/{1}.json',
+                'url_template': 'api/feed/{1}.json',
                 'ITERATION_HACK': 1,
                 },
-            'delete-relation-key': {
+            'delete-feed-key': {
                 'function': self.apply_sub2,
                 'method': 'DELETE',
-                'url_template': 'api/relation/{1}/{2}.json',
+                'url_template': 'api/feed/{1}/{2}.json',
                 'ITERATION_HACK': 2,
                 },
             'delete-tag': {
@@ -179,10 +179,10 @@ class MineAPI:
                 'method': 'GET',
                 'url_template': 'api/registry.json',
                 },
-            'list-relations': {
+            'list-feeds': {
                 'function': self.apply,
                 'method': 'GET',
-                'url_template': 'api/relation.json',
+                'url_template': 'api/feed.json',
                 },
             'list-tags': {
                 'function': self.apply,
@@ -224,15 +224,15 @@ class MineAPI:
                 'method': 'GET',
                 'url_template': 'api/registry/{1}.json',
                 },
-            'read-relation': {
+            'read-feed': {
                 'function': self.apply_sub1,
                 'method': 'GET',
-                'url_template': 'api/relation/{1}.json',
+                'url_template': 'api/feed/{1}.json',
                 },
-            'read-relation-key': {
+            'read-feed-key': {
                 'function': self.apply_sub2,
                 'method': 'GET',
-                'url_template': 'api/relation/{1}/{2}.json',
+                'url_template': 'api/feed/{1}/{2}.json',
                 },
             'read-tag': {
                 'function': self.apply_sub1,
@@ -269,10 +269,10 @@ class MineAPI:
                 'method': 'POST',
                 'url_template': 'api/registry/{1}.json',
                 },
-            'update-relation': {
+            'update-feed': {
                 'function': self.apply_sub1,
                 'method': 'POST',
-                'url_template': 'api/relation/{1}.json',
+                'url_template': 'api/feed/{1}.json',
                 },
             'update-tag': {
                 'function': self.apply_sub1,
@@ -480,17 +480,17 @@ class MineAPI:
         this getattr overrides the default and via a clever and
         slightly evil kludge implements the following virtual methods:
 
-        create_comment() create_item() create_relation() create_tag()
+        create_comment() create_item() create_feed() create_tag()
         create_vurl() delete_comment() delete_comment_key()
         delete_item() delete_item_key() delete_registry_key()
-        delete_relation() delete_relation_key() delete_tag()
+        delete_feed() delete_feed_key() delete_tag()
         delete_tag_key() delete_vurl() delete_vurl_key()
-        list_comments() list_items() list_registry() list_relations()
+        list_comments() list_items() list_registry() list_feeds()
         list_tags() list_vurls() read_comment() read_comment_key()
         read_data() read_item() read_item_key() read_registry_key()
-        read_relation() read_relation_key() read_tag() read_tag_key()
+        read_feed() read_feed_key() read_tag() read_tag_key()
         read_vurl() read_vurl_key() update_comment() update_item()
-        update_registry_key() update_relation() update_tag()
+        update_registry_key() update_feed() update_tag()
         update_vurl() version()
 
         so you can do stuff like:
