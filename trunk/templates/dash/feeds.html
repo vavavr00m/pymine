@@ -1,0 +1,23 @@
+{% extends "base/page.html" %}
+
+{% block nav_feeds %}id="current"{% endblock %}
+
+{% block title %}pymine feeds{% endblock %}
+
+{% block heading %}feeds{% endblock %}
+
+{% block content %}
+<h3>browse feeds</h3>
+<a href="/ui/list/feeds.html"><button>list all</button></a><br/>
+{% include 'widget/browse-feed.html' %}
+
+<h3>search feeds</h3>
+{% include 'widget/search-feed.html' %}
+
+<h3>create a feed</h3>
+{% include 'widget/create-feed.html' %}
+{% endblock %}
+
+{% block context_sidebar %}
+{% include "sidebar/feeds.html" %}
+{% endblock %}

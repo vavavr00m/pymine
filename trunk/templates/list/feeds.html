@@ -1,0 +1,33 @@
+{% extends "base/api-iterate.html" %}
+
+{% block title %}feeds listing{% endblock %}
+
+{% block heading %}feeds listing{% endblock %}
+
+{% block listing_per_hash %}
+<div class="listfeed {% cycle 'odd' 'even' %}">
+
+<h4>{{hash.feedName}}</h4>
+
+{% include 'widget/action2-feed.html' %}
+
+{% if hash.feedDescription %}
+<p class="listdesc">
+{{hash.feedDescription|safe}}
+</p>
+{% endif %}
+
+<ul class="listmeta">
+<li>interests: {{hash.feedInterests}}</li>
+<li>constraints: {{hash.feedFeedConstraints}}</li>
+<li>version: {{hash.feedVersion}}</li>
+</ul>
+
+</div>
+{% endblock %}
+
+{% block context_sidebar %}
+{% include "sidebar/feeds.html" %}
+{% include "sidebar/feed-search.html" %}
+{% endblock %}
+{% block nav_feeds %}id=current{% endblock %}

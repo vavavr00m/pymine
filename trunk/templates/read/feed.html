@@ -1,11 +1,11 @@
 {% extends 'base/api.html' %}
 
-{% block heading %}relation {{result.relationId}}{% endblock %}
+{% block heading %}feed {{result.feedId}}{% endblock %}
 
 {% block content %}
-<h3>viewing relation {{result.relationId}}</h3>
+<h3>viewing feed {{result.feedId}}</h3>
 
-{% include 'widget/action-relation.html' %}
+{% include 'widget/action-feed.html' %}
 
 {% if result %}
 <ul>
