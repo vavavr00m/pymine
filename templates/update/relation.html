@@ -1,8 +1,0 @@
-{% extends 'base/page.html' %}
-{% block content %}
-<h3>updating {{result.relationId}} | {{result.relationName}}</h3>
-{% include 'widget/action-relation.html' %}
-{% include 'widget/update-relation.html' %}
-<a href="/admin/api/relation/{{result.relationId}}/"><button>use the django admin editor for this relation</button></a>
-{% endblock %}
-{% block nav_relations %}id=current{% endblock %}

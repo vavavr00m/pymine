@@ -1,0 +1,19 @@
+<div class="widget">
+{% for individual in result %}
+<ul>
+{% for type, hash in individual.items %}
+<li>
+<a href="/ui/update/feed/{{hash.feedId}}.html">{{hash.feedName}}</a>
+|
+<a href="{{hash.feedFeedUrl}}">feed</a>
+|
+<a href="/ui/read/feed/{{hash.feedId}}.html">info</a>
+|
+<a href="/ui/update/feed/{{hash.feedId}}.html">edit</a>
+|
+<a href="/ui/delete/feed/{{hash.feedId}}.html">delete</a>
+</li>
+{% endfor %}
+</ul>
+{% endfor %}
+</div>
