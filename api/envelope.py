@@ -16,3 +16,10 @@
 ##
 
 """docstring goes here""" # :-)
+
+class Envelope:
+    """
+    """
+
+    def __init__(self, request, result):
+        pass

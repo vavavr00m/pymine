@@ -15,7 +15,9 @@
 ## permissions and limitations under the License.
 ##
 
-"""docstring goes here""" # :-)
+"""
+a minekey is the tuple of data necessary to access items in a mine
+"""
 
 import base64
 import hashlib
@@ -47,12 +49,14 @@ class MineKey:
 	request: request object for URL-generation purposes
 	"""
 
-	self.__type = kwargs.get('type', None)
 	self.__fid = kwargs.get('fid', -1)
 	self.__fversion = kwargs.get('fversion', -1)
 	self.__iid = kwargs.get('iid', -1)
 	self.__depth = kwargs.get('depth', -1)
+	self.__type = kwargs.get('type', None)
+
 	self.__ext = kwargs.get('ext', 'dat')
+
 	self.__hmac_supplied = kwargs.get('hmac', None)
 	self.__request = kwargs.get('request', None)
 	self.__feed = None
@@ -74,7 +78,9 @@ class MineKey:
 
     def validate(self):
 	"""
-	does a variety of sanity checks on self and throws RuntimeError if surprised
+	does a variety of sanity checks on self and throws a RuntimeError if surprised
+
+        returns the stripped hmac string
 	"""
 
 	def errmsg(x):
@@ -122,8 +128,8 @@ class MineKey:
 	"""
 	takes the result of self.key() and embeds / returns it in a
 	permalink string for this mine; for full pathname resolution
-	it 'request' to be set in the minekey constructor, or in a
-	parent thereof
+	it needs 'request' to be set in the minekey constructor, or in
+	a parent thereof
 	"""
 
 	link = "/key/%s" % self.key()
@@ -153,14 +159,13 @@ class MineKey:
 	"""
 
 	foo = {
-	    'type': self.__type,
+	    'depth': self.__depth,
+	    'ext': self.__ext,
 	    'fid': self.__fid,
 	    'fversion': self.__fversion,
 	    'iid': self.__iid,
-	    'depth': self.__depth,
-	    'ext': self.__ext,
-	    'hmac': self.__hmac_supplied,
 	    'request': self.__request,
+	    'type': self.__type,
 	    }
 
 	return MineKey(**foo)
@@ -205,7 +210,7 @@ class MineKey:
         """
         return self.spawn_icon(self.__iid)
 
-    def spawn_submit(self):
+    def spawn_submit_self(self):
 	"""
 	from this minekey, spawn a new minekey object for comment
 	submission, setting depth=1 if depth is currently legal
@@ -310,7 +315,7 @@ if __name__ == '__main__':
     print mk.key()
     print mk.permalink()
 
-    x = mk.spawn_submit()
+    x = mk.spawn_submit_self()
     print x
     print x.permalink()
 
@@ -318,7 +323,7 @@ if __name__ == '__main__':
     print y
     print y.permalink()
 
-    print y.spawn_submit()
+    print y.spawn_submit_self()
     
     print mk.rewrite_html('--<A HREF="/api/data/11">foo</A>--')
     print mk.rewrite_html('--<A HREF="/api/icon/11">foo</A>--')
@@ -343,3 +348,11 @@ if __name__ == '__main__':
 
     print mk.rewrite_html('--<A HREF="/API/DATA/18">FOO</A>--')
     print mk.rewrite_html('--<A HREF="/API/ICON/18">FOO</A>--')
+
+    a = """
+<A HREF="/api/data/20/bar">foo</A>
+<A HREF="/api/data/21/bar">foo</A>
+<A HREF="/api/data/22/bar">foo</A>
+"""
+
+    print mk.rewrite_html(a)

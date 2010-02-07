@@ -122,7 +122,7 @@ sub print_boilerplate {
 	print $indent, "return Envelope(request, s)\n";
     }
     elsif ($module eq 'ui') {
-	print $indent, "s = {}";
+	print $indent, "s = {}\n";
 	print $indent, "return render_to_response(template, s)\n";
     }
     else {
@@ -223,7 +223,7 @@ __END__;
 # foo = the formal parameter name to be used in the 'views' template
 
 # bar = the hardcoded formal parameter value to be passed from the
-# 'urls' invocation
+# 'urls' invocation, setting the 'foo' parameter above
 
 # The code checks the signatures of all permutations of HTTPmethod vs
 # URL and ensures that there are balanced numbers of arguments in the
