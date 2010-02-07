@@ -16,3 +16,10 @@
 ##
 
 """docstring goes here""" # :-)
+
+from django.conf.urls.defaults import *
+from pymine.views import API_CALL, REST
+import views as api
+
+urlpatterns = patterns('',
+                       )
