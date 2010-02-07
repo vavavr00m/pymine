@@ -21,5 +21,7 @@ class Envelope:
     """
     """
 
-    def __init__(self, request, result):
-        pass
+    def __init__(self, request, result, **kwargs):
+        self.request = request
+        self.result = result
+        self.kwargs = kwargs

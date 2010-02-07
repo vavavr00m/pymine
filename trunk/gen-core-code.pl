@@ -183,12 +183,12 @@ foreach $module (sort keys %urldispatch) {
 	    $wrapper = 'HTTP_METHOD';
 	}
 
-	print $indent, "(", "r'^$p\$',\n$indent $wrapper, {\n";
+	print $indent, "(", "r'^$p\$',\n$indent $wrapper, { ";
 	foreach $method (sort keys %{ $urldispatch{$module}{$pattern} }) {
 	    $x = $urldispatch{$module}{$pattern}{$method};
-	    print $indent, $indent, "'$method' : [ $x ],\n"
+	    print "'$method' : [ $x ],\n", $indent
 	}
-	print $indent, "}),\n";
+	print "}),\n";
 
     }
     print "#"x66, "\n";
