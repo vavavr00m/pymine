@@ -21,33 +21,41 @@ from django.conf.urls.defaults import *
 from django.contrib import admin
 
 import views as mine
-from views import REST, REST_NOAUTH
+from views import HTTP_METHOD, HTTP_METHOD_NOAUTH
 
 admin.autodiscover()
 
 urlpatterns = patterns('',
-		       (r'^ui/', include('ui.urls')),
-		       (r'^get/', include('get.urls')),
-		       (r'^api/', include('api.urls')),
-
-		       (r'^admin/doc/', \
-			    include('django.contrib.admindocs.urls')),
-
 		       (r'^admin/(.*)', admin.site.root),
+		       (r'^admin/doc/', include('django.contrib.admindocs.urls')),
+		       (r'^login.html$', 'django.contrib.auth.views.login', { 'template_name': 'users/login.html' }),
+		       (r'^logout.html$', 'django.contrib.auth.views.logout', { 'template_name': 'users/logout.html' }),
+		       (r'^api/', include('api.urls')),
+		       (r'^ui/', include('ui.urls')),
 
-		       (r'^login.html$', \
-			    'django.contrib.auth.views.login', \
-			    { 'template_name': 'users/login.html' }),
-
-		       (r'^logout.html$', \
-			    'django.contrib.auth.views.logout', \
-			    { 'template_name': 'users/logout.html' }),
-
-		       (r'^pub/(?P<suffix>.+)$', mine.handle_pub ),
-		       (r'^pub/$', mine.root_pub ),
-
-		       #################################
-
-		       (r'^favicon\.ico$', REST_NOAUTH, { 'GET': mine.root_favicon }),
-		       (r'^$', REST, { 'GET': mine.root_mine }),
-)
+		       ##################################################################
+		       ##################################################################
+		       ##################################################################
+		       (r'^$',
+			HTTP_METHOD, { 'GET' : [ mine.mine_root ],
+				       }),
+		       (r'^favicon\.ico$',
+			HTTP_METHOD_NOAUTH, { 'GET' : [ mine.mine_favicon ],
+					      }),
+		       (r'^key/(?P<mk_hmac>[-\w]+=*)/(?P<mk_fid>[1-9]\d*)/(?P<mk_fversion>[1-9]\d*)/(?P<mk_iid>\d+)/(?P<mk_depth>[1-9]\d*)/(?P<mk_type>(data|icon|submit))\.(?P<mk_ext>\w+)$',
+			HTTP_METHOD_NOAUTH, { 'GET' : [ mine.minekey_read ],
+					      'POST' : [ mine.minekey_submit ],
+					      }),
+		       (r'^page/(?P<suffix>.*)$',
+			HTTP_METHOD_NOAUTH, { 'GET' : [ mine.vurl_read_by_name ],
+					      }),
+		       (r'^pub(/?P<suffix>.*)$',
+			HTTP_METHOD_NOAUTH, { 'GET' : [ mine.mine_public ],
+					      }),
+		       (r'^vurl/(?P<vurlkey>[-\w]+)$',
+			HTTP_METHOD_NOAUTH, { 'GET' : [ mine.vurl_read_by_key ],
+					      }),
+		       ##################################################################
+		       ##################################################################
+		       ##################################################################
+		       )
