@@ -28,8 +28,8 @@
 # $__foo__: an extended attribute that may not be retreived except over SSL or via django admin interface
 
 # don't mess with the expressions too much; the idea is to be very
-# strict about what you will accept, thereby reducing exposure to
-# stupidity and hacking.
+# (but not insanely) strict about what you will accept, thereby
+# reducing exposure to stupidity and hacking.
 
 # there must be one and only one ID or IDZ per url pattern; the REST
 # space has been designed cleanly to ensure this is always the case;
@@ -38,32 +38,39 @@
 
 %expressions =
     (
+     # minekey elements
+     #(MK_HMAC)/(MK_FID)/(MK_FVERSION)/(MK_IID)/(MK_DEPTH)/(MK_TYPE).(MK_EXT)
+     'MK_HMAC', '?P<mk_hmac>[-\w]+=*',
+     'MK_FID', '?P<mk_fid>[1-9]\d*',
+     'MK_FVERSION', '?P<mk_fversion>[1-9]\d*',
+     'MK_IID', '?P<mk_iid>\d+',
+     'MK_DEPTH', '?P<mk_depth>[1-9]\d*',
+     'MK_TYPE', '?P<mk_type>(data|icon|submit)',
+     'MK_EXT', '?P<mk_ext>\w+',
+
      # various forms of thing-ids, zero not permitted
-     'ID',      '?P<id>[1-9]\d*',
+     'ID', '?P<id>[1-9]\d*',
 
      # ditto, but where id==0 is permitted
-     'IDZ',      '?P<idz>\d+',
+     'IDZ', '?P<idz>\d+',
 
      # acceptable output formats
-     'FMT',      '?P<fmt>(json|xml|txt|rdr)',
-
-     # b64url-encoded minekey
-     'MINEKEY',  '?P<minekey>[-\w]+=*',
+     'FMT', '?P<fmt>(json|xml|txt|rdr)',
 
      # base58-encoded id
-     'VURLKEY',  '?P<vurlkey>[-\w]+',
+     'VURLKEY', '?P<vurlkey>[-\w]+',
 
      # registry attribute name, must start with letter/underscore
-     'RATTR',    '?P<rattr>[_A-Za-z]\w*',
+     'RATTR', '?P<rattr>[_A-Za-z]\w*',
 
      # structure attribute name, ditto with optional '$' prefix for Xattrs
-     'ATTR',    '?P<sattr>\$?[_A-Za-z]\w*',
+     'ATTR', '?P<sattr>\$?[_A-Za-z]\w*',
 
      # token: a plausible, safe dummy filename
-     'TOKEN',    '?P<token>[\-\.\w]*',
+     'TOKEN', '?P<token>[\-\.\w]*',
 
      # suffix: swallow the rest of the string
-     'SUFFIX',   '?P<suffix>.*',
+     'SUFFIX', '?P<suffix>.*',
     );
 
 $indent = "    ";
@@ -83,9 +90,9 @@ while (<DATA>) {
 
     $pattern = $url;
     $pattern =~ s!\.!\\.!go; # escape all dots
-    $pattern =~ s/([A-Z]+)/ ($expressions{$1} || "----> $1 <----") /goe;
+    $pattern =~ s/([_A-Z]+)/ ($expressions{$1} || "----> $1 <----") /goe;
 
-    @kwds = grep(/^[A-Z]+$/o, split(/\b/o, $url));
+    @kwds = grep(/^[_A-Z]+$/o, split(/\b/o, $url));
     @kwds = map { lc($_) } grep(!/^(FMT)$/o, @kwds);
 
     @vargs = map { (split(":"))[0] } @args;
@@ -132,7 +139,7 @@ foreach $module (sort keys %defargs) {
 	print "#"x66, "\n";
 	print "\n";
 	print "# this definition ($pyfunc) is auto-generated.\n";
-	print "# do not edit it directly.\n";
+	print "# ensure that any changes are made via the generator.\n";
 	$a = $defargs{$module}{$pyfunc};
 	print "def $pyfunc($a):\n";
 	print $indent, '"""', "\n";
@@ -194,15 +201,47 @@ foreach $module (sort keys %urldispatch) {
 ##################################################################
 ##################################################################
 __END__;
-# note to alec: | cts -k 3
+
+# Ok, this is the code to generate most of the mine django
+# boilerplate; the syntax is pretty simple:
+
+# field 1: the module we're working on
+
+# field 2: the relevant HTTP method for the subsequent URL
+
+# field 3: the URL for the REST method or whatever; dots are escaped,
+# parenthesised subexpressions in CAPITAL_LETTERS are looked-up in the
+# table of regular expressions above and substituted.
+
+# field 4: the hyphenated-pseudo-name for the API routine we're
+# calling, fit for documentation purposes; this is coersced into
+# underscores and used as a function name in the actual boilerplate
+# code.
+
+# all remaining fields should be of "foo:bar" syntax, where:
+
+# foo = the formal parameter name to be used in the 'views' template
+
+# bar = the hardcoded formal parameter value to be passed from the
+# 'urls' invocation
+
+# The code checks the signatures of all permutations of HTTPmethod vs
+# URL and ensures that there are balanced numbers of arguments in the
+# urls and views templates
+
+# ps: note to alec: | cts -k 3
+
+##################################################################
+
+mine  POST  /key/(MK_HMAC)/(MK_FID)/(MK_FVERSION)/(MK_IID)/(MK_DEPTH)/(MK_TYPE).(MK_EXT)  minekey-submit
+mine  GET   /key/(MK_HMAC)/(MK_FID)/(MK_FVERSION)/(MK_IID)/(MK_DEPTH)/(MK_TYPE).(MK_EXT)  minekey-read
 
 mine  GET   /                      mine-root
-mine  GET   /favicon.ico           mine-favicon          #public
-mine  POST  /key/MINEKEY           minekey-post-comment  #public
-mine  GET   /key/MINEKEY(/TOKEN)?  minekey-read          #public
-mine  GET   /page/(SUFFIX)         vurl-read-by-name     #public
-mine  GET   /pub(/SUFFIX)          mine-public           #public
-mine  GET   /vurl/(VURLKEY)        vurl-read-by-key      #public
+mine  GET   /favicon.ico           mine-favicon
+
+mine  GET   /page/(SUFFIX)         vurl-read-by-name
+mine  GET   /pub(/SUFFIX)          mine-public
+mine  GET   /vurl/(VURLKEY)        vurl-read-by-key
 
 ##################################################################
 
