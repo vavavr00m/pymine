@@ -42,12 +42,12 @@ Minectl new-tags white-wine:wine red-wine:wine
 Minectl new-tags chardonnay:white-wine rioja:red-wine
 Minectl new-tags red-burgundy:red-wine white-burgundy:white-wine burgundy:red-wine,white-wine # latter->both
 
-# set up some relations
-Minectl new-relation alec 1 "Alec Muffett" food drink except:spirits animals themineproject
-Minectl new-relation adriana 1 "Adriana Lukas" food drink shoes cats motorcycles themineproject
-Minectl new-relation carrie 1 "Carrie Bishop" food drink sneakers themineproject
-Minectl new-relation ben 1 "Ben Laurie" food drink cats motorcycles
-Minectl new-relation perry 1 "Perry deHavilland" hippos red-wine
+# set up some feeds
+Minectl new-feed alec 1 "Alec Muffett" food drink except:spirits animals themineproject
+Minectl new-feed adriana 1 "Adriana Lukas" food drink shoes cats motorcycles themineproject
+Minectl new-feed carrie 1 "Carrie Bishop" food drink sneakers themineproject
+Minectl new-feed ben 1 "Ben Laurie" food drink cats motorcycles
+Minectl new-feed perry 1 "Perry deHavilland" hippos red-wine
 
 ###
 # upload a batch of objects without individual tagging
@@ -70,7 +70,7 @@ EOF
 # some dummy comments
 while read item who what body
 do
-    Minectl create-comment $item commentRelationId=$who commentTitle=$what commentBody="$body"
+    Minectl create-comment $item commentFeedId=$who commentTitle=$what commentBody="$body"
 done <<EOF
 1  1       comment-title-1  comment body  1
 1  1       comment-title-2  comment body  2

@@ -71,6 +71,15 @@ status_lookup = {}
 for short, long in item_status_choices:
     status_lookup[long] = short
 
+status_aliases = {
+    'private': '0',
+    'linkable': '2',
+    'shared': '4',
+    'limited': '6',
+    'public': '8',
+}
+status_lookup.update(status_aliases)
+
 ##################################################################
 
 def random_bits(nbits):
@@ -273,8 +282,8 @@ class Space:
 
 	@staticmethod
 	def item_status(r, m, mattr, s, sattr):
-	    """ """
-	    pass
+	    """this item has status..."""
+	    s[sattr] = m.get_status_display()
 
 	@staticmethod
 	def tag_cloud(r, m, mattr, s, sattr):
@@ -449,7 +458,7 @@ class Space:
 	    else:
 		gc[mattr] = lambda m: gc_lib.nullify(m, mattr) # default nullify()
 
-	return (r2s, s2m, m2s, gc)
+	return (prefix, r2s, s2m, m2s, gc)
 
 ##################################################################
 ##################################################################
@@ -666,7 +675,7 @@ class AbstractThing(AbstractModel):
 	'__prefix__': "thing",
 	}
 
-    (r2s, s2m, m2s, gc) = Space.compile(attr_map)
+    (prefix, r2s, s2m, m2s, gc) = Space.compile(attr_map)
 
     id = 0
     name = 'thing'
@@ -814,7 +823,7 @@ class Tag(AbstractThing):
 	'implies': dict(gc='reflist', s2m='tag_implies', m2s='tag_implies'),
 	'cloud': dict(gc='reflist', m2s='tag_cloud'),
 	}
-    (r2s, s2m, m2s, gc) = Space.compile(attr_map)
+    (prefix, r2s, s2m, m2s, gc) = Space.compile(attr_map)
 
     name = AbstractField.slug(unique=True)
     description = AbstractField.text(required=False)
@@ -949,7 +958,7 @@ class Vurl(AbstractThing):
 	'invalid_after': dict(s2m='date', m2s='date'),
 	'use_temporary_redirect': dict(gc='falsify', r2s='bool', s2m='bool', m2s='bool'),
 	}
-    (r2s, s2m, m2s, gc) = Space.compile(attr_map)
+    (prefix, r2s, s2m, m2s, gc) = Space.compile(attr_map)
 
     name = AbstractField.slug(unique=True)
     link = AbstractField.text(unique=True)
@@ -1021,7 +1030,7 @@ class Feed(AbstractThing):
 	'content_constraints': dict(s2m='copy', m2s='copy'),
 	'is_private': dict(gc='falsify', r2s='bool', s2m='bool', m2s='bool'),
 	}
-    (r2s, s2m, m2s, gc) = Space.compile(attr_map)
+    (prefix, r2s, s2m, m2s, gc) = Space.compile(attr_map)
 
     name = AbstractField.slug(unique=True)
     version = AbstractField.integer(1)
@@ -1065,7 +1074,7 @@ class Item(AbstractThing):
 	'data': dict(gc='file'),
 	'icon': dict(gc='file'),
 	}
-    (r2s, s2m, m2s, gc) = Space.compile(attr_map)
+    (prefix, r2s, s2m, m2s, gc) = Space.compile(attr_map)
 
     name = AbstractField.string()
     status = AbstractField.choice(item_status_choices)
@@ -1112,7 +1121,7 @@ class Comment(AbstractThing):
 	'data': dict(gc='file'),
 	}
 
-    (r2s, s2m, m2s, gc) = Space.compile(attr_map)
+    (prefix, r2s, s2m, m2s, gc) = Space.compile(attr_map)
 
     title = AbstractField.string()
     body = AbstractField.text(required=False)
