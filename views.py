@@ -18,8 +18,10 @@
 """docstring goes here""" # :-)
 
 from django.contrib.auth.decorators import login_required
-from django.http import HttpResponse, HttpResponseRedirect, HttpResponseForbidden, HttpResponseNotAllowed
+from django.http import HttpResponse, HttpResponseRedirect, HttpResponseForbidden, HttpResponseNotAllowed, HttpResponsePermanentRedirect
 from django.shortcuts import render_to_response
+
+from api.models import Vurl
 
 import django.utils.simplejson as json
 import pickle
@@ -31,15 +33,17 @@ def HTTP_METHOD_NOAUTH(request, *args, **kwargs):
     """deal with a non-API HTTP request : GET and POST methods"""
 
     if request.method == 'POST':
-        viewargs = kwargs.pop('POST', None)
+        viewlist = kwargs.pop('POST', None)
     elif request.method == 'GET':
-        viewargs = kwargs.pop('GET', None)
+        viewlist = kwargs.pop('GET', None)
 
-    if not viewargs:
+    # viewlist should now be [ method, defarg ... ]
+    if not viewlist:
          return HttpResponseNotAllowed([ x for x in kwargs.keys() if x in ('GET', 'POST') ])
 
     # purposely drop *args on the floor - we don't know where it's been
-    view = viewargs.pop(0)
+    view = viewlist[0]
+    viewargs = viewlist[1:]
     return view(request, *viewargs, **kwargs)
 
 @login_required
@@ -53,11 +57,11 @@ def API_REST(request, *args, **kwargs):
 
     if ((request.method == 'DELETE') or
         (request.method == 'POST' and request.POST.get('_method', None) == 'DELETE')):
-        viewargs = kwargs.pop('DELETE', None)
+        viewlist = kwargs.pop('DELETE', None)
     elif request.method == 'POST':
-        viewargs = kwargs.pop('POST', None)
+        viewlist = kwargs.pop('POST', None)
     elif request.method == 'GET':
-        viewargs = kwargs.pop('GET', None)
+        viewlist = kwargs.pop('GET', None)
 
     desired_format = kwargs.pop('fmt', None)
 
@@ -67,11 +71,12 @@ def API_REST(request, *args, **kwargs):
     if desired_format not in ('json', 'xml', 'rdr', 'txt'):
         return HttpResponseForbidden('illegal output format')
 
-    if not viewargs:
+    if not viewlist:
          return HttpResponseNotAllowed([ x for x in kwargs.keys() if x in ('GET', 'POST', 'DELETE') ])
 
     # purposely drop *args on the floor - we don't know where it's been
-    view = viewargs.pop(0)
+    view = viewlist[0]
+    viewargs = viewlist[1:]
 
     # API calls give us an response envelope / structure; we have to format it
     envelope = view(request, *viewargs, **kwargs)
@@ -103,9 +108,9 @@ def get_favicon(request, **kwargs):
     """
     arguments: request, **kwargs
     implements: GET /favicon.ico
-    returns: ...
+    returns: a punt to mine_public(request, 'images/favicon.ico', **kwargs)
     """
-    pass
+    return mine_public(request, 'images/favicon.ico', **kwargs)
 
 ##################################################################
 
@@ -115,9 +120,9 @@ def mine_public(request, suffix, **kwargs):
     """
     arguments: request, suffix, **kwargs
     implements: GET /pub(/SUFFIX)
-    returns: ...
+    returns: the output of httpserve.httpserve_path(request, suffix)
     """
-    pass
+    return httpserve.httpserve_path(request, suffix)
 
 ##################################################################
 
@@ -127,9 +132,9 @@ def mine_redirect(request, target, **kwargs):
     """
     arguments: request, target, **kwargs
     implements: GET /
-    returns: ...
+    returns: HttpResponseRedirect(target)
     """
-    pass
+    return HttpResponseRedirect(target)
 
 ##################################################################
 
@@ -163,9 +168,11 @@ def vurl_read_by_key(request, vurlkey, **kwargs):
     """
     arguments: request, vurlkey, **kwargs
     implements: GET /vurl/(VURLKEY)
-    returns: ...
+    returns: vurl.http_response()
     """
-    pass
+    v = Vurl.get_with_vurlkey(vurlkey.encode('utf-8'))
+    return v.http_response()
+
 
 ##################################################################
 
@@ -175,8 +182,9 @@ def vurl_read_by_name(request, suffix, **kwargs):
     """
     arguments: request, suffix, **kwargs
     implements: GET /page/(SUFFIX)
-    returns: ...
+    returns: vurl.http_response()
     """
-    pass
+    v = Vurl.objects.get(name=suffix)
+    return v.http_response()
 
 ##################################################################

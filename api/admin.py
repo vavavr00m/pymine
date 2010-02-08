@@ -64,7 +64,7 @@ class FeedAdmin(admin.ModelAdmin):
     fieldsets = [
         (None, {'fields': ['name', 'version', 'description']}), 
         ('Tags', {'fields': ['tags', 'tags_require', 'tags_exclude']}), 
-        ('Advanced', {'fields': ['is_untrusted', 
+        ('Advanced', {'fields': ['is_private', 
                                  'permitted_networks', 
                                  'content_constraints', 
                                  'embargo_before', 
@@ -82,8 +82,8 @@ class ItemAdmin(admin.ModelAdmin):
     date_hierarchy = 'created'
     fieldsets = [
         (None, {'fields': ['name', 'status', 'data_type', 'description']}), 
-        ('Data', {'fields': ['data',  'data_remote_url', 'icon', 'icon_type', 'linked_items']}), 
-        ('Tags', {'fields': ['tags', 'item_for_feeds', 'item_not_feeds']}), 
+        ('Data', {'fields': ['data',  'data_remote_url', 'icon', 'icon_type', 'links_to_items']}), 
+        ('Tags', {'fields': ['tags', 'for_feeds', 'not_feeds']}), 
         ('Advanced', {'fields': ['hide_before', 'hide_after']}), 
         ]
 

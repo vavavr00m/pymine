@@ -46,7 +46,7 @@
     (
      # minekey elements
      #(MK_HMAC)/(MK_FID)/(MK_FVERSION)/(MK_IID)/(MK_DEPTH)/(MK_TYPE).(MK_EXT)
-     'MK_HMAC', '?P<mk_hmac>[-\w]{43}*',
+     'MK_HMAC', '?P<mk_hmac>[-\w]{43}',
      'MK_FID', '?P<mk_fid>[1-9]\d*',
      'MK_FVERSION', '?P<mk_fversion>[1-9]\d*',
      'MK_IID', '?P<mk_iid>\d+',
@@ -245,8 +245,8 @@ __END__;
 
 ##################################################################
 
-api  GET     /api/data/(ID)(/TOKEN)          read-item-data
-api  GET     /api/icon/(ID)(/TOKEN)          read-item-icon
+api  GET     /api/data/(ID)(/(TOKEN))?       read-item-data
+api  GET     /api/icon/(ID)(/(TOKEN))?       read-item-icon
 api  POST    /api/encode.(FMT)               encode-minekey
 api  GET     /api/version.(FMT)              read-version
 
@@ -308,11 +308,11 @@ mine  GET   /key/(MK_HMAC)/(MK_FID)/(MK_FVERSION)/(MK_IID)/(MK_DEPTH)/(MK_TYPE).
 
 ##################################################################
 
-mine  GET  /                mine-redirect      target:'ui/dash/home.html'
-mine  GET  /favicon.ico     get-favicon
-mine  GET  /page/(SUFFIX)   vurl-read-by-name
-mine  GET  /pub(/SUFFIX)    mine-public
-mine  GET  /vurl/(VURLKEY)  vurl-read-by-key
+mine  GET  /                 mine-redirect      target:'ui/dash/home.html'
+mine  GET  /favicon.ico      get-favicon
+mine  GET  /page/(SUFFIX)    vurl-read-by-name
+mine  GET  /pub(/(SUFFIX))?  mine-public
+mine  GET  /vurl/(VURLKEY)   vurl-read-by-key
 
 ##################################################################
 

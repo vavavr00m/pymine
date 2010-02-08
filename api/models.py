@@ -29,7 +29,10 @@ from django.utils.encoding import iri_to_uri
 from django.utils.http import urlquote
 
 import base64
+import os
 import string
+
+import util.base58 as base58
 
 # TODO:
 # phrase tags
@@ -70,7 +73,10 @@ for short, long in item_status_choices:
     status_lookup[short] = long
 
 ##################################################################
-##################################################################
+
+def random_bits(nbits):
+    return base64.urlsafe_b64encode(os.urandom(nbits//8)).rstrip('=')
+
 ##################################################################
 
 class Space:
@@ -156,28 +162,28 @@ class Space:
 	@staticmethod
 	def bool(s, sattr, m, mattr):
 	    """copy a bool in a structure, to a bool in a model"""
-	    if sattr in s:
-		if s[sattr]:
-		    setattr(m, mattr, True)
-		else:
-		    setattr(m, mattr, False)
+	    if s[sattr]:
+		setattr(m, mattr, True)
+	    else:
+		setattr(m, mattr, False)
+
 	@staticmethod
 	def copy(s, sattr, m, mattr):
 	    """copy a field in a structure, to a field in a model, preserving type"""
-	    if sattr in s: setattr(m, mattr, s[sattr])
+	    setattr(m, mattr, s[sattr])
 
 	@staticmethod
 	def date(s, sattr, m, mattr):
 	    """copy a date in a structure, to a date in a model"""
-	    if sattr in s:
-		raise RuntimeError, "not yet integrated the Date parser"
+	    raise RuntimeError, "not yet integrated the Date parser"
 
 	@staticmethod
 	def strip(s, sattr, m, mattr):
 	    """copy a field (assume type string) in a structure, to a string in a model, stripping leading and trailing spaces"""
-	    if sattr in s: setattr(m, mattr, s[sattr].strip())
+	    setattr(m, mattr, s[sattr].strip())
 
 
+    # m2s must currently check for null before copy/set
     class m2s_lib:
 	@staticmethod
 	def comment_from_feed(m, mattr, s, sattr):
@@ -271,16 +277,6 @@ class Space:
 	    setattr(m, matter, None)
 
 	@staticmethod
-	def reflist(m, mattr):
-	    """trash a field in a model, by unreferencing the contents (not secure delete). requires save()"""
-	    pass
-
-	@staticmethod
-	def file(m, mattr):
-	    """trash a file in a model by deleting it (not likely to be secure delete).  requires save()"""
-	    pass
-
-	@staticmethod
 	def blankify(m, mattr):
 	    """trash a field in a model by blanking it (not secure delete). requires save()"""
 	    setattr(m, matter, "")
@@ -298,7 +294,17 @@ class Space:
 	@staticmethod
 	def munge(m, mattr):
 	    """trash a field in a model by filling it with hopefully unique garbage (not secure delete). requires save()"""
-	    setattr(m, mattr, "__%s_%d_%s__" % (mattr, m.id, 'RANDOM_GARBAGE_TBD'))
+	    setattr(m, mattr, "__%s_%d_%s__" % (mattr, m.id, random_bits(128)))
+
+	@staticmethod
+	def reflist(m, mattr):
+	    """trash a field in a model, by unreferencing the contents (not secure delete). requires save()"""
+	    pass
+
+	@staticmethod
+	def file(m, mattr):
+	    """trash a file in a model by deleting it (not likely to be secure delete).  requires save()"""
+	    pass
 
     @staticmethod
     def compile(attr_map):
@@ -314,21 +320,21 @@ class Space:
 	m2s = {}
 	gc = {}
 
-        defer_table = {
-            'commentFromFeed': True,
-            'commentUponItem': True,
-            'feedTags': True,
-            'feedTagsExclude': True,
-            'feedTagsRequire': True,
-            'itemData': True,
-            'itemForFeeds': True,
-            'itemIcon': True,
-            'itemLinksToItems': True,
-            'itemNotFeeds': True,
-            'itemTags': True,
-            'tagCloud': True,
-            'tagImplies': True,
-            }
+	defer_table = {
+	    'commentFromFeed': True,
+	    'commentUponItem': True,
+	    'feedTags': True,
+	    'feedTagsExclude': True,
+	    'feedTagsRequire': True,
+	    'itemData': True,
+	    'itemForFeeds': True,
+	    'itemIcon': True,
+	    'itemLinksToItems': True,
+	    'itemNotFeeds': True,
+	    'itemTags': True,
+	    'tagCloud': True,
+	    'tagImplies': True,
+	    }
 
 	def barf(direction, mattr, sattr):
 	    """to be called when methud exists but is empty"""
@@ -336,27 +342,67 @@ class Space:
 
 	prefix = attr_map.pop('__prefix__')
 
+        # for an explanation of the weird closure default arguments, see:
+        # http://code.activestate.com/recipes/502271/ regarding test2()
+
 	for mattr in attr_map.keys():
 	    table = attr_map[mattr]
 	    sattr = prefix + "".join([ string.capitalize(x) for x in mattr.split("_") ])
 
-	    # print prefix + "." + mattr, "->", sattr
+            print prefix + "." + mattr, "->", sattr
+            print table
 
 	    if 'm2s' in table:
 		methud = getattr(Space.m2s_lib, table['m2s'])
-		if not methud: barf('m2s', mattr, sattr)
-		m2s[mattr] = lambda m, s: methud(m, mattr, s, sattr)
+
+		if not methud:
+		    barf('m2s', mattr, sattr)
+
+		def m2s_closure(m, s, mattr=mattr, sattr=sattr, methud=methud):
+                    print "? m2s", mattr, sattr
+		    if getattr(m, mattr):
+			methud(m, mattr, s, sattr)
+                        print "done"
+
+		m2s[mattr] = m2s_closure
 
 	    if 's2m' in table:
 		methud = getattr(Space.s2m_lib, table['s2m'])
-		if not methud: barf('s2m', mattr, sattr)
-		s2m[sattr] = ( defer_table.get(sattr, False), lambda s, m: methud(s, sattr, m, mattr) )
-		r2s[sattr] = lambda r, s: Space.r2s_lib.strip(r, s, sattr) # default to r2s.strip()
+
+		if not methud:
+		    barf('s2m', mattr, sattr)
+
+		def s2m_closure(s, m, sattr=sattr, mattr=mattr, methud=methud):
+                    print "? s2m", mattr, sattr
+
+		    if sattr in s:
+			methud(s, sattr, m, mattr)
+                        print "done"
+
+		def r2s_closure(r, s, sattr=sattr):
+                    print "? r2s", sattr
+
+		    if sattr in r.POST:
+			Space.r2s_lib.strip(r, s, sattr)
+                        print "done"
+
+		s2m[sattr] = ( defer_table.get(sattr, False), s2m_closure )
+		r2s[sattr] = r2s_closure
 
 	    if 'r2s' in table: # override default provided in s2m
 		methud = getattr(Space.r2s_lib, table['r2s'])
-		if not methud: barf('r2s', mattr, sattr)
-		r2s[sattr] = lambda r, s: methud(r, s, sattr)
+
+		if not methud:
+		    barf('r2s', mattr, sattr)
+
+		def r2s_closure(r, s, sattr=sattr, methud=methud):
+                    print "? r2s2", sattr
+
+		    if sattr in r.POST:
+			methud(r, s, sattr)
+                        print "done"
+
+		r2s[sattr] = r2s_closure
 
 	    if mattr == 'id':
 		pass # id fields do not get gc'ed
@@ -604,9 +650,9 @@ class AbstractThing(AbstractModel):
 	multiple Items().  For Item() creation via the API, all this
 	will be made plain via the envelope metadata.
 	"""
-        margs = {}
-        m = klass(**margs)
-        return m.update(request, **kwargs)
+	margs = {}
+	m = klass(**margs)
+	return m.update(request, **kwargs)
 
     @classmethod
     def get(klass, **kwargs):
@@ -620,8 +666,8 @@ class AbstractThing(AbstractModel):
 
     @classmethod
     def execute_search_query(klass, search_string, qs):
-        """take one queryset and return another, filtered by the content of search_string; this version is a no-op"""
-        return qs
+	"""take one queryset and return another, filtered by the content of search_string; this version is a no-op"""
+	return qs
 
     @classmethod
     def search(klass, search_string, **kwargs):
@@ -631,65 +677,71 @@ class AbstractThing(AbstractModel):
     def update(self, request=None, **kwargs):
 	"""update a single Thing from a HTTPRequest, overriding with values from kwargs"""
 
-        # build a shadow structure: useful for debug/clarity                                                                         
-        s = {}
+	# build a shadow structure: useful for debug/clarity
+	s = {}
 
-        # update shadow structure from request and kwargs
-        for sattr in self.r2s.keys():
-            if sattr in kwargs: 
-                s[sattr] = kwargs[sattr]
-            elif request and sattr in r.POST: 
-                self.r2s[sattr](request, s)    
-            else: 
-                continue # kinda redundant but clearer
+	# update shadow structure from request and kwargs
+	for sattr in self.r2s.keys():
+            print "1", sattr
+	    if sattr in kwargs:
+		s[sattr] = kwargs[sattr]
+	    elif request and sattr in request.POST:
+		self.r2s[sattr](request, s)
+	    else:
+		continue # kinda redundant but clearer
 
-        # update self from shadow structure
+	# update self from shadow structure
 
-        # stage 1: undeferred
-        i_changed_something = False
+	# stage 1: undeferred
+	i_changed_something = False
 
-        for sattr in self.s2m.keys():
-            methud, defer = self.s2m[sattr]
-            if not defer:
-                methud(s, self)
-                i_changed_something = True
+	for sattr in self.s2m.keys():
+            print "2", sattr
+	    defer, methud = self.s2m[sattr]
+	    if not defer:
+		methud(s, self)
+		i_changed_something = True
 
-        # the point of deferral is to save a record so there is an Id,
-        # so that foreign keys can work and files can be saved; so
-        # it's only really relevant if there is no Id
+	# the point of deferral is to save a record so there is an Id,
+	# so that foreign keys can work and files can be saved; so
+	# it's only really relevant if there is no Id
 
-        if i_changed_something and not self.id:
-            self.save() # generate an id
+	if i_changed_something and not self.id:
+	    self.save() # generate an id
 
-        # stage 2: deferred
-        i_changed_something = False
+	# stage 2: deferred
+	i_changed_something = False
 
-        for sattr in self.s2m.keys():
-            methud, defer = self.s2m[sattr]
-            if defer:
-                methud(s, self)
-                i_changed_something = True
+	for sattr in self.s2m.keys():
+            print "3", sattr
+	    defer, methud = self.s2m[sattr]
+	    if defer:
+		methud(s, self)
+		i_changed_something = True
 
-        if i_changed_something:
-            self.save()
+	if i_changed_something:
+	    self.save()
 
-        # stage 3: file saving
-        # do this by subclassing
+	# stage 3: file saving
+	# do this by subclassing
+
+        # done
+        return self
 
     def delete(self): # this is the primary consumer of gc
 	"""gc all the fields and mark this Thing as deleted"""
-	for mattr in self.gc.keys(): 
-            self.gc[mattr](self)
+	for mattr in self.gc.keys():
+	    self.gc[mattr](self)
 	self.is_deleted = True
 	self.save()
 
     def to_structure(self): # this is the primary consumer of m2s
 	"""convert this model m to a dictionary structure s (ie: s-space)"""
 	s = {}
-        for mattr in self.m2s.keys(): 
-            self.m2s[mattr](self, s)
-        return s
-        
+	for mattr in self.m2s.keys():
+	    self.m2s[mattr](self, s)
+	return s
+
     def get_absolute_url(self):
 	"""return a url for this object for administrative purposes"""
 	url = u''
@@ -759,6 +811,58 @@ class Vurl(AbstractThing):
     invalid_after = AbstractField.datetime(required=False)
     use_temporary_redirect = AbstractField.bool(False)
 
+    @staticmethod
+    def get_with_vurlkey(encoded):
+	""" """
+	return Vurl.objects.get(id=base58.b58decode(encoded))
+
+    def vurlkey(self):
+	""" """
+	return base58.b58encode(self.id)
+
+    def save(self):
+	"""override save method to install a name if necessary"""
+
+	if not self.name:
+	    self.name = '__tmp_vurl_%s__' % random_bits(128)
+	    s = super(Vurl, self).save()
+	    self.name = '__%s__' % self.vurlkey()
+
+	s = super(Vurl, self).save()
+
+    def to_structure(self):
+	"""
+	Splices the virtual vurlKey/vurlPath sattrs into the Vurl
+	structure; since m2s_foo above only allows for a single mattr
+	to map to a single sattr, and since vurl.id is bound to
+	vurlId, and since vurlKey is a restatement of vurl.id in
+	base58, and since the vurlId is permanent and readonly, we
+	have no real option but to kludge this right here as duplicate
+	information.
+	"""
+
+	vk = self.vurlkey()
+	s = super(Vurl, self).to_structure()
+	s['vurlKey'] = vk
+	s['vurlPathShort'] = "/get/k/%s" % vk
+	s['vurlPathLong'] =  "/get/n/%s" % self.name
+	return s
+
+    def http_response(self):
+	if self.use_temporary_redirect:
+	    return HttpResponseRedirect(self.link)
+	else:
+	    return HttpResponsePermanentRedirect(self.link)
+
+    @classmethod
+    def execute_search_query(klass, qs, query):
+	for word in query.split():
+	    qs = qs.filter(Q(link__icontains=word) |
+			   Q(name__icontains=word))
+	return qs
+
+
+
 ##################################################################
 
 class Feed(AbstractThing):
@@ -821,8 +925,8 @@ class Item(AbstractThing):
 	'icon_type': dict(s2m='copy', m2s='copy'),
 	'icon_ciphertext_digest': dict(s2m='copy', m2s='copy'),
 
-        'data': dict(gc='file'),
-        'icon': dict(gc='file'),
+	'data': dict(gc='file'),
+	'icon': dict(gc='file'),
 	}
     (r2s, s2m, m2s, gc) = Space.compile(attr_map)
 
@@ -868,7 +972,7 @@ class Comment(AbstractThing):
 	'encryption_key': dict(s2m='copy', m2s='copy'),
 	'ciphertext_digest': dict(s2m='copy', m2s='copy'),
 
-        'data': dict(gc='file'),
+	'data': dict(gc='file'),
 	}
 
     (r2s, s2m, m2s, gc) = Space.compile(attr_map)

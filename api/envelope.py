@@ -22,7 +22,7 @@ class Envelope(dict):
     wrapper-class atop 'dict' to provide a few extra methods
     """
 
-    def __init__(self, request, result, **kwargs):
+    def __init__(self, request, s, **kwargs):
         self.update(kwargs)
-        self[result] = result
+        self['result'] = s
         # do some stuff with request, here

@@ -65,7 +65,7 @@ then
 fi
 
 # yes the args are visible during creation, no i can't be arsed yet to fix this
-MINE_SECRET=`python -c 'import os, util.base64_mine as b64 ; print b64.encode(os.urandom(66))'`
+MINE_SECRET=`python -c 'import os, base64; print base64.urlsafe_b64encode(os.urandom(66))'`
 
 if [ ! -f settings.py ]
 then
