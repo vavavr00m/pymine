@@ -19,7 +19,7 @@
 
 from django.conf import settings
 from django.contrib.auth.models import User
-import util.base64_mine as b64
+import base64
 import getopt
 import os
 import sys
@@ -28,8 +28,8 @@ from api.models import Registry
 
 def initialise_crypto():
     nbytes = 256/8
-    mine_hmac_key = b64.encode(os.urandom(nbytes))
-    mine_hmac_pad = b64.encode(os.urandom(nbytes))
+    mine_hmac_key = base64.urlsafe_b64encode(os.urandom(nbytes))
+    mine_hmac_pad = base64.urlsafe_b64encode(os.urandom(nbytes))
     Registry.set_encoded('__MINE_HMAC_KEY__', mine_hmac_key, False)
     Registry.set_encoded('__MINE_HMAC_PAD__', mine_hmac_pad, False)
  

@@ -45,8 +45,8 @@ def create_thing(request, thyng, **kwargs):
     implements: POST /api/vurl.(FMT)
     returns: ...
     """
-    s = {}
-    return Envelope(request, s)
+    m = thyng.create(request, **kwargs)
+    return Envelope(request, m.to_structure())
 
 ##################################################################
 
