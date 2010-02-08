@@ -17,6 +17,8 @@
 
 """docstring goes here""" # :-)
 
+from django.conf import settings
+
 from envelope import Envelope
 
 ##################################################################
@@ -27,10 +29,10 @@ def create_comment(request, idz, **kwargs):
     """
     arguments: request, idz, **kwargs
     implements: POST /api/comment/item/(IDZ).(FMT)
-    returns: ...
+    returns: an envelope containing the comment structure
     """
-    s = {}
-    return Envelope(request, s)
+    m = thyng.create(request, commentUponItem=int(idz))
+    return Envelope(request, m.to_structure())
 
 ##################################################################
 
@@ -43,9 +45,9 @@ def create_thing(request, thyng, **kwargs):
     implements: POST /api/item.(FMT)
     implements: POST /api/tag.(FMT)
     implements: POST /api/vurl.(FMT)
-    returns: ...
+    returns: an envelope containing the thing structure
     """
-    m = thyng.create(request, **kwargs)
+    m = thyng.create(request)
     return Envelope(request, m.to_structure())
 
 ##################################################################
@@ -56,10 +58,11 @@ def delete_registry_attr(request, rattr, **kwargs):
     """
     arguments: request, rattr, **kwargs
     implements: DELETE /api/registry/(RATTR).(FMT)
-    returns: ...
+    returns: an empty envelope
     """
-    s = {}
-    return Envelope(request, s)
+    m = Registry.get(key=rattr)
+    m.delete()
+    return Envelope(request, None)
 
 ##################################################################
 
@@ -73,10 +76,12 @@ def delete_thing(request, thyng, id, **kwargs):
     implements: DELETE /api/item/(ID).(FMT)
     implements: DELETE /api/tag/(ID).(FMT)
     implements: DELETE /api/vurl/(ID).(FMT)
-    returns: ...
+    returns: an empty envelope
     """
-    s = {}
-    return Envelope(request, s)
+
+    m = thing.get(id=int(id))
+    m.delete()
+    return Envelope(request, None)
 
 ##################################################################
 
@@ -90,10 +95,11 @@ def delete_thing_attr(request, thyng, id, attr, **kwargs):
     implements: DELETE /api/item/(ID)/(ATTR).(FMT)
     implements: DELETE /api/tag/(ID)/(ATTR).(FMT)
     implements: DELETE /api/vurl/(ID)/(ATTR).(FMT)
-    returns: ...
+    returns: ..
     """
-    s = {}
-    return Envelope(request, s)
+    m = thyng.get(id=int(id))
+    m.delete_attribute(attr)
+    return Envelope(request, m.to_structure())
 
 ##################################################################
 
@@ -103,7 +109,7 @@ def encode_minekey(request, **kwargs):
     """
     arguments: request, **kwargs
     implements: POST /api/encode.(FMT)
-    returns: ...
+    returns: ..
     """
     s = {}
     return Envelope(request, s)
@@ -116,10 +122,10 @@ def get_registry_attr(request, rattr, **kwargs):
     """
     arguments: request, rattr, **kwargs
     implements: GET /api/registry/(RATTR).(FMT)
-    returns: ...
+    returns: ..
     """
-    s = {}
-    return Envelope(request, s)
+    m = Registry.get(key=rattr)
+    return Envelope(request, m.value)
 
 ##################################################################
 
@@ -133,10 +139,11 @@ def get_thing_attr(request, thyng, id, attr, **kwargs):
     implements: GET /api/item/(ID)/(ATTR).(FMT)
     implements: GET /api/tag/(ID)/(ATTR).(FMT)
     implements: GET /api/vurl/(ID)/(ATTR).(FMT)
-    returns: ...
+    returns: ..
     """
-    s = {}
-    return Envelope(request, s)
+    m = thyng.get(id=int(mid))
+    s = m.to_structure()
+    return Envelope(request, s[sattr]) # throw exception if not there
 
 ##################################################################
 
@@ -146,10 +153,24 @@ def list_comments(request, idz, **kwargs):
     """
     arguments: request, idz, **kwargs
     implements: GET /api/comment/item/(IDZ).(FMT)
-    returns: ...
+    returns: ..
     """
-    s = {}
-    return Envelope(request, s)
+
+    iid = int(idz)
+
+    if iid == 0:
+        qs = Comment.list()
+    else:
+        item = Item.get(id=iid)
+        qs = item.comment_set.filter(is_deleted=False)
+
+    qs = qs.filter(is_deleted=False)
+
+    if 'query' in request.REQUEST:
+        qs = Comment.execute_search_query(request.REQUEST['query'], qs)
+
+    result = [ { m.sattr_prefix : m.to_structure() } for m in qs ]
+    return Envelope(request, result)
 
 ##################################################################
 
@@ -159,10 +180,11 @@ def list_registry(request, **kwargs):
     """
     arguments: request, **kwargs
     implements: GET /api/registry.(FMT)
-    returns: ...
+    returns: ..
     """
-    s = {}
-    return Envelope(request, s)
+    qs = Registry.objects.all()
+    result = [ m.to_structure() for m in qs ]
+    return Envelope(request, result)
 
 ##################################################################
 
@@ -175,27 +197,15 @@ def list_things(request, thyng, **kwargs):
     implements: GET /api/item.(FMT)
     implements: GET /api/tag.(FMT)
     implements: GET /api/vurl.(FMT)
-    returns: ...
+    returns: ..
     """
-    s = {}
-    return Envelope(request, s)
+    qs = thyng.list()
 
-##################################################################
+    if 'query' in request.REQUEST:
+        qs = thyng.execute_search_query(request.REQUEST['query'], qs)
 
-# this definition (query_thing) is auto-generated.
-# ensure that any changes are made via the generator.
-def query_thing(request, thyng, **kwargs):
-    """
-    arguments: request, thyng, **kwargs
-    implements: GET /api/query/comment.(FMT)
-    implements: GET /api/query/feed.(FMT)
-    implements: GET /api/query/item.(FMT)
-    implements: GET /api/query/tag.(FMT)
-    implements: GET /api/query/vurl.(FMT)
-    returns: ...
-    """
-    s = {}
-    return Envelope(request, s)
+    result = [ { m.sattr_prefix : m.to_structure() } for m in qs ]
+    return Envelope(request, result)
 
 ##################################################################
 
@@ -205,10 +215,9 @@ def read_item_data(request, id, token, **kwargs):
     """
     arguments: request, id, token, **kwargs
     implements: GET /api/data/(ID)(/TOKEN)
-    returns: ...
+    returns: ..
     """
-    s = {}
-    return Envelope(request, s)
+    pass
 
 ##################################################################
 
@@ -218,7 +227,7 @@ def read_item_icon(request, id, token, **kwargs):
     """
     arguments: request, id, token, **kwargs
     implements: GET /api/icon/(ID)(/TOKEN)
-    returns: ...
+    returns: ..
     """
     s = {}
     return Envelope(request, s)
@@ -235,10 +244,10 @@ def read_thing(request, thyng, id, **kwargs):
     implements: GET /api/item/(ID).(FMT)
     implements: GET /api/tag/(ID).(FMT)
     implements: GET /api/vurl/(ID).(FMT)
-    returns: ...
+    returns: ..
     """
-    s = {}
-    return Envelope(request, s)
+    m = thyng.get(id=int(id))
+    return Envelope(request, m.to_structure())
 
 ##################################################################
 
@@ -248,9 +257,13 @@ def read_version(request, **kwargs):
     """
     arguments: request, **kwargs
     implements: GET /api/version.(FMT)
-    returns: ...
+    returns: ..
     """
-    s = {}
+    s = {
+        'softwareName': settings.MINE_SOFTWARE_NAME,
+        'softwareRevision': settings.MINE_SOFTWARE_VERSION,
+        'mineApiVersion': settings.MINE_API_VERSION,
+        }
     return Envelope(request, s)
 
 ##################################################################
@@ -261,10 +274,14 @@ def update_registry_attr(request, rattr, **kwargs):
     """
     arguments: request, rattr, **kwargs
     implements: POST /api/registry/(RATTR).(FMT)
-    returns: ...
+    returns: ..
     """
-    s = {}
-    return Envelope(request, s)
+    v = request.POST[rattr]
+    m, created = Registry.objects.get_or_create(key=rattr, defaults={ 'value': v })
+    if not created: # then it will need updating                                                                       
+        m.value = v
+        m.save();
+    return Envelope(request, m.to_structure())
 
 ##################################################################
 
@@ -278,9 +295,10 @@ def update_thing(request, thyng, id, **kwargs):
     implements: POST /api/item/(ID).(FMT)
     implements: POST /api/tag/(ID).(FMT)
     implements: POST /api/vurl/(ID).(FMT)
-    returns: ...
+    returns: ..
     """
-    s = {}
-    return Envelope(request, s)
+    m = thyng.get(id=int(id))
+    m = m.update(request)
+    return Envelope(request, m.to_structure())
 
 ##################################################################
