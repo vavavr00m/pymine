@@ -32,30 +32,26 @@ urlpatterns = patterns('',
 		       (r'^logout.html$', 'django.contrib.auth.views.logout', { 'template_name': 'users/logout.html' }),
 		       (r'^api/', include('api.urls')),
 		       (r'^ui/', include('ui.urls')),
+                       )
 
-		       ##################################################################
-		       ##################################################################
-		       ##################################################################
-		       (r'^$',
-			HTTP_METHOD, { 'GET' : [ mine.mine_root ],
-				       }),
-		       (r'^favicon\.ico$',
-			HTTP_METHOD_NOAUTH, { 'GET' : [ mine.mine_favicon ],
-					      }),
-		       (r'^key/(?P<mk_hmac>[-\w]+=*)/(?P<mk_fid>[1-9]\d*)/(?P<mk_fversion>[1-9]\d*)/(?P<mk_iid>\d+)/(?P<mk_depth>[1-9]\d*)/(?P<mk_type>(data|icon|submit))\.(?P<mk_ext>\w+)$',
-			HTTP_METHOD_NOAUTH, { 'GET' : [ mine.minekey_read ],
-					      'POST' : [ mine.minekey_submit ],
-					      }),
-		       (r'^page/(?P<suffix>.*)$',
-			HTTP_METHOD_NOAUTH, { 'GET' : [ mine.vurl_read_by_name ],
-					      }),
-		       (r'^pub(/?P<suffix>.*)$',
-			HTTP_METHOD_NOAUTH, { 'GET' : [ mine.mine_public ],
-					      }),
-		       (r'^vurl/(?P<vurlkey>[-\w]+)$',
-			HTTP_METHOD_NOAUTH, { 'GET' : [ mine.vurl_read_by_key ],
-					      }),
-		       ##################################################################
-		       ##################################################################
-		       ##################################################################
-		       )
+##################################################################
+# this code is auto-generated.
+# ensure that any changes are made via the generator.
+
+urlpatterns += patterns('',
+                        (r'^$',
+                         HTTP_METHOD, { 'GET' : [ mine.mine_redirect, 'ui/dash/home.html' ], }),
+                        (r'^favicon\.ico$',
+                         HTTP_METHOD_NOAUTH, { 'GET' : [ mine.get_favicon ], }),
+                        (r'^key/(?P<mk_hmac>[-\w]{43}*)/(?P<mk_fid>[1-9]\d*)/(?P<mk_fversion>[1-9]\d*)/(?P<mk_iid>\d+)/(?P<mk_depth>[1-9]\d*)/(?P<mk_type>(data|icon|submit))\.(?P<mk_ext>\w+)$',
+                         HTTP_METHOD_NOAUTH, { 'GET' : [ mine.minekey_read ],
+                                               'POST' : [ mine.minekey_submit ], }),
+                        (r'^page/(?P<suffix>.*)$',
+                         HTTP_METHOD_NOAUTH, { 'GET' : [ mine.vurl_read_by_name ], }),
+                        (r'^pub(/?P<suffix>.*)$',
+                         HTTP_METHOD_NOAUTH, { 'GET' : [ mine.mine_public ], }),
+                        (r'^vurl/(?P<vurlkey>[-\w]+)$',
+                         HTTP_METHOD_NOAUTH, { 'GET' : [ mine.vurl_read_by_key ], }),
+                        )
+
+##################################################################

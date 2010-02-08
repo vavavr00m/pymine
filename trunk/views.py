@@ -17,11 +17,9 @@
 
 """docstring goes here""" # :-)
 
-from django.conf import settings
 from django.contrib.auth.decorators import login_required
-from django.core.urlresolvers import reverse
 from django.http import HttpResponse, HttpResponseRedirect, HttpResponseForbidden, HttpResponseNotAllowed
-from django.shortcuts import render_to_response, get_object_or_404
+from django.shortcuts import render_to_response
 
 import django.utils.simplejson as json
 import pickle
@@ -98,12 +96,10 @@ def API_REST(request, *args, **kwargs):
     return HttpResponse(data, mimetype=mimetype)
 
 ##################################################################
-##################################################################
-##################################################################
 
-# this definition (mine_favicon) is auto-generated.
+# this definition (get_favicon) is auto-generated.
 # ensure that any changes are made via the generator.
-def mine_favicon(request, **kwargs):
+def get_favicon(request, **kwargs):
     """
     arguments: request, **kwargs
     implements: GET /favicon.ico
@@ -125,11 +121,11 @@ def mine_public(request, suffix, **kwargs):
 
 ##################################################################
 
-# this definition (mine_root) is auto-generated.
+# this definition (mine_redirect) is auto-generated.
 # ensure that any changes are made via the generator.
-def mine_root(request, **kwargs):
+def mine_redirect(request, target, **kwargs):
     """
-    arguments: request, **kwargs
+    arguments: request, target, **kwargs
     implements: GET /
     returns: ...
     """
@@ -183,6 +179,4 @@ def vurl_read_by_name(request, suffix, **kwargs):
     """
     pass
 
-##################################################################
-##################################################################
 ##################################################################
