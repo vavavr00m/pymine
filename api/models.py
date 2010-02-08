@@ -33,13 +33,12 @@ import string
 
 # TODO:
 # phrase tags
-# no smart combi-type fields (not: for: etc)
 # xattrs are represented as $thingAttribute
-# Minekey is separate class once more, testable
 # envelope for creation can deal with single and multiple returns for create()
 # envelope removes status and exit
 # multiple file uploads for create
 # status flag becomes a bitfield / typed coersce field
+# garbage collection for delete
 
 ##################################################################
 ##################################################################
@@ -52,34 +51,12 @@ fss_yyyymmdd = '%Y-%m/%d'
 
 ##################################################################
 
-STATUS_MASK_EXPLICIT_ONLY = 0x01
-STATUS_MASK_HYPERLINKABLE = 0x02
-STATUS_MASK_TO_FEEDS = 0x04
-STATUS_MASK_TO_PUBLIC = 0x08
-
-STATUS_USER_ONLY = 0
-STATUS_EXPLICIT_ONLY = STATUS_USER_ONLY | STATUS_MASK_EXPLICIT_ONLY
-STATUS_HYPERLINKABLE = STATUS_EXPLICIT_ONLY | STATUS_MASK_HYPERLINKABLE
-STATUS_TO_FEEDS = STATUS_HYPERLINKABLE | STATUS_MASK_TO_FEEDS
-STATUS_TO_PUBLIC = STATUS_TO_FEEDS | STATUS_MASK_TO_PUBLIC
-
 item_status_choices = (
-    # Item is only visible to the user
-    ( STATUS_USER_ONLY, 'user-only' ),
-
-    # Item is STATUS_USER_ONLY, *plus* explicit "for:feedname" tagging
-    ( STATUS_EXPLICIT_ONLY, 'explicit-only' ),
-
-    # Item is STATUS_EXPLICIT_ONLY, *plus* hyperlinks from a parental feed item
-    ( STATUS_HYPERLINKABLE, 'hyperlinkable' ),
-
-    # Item will be visible to relevant "non-public" feeds
-    ( STATUS_TO_FEEDS, 'to-feeds' ),
-
-    # Item will be visible to all relevant feeds, marked "public" or otherwise
-    ( STATUS_TO_PUBLIC, 'to-public' ),
-
-    # The word 'relevant' above, means has "direct or implied tag matching".
+    ( '0', 'locked' ),
+    ( '2', 'linkable-by-items-in-feeds' ),
+    ( '4', 'to-explicitly-named-feeds' ),
+    ( '6', 'to-private-feeds-via-tags' ),
+    ( '8', 'to-public-feeds-via-tags' ),
     # In all instances, additional per-item "not:feedname" explicit tagging will be honoured.
     # In all instances, additional per-feed "exclude:tag" explicit tagging will be honoured.
     )
@@ -143,29 +120,40 @@ class Space:
 	    """trash a field in a model, by nulling it (not secure delete). requires save()"""
 	    setattr(m, matter, None)
 
+	@staticmethod
 	def free_reference(m, mattr):
 	    """trash a field in a model, by unreferencing it (not secure delete). requires save()"""
 	    pass
 
+	@staticmethod
 	def free_reflist(m, mattr):
-	    """trash a field in a model, by unreferencing it (not secure delete). requires save()"""
+	    """trash a field in a model, by unreferencing the contents (not secure delete). requires save()"""
 	    pass
 
+	@staticmethod
+        def free_file(m, mattr):
+            """trash a file in a model by deleting it (not likely to be secure delete).  requires save()"""
+            pass
+
+	@staticmethod
 	def to_blank(m, mattr):
 	    """trash a field in a model by blanking it (not secure delete). requires save()"""
 	    setattr(m, matter, "")
 
+	@staticmethod
 	def to_zero(m, mattr):
 	    """trash a field in a model by setting it to 0 (not secure delete). requires save()"""
 	    setattr(m, matter, 0)
 
+	@staticmethod
 	def to_false(m, mattr):
 	    """trash a field in a model by setting it to False (not secure delete). requires save()"""
 	    setattr(m, matter, False)
 
+	@staticmethod
 	def to_unique(m, mattr):
 	    """trash a field in a model by filling it with hopefully unique garbage (not secure delete). requires save()"""
-	    setattr(m, mattr, "__DELETED_%s_ID_%d_NONCE_%s__" % (mattr, m.id, 'RANDOM_GARBAGE_TBD'))
+	    setattr(m, mattr, "__%s_%d_%s__" % (mattr, m.id, 'RANDOM_GARBAGE_TBD'))
 
     @staticmethod
     def compile(attr_map):
@@ -189,7 +177,7 @@ class Space:
 	    table = attr_map[mattr]
 	    sattr = prefix + "".join([ string.capitalize(x) for x in mattr.split("_") ])
 
-	    print mattr, sattr
+	    print mattr, "->", sattr
 
 	    if 'm2s' in table:
 		methud = getattr(Space.m2s_lib, table['m2s'])
@@ -198,7 +186,7 @@ class Space:
 	    if 's2m' in table:
 		methud = getattr(Space.s2m_lib, table['s2m'])
 		s2m[sattr] = lambda s, m: methud(s, sattr, m, mattr)
-		r2s[sattr] = lambda r, s: r2s_lib.copy(r, s, sattr)
+		r2s[sattr] = lambda r, s: Space.r2s_lib.copy(r, s, sattr) # default to r2s.copy()
 
 	    if 'r2s' in table: # override default provided in s2m
 		methud = getattr(Space.r2s_lib, table['r2s'])
@@ -358,8 +346,6 @@ class AbstractModel(models.Model):
 	"""return a queryset of models matching kwargs; INCLUDE virtually-deleted ones"""
 	pass
 
-
-
 ##################################################################
 ##################################################################
 ##################################################################
@@ -498,8 +484,10 @@ class AbstractThing(AbstractModel):
 
     def delete(self):
 	"""gc all the fields and mark this Thing as deleted"""
+
 	for mattr in self.gc.keys():
 	    self.gc[mattr](self)
+
 	self.is_deleted = True
 	self.save()
 
@@ -524,6 +512,10 @@ class Tag(AbstractThing):
     attr_map = {
 	'__prefix__': "tag",
 	'id': dict(r2s='integer'),
+        'name': dict(),
+        'description': dict(),
+        'implies': dict(),
+        'cloud': dict(),
 	}
     (r2s, s2m, m2s, gc) = Space.compile(attr_map)
 
@@ -532,13 +524,17 @@ class Tag(AbstractThing):
     implies = AbstractField.reflist('self', symmetrical=False, pivot='implied_by', required=False)
     cloud = AbstractField.reflist('self', symmetrical=False, pivot='clouded_by', required=False)
 
-
 ##################################################################
 
 class Vurl(AbstractThing):
     attr_map = {
 	'__prefix__': "vurl",
 	'id': dict(r2s='integer'),
+        'name': dict(),
+        'link': dict(),
+        'invalid_before': dict(),
+        'invalid_after': dict(),
+        'use_temporary_redirect': dict(),
 	}
     (r2s, s2m, m2s, gc) = Space.compile(attr_map)
 
@@ -554,6 +550,17 @@ class Feed(AbstractThing):
     attr_map = {
 	'__prefix__': "feed",
 	'id': dict(r2s='integer'),
+        'name': dict(),
+        'version': dict(),
+        'description': dict(),
+        'embargo_after': dict(),
+        'embargo_before': dict(),
+        'tags': dict(),
+        'tags_exclude': dict(),
+        'tags_require': dict(),
+        'permitted_networks': dict(),
+        'content_constraints': dict(),
+        'is_private': dict(),
 	}
     (r2s, s2m, m2s, gc) = Space.compile(attr_map)
 
@@ -567,7 +574,7 @@ class Feed(AbstractThing):
     tags_require = AbstractField.reflist(Tag, pivot='feeds_requiring', required=False)
     permitted_networks = AbstractField.string(required=False)
     content_constraints = AbstractField.string(required=False)
-    is_untrusted = AbstractField.bool(False)
+    is_private = AbstractField.bool(True)
 
 ##################################################################
 
@@ -575,6 +582,25 @@ class Item(AbstractThing):
     attr_map = {
 	'__prefix__': "item",
 	'id': dict(r2s='integer'),
+        'name': dict(),
+        'status': dict(),
+        'description': dict(),
+        'hide_after': dict(),
+        'hide_before': dict(),
+        'tags': dict(),
+        'item_for_feeds': dict(),
+        'item_not_feeds': dict(),
+        'data': dict(),
+        'data_type': dict(),
+        'data_remote_url': dict(),
+        'linked_items': dict(),
+        'encryption_method': dict(),
+        'digest_method': dict(),
+        'encryption_key': dict(),
+        'ciphertext_digest': dict(),
+        'icon': dict(),
+        'icon_type': dict(),
+        'icon_ciphertext_digest': dict(),
 	}
     (r2s, s2m, m2s, gc) = Space.compile(attr_map)
 
@@ -609,7 +635,16 @@ class Comment(AbstractThing):
 	'__prefix__': "comment",
 	'id': dict(r2s='integer'),
 	'title': dict(),
+        'body': dict(),
+        'from_feed': dict(),
+        'upon_item': dict(),
+        'data': dict(),
+        'encryption_method': dict(),
+        'digest_method': dict(),
+        'encryption_key': dict(),
+        'ciphertext_digest': dict(),
 	}
+
     (r2s, s2m, m2s, gc) = Space.compile(attr_map)
 
     title = AbstractField.string()
