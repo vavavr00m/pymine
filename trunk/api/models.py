@@ -17,9 +17,19 @@
 
 """docstring goes here""" # :-)
 
-import string
+#from django.http import HttpResponsePermanentRedirect, HttpResponseRedirect
+#from django.template.loader import render_to_string
+#from django.utils import feedgenerator
+from django.conf import settings
+from django.core.cache import cache
+from django.core.files.storage import FileSystemStorage
+from django.db import models, transaction
+from django.db.models import Q
 from django.utils.encoding import iri_to_uri
 from django.utils.http import urlquote
+
+import base64
+import string
 
 # TODO:
 # phrase tags
@@ -182,22 +192,22 @@ class Space:
 	    print mattr, sattr
 
 	    if 'm2s' in table:
-		methud = getattr(m2s_lib, table['m2s'])
+		methud = getattr(Space.m2s_lib, table['m2s'])
 		m2s[mattr] = lambda m, s: methud(m, mattr, s, sattr)
 
 	    if 's2m' in table:
-		methud = getattr(s2m_lib, table['s2m'])
+		methud = getattr(Space.s2m_lib, table['s2m'])
 		s2m[sattr] = lambda s, m: methud(s, sattr, m, mattr)
 		r2s[sattr] = lambda r, s: r2s_lib.copy(r, s, sattr)
 
 	    if 'r2s' in table: # override default provided in s2m
-		methud = getattr(r2s_lib, table['r2s'])
+		methud = getattr(Space.r2s_lib, table['r2s'])
 		r2s[sattr] = lambda r, s: methud(r, s, sattr)
 
-	    if mattr = 'id':
+	    if mattr == 'id':
 		pass # id fields do not get gc'ed
 	    elif 'gc' in table:
-		methud = getattr(gc_lib, table['gc'])
+		methud = getattr(Space.gc_lib, table['gc'])
 		gc[mattr] = lambda m: methud(m, mattr)
 	    else:
 		gc[mattr] = lambda m: gc_lib.to_null(m, mattr) # default to_null()
@@ -211,79 +221,115 @@ class Space:
 class AbstractField:
     """superclass to frontend model fields and ease porting between GAE and Django"""
 
+    STRING_SHORT = 256 # bytes
+
     class Meta:
 	abstract = True
 
     @staticmethod
-    def bool(*args, **kwargs):
-	""" """
-	return None
+    def parse(input):
+	"""
+        Argument parser/translater for AbstractField.
+
+	One dict comes in, another goes out.
+
+        implements unique, symmetrical, storage, upload_to, pivot
+	"""
+
+	if input.get('required', True):
+	    output = dict(null=False, blank=False)
+	else:
+	    output = dict(null=True, blank=True)
+
+	for iname, oname in (('unique', 'unique'),
+			     ('symmetrical', 'symmetrical'),
+			     ('storage', 'storage'),
+			     ('upload_to', 'upload_to'),
+			     ('pivot', 'related_name'),
+			     ):
+	    if iname in input:
+		output[oname] = input[iname]
+
+	return output
 
     @staticmethod
-    def choice(*args, **kwargs):
-	""" """
-	return None
+    def bool(default):
+	"""implements a boolean (true/false)"""
+	return models.BooleanField(default=default)
 
     @staticmethod
-    def created(*args, **kwargs):
-	""" """
-	return None
+    def choice(choices):
+	"""implements a choices-field (max length of an encoded choice is 1 character)"""
+	return models.CharField(max_length=1, choices=choices)
 
     @staticmethod
-    def datetime(*args, **kwargs):
-	""" """
-	return None
+    def created():
+	"""implements created date"""
+	return models.DateTimeField(auto_now_add=True)
 
     @staticmethod
-    def file(*args, **kwargs):
-	""" """
-	return None
+    def datetime(**kwargs):
+	"""implements date/time field"""
+	x = AbstractField.parse(kwargs)
+	return models.DateTimeField(**x)
 
     @staticmethod
-    def integer(*args, **kwargs):
-	""" """
-	return None
+    def file(**kwargs):
+	"""implements a file"""
+	x = AbstractField.parse(kwargs)
+	return models.FileField(**x)
 
     @staticmethod
-    def last_modified(*args, **kwargs):
-	""" """
-	return None
+    def integer(default):
+	"""implements an integer"""
+	return models.PositiveIntegerField(default=default)
 
     @staticmethod
-    def reference(*args, **kwargs):
-	""" """
-	return None
+    def last_modified():
+	"""implements last_modified date"""
+	return models.DateTimeField(auto_now=True)
 
     @staticmethod
-    def reflist(*args, **kwargs):
-	""" """
-	return None
+    def reference(what, **kwargs):
+	"""implements foreign-keys"""
+	x = AbstractField.parse(kwargs)
+	return models.ForeignKey(what, **x)
 
     @staticmethod
-    def slug(*args, **kwargs):
-	""" """
-	return None
+    def reflist(what, **kwargs):
+	"""implements list-of-foreign-keys; AbstractField.parses out 'pivot' argument"""
+	x = AbstractField.parse(kwargs)
+	return models.ManyToManyField(what, **x)
 
     @staticmethod
-    def string(*args, **kwargs):
-	""" """
-	return None
+    def slug(**kwargs):
+	"""implements a slug (alphanumeric string, no spaces)"""
+	x = AbstractField.parse(kwargs)
+	return models.SlugField(max_length=AbstractField.STRING_SHORT, **x)
 
     @staticmethod
-    def text(*args, **kwargs):
-	""" """
-	return None
+    def string(**kwargs):
+	"""implements string"""
+	x = AbstractField.parse(kwargs)
+	return models.CharField(max_length=AbstractField.STRING_SHORT, **x)
 
     @staticmethod
-    def url(*args, **kwargs):
-	""" """
-	return None
+    def text(**kwargs):
+	"""implements a text area / text of arbitrary size"""
+	x = AbstractField.parse(kwargs)
+	return models.TextField(**x)
+
+    @staticmethod
+    def url(**kwargs):
+	"""implements a URL string"""
+	x = AbstractField.parse(kwargs)
+	return models.URLField(max_length=AbstractField.STRING_SHORT, **x)
 
 ##################################################################
 ##################################################################
 ##################################################################
 
-class AbstractModel:
+class AbstractModel(models.Model):
     """superclass to frontend models and ease porting between GAE and Django"""
 
     class Meta:
@@ -311,6 +357,8 @@ class AbstractModel:
     def all(klass, **kwargs):
 	"""return a queryset of models matching kwargs; INCLUDE virtually-deleted ones"""
 	pass
+
+
 
 ##################################################################
 ##################################################################
@@ -531,7 +579,7 @@ class Item(AbstractThing):
     (r2s, s2m, m2s, gc) = Space.compile(attr_map)
 
     name = AbstractField.string()
-    status = AbstractField.choice_integer(item_status_choices)
+    status = AbstractField.choice(item_status_choices)
     description = AbstractField.text(required=False)
     hide_after = AbstractField.datetime(required=False)
     hide_before = AbstractField.datetime(required=False)
@@ -546,7 +594,7 @@ class Item(AbstractThing):
     thumb = AbstractField.file(storage=thumb_fss, upload_to=fss_yyyymmdd, required=False)
     thumb_type = AbstractField.string(required=False)
 
-    linked_items = AbstractField.reflist(Item, pivot='items_linked', required=False)
+    linked_items = AbstractField.reflist('Item', pivot='items_linked', required=False)
 
     encryption_method = AbstractField.text(required=False)
     digest_method = AbstractField.text(required=False)
@@ -581,3 +629,48 @@ class Comment(AbstractThing):
 
 ##################################################################
 
+class Registry(AbstractModel): # not a Thing
+    """key/value pairs for Mine configuration"""
+
+    key = AbstractField.slug(unique=True)
+    value = AbstractField.text()
+
+    @classmethod
+    def get(klass, key):
+	""" """
+	return Registry.objects.get(key=key).value
+
+    @classmethod
+    def get_decoded(klass, key):
+	""" """
+	return base64.urlsafe_b64decode(klass.get(key))
+
+    @classmethod
+    def set(klass, key, value, overwrite_ok):
+	""" """
+	r, created = Registry.objects.get_or_create(key=key, defaults={ 'value': value })
+	if not created and not int(overwrite_ok):
+	    raise RuntimeError, 'not allowed to overwrite existing Registry key: %s' % key
+	r.save()
+	return r
+
+    @classmethod
+    def set_encoded(klass, key, value, overwrite_ok):
+	""" """
+	return klass.set(key, base64.urlsafe_b64encode(value), overwrite_ok)
+
+    def to_structure(self):
+	""" """
+	s = {}
+	s[self.key] = self.value # this is why it is not a Thing
+	s['keyCreated'] = self.created.isoformat()
+	s['keyLastModified'] = self.last_modified.isoformat()
+	return s
+
+    class Meta:
+	ordering = ['key']
+	verbose_name = 'Register'
+	verbose_name_plural = 'Registry'
+
+    def __unicode__(self):
+	return self.key
