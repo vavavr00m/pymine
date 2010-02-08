@@ -34,13 +34,19 @@
 # there must be one and only one ID or IDZ per url pattern; the REST
 # space has been designed cleanly to ensure this is always the case;
 # the only notable oddity are the small selection of comment-related
-# url-patterns which take a target itemId infix.
+# url-patterns which take a target itemId infix.  Where this is not
+# possible (ie: the minekey elements) instead we create entire
+# surrogates.
+
+# the regexp /[1-9]\d*/ represents "integer > zero", hence ID
+
+# the regexp /\d+/ represents "integer >= zero", hence IDZ
 
 %expressions =
     (
      # minekey elements
      #(MK_HMAC)/(MK_FID)/(MK_FVERSION)/(MK_IID)/(MK_DEPTH)/(MK_TYPE).(MK_EXT)
-     'MK_HMAC', '?P<mk_hmac>[-\w]+=*',
+     'MK_HMAC', '?P<mk_hmac>[-\w]{43}*',
      'MK_FID', '?P<mk_fid>[1-9]\d*',
      'MK_FVERSION', '?P<mk_fversion>[1-9]\d*',
      'MK_IID', '?P<mk_iid>\d+',
@@ -77,7 +83,6 @@ $indent = "    ";
 
 while (<DATA>) {
     next if (/^\s*(\#.*)?$/o);        # skip comments and blank lines
-
     s/#.*$//go;                       # trim trailing comments
 
     ($module, $method, $url, $pydoc, @args) = split;
@@ -121,7 +126,7 @@ sub print_boilerplate {
 	print $indent, "s = {}\n";
 	print $indent, "return Envelope(request, s)\n";
     }
-    elsif ($module eq 'ui') {
+    elsif ($module eq 'ui' or $module eq 'dev') {
 	print $indent, "s = {}\n";
 	print $indent, "return render_to_response(template, s)\n";
     }
@@ -133,8 +138,6 @@ sub print_boilerplate {
 foreach $module (sort keys %defargs) {
     open(F, ">tmp.$module.views.py") || die "open: $!\n";
     select(F);
-    print "#"x66, "\n";
-    print "#"x66, "\n";
     foreach $pyfunc (sort keys %{ $defargs{$module} }) {
 	print "#"x66, "\n";
 	print "\n";
@@ -153,8 +156,6 @@ foreach $module (sort keys %defargs) {
 	print "\n";
     }
     print "#"x66, "\n";
-    print "#"x66, "\n";
-    print "#"x66, "\n";
     select(STDOUT);
 }
 
@@ -162,11 +163,13 @@ foreach $module (sort keys %urldispatch) {
     open(F, ">tmp.$module.urls.py") || die "open: $!\n";
     select(F);
     print "#"x66, "\n";
-    print "#"x66, "\n";
-    print "#"x66, "\n";
+    print "# this code is auto-generated.\n";
+    print "# ensure that any changes are made via the generator.\n";
+    print "\n";
+    print "urlpatterns += patterns('',\n";
     foreach $pattern (sort keys %{ $urldispatch{$module} }) {
 	$p = $pattern;
-	$p =~ s!^/($module/)?!!;
+	$p =~ s!^/($module/)?!!; # remove the leading '/api' or '/ui' IFF it matches $module
 
 	if ($module eq "api") {
 	    if ($pattern =~ /\<fmt\>/) {
@@ -184,15 +187,24 @@ foreach $module (sort keys %urldispatch) {
 	}
 
 	print $indent, "(", "r'^$p\$',\n$indent $wrapper, { ";
-	foreach $method (sort keys %{ $urldispatch{$module}{$pattern} }) {
+
+	@methods = sort keys %{ $urldispatch{$module}{$pattern} };
+
+	foreach $method (@methods) {
 	    $x = $urldispatch{$module}{$pattern}{$method};
-	    print "'$method' : [ $x ],\n", $indent
+	    print "'$method' : [ $x ],";
+	    
+	    if ($method ne $methods[-1]) {
+		print "\n$indent";
+	    }
+	    else {
+		print " ";
+	    }
 	}
 	print "}),\n";
 
     }
-    print "#"x66, "\n";
-    print "#"x66, "\n";
+    print $indent, ")\n\n";
     print "#"x66, "\n";
     select(STDOUT);
 }
@@ -230,18 +242,6 @@ __END__;
 # urls and views templates
 
 # ps: note to alec: | cts -k 3
-
-##################################################################
-
-mine  POST  /key/(MK_HMAC)/(MK_FID)/(MK_FVERSION)/(MK_IID)/(MK_DEPTH)/(MK_TYPE).(MK_EXT)  minekey-submit
-mine  GET   /key/(MK_HMAC)/(MK_FID)/(MK_FVERSION)/(MK_IID)/(MK_DEPTH)/(MK_TYPE).(MK_EXT)  minekey-read
-
-mine  GET   /                      mine-root
-mine  GET   /favicon.ico           mine-favicon
-
-mine  GET   /page/(SUFFIX)         vurl-read-by-name
-mine  GET   /pub(/SUFFIX)          mine-public
-mine  GET   /vurl/(VURLKEY)        vurl-read-by-key
 
 ##################################################################
 
@@ -303,51 +303,59 @@ api  GET     /api/vurl/(ID)/(ATTR).(FMT)     get-thing-attr        thyng:Vurl
 
 ##################################################################
 
-ui  GET  /ui/create/comment/(IDZ).html  create-comment   template:'create/comment.html'
-ui  GET  /ui/create/feed.html           render           template:'create/feed.html'
-ui  GET  /ui/create/item.html           render           template:'create/item.html'
-ui  GET  /ui/create/tag.html            render           template:'create/tag.html'
-ui  GET  /ui/create/vurl.html           render           template:'create/vurl.html'
-
-ui  GET  /ui/dash/comments.html         dash-comments    template:'dash/comments.html'
-ui  GET  /ui/dash/feeds.html            dash-feeds       template:'dash/feeds.html'
-ui  GET  /ui/dash/items.html            dash-items       template:'dash/items.html'
-ui  GET  /ui/dash/tags.html             dash-tags        template:'dash/tags.html'
-ui  GET  /ui/dash/vurls.html            dash-vurls       template:'dash/vurls.html'
-
-ui  GET  /ui/dash/search.html           render           template:'dash/search.html'
-ui  GET  /ui/dash/settings.html         render           template:'dash/settings.html'
-
-ui  GET  /ui/delete/comment/(ID).html   delete-comment   template:'delete/comment.html'
-ui  GET  /ui/delete/feed/(ID).html      delete-feed      template:'delete/feed.html'
-ui  GET  /ui/delete/item/(ID).html      delete-item      template:'delete/item.html'
-ui  GET  /ui/delete/tag/(ID).html       delete-tag       template:'delete/tag.html'
-ui  GET  /ui/delete/vurl/(ID).html      delete-vurl      template:'delete/vurl.html'
-
-ui  GET  /ui/list/comments/(IDZ).html   list-comments    template:'list/comments.html'
-ui  GET  /ui/list/feeds.html            list-feeds       template:'list/feeds.html'
-ui  GET  /ui/list/items.html            list-items       template:'list/items.html'
-ui  GET  /ui/list/tags.html             list-tags        template:'list/tags.html'
-ui  GET  /ui/list/vurls.html            list-vurls       template:'list/vurls.html'
-
-ui  GET  /ui/read/comment/(ID).html     read-comment     template:'read/comment.html'
-ui  GET  /ui/read/feed/(ID).html        read-feed        template:'read/feed.html'
-ui  GET  /ui/read/item/(ID).html        read-item        template:'read/item.html'
-ui  GET  /ui/read/tag/(ID).html         read-tag         template:'read/tag.html'
-ui  GET  /ui/read/vurl/(ID).html        read-vurl        template:'read/vurl.html'
-
-ui  GET  /ui/search/comments.html       search-comments  template:'search/comments.html'
-ui  GET  /ui/search/feeds.html          search-feeds     template:'search/feeds.html'
-ui  GET  /ui/search/items.html          search-items     template:'search/items.html'
-ui  GET  /ui/search/tags.html           search-tags      template:'search/tags.html'
-ui  GET  /ui/search/vurls.html          search-vurls     template:'search/vurls.html'
-
-ui  GET  /ui/update/comment/(ID).html   update-comment   template:'update/comment.html'
-ui  GET  /ui/update/feed/(ID).html      update-feed      template:'update/feed.html'
-ui  GET  /ui/update/item/(ID).html      update-item      template:'update/item.html'
-ui  GET  /ui/update/tag/(ID).html       update-tag       template:'update/tag.html'
-ui  GET  /ui/update/vurl/(ID).html      update-vurl      template:'update/vurl.html'
-
-ui  GET  /ui/version.html               version          template:'version.html'
+mine  POST  /key/(MK_HMAC)/(MK_FID)/(MK_FVERSION)/(MK_IID)/(MK_DEPTH)/(MK_TYPE).(MK_EXT)  minekey-submit
+mine  GET   /key/(MK_HMAC)/(MK_FID)/(MK_FVERSION)/(MK_IID)/(MK_DEPTH)/(MK_TYPE).(MK_EXT)  minekey-read
 
 ##################################################################
+
+mine  GET  /                mine-redirect      target:'ui/dash/home.html'
+mine  GET  /favicon.ico     get-favicon
+mine  GET  /page/(SUFFIX)   vurl-read-by-name
+mine  GET  /pub(/SUFFIX)    mine-public
+mine  GET  /vurl/(VURLKEY)  vurl-read-by-key
+
+##################################################################
+
+ui  GET  /ui/create/comment/(IDZ).html  create-comment     template:'create/comment.html'
+ui  GET  /ui/create/feed.html           render             template:'create/feed.html'
+ui  GET  /ui/create/item.html           render             template:'create/item.html'
+ui  GET  /ui/create/tag.html            render             template:'create/tag.html'
+ui  GET  /ui/create/vurl.html           render             template:'create/vurl.html'
+ui  GET  /ui/dash/comments.html         dash-comments      template:'dash/comments.html'
+ui  GET  /ui/dash/feeds.html            dash-feeds         template:'dash/feeds.html'
+ui  GET  /ui/dash/home.html             render             template:'dash/home.html'
+ui  GET  /ui/dash/items.html            dash-items         template:'dash/items.html'
+ui  GET  /ui/dash/search.html           render             template:'dash/search.html'
+ui  GET  /ui/dash/settings.html         render             template:'dash/settings.html'
+ui  GET  /ui/dash/tags.html             dash-tags          template:'dash/tags.html'
+ui  GET  /ui/dash/vurls.html            dash-vurls         template:'dash/vurls.html'
+ui  GET  /ui/delete/comment/(ID).html   delete-comment     template:'delete/comment.html'
+ui  GET  /ui/delete/feed/(ID).html      delete-feed        template:'delete/feed.html'
+ui  GET  /ui/delete/item/(ID).html      delete-item        template:'delete/item.html'
+ui  GET  /ui/delete/tag/(ID).html       delete-tag         template:'delete/tag.html'
+ui  GET  /ui/delete/vurl/(ID).html      delete-vurl        template:'delete/vurl.html'
+ui  GET  /ui/list/comments/(IDZ).html   list-comments      template:'list/comments.html'
+ui  GET  /ui/list/feeds.html            list-feeds         template:'list/feeds.html'
+ui  GET  /ui/list/items.html            list-items         template:'list/items.html'
+ui  GET  /ui/list/tags.html             list-tags          template:'list/tags.html'
+ui  GET  /ui/list/vurls.html            list-vurls         template:'list/vurls.html'
+ui  GET  /ui/read/comment/(ID).html     read-comment       template:'read/comment.html'
+ui  GET  /ui/read/feed/(ID).html        read-feed          template:'read/feed.html'
+ui  GET  /ui/read/item/(ID).html        read-item          template:'read/item.html'
+ui  GET  /ui/read/tag/(ID).html         read-tag           template:'read/tag.html'
+ui  GET  /ui/read/vurl/(ID).html        read-vurl          template:'read/vurl.html'
+ui  GET  /ui/search/comments.html       search-comments    template:'search/comments.html'
+ui  GET  /ui/search/feeds.html          search-feeds       template:'search/feeds.html'
+ui  GET  /ui/search/items.html          search-items       template:'search/items.html'
+ui  GET  /ui/search/tags.html           search-tags        template:'search/tags.html'
+ui  GET  /ui/search/vurls.html          search-vurls       template:'search/vurls.html'
+ui  GET  /ui/update/comment/(ID).html   update-comment     template:'update/comment.html'
+ui  GET  /ui/update/feed/(ID).html      update-feed        template:'update/feed.html'
+ui  GET  /ui/update/item/(ID).html      update-item        template:'update/item.html'
+ui  GET  /ui/update/tag/(ID).html       update-tag         template:'update/tag.html'
+ui  GET  /ui/update/vurl/(ID).html      update-vurl        template:'update/vurl.html'
+ui  GET  /ui/version.html               version            template:'version.html'
+
+##################################################################
+
+dev  GET  /dev/home.html  render  template:'dev/tbd.html'

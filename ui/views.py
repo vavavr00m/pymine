@@ -20,8 +20,6 @@
 from django.shortcuts import render_to_response
 
 ##################################################################
-##################################################################
-##################################################################
 
 # this definition (create_comment) is auto-generated.
 # ensure that any changes are made via the generator.
@@ -305,6 +303,7 @@ def render(request, template, **kwargs):
     implements: GET /ui/create/item.html
     implements: GET /ui/create/tag.html
     implements: GET /ui/create/vurl.html
+    implements: GET /ui/dash/home.html
     implements: GET /ui/dash/search.html
     implements: GET /ui/dash/settings.html
     returns: ...
@@ -455,6 +454,4 @@ def version(request, template, **kwargs):
     s = {}
     return render_to_response(template, s)
 
-##################################################################
-##################################################################
 ##################################################################
