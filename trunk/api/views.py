@@ -169,7 +169,7 @@ def list_comments(request, idz, **kwargs):
     if 'query' in request.REQUEST:
         qs = Comment.execute_search_query(request.REQUEST['query'], qs)
 
-    result = [ { m.sattr_prefix : m.to_structure() } for m in qs ]
+    result = [ { m.prefix : m.to_structure() } for m in qs ]
     return Envelope(request, result)
 
 ##################################################################
@@ -204,7 +204,7 @@ def list_things(request, thyng, **kwargs):
     if 'query' in request.REQUEST:
         qs = thyng.execute_search_query(request.REQUEST['query'], qs)
 
-    result = [ { m.sattr_prefix : m.to_structure() } for m in qs ]
+    result = [ { m.prefix : m.to_structure() } for m in qs ]
     return Envelope(request, result)
 
 ##################################################################
