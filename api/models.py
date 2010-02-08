@@ -78,81 +78,80 @@ class Space:
 
     class r2s_lib:
 	@staticmethod
-	def verbatim(r, s, sattr):
-	    """copy a string from a request, to a string in a structure, verbatim"""
-	    s[sattr] = str(r.POST[sattr])
-
-	@staticmethod
-	def strip(r, s, sattr):
-	    """copy a string from a request, to a string in a structure, stripping leading and trailing spaces"""
-	    s[sattr] = str(r.POST[sattr]).strip()
+	def bool(r, s, sattr):
+	    """copy a field from a request, to a bool in a structure"""
+	    s[sattr] = True if int(r.POST[sattr]) else False
 
 	@staticmethod
 	def integer(r, s, sattr):
 	    """copy a field from a request, to an int in a structure"""
 	    s[sattr] = int(r.POST[sattr])
 
+	@staticmethod # THIS IS THE DEFAULT HARDCODED R2S_LIB METHOD
+	def strip(r, s, sattr):
+	    """copy a string from a request, to a string in a structure, stripping leading and trailing spaces"""
+	    s[sattr] = str(r.POST[sattr]).strip()
+
 	@staticmethod
-	def bool(r, s, sattr):
-	    """copy a field from a request, to a bool in a structure"""
-	    s[sattr] = True if int(r.POST[sattr]) else False
+	def verbatim(r, s, sattr):
+	    """copy a string from a request, to a string in a structure, verbatim"""
+	    s[sattr] = str(r.POST[sattr])
 
     class s2m_lib:
-	@staticmethod # BACKEND METHOD
-	def thingref(klass, s, sattr, m, mattr):
-	    """process a foreign key reference"""
+	@staticmethod
+	def comment_from_feed(s, sattr, m, mattr):
+	    """ """
 	    pass
 
 	@staticmethod
-	def itemref(s, sattr, m, mattr):
-	    """process a foreign key reference"""
-	    return thingref(Item, s, sattr, m, mattr)
-
-	@staticmethod
-	def feedref(s, sattr, m, mattr):
-	    """process a foreign key reference"""
-	    return thingref(Feed, s, sattr, m, mattr)
-
-	@staticmethod # BACKEND METHOD
-	def thingreflist(klass, s, sattr, m, mattr):
-	    """process a foreign key reference"""
+	def comment_upon_item(s, sattr, m, mattr):
+	    """ """
 	    pass
 
 	@staticmethod
-	def tagreflist(s, sattr, m, mattr):
-	    """process a foreign key reference list / manytomany field"""
-	    return tagreflist(Tag, s, sattr, m, mattr)
-
-	@staticmethod
-	def itemreflist(s, sattr, m, mattr):
-	    """process a foreign key reference list / manytomany field"""
-	    return tagreflist(Item, s, sattr, m, mattr)
-
-	@staticmethod
-	def feedreflist(s, sattr, m, mattr):
-	    """process a foreign key reference list / manytomany field"""
-	    return tagreflist(Feed, s, sattr, m, mattr)
-
-	@staticmethod
-	def dummy(s, sattr, m, mattr):
-	    """do nothing"""
+	def feed_tags(s, sattr, m, mattr):
+	    """ """
 	    pass
 
 	@staticmethod
-	def copy(s, sattr, m, mattr):
-	    """copy a field in a structure, to a field in a model, preserving type"""
-	    if sattr in s: setattr(m, mattr, s[sattr])
+	def feed_tags_exclude(s, sattr, m, mattr):
+	    """ """
+	    pass
 
 	@staticmethod
-	def strip(s, sattr, m, mattr):
-	    """copy a field (assume type string) in a structure, to a string in a model, stripping leading and trailing spaces"""
-	    if sattr in s: setattr(m, mattr, s[sattr].strip())
+	def feed_tags_require(s, sattr, m, mattr):
+	    """ """
+	    pass
 
 	@staticmethod
-	def date(s, sattr, m, mattr):
-	    """copy a date in a structure, to a date in a model"""
-	    if sattr in s:
-		raise RuntimeError, "not yet integrated the Date parser"
+	def item_for_feeds(s, sattr, m, mattr):
+	    """ """
+	    pass
+
+	@staticmethod
+	def item_links_to_items(s, sattr, m, mattr):
+	    """ """
+	    pass
+
+	@staticmethod
+	def item_not_feeds(s, sattr, m, mattr):
+	    """ """
+	    pass
+
+	@staticmethod
+	def item_tags(s, sattr, m, mattr):
+	    """ """
+	    pass
+
+	@staticmethod
+	def item_status(s, sattr, m, mattr):
+	    """ """
+	    pass
+
+	@staticmethod
+	def tag_implies(s, sattr, m, mattr):
+	    """ """
+	    pass
 
 	@staticmethod
 	def bool(s, sattr, m, mattr):
@@ -162,48 +161,92 @@ class Space:
 		    setattr(m, mattr, True)
 		else:
 		    setattr(m, mattr, False)
+	@staticmethod
+	def copy(s, sattr, m, mattr):
+	    """copy a field in a structure, to a field in a model, preserving type"""
+	    if sattr in s: setattr(m, mattr, s[sattr])
+
+	@staticmethod
+	def date(s, sattr, m, mattr):
+	    """copy a date in a structure, to a date in a model"""
+	    if sattr in s:
+		raise RuntimeError, "not yet integrated the Date parser"
+
+	@staticmethod
+	def strip(s, sattr, m, mattr):
+	    """copy a field (assume type string) in a structure, to a string in a model, stripping leading and trailing spaces"""
+	    if sattr in s: setattr(m, mattr, s[sattr].strip())
+
 
     class m2s_lib:
-	@staticmethod # BACKEND METHOD
-	def thingref(klass, m, mattr, s, sattr):
-	    """process a foreign key reference"""
+	@staticmethod
+	def comment_from_feed(m, mattr, s, sattr):
+	    """ """
 	    pass
 
 	@staticmethod
-	def itemref(m, mattr, s, sattr):
-	    """process a foreign key reference"""
-	    return thingref(Item, m, mattr, s, sattr)
-
-	@staticmethod
-	def feedref(m, mattr, s, sattr):
-	    """process a foreign key reference"""
-	    return thingref(Feed, m, mattr, s, sattr)
-
-	@staticmethod # BACKEND METHOD
-	def thingreflist(klass, m, mattr, s, sattr):
-	    """process a foreign key reference"""
+	def comment_upon_item(m, mattr, s, sattr):
+	    """ """
 	    pass
 
 	@staticmethod
-	def tagreflist(m, mattr, s, sattr):
-	    """process a foreign key reference list / manytomany field"""
-	    return tagreflist(Tag, m, mattr, s, sattr)
-
-	@staticmethod
-	def itemreflist(m, mattr, s, sattr):
-	    """process a foreign key reference list / manytomany field"""
-	    return tagreflist(Item, m, mattr, s, sattr)
-
-	@staticmethod
-	def feedreflist(m, mattr, s, sattr):
-	    """process a foreign key reference list / manytomany field"""
-	    return tagreflist(Feed, m, mattr, s, sattr)
-
-	@staticmethod
-	def dummy(m, mattr, s, sattr):
-	    """do nothing"""
+	def feed_tags(m, mattr, s, sattr):
+	    """ """
 	    pass
 
+	@staticmethod
+	def feed_tags_exclude(m, mattr, s, sattr):
+	    """ """
+	    pass
+
+	@staticmethod
+	def feed_tags_require(m, mattr, s, sattr):
+	    """ """
+	    pass
+
+	@staticmethod
+	def item_for_feeds(m, mattr, s, sattr):
+	    """ """
+	    pass
+
+	@staticmethod
+	def item_links_to_items(m, mattr, s, sattr):
+	    """ """
+	    pass
+
+	@staticmethod
+	def item_not_feeds(m, mattr, s, sattr):
+	    """ """
+	    pass
+
+	@staticmethod
+	def item_tags(m, mattr, s, sattr):
+	    """ """
+	    pass
+
+	@staticmethod
+	def item_status(m, mattr, s, sattr):
+	    """ """
+	    pass
+
+	@staticmethod
+	def tag_cloud(m, mattr, s, sattr):
+	    """ """
+	    pass
+
+	@staticmethod
+	def tag_implies(m, mattr, s, sattr):
+	    """ """
+	    pass
+
+	@staticmethod
+	def bool(m, mattr, s, sattr):
+	    """copy a field in a model, to a field in a structure"""
+	    x = getattr(m, mattr)
+	    if x:
+		s[sattr] = 1
+	    else:
+		s[sattr] = 0
 	@staticmethod
 	def copy(m, mattr, s, sattr):
 	    """copy a field in a model, to a field in a structure, preserving type"""
@@ -216,53 +259,44 @@ class Space:
 	    x = getattr(m, mattr)
 	    if x: s[sattr] = x.isoformat()
 
-	@staticmethod
-	def bool(m, mattr, s, sattr):
-	    """copy a field in a model, to a field in a structure"""
-	    x = getattr(m, mattr)
-	    if x:
-		s[sattr] = 1
-	    else:
-		s[sattr] = 0
-
     class gc_lib:
 	@staticmethod
-	def to_null(m, mattr):
+	def skip(m, mattr):
+	    """do not trash a field"""
+	    pass
+
+	@staticmethod
+	def nullify(m, mattr):
 	    """trash a field in a model, by nulling it (not secure delete). requires save()"""
 	    setattr(m, matter, None)
 
 	@staticmethod
-	def dereference(m, mattr):
-	    """trash a field in a model, by unreferencing it (not secure delete). requires save()"""
-	    pass
-
-	@staticmethod
-	def dereflist(m, mattr):
+	def reflist(m, mattr):
 	    """trash a field in a model, by unreferencing the contents (not secure delete). requires save()"""
 	    pass
 
 	@staticmethod
-	def defile(m, mattr):
+	def file(m, mattr):
 	    """trash a file in a model by deleting it (not likely to be secure delete).  requires save()"""
 	    pass
 
 	@staticmethod
-	def to_blank(m, mattr):
+	def blankify(m, mattr):
 	    """trash a field in a model by blanking it (not secure delete). requires save()"""
 	    setattr(m, matter, "")
 
 	@staticmethod
-	def to_zero(m, mattr):
+	def zeroify(m, mattr):
 	    """trash a field in a model by setting it to 0 (not secure delete). requires save()"""
 	    setattr(m, matter, 0)
 
 	@staticmethod
-	def to_false(m, mattr):
+	def falsify(m, mattr):
 	    """trash a field in a model by setting it to False (not secure delete). requires save()"""
 	    setattr(m, matter, False)
 
 	@staticmethod
-	def to_unique(m, mattr):
+	def munge(m, mattr):
 	    """trash a field in a model by filling it with hopefully unique garbage (not secure delete). requires save()"""
 	    setattr(m, mattr, "__%s_%d_%s__" % (mattr, m.id, 'RANDOM_GARBAGE_TBD'))
 
@@ -280,6 +314,22 @@ class Space:
 	m2s = {}
 	gc = {}
 
+        defer_table = {
+            'commentFromFeed': True,
+            'commentUponItem': True,
+            'feedTags': True,
+            'feedTagsExclude': True,
+            'feedTagsRequire': True,
+            'itemData': True,
+            'itemForFeeds': True,
+            'itemIcon': True,
+            'itemLinksToItems': True,
+            'itemNotFeeds': True,
+            'itemTags': True,
+            'tagCloud': True,
+            'tagImplies': True,
+            }
+
 	def barf(direction, mattr, sattr):
 	    """to be called when methud exists but is empty"""
 	    raise RuntimeError, 'blank methud for %s, %s, %s' % (direction, mattr, sattr)
@@ -290,7 +340,7 @@ class Space:
 	    table = attr_map[mattr]
 	    sattr = prefix + "".join([ string.capitalize(x) for x in mattr.split("_") ])
 
-	    # print mattr, "->", sattr
+	    # print prefix + "." + mattr, "->", sattr
 
 	    if 'm2s' in table:
 		methud = getattr(Space.m2s_lib, table['m2s'])
@@ -300,7 +350,7 @@ class Space:
 	    if 's2m' in table:
 		methud = getattr(Space.s2m_lib, table['s2m'])
 		if not methud: barf('s2m', mattr, sattr)
-		s2m[sattr] = lambda s, m: methud(s, sattr, m, mattr)
+		s2m[sattr] = ( defer_table.get(sattr, False), lambda s, m: methud(s, sattr, m, mattr) )
 		r2s[sattr] = lambda r, s: Space.r2s_lib.strip(r, s, sattr) # default to r2s.strip()
 
 	    if 'r2s' in table: # override default provided in s2m
@@ -314,7 +364,7 @@ class Space:
 		methud = getattr(Space.gc_lib, table['gc'])
 		gc[mattr] = lambda m: methud(m, mattr)
 	    else:
-		gc[mattr] = lambda m: gc_lib.to_null(m, mattr) # default to_null()
+		gc[mattr] = lambda m: gc_lib.nullify(m, mattr) # default nullify()
 
 	return (r2s, s2m, m2s, gc)
 
@@ -442,26 +492,6 @@ class AbstractModel(models.Model):
     created = AbstractField.created()
     last_modified = AbstractField.last_modified()
 
-    @classmethod
-    def get(klass, **kwargs):
-	"""return a single model matching kwargs; expunge virtually-deleted ones; if none return None; if multiple, throw exception"""
-	pass
-
-    @classmethod
-    def list(klass, **kwargs):
-	"""return a queryset of models matching kwargs; expunge virtually-deleted ones"""
-	pass
-
-    @classmethod
-    def search(klass, search_string, **kwargs):
-	"""return a queryset of models matching search_string; expunge virtually-deleted ones"""
-	pass
-
-    @classmethod
-    def all(klass, **kwargs):
-	"""return a queryset of models matching kwargs; INCLUDE virtually-deleted ones"""
-	pass
-
 ##################################################################
 ##################################################################
 ##################################################################
@@ -560,7 +590,7 @@ class AbstractThing(AbstractModel):
     is_deleted = AbstractField.bool(False)
 
     @classmethod
-    def create(self, request=None, **kwargs):
+    def create(klass, request=None, **kwargs):
 	"""
 	create a new Thing from a HTTPRequest, overriding with values from kwargs.
 
@@ -574,25 +604,92 @@ class AbstractThing(AbstractModel):
 	multiple Items().  For Item() creation via the API, all this
 	will be made plain via the envelope metadata.
 	"""
-	pass
+        margs = {}
+        m = klass(**margs)
+        return m.update(request, **kwargs)
+
+    @classmethod
+    def get(klass, **kwargs):
+	"""return a single model matching kwargs; expunge virtually-deleted ones; if none return None; if multiple, throw exception"""
+	return klass.objects.filter(is_deleted=False).get(**kwargs)
+
+    @classmethod
+    def list(klass, **kwargs):
+	"""return a queryset of models matching kwargs; expunge virtually-deleted ones"""
+	return klass.objects.filter(is_deleted=False).filter(**kwargs)
+
+    @classmethod
+    def execute_search_query(klass, search_string, qs):
+        """take one queryset and return another, filtered by the content of search_string; this version is a no-op"""
+        return qs
+
+    @classmethod
+    def search(klass, search_string, **kwargs):
+	"""return a queryset of models matching **kwargs and search_string; expunge virtually-deleted ones"""
+	return klass.execute_search_query(search_string, klass.list(**kwargs))
 
     def update(self, request=None, **kwargs):
 	"""update a single Thing from a HTTPRequest, overriding with values from kwargs"""
-	pass
 
-    def delete(self):
+        # build a shadow structure: useful for debug/clarity                                                                         
+        s = {}
+
+        # update shadow structure from request and kwargs
+        for sattr in self.r2s.keys():
+            if sattr in kwargs: 
+                s[sattr] = kwargs[sattr]
+            elif request and sattr in r.POST: 
+                self.r2s[sattr](request, s)    
+            else: 
+                continue # kinda redundant but clearer
+
+        # update self from shadow structure
+
+        # stage 1: undeferred
+        i_changed_something = False
+
+        for sattr in self.s2m.keys():
+            methud, defer = self.s2m[sattr]
+            if not defer:
+                methud(s, self)
+                i_changed_something = True
+
+        # the point of deferral is to save a record so there is an Id,
+        # so that foreign keys can work and files can be saved; so
+        # it's only really relevant if there is no Id
+
+        if i_changed_something and not self.id:
+            self.save() # generate an id
+
+        # stage 2: deferred
+        i_changed_something = False
+
+        for sattr in self.s2m.keys():
+            methud, defer = self.s2m[sattr]
+            if defer:
+                methud(s, self)
+                i_changed_something = True
+
+        if i_changed_something:
+            self.save()
+
+        # stage 3: file saving
+        # do this by subclassing
+
+    def delete(self): # this is the primary consumer of gc
 	"""gc all the fields and mark this Thing as deleted"""
-
-	for mattr in self.gc.keys():
-	    self.gc[mattr](self)
-
+	for mattr in self.gc.keys(): 
+            self.gc[mattr](self)
 	self.is_deleted = True
 	self.save()
 
-    def to_structure(self):
+    def to_structure(self): # this is the primary consumer of m2s
 	"""convert this model m to a dictionary structure s (ie: s-space)"""
-	pass
-
+	s = {}
+        for mattr in self.m2s.keys(): 
+            self.m2s[mattr](self, s)
+        return s
+        
     def get_absolute_url(self):
 	"""return a url for this object for administrative purposes"""
 	url = u''
@@ -624,13 +721,13 @@ class Tag(AbstractThing):
     attr_map = {
 	'__prefix__': "tag",
 	'id': dict(r2s='integer', s2m='copy', m2s='copy'),
-	'created': dict(s2m='date', m2s='date'),
-	'last_modified': dict(s2m='date', m2s='date'),
+	'created': dict(gc='skip', s2m='date', m2s='date'),
+	'last_modified': dict(gc='skip', s2m='date', m2s='date'),
 
-	'name': dict(s2m='copy', m2s='copy'),
+	'name': dict(gc='munge', s2m='copy', m2s='copy'),
 	'description': dict(r2s='verbatim', s2m='copy', m2s='copy'),
-	'implies': dict(s2m='dummy', m2s='dummy'),
-	'cloud': dict(s2m='dummy', m2s='dummy'),
+	'implies': dict(gc='reflist', s2m='tag_implies', m2s='tag_implies'),
+	'cloud': dict(gc='reflist', m2s='tag_cloud'),
 	}
     (r2s, s2m, m2s, gc) = Space.compile(attr_map)
 
@@ -645,14 +742,14 @@ class Vurl(AbstractThing):
     attr_map = {
 	'__prefix__': "vurl",
 	'id': dict(r2s='integer', s2m='copy', m2s='copy'),
-	'created': dict(s2m='date', m2s='date'),
-	'last_modified': dict(s2m='date', m2s='date'),
+	'created': dict(gc='skip', s2m='date', m2s='date'),
+	'last_modified': dict(gc='skip', s2m='date', m2s='date'),
 
-	'name': dict(s2m='copy', m2s='copy'),
-	'link': dict(s2m='copy', m2s='copy'),
+	'name': dict(gc='munge', s2m='copy', m2s='copy'),
+	'link': dict(gc='munge', s2m='copy', m2s='copy'),
 	'invalid_before': dict(s2m='date', m2s='date'),
 	'invalid_after': dict(s2m='date', m2s='date'),
-	'use_temporary_redirect': dict(r2s='bool', s2m='bool', m2s='bool'),
+	'use_temporary_redirect': dict(gc='falsify', r2s='bool', s2m='bool', m2s='bool'),
 	}
     (r2s, s2m, m2s, gc) = Space.compile(attr_map)
 
@@ -668,20 +765,20 @@ class Feed(AbstractThing):
     attr_map = {
 	'__prefix__': "feed",
 	'id': dict(r2s='integer', s2m='copy', m2s='copy'),
-	'created': dict(s2m='date', m2s='date'),
-	'last_modified': dict(s2m='date', m2s='date'),
+	'created': dict(gc='skip', s2m='date', m2s='date'),
+	'last_modified': dict(gc='skip', s2m='date', m2s='date'),
 
-	'name': dict(s2m='copy', m2s='copy'),
-	'version': dict(s2m='dummy', m2s='dummy'),
+	'name': dict(gc='munge', s2m='copy', m2s='copy'),
+	'version': dict(gc='zeroify', r2s='integer', s2m='copy', m2s='copy'),
 	'description': dict(r2s='verbatim', s2m='copy', m2s='copy'),
 	'embargo_after': dict(s2m='date', m2s='date'),
 	'embargo_before': dict(s2m='date', m2s='date'),
-	'tags': dict(s2m='dummy', m2s='dummy'),
-	'tags_exclude': dict(s2m='dummy', m2s='dummy'),
-	'tags_require': dict(s2m='dummy', m2s='dummy'),
+	'tags': dict(gc='reflist', s2m='feed_tags', m2s='feed_tags'),
+	'tags_exclude': dict(gc='reflist', s2m='feed_tags_exclude', m2s='feed_tags_exclude'),
+	'tags_require': dict(gc='reflist', s2m='feed_tags_require', m2s='feed_tags_require'),
 	'permitted_networks': dict(s2m='copy', m2s='copy'),
 	'content_constraints': dict(s2m='copy', m2s='copy'),
-	'is_private': dict(r2s='bool', s2m='bool', m2s='bool'),
+	'is_private': dict(gc='falsify', r2s='bool', s2m='bool', m2s='bool'),
 	}
     (r2s, s2m, m2s, gc) = Space.compile(attr_map)
 
@@ -703,28 +800,29 @@ class Item(AbstractThing):
     attr_map = {
 	'__prefix__': "item",
 	'id': dict(r2s='integer', s2m='copy', m2s='copy'),
-	'created': dict(s2m='date', m2s='date'),
-	'last_modified': dict(s2m='date', m2s='date'),
+	'created': dict(gc='skip', s2m='date', m2s='date'),
+	'last_modified': dict(gc='skip', s2m='date', m2s='date'),
 
-	'name': dict(s2m='copy', m2s='copy'),
-	'status': dict(s2m='dummy', m2s='dummy'),
+	'name': dict(gc='munge', s2m='copy', m2s='copy'),
+	'status': dict(gc='skip', s2m='item_status', m2s='item_status'),
 	'description': dict(r2s='verbatim', s2m='copy', m2s='copy'),
 	'hide_after': dict(s2m='date', m2s='date'),
 	'hide_before': dict(s2m='date', m2s='date'),
-	'tags': dict(s2m='dummy', m2s='dummy'),
-	'item_for_feeds': dict(s2m='dummy', m2s='dummy'),
-	'item_not_feeds': dict(s2m='dummy', m2s='dummy'),
-	'data': dict(s2m='dummy', m2s='dummy'),
+	'tags': dict(gc='reflist', s2m='item_tags', m2s='item_tags'),
+	'for_feeds': dict(gc='reflist', s2m='item_for_feeds', m2s='item_for_feeds'),
+	'not_feeds': dict(gc='reflist', s2m='item_not_feeds', m2s='item_not_feeds'),
 	'data_type': dict(s2m='copy', m2s='copy'),
 	'data_remote_url': dict(s2m='copy', m2s='copy'),
-	'linked_items': dict(s2m='dummy', m2s='dummy'),
+	'links_to_items': dict(gc='reflist', s2m='item_links_to_items', m2s='item_links_to_items'),
 	'encryption_method': dict(s2m='copy', m2s='copy'),
 	'digest_method': dict(s2m='copy', m2s='copy'),
 	'encryption_key': dict(s2m='copy', m2s='copy'),
 	'ciphertext_digest': dict(s2m='copy', m2s='copy'),
-	'icon': dict(s2m='dummy', m2s='dummy'),
 	'icon_type': dict(s2m='copy', m2s='copy'),
 	'icon_ciphertext_digest': dict(s2m='copy', m2s='copy'),
+
+        'data': dict(gc='file'),
+        'icon': dict(gc='file'),
 	}
     (r2s, s2m, m2s, gc) = Space.compile(attr_map)
 
@@ -734,21 +832,21 @@ class Item(AbstractThing):
     hide_after = AbstractField.datetime(required=False)
     hide_before = AbstractField.datetime(required=False)
     tags = AbstractField.reflist(Tag, pivot='items_tagged', required=False)
-    item_for_feeds = AbstractField.reflist(Feed, pivot='items_explicitly_for', required=False)
-    item_not_feeds = AbstractField.reflist(Feed, pivot='items_explicitly_not', required=False)
+    for_feeds = AbstractField.reflist(Feed, pivot='items_explicitly_for', required=False)
+    not_feeds = AbstractField.reflist(Feed, pivot='items_explicitly_not', required=False)
 
-    data = AbstractField.file(storage=item_fss, upload_to=fss_yyyymmdd, required=False)
+    data = AbstractField.file(storage=item_fss, upload_to=fss_yyyymmdd, required=False) # not translated
     data_type = AbstractField.string(required=False)
     data_remote_url = AbstractField.url(required=False)
 
-    linked_items = AbstractField.reflist('Item', pivot='items_linked', required=False)
+    links_to_items = AbstractField.reflist('Item', pivot='item_linked_from', required=False)
 
     encryption_method = AbstractField.text(required=False)
     digest_method = AbstractField.text(required=False)
     encryption_key = AbstractField.text(required=False)
     ciphertext_digest = AbstractField.text(required=False)
 
-    icon = AbstractField.file(storage=icon_fss, upload_to=fss_yyyymmdd, required=False)
+    icon = AbstractField.file(storage=icon_fss, upload_to=fss_yyyymmdd, required=False) # not translated
     icon_type = AbstractField.string(required=False)
     icon_ciphertext_digest = AbstractField.text(required=False)
 
@@ -758,18 +856,19 @@ class Comment(AbstractThing):
     attr_map = {
 	'__prefix__': "comment",
 	'id': dict(r2s='integer', s2m='copy', m2s='copy'),
-	'created': dict(s2m='date', m2s='date'),
-	'last_modified': dict(s2m='date', m2s='date'),
+	'created': dict(gc='skip', s2m='date', m2s='date'),
+	'last_modified': dict(gc='skip', s2m='date', m2s='date'),
 
-	'title': dict(s2m='copy', m2s='copy'),
+	'title': dict(gc='munge', s2m='copy', m2s='copy'),
 	'body': dict(r2s='verbatim', s2m='copy', m2s='copy'),
-	'from_feed': dict(s2m='dummy', m2s='dummy'),
-	'upon_item': dict(s2m='dummy', m2s='dummy'),
-	'data': dict(s2m='dummy', m2s='dummy'),
+	'from_feed': dict(s2m='comment_from_feed', m2s='comment_from_feed'),
+	'upon_item': dict(s2m='comment_upon_item', m2s='comment_upon_item'),
 	'encryption_method': dict(s2m='copy', m2s='copy'),
 	'digest_method': dict(s2m='copy', m2s='copy'),
 	'encryption_key': dict(s2m='copy', m2s='copy'),
 	'ciphertext_digest': dict(s2m='copy', m2s='copy'),
+
+        'data': dict(gc='file'),
 	}
 
     (r2s, s2m, m2s, gc) = Space.compile(attr_map)
@@ -779,7 +878,7 @@ class Comment(AbstractThing):
     from_feed = AbstractField.reference(Feed, required=False)
     upon_item = AbstractField.reference(Item, required=False)
 
-    data = AbstractField.file(storage=comment_fss, upload_to=fss_yyyymmdd, required=False)
+    data = AbstractField.file(storage=comment_fss, upload_to=fss_yyyymmdd, required=False) # not translated
 
     encryption_method = AbstractField.text(required=False)
     digest_method = AbstractField.text(required=False)
