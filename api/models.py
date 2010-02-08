@@ -46,7 +46,7 @@ import string
 ##################################################################
 
 item_fss = None
-thumb_fss = None
+icon_fss = None
 comment_fss = None
 fss_yyyymmdd = '%Y-%m/%d'
 
@@ -566,7 +566,7 @@ class Feed(AbstractThing):
     tags_exclude = AbstractField.reflist(Tag, pivot='feeds_excluding', required=False)
     tags_require = AbstractField.reflist(Tag, pivot='feeds_requiring', required=False)
     permitted_networks = AbstractField.string(required=False)
-    constraint_string = AbstractField.string(required=False)
+    content_constraints = AbstractField.string(required=False)
     is_untrusted = AbstractField.bool(False)
 
 ##################################################################
@@ -591,16 +591,16 @@ class Item(AbstractThing):
     data_type = AbstractField.string(required=False)
     data_remote_url = AbstractField.url(required=False)
 
-    thumb = AbstractField.file(storage=thumb_fss, upload_to=fss_yyyymmdd, required=False)
-    thumb_type = AbstractField.string(required=False)
-
     linked_items = AbstractField.reflist('Item', pivot='items_linked', required=False)
 
     encryption_method = AbstractField.text(required=False)
     digest_method = AbstractField.text(required=False)
     encryption_key = AbstractField.text(required=False)
     ciphertext_digest = AbstractField.text(required=False)
-    thumb_ciphertext_digest = AbstractField.text(required=False)
+
+    icon = AbstractField.file(storage=icon_fss, upload_to=fss_yyyymmdd, required=False)
+    icon_type = AbstractField.string(required=False)
+    icon_ciphertext_digest = AbstractField.text(required=False)
 
 ##################################################################
 
@@ -616,6 +616,7 @@ class Comment(AbstractThing):
     body = AbstractField.text(required=False)
     from_feed = AbstractField.reference(Feed, required=False)
     upon_item = AbstractField.reference(Item, required=False)
+
     data = AbstractField.file(storage=comment_fss, upload_to=fss_yyyymmdd, required=False)
 
     encryption_method = AbstractField.text(required=False)

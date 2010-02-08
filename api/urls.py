@@ -19,6 +19,7 @@
 
 from django.conf.urls.defaults import *
 from pymine.views import API_REST, HTTP_METHOD
+from pymine.api.models import Comment, Feed, Tag, Item, Vurl
 import views as api
 
 urlpatterns = patterns('',
