@@ -279,12 +279,6 @@ api  POST    /api/item/(ID).(FMT)            update-thing          thyng:Item
 api  DELETE  /api/item/(ID)/(ATTR).(FMT)     delete-thing-attr     thyng:Item
 api  GET     /api/item/(ID)/(ATTR).(FMT)     get-thing-attr        thyng:Item
 
-api  GET     /api/query/comment.(FMT)        query-thing           thyng:Comment
-api  GET     /api/query/feed.(FMT)           query-thing           thyng:Feed
-api  GET     /api/query/item.(FMT)           query-thing           thyng:Item
-api  GET     /api/query/tag.(FMT)            query-thing           thyng:Tag
-api  GET     /api/query/vurl.(FMT)           query-thing           thyng:Vurl
-
 api  POST    /api/tag.(FMT)                  create-thing          thyng:Tag
 api  GET     /api/tag.(FMT)                  list-things           thyng:Tag
 api  DELETE  /api/tag/(ID).(FMT)             delete-thing          thyng:Tag

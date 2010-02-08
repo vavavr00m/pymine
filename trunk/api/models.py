@@ -306,6 +306,11 @@ class Space:
 	    """trash a file in a model by deleting it (not likely to be secure delete).  requires save()"""
 	    pass
 
+	@staticmethod
+	def item_status(m, mattr):
+	    """trash item.status_choice.  requires save()"""
+	    m.status = item_status_choices[0][0]
+
     @staticmethod
     def compile(attr_map):
 	"""
@@ -349,8 +354,8 @@ class Space:
 	    table = attr_map[mattr]
 	    sattr = prefix + "".join([ string.capitalize(x) for x in mattr.split("_") ])
 
-            print prefix + "." + mattr, "->", sattr
-            print table
+            # print prefix + "." + mattr, "->", sattr
+            # print table
 
 	    if 'm2s' in table:
 		methud = getattr(Space.m2s_lib, table['m2s'])
@@ -359,10 +364,10 @@ class Space:
 		    barf('m2s', mattr, sattr)
 
 		def m2s_closure(m, s, mattr=mattr, sattr=sattr, methud=methud):
-                    print "? m2s", mattr, sattr
+                    # print "? m2s", mattr, sattr
 		    if getattr(m, mattr):
 			methud(m, mattr, s, sattr)
-                        print "done"
+                        # print "done"
 
 		m2s[mattr] = m2s_closure
 
@@ -373,18 +378,18 @@ class Space:
 		    barf('s2m', mattr, sattr)
 
 		def s2m_closure(s, m, sattr=sattr, mattr=mattr, methud=methud):
-                    print "? s2m", mattr, sattr
+                    # print "? s2m", mattr, sattr
 
 		    if sattr in s:
 			methud(s, sattr, m, mattr)
-                        print "done"
+                        # print "done"
 
 		def r2s_closure(r, s, sattr=sattr):
-                    print "? r2s", sattr
+                    # print "? r2s", sattr
 
 		    if sattr in r.POST:
 			Space.r2s_lib.strip(r, s, sattr)
-                        print "done"
+                        # print "done"
 
 		s2m[sattr] = ( defer_table.get(sattr, False), s2m_closure )
 		r2s[sattr] = r2s_closure
@@ -396,11 +401,11 @@ class Space:
 		    barf('r2s', mattr, sattr)
 
 		def r2s_closure(r, s, sattr=sattr, methud=methud):
-                    print "? r2s2", sattr
+                    # print "? r2s2", sattr
 
 		    if sattr in r.POST:
 			methud(r, s, sattr)
-                        print "done"
+                        # print "done"
 
 		r2s[sattr] = r2s_closure
 
@@ -660,9 +665,9 @@ class AbstractThing(AbstractModel):
 	return klass.objects.filter(is_deleted=False).get(**kwargs)
 
     @classmethod
-    def list(klass, **kwargs):
+    def list(klass):
 	"""return a queryset of models matching kwargs; expunge virtually-deleted ones"""
-	return klass.objects.filter(is_deleted=False).filter(**kwargs)
+	return klass.objects.filter(is_deleted=False)
 
     @classmethod
     def execute_search_query(klass, search_string, qs):
@@ -682,7 +687,7 @@ class AbstractThing(AbstractModel):
 
 	# update shadow structure from request and kwargs
 	for sattr in self.r2s.keys():
-            print "1", sattr
+            # print "1", sattr
 	    if sattr in kwargs:
 		s[sattr] = kwargs[sattr]
 	    elif request and sattr in request.POST:
@@ -696,7 +701,7 @@ class AbstractThing(AbstractModel):
 	i_changed_something = False
 
 	for sattr in self.s2m.keys():
-            print "2", sattr
+            # print "2", sattr
 	    defer, methud = self.s2m[sattr]
 	    if not defer:
 		methud(s, self)
@@ -713,7 +718,7 @@ class AbstractThing(AbstractModel):
 	i_changed_something = False
 
 	for sattr in self.s2m.keys():
-            print "3", sattr
+            # print "3", sattr
 	    defer, methud = self.s2m[sattr]
 	    if defer:
 		methud(s, self)
@@ -747,20 +752,12 @@ class AbstractThing(AbstractModel):
 	url = u''
 	return iri_to_uri(url)
 
-    def set_attribute(self, key, value):
-	"""set attribute 'key' (or extended attribute for '$key') to 'value' (a string)"""
-	pass
-
-    def get_attribute(self, key):
-	"""get the value of attribute 'key' (or extended attribute for '$key')"""
-	pass
-
     def delete_attribute(self, key):
-	"""erase the value of attribute 'key' (or delete extended attribute '$key')"""
-	pass
+	"""
+        erase the value of attribute 'key' (or delete extended attribute '$key')
 
-    def list_attributes(self):
-	"""list all attributes and $extendedattributes"""
+        get_, set_, update_, and list_attributes are performed via views()
+        """
 	pass
 
     def __unicode__(self):
@@ -908,7 +905,7 @@ class Item(AbstractThing):
 	'last_modified': dict(gc='skip', s2m='date', m2s='date'),
 
 	'name': dict(gc='munge', s2m='copy', m2s='copy'),
-	'status': dict(gc='skip', s2m='item_status', m2s='item_status'),
+	'status': dict(gc='item_status', s2m='item_status', m2s='item_status'),
 	'description': dict(r2s='verbatim', s2m='copy', m2s='copy'),
 	'hide_after': dict(s2m='date', m2s='date'),
 	'hide_before': dict(s2m='date', m2s='date'),
