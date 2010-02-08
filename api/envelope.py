@@ -17,11 +17,12 @@
 
 """docstring goes here""" # :-)
 
-class Envelope:
+class Envelope(dict):
     """
+    wrapper-class atop 'dict' to provide a few extra methods
     """
 
     def __init__(self, request, result, **kwargs):
-        self.request = request
-        self.result = result
-        self.kwargs = kwargs
+        self.update(kwargs)
+        self[result] = result
+        # do some stuff with request, here
