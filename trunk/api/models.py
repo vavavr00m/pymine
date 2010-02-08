@@ -65,12 +65,11 @@ item_status_choices = (
     )
 
 # create a status-lookup table, long->short and short->long
-# short->long is ALSO covered by m.get_status_display()
+# short->long is covered by m.get_status_display()
 
 status_lookup = {}
 for short, long in item_status_choices:
     status_lookup[long] = short
-    status_lookup[short] = long
 
 ##################################################################
 
@@ -105,62 +104,91 @@ class Space:
 
     class s2m_lib:
 	@staticmethod
-	def comment_from_feed(s, sattr, m, mattr):
-	    """ """
-	    pass
+	def comment_from_feed(r, s, sattr, m, mattr):
+	    """insert reference from a comment to the feed from which it was sourced"""
+	    src = s[sattr]
+	    dst = Feed.get(name=src)
+	    setattr(m, mattr, dst)
 
 	@staticmethod
-	def comment_upon_item(s, sattr, m, mattr):
-	    """ """
-	    pass
+	def comment_upon_item(r, s, sattr, m, mattr):
+	    """insert reference from a comment to the item to which it refers"""
+	    src = s[sattr]
+	    dst = Item.get(id=src)
+	    setattr(m, mattr, dst)
 
 	@staticmethod
-	def feed_tags(s, sattr, m, mattr):
-	    """ """
-	    pass
+	def feed_interests(r, s, sattr, m, mattr):
+	    """insert tags regarding which the feed is interested"""
+	    dst = m.interests
+	    dst.clear()
+	    for x in s[sattr].split():
+		dst.add(Tag.get_or_auto_tag(r, x))
 
 	@staticmethod
-	def feed_tags_exclude(s, sattr, m, mattr):
-	    """ """
-	    pass
+	def feed_interests_exclude(r, s, sattr, m, mattr):
+	    """insert tags regarding which the feed is not interested"""
+	    dst = m.interests_exclude
+	    dst.clear()
+	    for x in s[sattr].split():
+		dst.add(Tag.get_or_auto_tag(r, x))
 
 	@staticmethod
-	def feed_tags_require(s, sattr, m, mattr):
-	    """ """
-	    pass
+	def feed_interests_require(r, s, sattr, m, mattr):
+	    """insert tags regarding which the feed mandates requirement"""
+	    dst = m.interests_require
+	    dst.clear()
+	    for x in s[sattr].split():
+		dst.add(Tag.get_or_auto_tag(r, x))
 
 	@staticmethod
-	def item_for_feeds(s, sattr, m, mattr):
-	    """ """
-	    pass
+	def item_for_feeds(r, s, sattr, m, mattr):
+	    """insert feeds to which the item is explicitly to be fed"""
+	    dst = m.for_feeds
+	    dst.clear()
+	    for x in s[sattr].split():
+		dst.add(Feed.get(name=x))
 
 	@staticmethod
-	def item_links_to_items(s, sattr, m, mattr):
-	    """ """
-	    pass
+	def item_links_to_items(r, s, sattr, m, mattr):
+	    """insert the list of items which this item encloses"""
+	    dst = m.links_to_items
+	    dst.clear()
+	    for x in s[sattr].split():
+		dst.add(Item.get(id=int(x)))
 
 	@staticmethod
-	def item_not_feeds(s, sattr, m, mattr):
-	    """ """
-	    pass
+	def item_not_feeds(r, s, sattr, m, mattr):
+	    """insert feeds for which the item is explicitly banned"""
+	    dst = m.for_feeds
+	    dst.clear()
+	    for x in s[sattr].split():
+		dst.add(Feed.get(name=x))
 
 	@staticmethod
-	def item_tags(s, sattr, m, mattr):
+	def item_tags(r, s, sattr, m, mattr):
 	    """ """
-	    pass
+	    dst = m.tags
+	    dst.clear()
+	    for x in s[sattr].split():
+		dst.add(Tag.get_or_auto_tag(r, x))
 
 	@staticmethod
-	def item_status(s, sattr, m, mattr):
-	    """ """
-	    pass
+	def item_status(r, s, sattr, m, mattr):
+	    """set the item statius"""
+	    src = s[sattr]
+	    setattr(m, mattr, status_lookup[src])
 
 	@staticmethod
-	def tag_implies(s, sattr, m, mattr):
-	    """ """
-	    pass
+	def tag_implies(r, s, sattr, m, mattr):
+	    """what tags does this tag imply"""
+	    dst = m.implies
+	    dst.clear()
+	    for x in s[sattr].split():
+		dst.add(Tag.get_or_auto_tag(r, x))
 
 	@staticmethod
-	def bool(s, sattr, m, mattr):
+	def bool(r, s, sattr, m, mattr):
 	    """copy a bool in a structure, to a bool in a model"""
 	    if s[sattr]:
 		setattr(m, mattr, True)
@@ -168,99 +196,117 @@ class Space:
 		setattr(m, mattr, False)
 
 	@staticmethod
-	def copy(s, sattr, m, mattr):
+	def copy(r, s, sattr, m, mattr):
 	    """copy a field in a structure, to a field in a model, preserving type"""
 	    setattr(m, mattr, s[sattr])
 
 	@staticmethod
-	def date(s, sattr, m, mattr):
+	def date(r, s, sattr, m, mattr):
 	    """copy a date in a structure, to a date in a model"""
 	    raise RuntimeError, "not yet integrated the Date parser"
 
 	@staticmethod
-	def strip(s, sattr, m, mattr):
+	def strip(r, s, sattr, m, mattr):
 	    """copy a field (assume type string) in a structure, to a string in a model, stripping leading and trailing spaces"""
 	    setattr(m, mattr, s[sattr].strip())
-
 
     # m2s must currently check for null before copy/set
     class m2s_lib:
 	@staticmethod
-	def comment_from_feed(m, mattr, s, sattr):
+	def comment_from_feed(r, m, mattr, s, sattr):
+	    """what feed is the comment from?"""
+            s[sattr] = getattr(m, mattr).name
+
+	@staticmethod
+	def comment_upon_item(r, m, mattr, s, sattr):
+	    """what item is the comment upon"""
+            s[sattr] = getattr(m, mattr).id
+
+	@staticmethod
+	def feed_interests(r, m, mattr, s, sattr):
+	    """these tags are relevant to my interests"""
+            src = m.interests
+            x = " ".join([ x.name for x in src.all() ])
+            if x: s[sattr] = x
+
+	@staticmethod
+	def feed_interests_exclude(r, m, mattr, s, sattr):
+	    """these tags are not relevant to my interests"""
+            src = m.interests_exclude
+            x = " ".join([ x.name for x in src.all() ])
+            if x: s[sattr] = x
+
+	@staticmethod
+	def feed_interests_require(r, m, mattr, s, sattr):
+	    """these tags are required for my interest"""
+            src = m.interests_require
+            x = " ".join([ x.name for x in src.all() ])
+            if x: s[sattr] = x
+
+	@staticmethod
+	def item_for_feeds(r, m, mattr, s, sattr):
+	    """this item is destined for..."""
+            src = m.for_feeds
+            x = " ".join([ x.name for x in src.all() ])
+            if x: s[sattr] = x
+
+	@staticmethod
+	def item_links_to_items(r, m, mattr, s, sattr):
+            """this item contains..."""
+            src = m.links_to_items
+            x = " ".join([ str(x.id) for x in src.all() ])
+            if x: s[sattr] = x
+
+	@staticmethod
+	def item_not_feeds(r, m, mattr, s, sattr):
+	    """this item is banned from being seen by..."""
+            src = m.not_feeds
+            x = " ".join([ x.name for x in src.all() ])
+            if x: s[sattr] = x
+
+	@staticmethod
+	def item_tags(r, m, mattr, s, sattr):
+            """this item is tagged..."""
+            src = m.tags
+            x = " ".join([ x.name for x in src.all() ])
+            if x: s[sattr] = x
+
+	@staticmethod
+	def item_status(r, m, mattr, s, sattr):
 	    """ """
 	    pass
 
 	@staticmethod
-	def comment_upon_item(m, mattr, s, sattr):
-	    """ """
-	    pass
+	def tag_cloud(r, m, mattr, s, sattr):
+            """this tag has the following cloud of indirect implications..."""
+            src = m.cloud
+            x = ' '.join([ x.name for x in src.all() ])
+            if x: s[sattr] = x
 
 	@staticmethod
-	def feed_tags(m, mattr, s, sattr):
-	    """ """
-	    pass
+	def tag_implies(r, m, mattr, s, sattr):
+            """this tag has the following implications..."""
+            src = m.implies
+            x = ' '.join([ x.name for x in src.all() ])
+            if x: s[sattr] = x
 
 	@staticmethod
-	def feed_tags_exclude(m, mattr, s, sattr):
-	    """ """
-	    pass
-
-	@staticmethod
-	def feed_tags_require(m, mattr, s, sattr):
-	    """ """
-	    pass
-
-	@staticmethod
-	def item_for_feeds(m, mattr, s, sattr):
-	    """ """
-	    pass
-
-	@staticmethod
-	def item_links_to_items(m, mattr, s, sattr):
-	    """ """
-	    pass
-
-	@staticmethod
-	def item_not_feeds(m, mattr, s, sattr):
-	    """ """
-	    pass
-
-	@staticmethod
-	def item_tags(m, mattr, s, sattr):
-	    """ """
-	    pass
-
-	@staticmethod
-	def item_status(m, mattr, s, sattr):
-	    """ """
-	    pass
-
-	@staticmethod
-	def tag_cloud(m, mattr, s, sattr):
-	    """ """
-	    pass
-
-	@staticmethod
-	def tag_implies(m, mattr, s, sattr):
-	    """ """
-	    pass
-
-	@staticmethod
-	def bool(m, mattr, s, sattr):
+	def bool(r, m, mattr, s, sattr):
 	    """copy a field in a model, to a field in a structure"""
 	    x = getattr(m, mattr)
 	    if x:
 		s[sattr] = 1
 	    else:
 		s[sattr] = 0
+
 	@staticmethod
-	def copy(m, mattr, s, sattr):
+	def copy(r, m, mattr, s, sattr):
 	    """copy a field in a model, to a field in a structure, preserving type"""
 	    x = getattr(m, mattr)
 	    if x: s[sattr] = x
 
 	@staticmethod
-	def date(m, mattr, s, sattr):
+	def date(r, m, mattr, s, sattr):
 	    """copy a date in a model, to a date in a structure"""
 	    x = getattr(m, mattr)
 	    if x: s[sattr] = x.isoformat()
@@ -328,9 +374,9 @@ class Space:
 	defer_table = {
 	    'commentFromFeed': True,
 	    'commentUponItem': True,
-	    'feedTags': True,
-	    'feedTagsExclude': True,
-	    'feedTagsRequire': True,
+	    'feedInterests': True,
+	    'feedInterestsExclude': True,
+	    'feedInterestsRequire': True,
 	    'itemData': True,
 	    'itemForFeeds': True,
 	    'itemIcon': True,
@@ -347,65 +393,51 @@ class Space:
 
 	prefix = attr_map.pop('__prefix__')
 
-        # for an explanation of the weird closure default arguments, see:
-        # http://code.activestate.com/recipes/502271/ regarding test2()
+	# for an explanation of the weird closure default arguments, see:
+	# http://code.activestate.com/recipes/502271/ regarding test2()
 
 	for mattr in attr_map.keys():
 	    table = attr_map[mattr]
 	    sattr = prefix + "".join([ string.capitalize(x) for x in mattr.split("_") ])
 
-            # print prefix + "." + mattr, "->", sattr
-            # print table
+	    # print prefix + "." + mattr, "->", sattr
+	    # print table
 
 	    if 'm2s' in table:
 		methud = getattr(Space.m2s_lib, table['m2s'])
-
 		if not methud:
 		    barf('m2s', mattr, sattr)
 
-		def m2s_closure(m, s, mattr=mattr, sattr=sattr, methud=methud):
-                    # print "? m2s", mattr, sattr
+		def m2s_closure(r, m, s, mattr=mattr, sattr=sattr, methud=methud):
 		    if getattr(m, mattr):
-			methud(m, mattr, s, sattr)
-                        # print "done"
+			methud(r, m, mattr, s, sattr)
 
 		m2s[mattr] = m2s_closure
 
 	    if 's2m' in table:
 		methud = getattr(Space.s2m_lib, table['s2m'])
-
 		if not methud:
 		    barf('s2m', mattr, sattr)
 
-		def s2m_closure(s, m, sattr=sattr, mattr=mattr, methud=methud):
-                    # print "? s2m", mattr, sattr
-
+		def s2m_closure(r, s, m, sattr=sattr, mattr=mattr, methud=methud):
 		    if sattr in s:
-			methud(s, sattr, m, mattr)
-                        # print "done"
+			methud(r, s, sattr, m, mattr)
 
 		def r2s_closure(r, s, sattr=sattr):
-                    # print "? r2s", sattr
-
 		    if sattr in r.POST:
 			Space.r2s_lib.strip(r, s, sattr)
-                        # print "done"
 
 		s2m[sattr] = ( defer_table.get(sattr, False), s2m_closure )
 		r2s[sattr] = r2s_closure
 
 	    if 'r2s' in table: # override default provided in s2m
 		methud = getattr(Space.r2s_lib, table['r2s'])
-
 		if not methud:
 		    barf('r2s', mattr, sattr)
 
 		def r2s_closure(r, s, sattr=sattr, methud=methud):
-                    # print "? r2s2", sattr
-
 		    if sattr in r.POST:
 			methud(r, s, sattr)
-                        # print "done"
 
 		r2s[sattr] = r2s_closure
 
@@ -680,14 +712,18 @@ class AbstractThing(AbstractModel):
 	return klass.execute_search_query(search_string, klass.list(**kwargs))
 
     def update(self, request=None, **kwargs):
-	"""update a single Thing from a HTTPRequest, overriding with values from kwargs"""
+	"""
+	update a single Thing from a HTTPRequest, overriding with values from kwargs
+
+	kwargs override is needed so that commenters cannot cite commentFromFeed in request.POST
+	"""
 
 	# build a shadow structure: useful for debug/clarity
 	s = {}
 
 	# update shadow structure from request and kwargs
 	for sattr in self.r2s.keys():
-            # print "1", sattr
+
 	    if sattr in kwargs:
 		s[sattr] = kwargs[sattr]
 	    elif request and sattr in request.POST:
@@ -701,10 +737,10 @@ class AbstractThing(AbstractModel):
 	i_changed_something = False
 
 	for sattr in self.s2m.keys():
-            # print "2", sattr
+
 	    defer, methud = self.s2m[sattr]
 	    if not defer:
-		methud(s, self)
+		methud(request, s, self)
 		i_changed_something = True
 
 	# the point of deferral is to save a record so there is an Id,
@@ -718,10 +754,10 @@ class AbstractThing(AbstractModel):
 	i_changed_something = False
 
 	for sattr in self.s2m.keys():
-            # print "3", sattr
+
 	    defer, methud = self.s2m[sattr]
 	    if defer:
-		methud(s, self)
+		methud(request, s, self)
 		i_changed_something = True
 
 	if i_changed_something:
@@ -730,8 +766,8 @@ class AbstractThing(AbstractModel):
 	# stage 3: file saving
 	# do this by subclassing
 
-        # done
-        return self
+	# done
+	return self
 
     def delete(self): # this is the primary consumer of gc
 	"""gc all the fields and mark this Thing as deleted"""
@@ -740,11 +776,11 @@ class AbstractThing(AbstractModel):
 	self.is_deleted = True
 	self.save()
 
-    def to_structure(self): # this is the primary consumer of m2s
+    def to_structure(self, request=None): # this is the primary consumer of m2s
 	"""convert this model m to a dictionary structure s (ie: s-space)"""
 	s = {}
 	for mattr in self.m2s.keys():
-	    self.m2s[mattr](self, s)
+	    self.m2s[mattr](request, self, s)
 	return s
 
     def get_absolute_url(self):
@@ -754,10 +790,10 @@ class AbstractThing(AbstractModel):
 
     def delete_attribute(self, key):
 	"""
-        erase the value of attribute 'key' (or delete extended attribute '$key')
+	erase the value of attribute 'key' (or delete extended attribute '$key')
 
-        get_, set_, update_, and list_attributes are performed via views()
-        """
+	get_, set_, update_, and list_attributes are performed via views()
+	"""
 	pass
 
     def __unicode__(self):
@@ -785,6 +821,119 @@ class Tag(AbstractThing):
     implies = AbstractField.reflist('self', symmetrical=False, pivot='implied_by', required=False)
     cloud = AbstractField.reflist('self', symmetrical=False, pivot='clouded_by', required=False)
 
+    def __update_cloud_field(self):
+	""" """
+	# wipe our cloud cache
+	self.cloud.clear()
+	# get us into the processing loop
+	tgraph = { self: False }
+	loop = True
+	# until we make a pass thru tgraph where nothing happens
+	while loop:
+	    # default: we won't go round again
+	    loop = False
+	    # for each tag in tgraph
+	    for tag, visited in tgraph.items():
+		# if we've already exploded it, skip to next
+		if visited:
+		    continue
+		# register all the unvisited parents into tgraph
+		for parent in tag.implies.all():
+		    if not tgraph.get(parent, False):
+			tgraph[parent] = False
+			loop = True # mark more work to be done
+		# add this tag to the cloud
+		self.cloud.add(tag)
+		# mark current tag as 'visited'
+		tgraph[tag] = True
+	self.save() # needed?
+
+    def __update_cloud_graph(self, tgraph):
+	"""
+	I could try ripping out the list of tags just once (avoiding
+	~n! database hits) and reconstructing the graph from that, but
+	if they change on disk underneath me then something nasty can
+	happen; better to let caching at a lower level take the hit...
+	"""
+	# update all the tags with this data
+	for tag in tgraph.keys():
+	    tag = Tag.objects.get(id=tag.id) # potentially dirty, reload
+	    tag.__update_cloud_field()
+
+    def __expand_cloud_graph(self):
+	"""
+	This is brute-force and ignorance code but it is proof against loops.
+	"""
+	tgraph = { self: False }
+	if not self.id:
+	    return tgraph # we are not yet in the database
+	loop = True # get us into the processing loop
+	while loop:
+	    loop = False
+	    for tag, visited in tgraph.items():
+		if visited:
+		    continue
+		for parent in tag.implies.all():
+		    if not tgraph.get(parent, False):
+			tgraph[parent] = False
+			loop = True
+		for child in tag.implied_by.all():
+		    if not tgraph.get(child, False):
+			tgraph[child] = False
+			loop = True
+		tgraph[tag] = True
+	return tgraph
+
+    @transaction.commit_on_success # <- rollback if it raises an exception
+    def delete_attribute(self, sattr):
+	"""
+	This method overrides AbstractThing.delete_attribute() and acts as
+	a hook to detect changes in the Tag implications that might
+	trigger a recalculation of the Tag cloud.
+	"""
+	if sattr == 'tagImplies':
+	    tgraph = self.__expand_cloud_graph()
+	else:
+	    tgraph = None
+	super(Tag, self).delete_attribute(sattr)
+	if tgraph:
+	    self.__update_cloud_graph(tgraph)
+
+    @transaction.commit_on_success # <- rollback if it raises an exception
+    def update_from_request(self, r, **kwargs):
+	"""
+	This method overrides AbstractThing.update_from_request() and
+	acts as a hook to detect changes in the Tag implications that
+	might trigger a recalculation of the Tag cloud.
+
+	There is a performance impact here which needs to be
+	considered; we *ought* to determine whether something has
+	changed that would require the cloud to be recomputed; but
+	maybe slightly overzealous refreshing will be good for a
+	while... having flushed out a bug where an Item with no
+	implications was not clouding itself, the simplicity of just
+	recomputing every time is attractive, especially with the
+	likely shallow hierarchies of implication, if any at all...
+	"""
+
+	tgraph = self.__expand_cloud_graph()
+	retval = super(Tag, self).update_from_request(r, **kwargs)
+	self.__update_cloud_graph(tgraph)
+	retval = Tag.objects.get(id=retval.id) # reload, possibly dirty
+	return retval
+
+    @classmethod
+    def get_or_auto_tag(klass, request, name):
+	if 'auto_tag' in request.POST and request.POST['auto_tag']:
+	    t, created = Tag.objects.get_or_create(name=name, defaults={})  # TBD: MAY HAVE ISSUES WITH PREVIOUSLY DELETED TAGS?
+	    if created:
+		tgraph = t.__expand_cloud_graph()
+		t.__update_cloud_graph(tgraph)
+		t.save()
+	else:
+	    t = Tag.objects.get(name=name)
+	return t
+
 ##################################################################
 
 class Vurl(AbstractThing):
@@ -811,7 +960,7 @@ class Vurl(AbstractThing):
     @staticmethod
     def get_with_vurlkey(encoded):
 	""" """
-	return Vurl.objects.get(id=base58.b58decode(encoded))
+	return Vurl.get(id=base58.b58decode(encoded))
 
     def vurlkey(self):
 	""" """
@@ -851,15 +1000,6 @@ class Vurl(AbstractThing):
 	else:
 	    return HttpResponsePermanentRedirect(self.link)
 
-    @classmethod
-    def execute_search_query(klass, qs, query):
-	for word in query.split():
-	    qs = qs.filter(Q(link__icontains=word) |
-			   Q(name__icontains=word))
-	return qs
-
-
-
 ##################################################################
 
 class Feed(AbstractThing):
@@ -874,9 +1014,9 @@ class Feed(AbstractThing):
 	'description': dict(r2s='verbatim', s2m='copy', m2s='copy'),
 	'embargo_after': dict(s2m='date', m2s='date'),
 	'embargo_before': dict(s2m='date', m2s='date'),
-	'tags': dict(gc='reflist', s2m='feed_tags', m2s='feed_tags'),
-	'tags_exclude': dict(gc='reflist', s2m='feed_tags_exclude', m2s='feed_tags_exclude'),
-	'tags_require': dict(gc='reflist', s2m='feed_tags_require', m2s='feed_tags_require'),
+	'interests': dict(gc='reflist', s2m='feed_interests', m2s='feed_interests'),
+	'interests_exclude': dict(gc='reflist', s2m='feed_interests_exclude', m2s='feed_interests_exclude'),
+	'interests_require': dict(gc='reflist', s2m='feed_interests_require', m2s='feed_interests_require'),
 	'permitted_networks': dict(s2m='copy', m2s='copy'),
 	'content_constraints': dict(s2m='copy', m2s='copy'),
 	'is_private': dict(gc='falsify', r2s='bool', s2m='bool', m2s='bool'),
@@ -888,9 +1028,9 @@ class Feed(AbstractThing):
     description = AbstractField.text(required=False)
     embargo_after = AbstractField.datetime(required=False)
     embargo_before = AbstractField.datetime(required=False)
-    tags = AbstractField.reflist(Tag, pivot='feeds_with_tag', required=False)
-    tags_exclude = AbstractField.reflist(Tag, pivot='feeds_excluding', required=False)
-    tags_require = AbstractField.reflist(Tag, pivot='feeds_requiring', required=False)
+    interests = AbstractField.reflist(Tag, pivot='feeds_with_tag', required=False)
+    interests_exclude = AbstractField.reflist(Tag, pivot='feeds_excluding', required=False)
+    interests_require = AbstractField.reflist(Tag, pivot='feeds_requiring', required=False)
     permitted_networks = AbstractField.string(required=False)
     content_constraints = AbstractField.string(required=False)
     is_private = AbstractField.bool(True)
@@ -962,8 +1102,8 @@ class Comment(AbstractThing):
 
 	'title': dict(gc='munge', s2m='copy', m2s='copy'),
 	'body': dict(r2s='verbatim', s2m='copy', m2s='copy'),
-	'from_feed': dict(s2m='comment_from_feed', m2s='comment_from_feed'),
-	'upon_item': dict(s2m='comment_upon_item', m2s='comment_upon_item'),
+	'from_feed': dict(s2m='comment_from_feed', m2s='comment_from_feed'), # r2s=string, not integer!
+	'upon_item': dict(r2s='integer', s2m='comment_upon_item', m2s='comment_upon_item'),
 	'encryption_method': dict(s2m='copy', m2s='copy'),
 	'digest_method': dict(s2m='copy', m2s='copy'),
 	'encryption_key': dict(s2m='copy', m2s='copy'),

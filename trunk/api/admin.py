@@ -63,7 +63,7 @@ class FeedAdmin(admin.ModelAdmin):
     date_hierarchy = 'created'
     fieldsets = [
         (None, {'fields': ['name', 'version', 'description']}), 
-        ('Tags', {'fields': ['tags', 'tags_require', 'tags_exclude']}), 
+        ('Interests', {'fields': ['interests', 'interests_require', 'interests_exclude']}), 
         ('Advanced', {'fields': ['is_private', 
                                  'permitted_networks', 
                                  'content_constraints', 
