@@ -240,20 +240,20 @@ while (<DATA>) {
 	&Mine($method, $api, @ARGV);
     }
 
-    # FRELATION: magic special case for adding relations
+    # FFEED: magic special case for adding feeds
 
-    elsif ($call_how eq 'FRELATION') {
+    elsif ($call_how eq 'FFEED') {
 
-	my $relationname = shift(@ARGV);
-	my $relationversion = shift(@ARGV);
-	my $relationdescription = shift(@ARGV);
+	my $feedname = shift(@ARGV);
+	my $feedversion = shift(@ARGV);
+	my $feeddescription = shift(@ARGV);
 
 	&Mine($method,
 	      $api,
-	      "relationName=$relationname",
-	      "relationVersion=$relationversion",
-	      "relationDescription=$relationdescription",
-	      "relationInterests=@ARGV",
+	      "feedName=$feedname",
+	      "feedVersion=$feedversion",
+	      "feedDescription=$feeddescription",
+	      "feedInterests=@ARGV",
 	    );
     }
 
@@ -436,8 +436,8 @@ upload FUPLOAD create /api/item.json [-t "tag ..."] [-s status] item.jpg item.pd
 # accelerated tagging
 new-tags FTAGS create /api/tag.json tag1 tag2 tag3:implies1 tag4:implies1,implies2[,more...] ...
 
-# accelerated relation
-new-relation FRELATION create /api/relation.json name vers desc tag ...
+# accelerated feed
+new-feed FFEED create /api/feed.json name vers desc tag ...
 
 ###
 # raw API calls
@@ -451,7 +451,7 @@ version PASSARGS read /api/version.json
 
 # all instances of update-foo (except update-data) were more formally
 # "create-foo-key" method calls; this is because there is no API
-# interface to support modifying a Thing (Relation / Item / Tag /
+# interface to support modifying a Thing (Feed / Item / Tag /
 # Comment / Config) by means of replacing one binary blob with
 # another; thus the more refined create-foo-key routines were
 # hijacked to achieve the intended aim of update-foo...
@@ -484,13 +484,13 @@ delete-item-key SUB1EVERY delete /api/item/IID/KEY.json 42 itemKey ...
 clone-item SUB1PASS create /api/item/IID/clone.json 42
 list-clones SUB1PASS read /api/item/IID/clone.json 42
 
-list-relations PASSARGS read /api/relation.json
-create-relation PASSARGS create /api/relation.json relationKey=value ...
-get-relation SUB1PASS read /api/relation/RID.json 42
-delete-relation SUBEVERY delete /api/relation/RID.json 42 17 23 ...
-update-relation SUB1PASS create /api/relation/RID.json 42 relationKey=value ...
-get-relation-key SUB1EVERY read /api/relation/RID/KEY.json 42 relationKey
-delete-relation-key SUB1EVERY delete /api/relation/RID/KEY.json 42 relationKey ...
+list-feeds PASSARGS read /api/feed.json
+create-feed PASSARGS create /api/feed.json feedKey=value ...
+get-feed SUB1PASS read /api/feed/RID.json 42
+delete-feed SUBEVERY delete /api/feed/RID.json 42 17 23 ...
+update-feed SUB1PASS create /api/feed/RID.json 42 feedKey=value ...
+get-feed-key SUB1EVERY read /api/feed/RID/KEY.json 42 feedKey
+delete-feed-key SUB1EVERY delete /api/feed/RID/KEY.json 42 feedKey ...
 
 list-tags PASSARGS read /api/tag.json
 create-tag PASSARGS create /api/tag.json tagKey=value ...

@@ -20,6 +20,7 @@
 from django.conf import settings
 
 from envelope import Envelope
+from models import Comment
 
 ##################################################################
 
@@ -31,7 +32,7 @@ def create_comment(request, idz, **kwargs):
     implements: POST /api/comment/item/(IDZ).(FMT)
     returns: an envelope containing the comment structure
     """
-    m = thyng.create(request, commentUponItem=int(idz))
+    m = Comment.create(request, commentUponItem=int(idz))
     return Envelope(request, m.to_structure())
 
 ##################################################################
