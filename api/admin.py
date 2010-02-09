@@ -81,8 +81,14 @@ class ItemAdmin(admin.ModelAdmin):
     list_filter = ['created']
     date_hierarchy = 'created'
     fieldsets = [
-        (None, {'fields': ['name', 'status', 'data_type', 'description']}), 
-        ('Data', {'fields': ['data',  'data_remote_url', 'icon', 'icon_type', 'links_to_items']}), 
+        (None, {'fields': ['name', 'status', 'description']}), 
+        ('Data', {'fields': ['data_type', 
+                             'data',  
+                             'icon_type', 
+                             'icon', 
+                             'links_to_items',
+                             'data_remote_url', 
+                             ]}), 
         ('Tags', {'fields': ['tags', 'for_feeds', 'not_feeds']}), 
         ('Advanced', {'fields': ['hide_before', 'hide_after']}), 
         ]
