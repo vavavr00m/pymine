@@ -43,7 +43,7 @@ Minectl new-tags chardonnay:white-wine rioja:red-wine
 Minectl new-tags red-burgundy:red-wine white-burgundy:white-wine burgundy:red-wine,white-wine # latter->both
 
 # set up some feeds
-Minectl new-feed alec 1 "Alec Muffett" food drink except:spirits animals themineproject
+Minectl new-feed alec 1 "Alec Muffett" food drink animals themineproject
 Minectl new-feed adriana 1 "Adriana Lukas" food drink shoes cats motorcycles themineproject
 Minectl new-feed carrie 1 "Carrie Bishop" food drink sneakers themineproject
 Minectl new-feed ben 1 "Ben Laurie" food drink cats motorcycles
@@ -70,10 +70,10 @@ EOF
 # some dummy comments
 while read item who what body
 do
-    Minectl create-comment $item commentFeedId=$who commentTitle=$what commentBody="$body"
+    Minectl create-comment $item commentFromFeed=$who commentTitle=$what commentBody="$body"
 done <<EOF
-1  1       comment-title-1  comment body  1
-1  1       comment-title-2  comment body  2
+1  alec       comment-title-1  comment body  1
+1  adriana      comment-title-2  comment body  2
 1  carrie  comment-title-3  comment body  3
 2  perry   comment-title-4  comment body  4
 2  perry   comment-title-5  comment body  5
@@ -90,57 +90,6 @@ Minectl create-vurl vurlLink=http://www.google.co.uk/ # autoname
 # custom objects for feed testing
 
 file=public_html/testdata/austen.txt
-
-while read status tags
-do
-
-    desc="example with status=$status tags=$tags"
-
-    Minectl create-item \
-	"itemName=example" \
-	"itemDescription=$desc" \
-	"itemStatus=$status" \
-	"itemType=text/plain" \
-	"itemTags=$tags" \
-	"itemData=@$file"
-
-done <<EOF
-private for:adriana
-private not:adriana
-public for:adriana
-public not:adriana
-public not:adriana themineproject
-shared for:adriana
-shared not:adriana
-EOF
-
-
-# first iid when we go into this look is 15
-while read status type name description
-do
-    Minectl create-item \
-	"itemStatus=$status" \
-	"itemType=$type" \
-	"itemName=$name" \
-	"itemDescription=$description"
-
-done <<EOF
-public text/html depth-0 this is a link to <a href="/api/item/16">item 16</a>
-public text/html depth-1 this is a link to <a href="/api/item/17">item 17</a>
-public text/html depth-2 this is a link to <a href="/api/item/18">item 18</a>
-public text/html depth-3 this is a link to <a href="/api/item/19">item 19</a>
-shared text/html depth-4 this is a link to <a href="/api/item/20">item 20</a>
-public text/html depth-5 this is a link to <a href="/api/item/21">item 21</a>
-public text/html depth-6 this is a link to <a href="/api/item/22">item 22</a>
-private text/html depth-7 this is a link to <a href="/api/item/23">item 23</a>
-public text/html depth-8 this is a link to <a href="/api/item/24">item 24</a>
-public text/html loop this is a link to <a href="/api/item/24">item 24</a>
-EOF
-
-Minectl update-item 15 itemTags=themineproject
-Minectl update-item 18 itemTags=themineproject
-Minectl update-item 21 itemTags=themineproject
-Minectl update-item 24 itemTags=themineproject
 
 # audio
 Minectl upload -t themineproject -s public $SAMPLES/*.mp3

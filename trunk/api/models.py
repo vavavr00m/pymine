@@ -703,12 +703,12 @@ class AbstractThing(AbstractModel):
     @classmethod
     def get(klass, **kwargs):
 	"""return a single model matching kwargs; expunge virtually-deleted ones; if none return None; if multiple, throw exception"""
-	return klass.objects.filter(is_deleted=False).get(**kwargs)
+	return klass.objects.get(**dict(kwargs, is_deleted=False))
 
     @classmethod
-    def list(klass):
+    def list(klass, **kwargs):
 	"""return a queryset of models matching kwargs; expunge virtually-deleted ones"""
-	return klass.objects.filter(is_deleted=False)
+	return klass.objects.filter(**dict(kwargs, is_deleted=False))
 
     @classmethod
     def execute_search_query(klass, search_string, qs):
@@ -719,7 +719,8 @@ class AbstractThing(AbstractModel):
     def search(klass, search_string, **kwargs):
 	"""return a queryset of models matching **kwargs and search_string; expunge virtually-deleted ones"""
 	return klass.execute_search_query(search_string, klass.list(**kwargs))
-
+    
+    @transaction.commit_on_success # <- rollback if it raises an exception                                                                                       
     def update(self, request=None, **kwargs):
 	"""
 	update a single Thing from a HTTPRequest, overriding with values from kwargs
