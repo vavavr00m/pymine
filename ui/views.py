@@ -19,6 +19,9 @@
 
 from django.shortcuts import render_to_response
 
+from pymine.api.models import Tag, Item, Feed, Comment, Vurl
+import pymine.api.views as api
+
 ##################################################################
 
 # this definition (create_comment) is auto-generated.
@@ -29,7 +32,7 @@ def create_comment(request, template, idz, **kwargs):
     implements: GET /ui/create/comment/(IDZ).html
     returns: ...
     """
-    s = {}
+    s = {'itemId': idz}
     return render_to_response(template, s)
 
 ##################################################################
@@ -42,124 +45,42 @@ def dash_comments(request, template, **kwargs):
     implements: GET /ui/dash/comments.html
     returns: ...
     """
-    s = {}
+    iid = 0
+    s = api.list_comments(request, iid)
+    s['itemId'] = iid # HACK TO SUPPORT PAGE
     return render_to_response(template, s)
 
 ##################################################################
 
-# this definition (dash_feeds) is auto-generated.
+# this definition (dash_things) is auto-generated.
 # ensure that any changes are made via the generator.
-def dash_feeds(request, template, **kwargs):
+def dash_things(request, template, thyng, **kwargs):
     """
-    arguments: request, template, **kwargs
+    arguments: request, template, thyng, **kwargs
     implements: GET /ui/dash/feeds.html
-    returns: ...
-    """
-    s = {}
-    return render_to_response(template, s)
-
-##################################################################
-
-# this definition (dash_items) is auto-generated.
-# ensure that any changes are made via the generator.
-def dash_items(request, template, **kwargs):
-    """
-    arguments: request, template, **kwargs
     implements: GET /ui/dash/items.html
-    returns: ...
-    """
-    s = {}
-    return render_to_response(template, s)
-
-##################################################################
-
-# this definition (dash_tags) is auto-generated.
-# ensure that any changes are made via the generator.
-def dash_tags(request, template, **kwargs):
-    """
-    arguments: request, template, **kwargs
     implements: GET /ui/dash/tags.html
-    returns: ...
-    """
-    s = {}
-    return render_to_response(template, s)
-
-##################################################################
-
-# this definition (dash_vurls) is auto-generated.
-# ensure that any changes are made via the generator.
-def dash_vurls(request, template, **kwargs):
-    """
-    arguments: request, template, **kwargs
     implements: GET /ui/dash/vurls.html
     returns: ...
     """
-    s = {}
+    s = api.list_things(request, thyng)
     return render_to_response(template, s)
 
 ##################################################################
 
-# this definition (delete_comment) is auto-generated.
+# this definition (delete_thing) is auto-generated.
 # ensure that any changes are made via the generator.
-def delete_comment(request, template, id, **kwargs):
+def delete_thing(request, template, idname, id, **kwargs):
     """
-    arguments: request, template, id, **kwargs
+    arguments: request, template, idname, id, **kwargs
     implements: GET /ui/delete/comment/(ID).html
-    returns: ...
-    """
-    s = {}
-    return render_to_response(template, s)
-
-##################################################################
-
-# this definition (delete_feed) is auto-generated.
-# ensure that any changes are made via the generator.
-def delete_feed(request, template, id, **kwargs):
-    """
-    arguments: request, template, id, **kwargs
     implements: GET /ui/delete/feed/(ID).html
-    returns: ...
-    """
-    s = {}
-    return render_to_response(template, s)
-
-##################################################################
-
-# this definition (delete_item) is auto-generated.
-# ensure that any changes are made via the generator.
-def delete_item(request, template, id, **kwargs):
-    """
-    arguments: request, template, id, **kwargs
     implements: GET /ui/delete/item/(ID).html
-    returns: ...
-    """
-    s = {}
-    return render_to_response(template, s)
-
-##################################################################
-
-# this definition (delete_tag) is auto-generated.
-# ensure that any changes are made via the generator.
-def delete_tag(request, template, id, **kwargs):
-    """
-    arguments: request, template, id, **kwargs
     implements: GET /ui/delete/tag/(ID).html
-    returns: ...
-    """
-    s = {}
-    return render_to_response(template, s)
-
-##################################################################
-
-# this definition (delete_vurl) is auto-generated.
-# ensure that any changes are made via the generator.
-def delete_vurl(request, template, id, **kwargs):
-    """
-    arguments: request, template, id, **kwargs
     implements: GET /ui/delete/vurl/(ID).html
     returns: ...
     """
-    s = {}
+    s = {idname:id}
     return render_to_response(template, s)
 
 ##################################################################
@@ -172,131 +93,48 @@ def list_comments(request, template, idz, **kwargs):
     implements: GET /ui/list/comments/(IDZ).html
     returns: ...
     """
-    s = {}
+    s = api.list_comments(request, iiz)
+    s['itemId'] = idz # NEEDED HACK TO SUPPORT PAGE
     return render_to_response(template, s)
 
 ##################################################################
 
-# this definition (list_feeds) is auto-generated.
+# this definition (list_things) is auto-generated.
 # ensure that any changes are made via the generator.
-def list_feeds(request, template, **kwargs):
+def list_things(request, template, thyng, **kwargs):
     """
-    arguments: request, template, **kwargs
+    arguments: request, template, thyng, **kwargs
     implements: GET /ui/list/feeds.html
-    returns: ...
-    """
-    s = {}
-    return render_to_response(template, s)
-
-##################################################################
-
-# this definition (list_items) is auto-generated.
-# ensure that any changes are made via the generator.
-def list_items(request, template, **kwargs):
-    """
-    arguments: request, template, **kwargs
     implements: GET /ui/list/items.html
-    returns: ...
-    """
-    s = {}
-    return render_to_response(template, s)
-
-##################################################################
-
-# this definition (list_tags) is auto-generated.
-# ensure that any changes are made via the generator.
-def list_tags(request, template, **kwargs):
-    """
-    arguments: request, template, **kwargs
     implements: GET /ui/list/tags.html
-    returns: ...
-    """
-    s = {}
-    return render_to_response(template, s)
-
-##################################################################
-
-# this definition (list_vurls) is auto-generated.
-# ensure that any changes are made via the generator.
-def list_vurls(request, template, **kwargs):
-    """
-    arguments: request, template, **kwargs
     implements: GET /ui/list/vurls.html
     returns: ...
     """
-    s = {}
+    s = api.list_things(request, Item)
     return render_to_response(template, s)
 
 ##################################################################
 
-# this definition (read_comment) is auto-generated.
+# this definition (read_thing) is auto-generated.
 # ensure that any changes are made via the generator.
-def read_comment(request, template, id, **kwargs):
+def read_thing(request, template, thyng, id, **kwargs):
     """
-    arguments: request, template, id, **kwargs
+    arguments: request, template, thyng, id, **kwargs
     implements: GET /ui/read/comment/(ID).html
-    returns: ...
-    """
-    s = {}
-    return render_to_response(template, s)
-
-##################################################################
-
-# this definition (read_feed) is auto-generated.
-# ensure that any changes are made via the generator.
-def read_feed(request, template, id, **kwargs):
-    """
-    arguments: request, template, id, **kwargs
     implements: GET /ui/read/feed/(ID).html
-    returns: ...
-    """
-    s = {}
-    return render_to_response(template, s)
-
-##################################################################
-
-# this definition (read_item) is auto-generated.
-# ensure that any changes are made via the generator.
-def read_item(request, template, id, **kwargs):
-    """
-    arguments: request, template, id, **kwargs
     implements: GET /ui/read/item/(ID).html
-    returns: ...
-    """
-    s = {}
-    return render_to_response(template, s)
-
-##################################################################
-
-# this definition (read_tag) is auto-generated.
-# ensure that any changes are made via the generator.
-def read_tag(request, template, id, **kwargs):
-    """
-    arguments: request, template, id, **kwargs
     implements: GET /ui/read/tag/(ID).html
-    returns: ...
-    """
-    s = {}
-    return render_to_response(template, s)
-
-##################################################################
-
-# this definition (read_vurl) is auto-generated.
-# ensure that any changes are made via the generator.
-def read_vurl(request, template, id, **kwargs):
-    """
-    arguments: request, template, id, **kwargs
     implements: GET /ui/read/vurl/(ID).html
     returns: ...
     """
-    s = {}
+    s = api.read_thing(request, thyng, id) 
     return render_to_response(template, s)
 
 ##################################################################
 
-# this definition (render) is auto-generated.
+# this definition (render_page) is auto-generated.
 # ensure that any changes are made via the generator.
-def render(request, template, **kwargs):
+def render_page(request, template, **kwargs):
     """
     arguments: request, template, **kwargs
     implements: GET /ui/create/feed.html
@@ -306,70 +144,10 @@ def render(request, template, **kwargs):
     implements: GET /ui/dash/home.html
     implements: GET /ui/dash/search.html
     implements: GET /ui/dash/settings.html
-    returns: ...
-    """
-    s = {}
-    return render_to_response(template, s)
-
-##################################################################
-
-# this definition (search_comments) is auto-generated.
-# ensure that any changes are made via the generator.
-def search_comments(request, template, **kwargs):
-    """
-    arguments: request, template, **kwargs
     implements: GET /ui/search/comments.html
-    returns: ...
-    """
-    s = {}
-    return render_to_response(template, s)
-
-##################################################################
-
-# this definition (search_feeds) is auto-generated.
-# ensure that any changes are made via the generator.
-def search_feeds(request, template, **kwargs):
-    """
-    arguments: request, template, **kwargs
     implements: GET /ui/search/feeds.html
-    returns: ...
-    """
-    s = {}
-    return render_to_response(template, s)
-
-##################################################################
-
-# this definition (search_items) is auto-generated.
-# ensure that any changes are made via the generator.
-def search_items(request, template, **kwargs):
-    """
-    arguments: request, template, **kwargs
     implements: GET /ui/search/items.html
-    returns: ...
-    """
-    s = {}
-    return render_to_response(template, s)
-
-##################################################################
-
-# this definition (search_tags) is auto-generated.
-# ensure that any changes are made via the generator.
-def search_tags(request, template, **kwargs):
-    """
-    arguments: request, template, **kwargs
     implements: GET /ui/search/tags.html
-    returns: ...
-    """
-    s = {}
-    return render_to_response(template, s)
-
-##################################################################
-
-# this definition (search_vurls) is auto-generated.
-# ensure that any changes are made via the generator.
-def search_vurls(request, template, **kwargs):
-    """
-    arguments: request, template, **kwargs
     implements: GET /ui/search/vurls.html
     returns: ...
     """
@@ -378,67 +156,19 @@ def search_vurls(request, template, **kwargs):
 
 ##################################################################
 
-# this definition (update_comment) is auto-generated.
+# this definition (update_thing) is auto-generated.
 # ensure that any changes are made via the generator.
-def update_comment(request, template, id, **kwargs):
+def update_thing(request, template, thyng, id, **kwargs):
     """
-    arguments: request, template, id, **kwargs
+    arguments: request, template, thyng, id, **kwargs
     implements: GET /ui/update/comment/(ID).html
-    returns: ...
-    """
-    s = {}
-    return render_to_response(template, s)
-
-##################################################################
-
-# this definition (update_feed) is auto-generated.
-# ensure that any changes are made via the generator.
-def update_feed(request, template, id, **kwargs):
-    """
-    arguments: request, template, id, **kwargs
     implements: GET /ui/update/feed/(ID).html
-    returns: ...
-    """
-    s = {}
-    return render_to_response(template, s)
-
-##################################################################
-
-# this definition (update_item) is auto-generated.
-# ensure that any changes are made via the generator.
-def update_item(request, template, id, **kwargs):
-    """
-    arguments: request, template, id, **kwargs
     implements: GET /ui/update/item/(ID).html
-    returns: ...
-    """
-    s = {}
-    return render_to_response(template, s)
-
-##################################################################
-
-# this definition (update_tag) is auto-generated.
-# ensure that any changes are made via the generator.
-def update_tag(request, template, id, **kwargs):
-    """
-    arguments: request, template, id, **kwargs
     implements: GET /ui/update/tag/(ID).html
-    returns: ...
-    """
-    s = {}
-    return render_to_response(template, s)
-
-##################################################################
-
-# this definition (update_vurl) is auto-generated.
-# ensure that any changes are made via the generator.
-def update_vurl(request, template, id, **kwargs):
-    """
-    arguments: request, template, id, **kwargs
     implements: GET /ui/update/vurl/(ID).html
     returns: ...
     """
-    s = {}
+    s = api.update_thing(request, thyng, id) 
     return render_to_response(template, s)
 
 ##################################################################
@@ -451,7 +181,7 @@ def version(request, template, **kwargs):
     implements: GET /ui/version.html
     returns: ...
     """
-    s = {}
+    s = api.read_version()
     return render_to_response(template, s)
 
 ##################################################################

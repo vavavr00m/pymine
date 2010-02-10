@@ -64,11 +64,12 @@ class FeedAdmin(admin.ModelAdmin):
     fieldsets = [
         (None, {'fields': ['name', 'version', 'description']}), 
         ('Interests', {'fields': ['interests', 'interests_require', 'interests_exclude']}), 
-        ('Advanced', {'fields': ['is_private', 
-                                 'permitted_networks', 
+        ('Advanced', {'fields': ['permitted_networks', 
                                  'content_constraints', 
                                  'embargo_before', 
-                                 'embargo_after']}), 
+                                 'embargo_after',
+                                 'is_broadcast', 
+                                 ]}), 
         ]
 
 admin.site.register(Feed, FeedAdmin)
@@ -87,7 +88,7 @@ class ItemAdmin(admin.ModelAdmin):
                              'icon_type', 
                              'icon', 
                              'links_to_items',
-                             'data_remote_url', 
+                             'data_remote_url',
                              ]}), 
         ('Tags', {'fields': ['tags', 'for_feeds', 'not_feeds']}), 
         ('Advanced', {'fields': ['hide_before', 'hide_after']}), 
