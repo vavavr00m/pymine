@@ -55,11 +55,10 @@ fss_yyyymmdd = '%Y-%m/%d'
 ##################################################################
 
 item_status_choices = (
-    ( '0', 'locked' ),
-    ( '2', 'linkable-by-items-in-feeds' ),
-    ( '4', 'to-explicitly-cited-feeds' ),
-    ( '6', 'to-private-feeds-via-tags' ),
-    ( '8', 'to-public-feeds-via-tags' ),
+    ( '0', 'completely-inaccessible' ),
+    ( '3', 'merely-linkable-from-other-items-in-feeds' ),
+    ( '6', 'exposed-to-feeds-via-explicit-citation' ),
+    ( '9', 'exposed-to-feeds-via-tags' ),
     # In all instances, additional per-item "not:feedname" explicit tagging will be honoured.
     # In all instances, additional per-feed "exclude:tag" explicit tagging will be honoured.
     )
@@ -72,11 +71,10 @@ for short, long in item_status_choices:
     status_lookup[long] = short
 
 status_aliases = {
-    'private': '0',
-    'linkable': '2',
-    'shared': '4',
-    'limited': '6',
-    'public': '8',
+    'secret':   '0',
+    'linkable': '3',
+    'private':  '6',
+    'shared':   '9',
 }
 status_lookup.update(status_aliases)
 
@@ -1043,7 +1041,7 @@ class Feed(AbstractThing):
     interests_require = AbstractField.reflist(Tag, pivot='feeds_requiring', required=False)
     permitted_networks = AbstractField.string(required=False)
     content_constraints = AbstractField.string(required=False)
-    is_private = AbstractField.bool(True)
+    is_broadcast = AbstractField.bool(False)
 
 ##################################################################
 
@@ -1085,6 +1083,7 @@ class Item(AbstractThing):
     tags = AbstractField.reflist(Tag, pivot='items_tagged', required=False)
     for_feeds = AbstractField.reflist(Feed, pivot='items_explicitly_for', required=False)
     not_feeds = AbstractField.reflist(Feed, pivot='items_explicitly_not', required=False)
+    is_visible_to_broadcast_feeds = AbstractField.bool(False)
 
     data = AbstractField.file(storage=item_fss, upload_to=fss_yyyymmdd, required=False) # not translated
     data_type = AbstractField.string(required=False)

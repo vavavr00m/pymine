@@ -310,46 +310,54 @@ mine  GET  /vurl/(VURLKEY)   vurl-read-by-key
 
 ##################################################################
 
-ui  GET  /ui/create/comment/(IDZ).html  create-comment     template:'create/comment.html'
-ui  GET  /ui/create/feed.html           render             template:'create/feed.html'
-ui  GET  /ui/create/item.html           render             template:'create/item.html'
-ui  GET  /ui/create/tag.html            render             template:'create/tag.html'
-ui  GET  /ui/create/vurl.html           render             template:'create/vurl.html'
-ui  GET  /ui/dash/comments.html         dash-comments      template:'dash/comments.html'
-ui  GET  /ui/dash/feeds.html            dash-feeds         template:'dash/feeds.html'
-ui  GET  /ui/dash/home.html             render             template:'dash/home.html'
-ui  GET  /ui/dash/items.html            dash-items         template:'dash/items.html'
-ui  GET  /ui/dash/search.html           render             template:'dash/search.html'
-ui  GET  /ui/dash/settings.html         render             template:'dash/settings.html'
-ui  GET  /ui/dash/tags.html             dash-tags          template:'dash/tags.html'
-ui  GET  /ui/dash/vurls.html            dash-vurls         template:'dash/vurls.html'
-ui  GET  /ui/delete/comment/(ID).html   delete-comment     template:'delete/comment.html'
-ui  GET  /ui/delete/feed/(ID).html      delete-feed        template:'delete/feed.html'
-ui  GET  /ui/delete/item/(ID).html      delete-item        template:'delete/item.html'
-ui  GET  /ui/delete/tag/(ID).html       delete-tag         template:'delete/tag.html'
-ui  GET  /ui/delete/vurl/(ID).html      delete-vurl        template:'delete/vurl.html'
-ui  GET  /ui/list/comments/(IDZ).html   list-comments      template:'list/comments.html'
-ui  GET  /ui/list/feeds.html            list-feeds         template:'list/feeds.html'
-ui  GET  /ui/list/items.html            list-items         template:'list/items.html'
-ui  GET  /ui/list/tags.html             list-tags          template:'list/tags.html'
-ui  GET  /ui/list/vurls.html            list-vurls         template:'list/vurls.html'
-ui  GET  /ui/read/comment/(ID).html     read-comment       template:'read/comment.html'
-ui  GET  /ui/read/feed/(ID).html        read-feed          template:'read/feed.html'
-ui  GET  /ui/read/item/(ID).html        read-item          template:'read/item.html'
-ui  GET  /ui/read/tag/(ID).html         read-tag           template:'read/tag.html'
-ui  GET  /ui/read/vurl/(ID).html        read-vurl          template:'read/vurl.html'
-ui  GET  /ui/search/comments.html       search-comments    template:'search/comments.html'
-ui  GET  /ui/search/feeds.html          search-feeds       template:'search/feeds.html'
-ui  GET  /ui/search/items.html          search-items       template:'search/items.html'
-ui  GET  /ui/search/tags.html           search-tags        template:'search/tags.html'
-ui  GET  /ui/search/vurls.html          search-vurls       template:'search/vurls.html'
-ui  GET  /ui/update/comment/(ID).html   update-comment     template:'update/comment.html'
-ui  GET  /ui/update/feed/(ID).html      update-feed        template:'update/feed.html'
-ui  GET  /ui/update/item/(ID).html      update-item        template:'update/item.html'
-ui  GET  /ui/update/tag/(ID).html       update-tag         template:'update/tag.html'
-ui  GET  /ui/update/vurl/(ID).html      update-vurl        template:'update/vurl.html'
-ui  GET  /ui/version.html               version            template:'version.html'
+ui  GET  /ui/create/comment/(IDZ).html  create-comment  template:'create/comment.html'
+ui  GET  /ui/create/feed.html           render-page     template:'create/feed.html'
+ui  GET  /ui/create/item.html           render-page     template:'create/item.html'
+ui  GET  /ui/create/tag.html            render-page     template:'create/tag.html'
+ui  GET  /ui/create/vurl.html           render-page     template:'create/vurl.html'
+
+ui  GET  /ui/dash/home.html             render-page     template:'dash/home.html'
+ui  GET  /ui/dash/search.html           render-page     template:'dash/search.html'
+ui  GET  /ui/dash/settings.html         render-page     template:'dash/settings.html'
+
+ui  GET  /ui/dash/comments.html         dash-comments   template:'dash/comments.html'
+ui  GET  /ui/dash/feeds.html            dash-things     template:'dash/feeds.html'       thyng:Feed
+ui  GET  /ui/dash/items.html            dash-things     template:'dash/items.html'       thyng:Item
+ui  GET  /ui/dash/tags.html             dash-things     template:'dash/tags.html'        thyng:Tag
+ui  GET  /ui/dash/vurls.html            dash-things     template:'dash/vurls.html'       thyng:Vurl
+
+ui  GET  /ui/delete/comment/(ID).html   delete-thing    template:'delete/comment.html'   idname:'commentId'
+ui  GET  /ui/delete/feed/(ID).html      delete-thing    template:'delete/feed.html'      idname:'feedId'
+ui  GET  /ui/delete/item/(ID).html      delete-thing    template:'delete/item.html'      idname:'itemId'
+ui  GET  /ui/delete/tag/(ID).html       delete-thing    template:'delete/tag.html'       idname:'tagId'
+ui  GET  /ui/delete/vurl/(ID).html      delete-thing    template:'delete/vurl.html'      idname:'vurlId'
+
+ui  GET  /ui/list/comments/(IDZ).html   list-comments   template:'list/comments.html'
+ui  GET  /ui/list/feeds.html            list-things     template:'list/feeds.html'       thyng:Feed
+ui  GET  /ui/list/items.html            list-things     template:'list/items.html'       thyng:Item
+ui  GET  /ui/list/tags.html             list-things     template:'list/tags.html'        thyng:Tag
+ui  GET  /ui/list/vurls.html            list-things     template:'list/vurls.html'       thyng:Vurl
+
+ui  GET  /ui/read/comment/(ID).html     read-thing      template:'read/comment.html'     thyng:Comment
+ui  GET  /ui/read/feed/(ID).html        read-thing      template:'read/feed.html'        thyng:Feed
+ui  GET  /ui/read/item/(ID).html        read-thing      template:'read/item.html'        thyng:Item
+ui  GET  /ui/read/tag/(ID).html         read-thing      template:'read/tag.html'         thyng:Tag
+ui  GET  /ui/read/vurl/(ID).html        read-thing      template:'read/vurl.html'        thyng:Vurl
+
+ui  GET  /ui/search/comments.html       render-page     template:'search/comments.html'
+ui  GET  /ui/search/feeds.html          render-page     template:'search/feeds.html'
+ui  GET  /ui/search/items.html          render-page     template:'search/items.html'
+ui  GET  /ui/search/tags.html           render-page     template:'search/tags.html'
+ui  GET  /ui/search/vurls.html          render-page     template:'search/vurls.html'
+
+ui  GET  /ui/update/comment/(ID).html   update-thing    template:'update/comment.html'   thyng:Comment
+ui  GET  /ui/update/feed/(ID).html      update-thing    template:'update/feed.html'      thyng:Feed
+ui  GET  /ui/update/item/(ID).html      update-thing    template:'update/item.html'      thyng:Item
+ui  GET  /ui/update/tag/(ID).html       update-thing    template:'update/tag.html'       thyng:Tag
+ui  GET  /ui/update/vurl/(ID).html      update-thing    template:'update/vurl.html'      thyng:Vurl
+
+ui  GET  /ui/version.html               version         template:'version.html'
 
 ##################################################################
 
-dev  GET  /dev/home.html  render  template:'dev/tbd.html'
+dev  GET  /dev/home.html  render-page  template:'dev/tbd.html'
