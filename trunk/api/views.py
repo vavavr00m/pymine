@@ -96,7 +96,7 @@ def delete_thing_attr(request, thyng, id, attr, **kwargs):
     implements: DELETE /api/item/(ID)/(ATTR).(FMT)
     implements: DELETE /api/tag/(ID)/(ATTR).(FMT)
     implements: DELETE /api/vurl/(ID)/(ATTR).(FMT)
-    returns: ..
+    returns: ...
     """
     m = thyng.get(id=int(id))
     m.delete_attribute(attr)
@@ -110,7 +110,7 @@ def encode_minekey(request, **kwargs):
     """
     arguments: request, **kwargs
     implements: POST /api/encode.(FMT)
-    returns: ..
+    returns: ...
     """
     s = {}
     return Envelope(request, s)
@@ -123,7 +123,7 @@ def get_registry_attr(request, rattr, **kwargs):
     """
     arguments: request, rattr, **kwargs
     implements: GET /api/registry/(RATTR).(FMT)
-    returns: ..
+    returns: ...
     """
     m = Registry.get(key=rattr)
     return Envelope(request, m.value)
@@ -140,7 +140,7 @@ def get_thing_attr(request, thyng, id, attr, **kwargs):
     implements: GET /api/item/(ID)/(ATTR).(FMT)
     implements: GET /api/tag/(ID)/(ATTR).(FMT)
     implements: GET /api/vurl/(ID)/(ATTR).(FMT)
-    returns: ..
+    returns: ...
     """
     m = thyng.get(id=int(id))
     s = m.to_structure()
@@ -154,7 +154,7 @@ def list_comments(request, idz, **kwargs):
     """
     arguments: request, idz, **kwargs
     implements: GET /api/comment/item/(IDZ).(FMT)
-    returns: ..
+    returns: ...
     """
 
     iid = int(idz)
@@ -181,7 +181,7 @@ def list_registry(request, **kwargs):
     """
     arguments: request, **kwargs
     implements: GET /api/registry.(FMT)
-    returns: ..
+    returns: ...
     """
     qs = Registry.objects.all()
     result = [ m.to_structure() for m in qs ]
@@ -198,7 +198,7 @@ def list_things(request, thyng, **kwargs):
     implements: GET /api/item.(FMT)
     implements: GET /api/tag.(FMT)
     implements: GET /api/vurl.(FMT)
-    returns: ..
+    returns: ...
     """
     qs = thyng.list()
 
@@ -216,7 +216,7 @@ def read_item_data(request, id, token, **kwargs):
     """
     arguments: request, id, token, **kwargs
     implements: GET /api/data/(ID)(/TOKEN)
-    returns: ..
+    returns: ...
     """
     pass
 
@@ -228,7 +228,7 @@ def read_item_icon(request, id, token, **kwargs):
     """
     arguments: request, id, token, **kwargs
     implements: GET /api/icon/(ID)(/TOKEN)
-    returns: ..
+    returns: ...
     """
     s = {}
     return Envelope(request, s)
@@ -245,7 +245,7 @@ def read_thing(request, thyng, id, **kwargs):
     implements: GET /api/item/(ID).(FMT)
     implements: GET /api/tag/(ID).(FMT)
     implements: GET /api/vurl/(ID).(FMT)
-    returns: ..
+    returns: ...
     """
     m = thyng.get(id=int(id))
     return Envelope(request, m.to_structure())
@@ -258,7 +258,7 @@ def read_version(request, **kwargs):
     """
     arguments: request, **kwargs
     implements: GET /api/version.(FMT)
-    returns: ..
+    returns: ...
     """
     s = {
         'softwareName': settings.MINE_SOFTWARE_NAME,
@@ -275,7 +275,7 @@ def update_registry_attr(request, rattr, **kwargs):
     """
     arguments: request, rattr, **kwargs
     implements: POST /api/registry/(RATTR).(FMT)
-    returns: ..
+    returns: ...
     """
     v = request.POST[rattr]
     m, created = Registry.objects.get_or_create(key=rattr, defaults={ 'value': v })
@@ -296,7 +296,7 @@ def update_thing(request, thyng, id, **kwargs):
     implements: POST /api/item/(ID).(FMT)
     implements: POST /api/tag/(ID).(FMT)
     implements: POST /api/vurl/(ID).(FMT)
-    returns: ..
+    returns: ...
     """
     m = thyng.get(id=int(id))
     m = m.update(request)

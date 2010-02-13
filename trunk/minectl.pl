@@ -284,7 +284,6 @@ while (<DATA>) {
 	    my @cmdargs = (
 		"itemData=\@$filename",
 		"itemName=$itemname",
-		"itemType=$filetype",
 		"itemDescription=auto-uploaded from $filename"
 		);
 
