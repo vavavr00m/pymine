@@ -24,6 +24,30 @@ import hashlib
 import hmac
 import re
 
+import util.mimestuff as mimestuff
+
+try:
+    from models import Feed, Item
+except:
+
+    class Feed:
+        id = 1
+        version = 1
+        @classmethod 
+        def get(*args, **kwargs):
+            return Feed()
+        
+    class Item:
+        id = 1
+        version = 1
+        data_type = 'text/plain'
+        icon_type = 'image/png'
+        @classmethod 
+        def get(*args, **kwargs):
+            return Item()
+        def synthetic_extension(self):
+            return "pdf"
+
 # minekey format:
 # hmac/fid/fversion/iid/depth/type.ext
 # type in ( data, icon, submit )
@@ -45,22 +69,20 @@ class MineKey:
 	iid: integer item id >= 0
 	depth: integer depth > 0
 	ext: regexp ^\w+$
-	hmac: hmac against which to check this
+	hmac: hmac against which to check this minekey
 	request: request object for URL-generation purposes
 	"""
 
+	self.__depth = kwargs.get('depth', -1)
 	self.__fid = kwargs.get('fid', -1)
 	self.__fversion = kwargs.get('fversion', -1)
 	self.__iid = kwargs.get('iid', -1)
-	self.__depth = kwargs.get('depth', -1)
 	self.__type = kwargs.get('type', None)
 
-	self.__ext = kwargs.get('ext', 'dat')
-
-	self.__hmac_supplied = kwargs.get('hmac', None)
 	self.__request = kwargs.get('request', None)
-	self.__feed = None
-	self.__item = None
+	self.__hmac_supplied = kwargs.get('hmac', None)
+	self.__item_cached = None
+	self.__feed_cached = None
 
     def __str__(self):
 	"""
@@ -81,6 +103,10 @@ class MineKey:
 	does a variety of sanity checks on self and throws a RuntimeError if surprised
 
         returns the stripped hmac string
+
+        for a minekey such as "HASH/42/1/11/2/data.dat" - the
+        validation covers everything from "HASH" to "data" inclusive;
+        the trailing ".dat" is considered advisory.
 	"""
 
 	def errmsg(x):
@@ -97,8 +123,11 @@ class MineKey:
 	    raise RuntimeError, errmsg('depth not in bounds')
 	if self.__type not in ('data', 'icon', 'submit'):
 	    raise RuntimeError, errmsg('type not in permitted set')
-	if not re.match(r'^\w+$', self.__ext):
-	    raise RuntimeError, errmsg('ext "%s" has illegal format' % self.__ext)
+
+        f = self.get_feed()
+
+        if f.version != self.__fversion:
+            raise RuntimeError, errmsg("database feed version %d not equal to minekey feed version %d" % (f.version, self.__fversion))
 
 	hmac_key = '12345678901234567890123456789012'
 	hmac_pad = '________________________________'
@@ -112,6 +141,18 @@ class MineKey:
 					   (hash, self.__hmac_supplied))
 	return hash
 
+    def get_feed(self):
+        """return a (cached) copy of the feed object corresponding to this minekey"""
+        if not self.__feed_cached:
+            self.__feed_cached = Feed.get(id=self.__fid)
+        return self.__feed_cached
+
+    def get_item(self):
+        if not self.__item_cached:
+            if self.__iid:
+                self.__item_cached = Item.get(id=self.__iid)
+        return self.__item_cached
+
     def key(self):
 	"""
 	validates, and then returns the minekey information WITH hmac, in the following format:
@@ -122,7 +163,23 @@ class MineKey:
 	"""
 
 	hash = self.validate()
-	return "%s/%s.%s" % (hash, str(self), self.__ext)
+
+        if self.__iid == 0:
+            ext = 'feed'
+        else:
+            i = self.get_item() # if None, something is wrong so let it barf
+
+            if self.__type == 'data':
+                ext = mimestuff.lookup.guess_extension(i.data_type)
+            elif self.__type == 'icon':
+                ext = mimestuff.lookup.guess_extension(i.icon_type)
+            elif self.__type == 'submit':
+                ext = '.cgi'
+
+        if not ext:
+            ext = '.dat'
+
+	return "%s/%s%s" % (hash, str(self), ext)
 
     def permalink(self):
 	"""
@@ -160,12 +217,12 @@ class MineKey:
 
 	foo = {
 	    'depth': self.__depth,
-	    'ext': self.__ext,
 	    'fid': self.__fid,
 	    'fversion': self.__fversion,
 	    'iid': self.__iid,
-	    'request': self.__request,
 	    'type': self.__type,
+
+	    'request': self.__request,
 	    }
 
 	return MineKey(**foo)
