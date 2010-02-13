@@ -410,13 +410,13 @@ class MineAPI:
 
     def apply_sub1_regkey(self, method, url_template, *args, **kwargs):
 	"""
-	Replaces '{1}' in url_template with arg[0]; invokes resulting
+	Replaces 'E{lb}1E{rb}' in url_template with arg[0]; invokes resulting
 	url with method using faked-up kwargs:
 
-          {arg[0] : arg[1]} # eg: {'foo': 42}
+        E{lb} arg[0] : arg[1] E{rb} # eg: E{lb} 'foo': 42 E{rb}
 
         ...because this syntax is used to populate individual keys in
-        the registry (applying {'foo':42{ to /api/registry/foo.json)
+        the registry (applying E{lb} 'foo':42 E{rb} to /api/registry/foo.json)
 	"""
 
 	url_suffix = url_template.replace('{1}', args[0])
@@ -495,8 +495,8 @@ class MineAPI:
 
         so you can do stuff like:
 
-            m = MineAPI(username='fred, ...')
-            tags = m.list_tags()
+        m = MineAPI(username='fred, ...')
+        tags = m.list_tags()
 
         ...even though no list_tags() method is defined; this works
         because __getattr__() traps the attempt to access the

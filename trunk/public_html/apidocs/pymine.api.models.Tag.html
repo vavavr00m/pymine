@@ -19,28 +19,16 @@
     <div>
       
     </div>
-    <div>This is the modelspace representation of the Tag object<table class="fieldTable"></table></div>
+    <div class="undocumented">No class docstring</div>
     
     
     <div id="splitTables">
-      <table class="children sortable" id="id16">
+      <table class="children sortable" id="id30">
   
   
   
   
-  <tr class="class">
-    
-    
-    <td>Class</td>
-    <td><a href="pymine.api.models.Tag.Meta.html">Meta</a></td>
-    <td><span class="undocumented">Undocumented</span></td>
-  </tr><tr class="method">
-    
-    
-    <td>Method</td>
-    <td><a href="pymine.api.models.Tag.html#__unicode__">__unicode__</a></td>
-    <td><span class="undocumented">Undocumented</span></td>
-  </tr><tr class="method">
+  <tr class="method">
     
     
     <td>Method</td>
@@ -63,25 +51,19 @@ loops.</span></td>
     
     
     <td>Method</td>
-    <td><a href="pymine.api.models.Tag.html#delete_sattr">delete_sattr</a></td>
-    <td><span>This method overrides AbstractThing.delete_sattr() and acts as</span></td>
+    <td><a href="pymine.api.models.Tag.html#delete_attribute">delete_attribute</a></td>
+    <td><span>This method overrides AbstractThing.delete_attribute() and acts as</span></td>
   </tr><tr class="method">
     
     
     <td>Method</td>
-    <td><a href="pymine.api.models.Tag.html#update_from_request">update_from_request</a></td>
-    <td><span>This method overrides AbstractThing.update_from_request() and</span></td>
+    <td><a href="pymine.api.models.Tag.html#update">update</a></td>
+    <td><span>This method overrides AbstractThing.update() and acts as a</span></td>
   </tr><tr class="classmethod">
     
     
     <td>Class Method</td>
     <td><a href="pymine.api.models.Tag.html#get_or_auto_tag">get_or_auto_tag</a></td>
-    <td><span class="undocumented">Undocumented</span></td>
-  </tr><tr class="classmethod">
-    
-    
-    <td>Class Method</td>
-    <td><a href="pymine.api.models.Tag.html#filter_queryset">filter_queryset</a></td>
     <td><span class="undocumented">Undocumented</span></td>
   </tr>
   
@@ -90,65 +72,83 @@ loops.</span></td>
         <p>
           Inherited from <a href="pymine.api.models.AbstractThing.html">AbstractThing</a>:
         </p>
-        <table class="children sortable" id="id17">
+        <table class="children sortable" id="id31">
   
   
   
   
-  <tr class="baseclassmethod">
+  <tr class="baseclass">
+    
+    
+    <td>Class</td>
+    <td><a href="pymine.api.models.AbstractThing.Meta.html">Meta</a></td>
+    <td><span class="undocumented">Undocumented</span></td>
+  </tr><tr class="baseclassmethod">
     
     
     <td>Class Method</td>
-    <td><a href="pymine.api.models.AbstractThing.html#new_from_request">new_from_request</a></td>
-    <td><span class="undocumented">Undocumented</span></td>
+    <td><a href="pymine.api.models.AbstractThing.html#create">create</a></td>
+    <td><span>create a new Thing from a HTTPRequest, overriding with values from 
+kwargs.</span></td>
+  </tr><tr class="baseclassmethod">
+    
+    
+    <td>Class Method</td>
+    <td><a href="pymine.api.models.AbstractThing.html#get">get</a></td>
+    <td><span>return a single model matching kwargs; expunge virtually-deleted ones; 
+if none return None; if multiple, throw exception</span></td>
+  </tr><tr class="baseclassmethod">
+    
+    
+    <td>Class Method</td>
+    <td><a href="pymine.api.models.AbstractThing.html#list">list</a></td>
+    <td><span>return a queryset of models matching kwargs; expunge virtually-deleted 
+ones</span></td>
+  </tr><tr class="baseclassmethod">
+    
+    
+    <td>Class Method</td>
+    <td><a href="pymine.api.models.AbstractThing.html#execute_search_query">execute_search_query</a></td>
+    <td><span>take one queryset and return another, filtered by the content of 
+search_string; this version is a no-op</span></td>
+  </tr><tr class="baseclassmethod">
+    
+    
+    <td>Class Method</td>
+    <td><a href="pymine.api.models.AbstractThing.html#search">search</a></td>
+    <td><span>return a queryset of models matching **kwargs and search_string; expunge
+virtually-deleted ones</span></td>
   </tr><tr class="basemethod">
     
     
     <td>Method</td>
-    <td><a href="pymine.api.models.AbstractThing.html#lookup_mattr">lookup_mattr</a></td>
-    <td><span class="undocumented">Undocumented</span></td>
+    <td><a href="pymine.api.models.AbstractThing.html#save_files_from">save_files_from</a></td>
+    <td><span>stub for file-saving per instance/class; returns True if a change was 
+made</span></td>
   </tr><tr class="basemethod">
     
     
     <td>Method</td>
-    <td><a href="pymine.api.models.AbstractThing.html#get_sattr">get_sattr</a></td>
-    <td><span class="undocumented">Undocumented</span></td>
+    <td><a href="pymine.api.models.AbstractThing.html#delete">delete</a></td>
+    <td><span>gc all the fields and mark this Thing as deleted</span></td>
   </tr><tr class="basemethod">
     
     
     <td>Method</td>
     <td><a href="pymine.api.models.AbstractThing.html#to_structure">to_structure</a></td>
-    <td><span class="undocumented">Undocumented</span></td>
+    <td><span>convert this model m to a dictionary structure s (ie: s-space)</span></td>
   </tr><tr class="basemethod">
     
     
     <td>Method</td>
     <td><a href="pymine.api.models.AbstractThing.html#get_absolute_url">get_absolute_url</a></td>
-    <td><span class="undocumented">Undocumented</span></td>
-  </tr>
-  
-</table>
-      
-        <p>
-          Inherited from <a href="pymine.api.models.AbstractModel.html">AbstractModel</a> (via <a href="pymine.api.models.AbstractThing.html">AbstractThing</a>):
-        </p>
-        <table class="children sortable" id="id18">
-  
-  
-  
-  
-  <tr class="basemethod">
-    
-    
-    <td>Method</td>
-    <td><a href="pymine.api.models.AbstractModel.html#delete">delete</a></td>
-    <td><span class="undocumented">Undocumented</span></td>
+    <td><span>return a url for this object for administrative purposes</span></td>
   </tr><tr class="basemethod">
     
     
     <td>Method</td>
-    <td><a href="pymine.api.models.AbstractModel.html#delete_for_real">delete_for_real</a></td>
-    <td><span class="undocumented">Undocumented</span></td>
+    <td><a href="pymine.api.models.AbstractThing.html#__unicode__">__unicode__</a></td>
+    <td><span>return the canonical name of this object</span></td>
   </tr>
   
 </table>
@@ -159,18 +159,6 @@ loops.</span></td>
     
     
     <div class="function">
-        <a name="pymine.api.models.Tag.__unicode__"></a>
-        <a name="__unicode__"></a>
-        <div class="functionHeader">
-        
-        def __unicode__(self):
-        
-      </div>
-        <div class="functionBody">
-          
-          <div class="undocumented">Undocumented</div>
-        </div>
-      </div><div class="function">
         <a name="pymine.api.models.Tag.__update_cloud_field"></a>
         <a name="__update_cloud_field"></a>
         <div class="functionHeader">
@@ -211,32 +199,32 @@ caching at a lower level take the hit...<table class="fieldTable"></table></div>
 loops.<table class="fieldTable"></table></div>
         </div>
       </div><div class="function">
-        <a name="pymine.api.models.Tag.delete_sattr"></a>
-        <a name="delete_sattr"></a>
+        <a name="pymine.api.models.Tag.delete_attribute"></a>
+        <a name="delete_attribute"></a>
         <div class="functionHeader">
         @transaction.commit_on_success<br />
-        def delete_sattr(self, sattr):
+        def delete_attribute(self, sattr):
         
       </div>
         <div class="functionBody">
-          <div class="interfaceinfo">overrides <a href="pymine.api.models.AbstractThing.html#delete_sattr">pymine.api.models.AbstractThing.delete_sattr</a></div>
-          <div>This method overrides AbstractThing.delete_sattr() and acts as a hook to
-detect changes in the Tag implications that might trigger a recalculation 
-of the Tag cloud.<table class="fieldTable"></table></div>
+          <div class="interfaceinfo">overrides <a href="pymine.api.models.AbstractThing.html#delete_attribute">pymine.api.models.AbstractThing.delete_attribute</a></div>
+          <div>This method overrides AbstractThing.delete_attribute() and acts as a 
+hook to detect changes in the Tag implications that might trigger a 
+recalculation of the Tag cloud.<table class="fieldTable"></table></div>
         </div>
       </div><div class="function">
-        <a name="pymine.api.models.Tag.update_from_request"></a>
-        <a name="update_from_request"></a>
+        <a name="pymine.api.models.Tag.update"></a>
+        <a name="update"></a>
         <div class="functionHeader">
         @transaction.commit_on_success<br />
-        def update_from_request(self, r, **kwargs):
+        def update(self, r, **kwargs):
         
       </div>
         <div class="functionBody">
-          <div class="interfaceinfo">overrides <a href="pymine.api.models.AbstractThing.html#update_from_request">pymine.api.models.AbstractThing.update_from_request</a></div>
-          <div>This method overrides AbstractThing.update_from_request() and acts as a 
-hook to detect changes in the Tag implications that might trigger a 
-recalculation of the Tag cloud.</p>
+          <div class="interfaceinfo">overrides <a href="pymine.api.models.AbstractThing.html#update">pymine.api.models.AbstractThing.update</a></div>
+          <div>This method overrides AbstractThing.update() and acts as a hook to 
+detect changes in the Tag implications that might trigger a recalculation 
+of the Tag cloud.</p>
 <p>There is a performance impact here which needs to be considered; we 
 *ought* to determine whether something has changed that would require the 
 cloud to be recomputed; but maybe slightly overzealous refreshing will be 
@@ -257,22 +245,10 @@ implication, if any at all...<table class="fieldTable"></table></div>
           
           <div class="undocumented">Undocumented</div>
         </div>
-      </div><div class="function">
-        <a name="pymine.api.models.Tag.filter_queryset"></a>
-        <a name="filter_queryset"></a>
-        <div class="functionHeader">
-        @classmethod<br />
-        def filter_queryset(klass, qs, query):
-        
-      </div>
-        <div class="functionBody">
-          <div class="interfaceinfo">overrides <a href="pymine.api.models.AbstractThing.html#filter_queryset">pymine.api.models.AbstractThing.filter_queryset</a></div>
-          <div class="undocumented">Undocumented</div>
-        </div>
       </div>
     
     <address>
-      <a href="index.html">API Documentation</a> for pymine, generated by <a href="http://codespeak.net/~mwh/pydoctor/">pydoctor</a> at (date elided).
+      <a href="index.html">API Documentation</a> for pymine, generated by <a href="http://codespeak.net/~mwh/pydoctor/">pydoctor</a> at 2010-02-13 20:51:05.
     </address>
   </body>
 </html>

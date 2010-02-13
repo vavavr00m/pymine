@@ -1,6 +1,6 @@
 #!/usr/bin/python
 ##
-## Copyright 2009-2010 Adriana Lukas & Alec Muffett
+## Copyright 2010 Adriana Lukas & Alec Muffett
 ##
 ## Licensed under the Apache License, Version 2.0 (the "License"); you
 ## may not use this file except in compliance with the License. You
@@ -23,6 +23,11 @@ import mimetypes
 import os
 
 class lookup:
+    """
+    class provides two methods which frontend mimetypes.guess_foo()
+    with a small hardcoded cache of sanity
+    """
+
     __e2t = {
         '.avi': 'video/x-msvideo',
         '.css': 'text/css',
@@ -52,6 +57,7 @@ class lookup:
 
     @staticmethod
     def guess_type(path):
+        """see mimetypes.guess_type()"""
         head, tail = os.path.split(path)
         base, ext = os.path.splitext(tail)
         ext = ext.lower()
@@ -67,6 +73,7 @@ class lookup:
 
     @staticmethod
     def guess_extension(type):
+        """see mimetypes.guess_extension()"""
         ext = lookup.__t2e.get(type, None)
         if not ext:
             ext = mimetypes.guess_extension(type)

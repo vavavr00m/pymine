@@ -23,7 +23,7 @@
     
     
     <div id="splitTables">
-      <table class="children sortable" id="id58">
+      <table class="children sortable" id="id55">
   
   
   
@@ -32,44 +32,65 @@
     
     
     <td>Function</td>
-    <td><a href="pymine.views.html#REST_NOAUTH">REST_NOAUTH</a></td>
-    <td><span>Things that use REST()/REST_NOAUTH() return their own HTTPResponse</span></td>
+    <td><a href="pymine.views.html#HTTP_METHOD_NOAUTH">HTTP_METHOD_NOAUTH</a></td>
+    <td><span>deal with a non-API HTTP request : GET and POST methods</span></td>
   </tr><tr class="function">
     
     
     <td>Function</td>
-    <td><a href="pymine.views.html#REST">REST</a></td>
-    <td><span>frontend to REST_NOAUTH() but uses the @login_required decorator</span></td>
+    <td><a href="pymine.views.html#HTTP_METHOD">HTTP_METHOD</a></td>
+    <td><span>frontend to HTTP_METHOD_NOAUTH but uses the @login_required 
+decorator</span></td>
   </tr><tr class="function">
     
     
     <td>Function</td>
-    <td><a href="pymine.views.html#API_CALL">API_CALL</a></td>
-    <td><span>Things that use API_CALL() return a structure that here is</span></td>
+    <td><a href="pymine.views.html#API_REST">API_REST</a></td>
+    <td><span>deal with an API HTTP request : GET, POST and DELETE methods</span></td>
   </tr><tr class="function">
     
     
     <td>Function</td>
-    <td><a href="pymine.views.html#root_mine">root_mine</a></td>
-    <td><span>root_mine() returns ...</span></td>
+    <td><a href="pymine.views.html#get_favicon">get_favicon</a></td>
+    <td><span>arguments: request, **kwargs</span></td>
   </tr><tr class="function">
     
     
     <td>Function</td>
-    <td><a href="pymine.views.html#root_favicon">root_favicon</a></td>
-    <td><span>root_favicon() returns ...</span></td>
+    <td><a href="pymine.views.html#mine_public">mine_public</a></td>
+    <td><span>arguments: request, suffix, **kwargs</span></td>
   </tr><tr class="function">
     
     
     <td>Function</td>
-    <td><a href="pymine.views.html#root_pub">root_pub</a></td>
-    <td><span>root_pub() returns ...</span></td>
+    <td><a href="pymine.views.html#mine_redirect">mine_redirect</a></td>
+    <td><span>arguments: request, target, **kwargs</span></td>
   </tr><tr class="function">
     
     
     <td>Function</td>
-    <td><a href="pymine.views.html#handle_pub">handle_pub</a></td>
-    <td><span>handle_pub(suffix) returns ...</span></td>
+    <td><a href="pymine.views.html#minekey_read">minekey_read</a></td>
+    <td><span>arguments: request, mk_hmac, mk_fid, mk_fversion, mk_iid, mk_depth, 
+mk_type, mk_ext, **kwargs</span></td>
+  </tr><tr class="function">
+    
+    
+    <td>Function</td>
+    <td><a href="pymine.views.html#minekey_submit">minekey_submit</a></td>
+    <td><span>arguments: request, mk_hmac, mk_fid, mk_fversion, mk_iid, mk_depth, 
+mk_type, mk_ext, **kwargs</span></td>
+  </tr><tr class="function">
+    
+    
+    <td>Function</td>
+    <td><a href="pymine.views.html#vurl_read_by_key">vurl_read_by_key</a></td>
+    <td><span>arguments: request, vurlkey, **kwargs</span></td>
+  </tr><tr class="function">
+    
+    
+    <td>Function</td>
+    <td><a href="pymine.views.html#vurl_read_by_name">vurl_read_by_name</a></td>
+    <td><span>arguments: request, suffix, **kwargs</span></td>
   </tr>
   
 </table>
@@ -80,104 +101,141 @@
     
     
     <div class="function">
-        <a name="pymine.views.REST_NOAUTH"></a>
-        <a name="REST_NOAUTH"></a>
+        <a name="pymine.views.HTTP_METHOD_NOAUTH"></a>
+        <a name="HTTP_METHOD_NOAUTH"></a>
         <div class="functionHeader">
         
-        def REST_NOAUTH(request, *args, **kwargs):
+        def HTTP_METHOD_NOAUTH(request, *args, **kwargs):
         
       </div>
         <div class="functionBody">
           
-          <div>Things that use REST()/REST_NOAUTH() return their own HTTPResponse 
-objects directly; this includes item-data-reads, and most non-API 
-handlers<table class="fieldTable"></table></div>
+          <div>deal with a non-API HTTP request : GET and POST methods<table class="fieldTable"></table></div>
         </div>
       </div><div class="function">
-        <a name="pymine.views.REST"></a>
-        <a name="REST"></a>
-        <div class="functionHeader">
-        @login_required()<br />
-        def REST(request, *args, **kwargs):
-        
-      </div>
-        <div class="functionBody">
-          
-          <div>frontend to REST_NOAUTH() but uses the @login_required decorator<table class="fieldTable"></table></div>
-        </div>
-      </div><div class="function">
-        <a name="pymine.views.API_CALL"></a>
-        <a name="API_CALL"></a>
+        <a name="pymine.views.HTTP_METHOD"></a>
+        <a name="HTTP_METHOD"></a>
         <div class="functionHeader">
         @login_required<br />
-        def API_CALL(request, *args, **kwargs):
+        def HTTP_METHOD(request, *args, **kwargs):
         
       </div>
         <div class="functionBody">
           
-          <div>Things that use API_CALL() return a structure that here is converted to 
-the desired output format and returned.</p>
-<p>The pseudo-format &quot;rdr&quot; enables use of the redirect_success 
-parameter; if &quot;foo.rdr&quot; is called and 
-&quot;redirect_success&quot; is set, then a successful completion of 
-foo.rdr yields a redirect to the value of &quot;redirect_success&quot;</p>
-<p>The format &quot;raw&quot; returns a undefined string representation of 
-the results for &quot;foo.raw&quot;, purely for human consumption.  If 
-DEBUG is set then the return value is type text/plain, otherwise it is 
-application/octet-stream.<table class="fieldTable"></table></div>
+          <div>frontend to HTTP_METHOD_NOAUTH but uses the @login_required 
+decorator<table class="fieldTable"></table></div>
         </div>
       </div><div class="function">
-        <a name="pymine.views.root_mine"></a>
-        <a name="root_mine"></a>
+        <a name="pymine.views.API_REST"></a>
+        <a name="API_REST"></a>
         <div class="functionHeader">
-        
-        def root_mine(request, *args, **kwargs):
+        @login_required<br />
+        def API_REST(request, *args, **kwargs):
         
       </div>
         <div class="functionBody">
           
-          <div>root_mine() returns ...<table class="fieldTable"></table></div>
+          <div>deal with an API HTTP request : GET, POST and DELETE methods<table class="fieldTable"></table></div>
         </div>
       </div><div class="function">
-        <a name="pymine.views.root_favicon"></a>
-        <a name="root_favicon"></a>
+        <a name="pymine.views.get_favicon"></a>
+        <a name="get_favicon"></a>
         <div class="functionHeader">
         
-        def root_favicon(request, *args, **kwargs):
+        def get_favicon(request, **kwargs):
         
       </div>
         <div class="functionBody">
           
-          <div>root_favicon() returns ...<table class="fieldTable"></table></div>
+          <div>arguments: request, **kwargs implements: GET /favicon.ico returns: a 
+punt to mine_public(request, 'images/favicon.ico', **kwargs)<table class="fieldTable"></table></div>
         </div>
       </div><div class="function">
-        <a name="pymine.views.root_pub"></a>
-        <a name="root_pub"></a>
+        <a name="pymine.views.mine_public"></a>
+        <a name="mine_public"></a>
         <div class="functionHeader">
         
-        def root_pub(request, *args, **kwargs):
+        def mine_public(request, suffix, **kwargs):
         
       </div>
         <div class="functionBody">
           
-          <div>root_pub() returns ...<table class="fieldTable"></table></div>
+          <div>arguments: request, suffix, **kwargs implements: GET /pub(/SUFFIX) 
+returns: the output of httpserve.httpserve_path(request, suffix)<table class="fieldTable"></table></div>
         </div>
       </div><div class="function">
-        <a name="pymine.views.handle_pub"></a>
-        <a name="handle_pub"></a>
+        <a name="pymine.views.mine_redirect"></a>
+        <a name="mine_redirect"></a>
         <div class="functionHeader">
         
-        def handle_pub(request, suffix, *args, **kwargs):
+        def mine_redirect(request, target, **kwargs):
         
       </div>
         <div class="functionBody">
           
-          <div>handle_pub(suffix) returns ...<table class="fieldTable"></table></div>
+          <div>arguments: request, target, **kwargs implements: GET / returns: 
+HttpResponseRedirect(target)<table class="fieldTable"></table></div>
+        </div>
+      </div><div class="function">
+        <a name="pymine.views.minekey_read"></a>
+        <a name="minekey_read"></a>
+        <div class="functionHeader">
+        
+        def minekey_read(request, mk_hmac, mk_fid, mk_fversion, mk_iid, mk_depth, mk_type, mk_ext, **kwargs):
+        
+      </div>
+        <div class="functionBody">
+          
+          <div>arguments: request, mk_hmac, mk_fid, mk_fversion, mk_iid, mk_depth, 
+mk_type, mk_ext, **kwargs implements: GET 
+/key/(MK_HMAC)/(MK_FID)/(MK_FVERSION)/(MK_IID)/(MK_DEPTH)/(MK_TYPE).(MK_EXT)
+returns: ...<table class="fieldTable"></table></div>
+        </div>
+      </div><div class="function">
+        <a name="pymine.views.minekey_submit"></a>
+        <a name="minekey_submit"></a>
+        <div class="functionHeader">
+        
+        def minekey_submit(request, mk_hmac, mk_fid, mk_fversion, mk_iid, mk_depth, mk_type, mk_ext, **kwargs):
+        
+      </div>
+        <div class="functionBody">
+          
+          <div>arguments: request, mk_hmac, mk_fid, mk_fversion, mk_iid, mk_depth, 
+mk_type, mk_ext, **kwargs implements: POST 
+/key/(MK_HMAC)/(MK_FID)/(MK_FVERSION)/(MK_IID)/(MK_DEPTH)/(MK_TYPE).(MK_EXT)
+returns: ...<table class="fieldTable"></table></div>
+        </div>
+      </div><div class="function">
+        <a name="pymine.views.vurl_read_by_key"></a>
+        <a name="vurl_read_by_key"></a>
+        <div class="functionHeader">
+        
+        def vurl_read_by_key(request, vurlkey, **kwargs):
+        
+      </div>
+        <div class="functionBody">
+          
+          <div>arguments: request, vurlkey, **kwargs implements: GET /vurl/(VURLKEY) 
+returns: vurl.http_response()<table class="fieldTable"></table></div>
+        </div>
+      </div><div class="function">
+        <a name="pymine.views.vurl_read_by_name"></a>
+        <a name="vurl_read_by_name"></a>
+        <div class="functionHeader">
+        
+        def vurl_read_by_name(request, suffix, **kwargs):
+        
+      </div>
+        <div class="functionBody">
+          
+          <div>arguments: request, suffix, **kwargs implements: GET /page/(SUFFIX) 
+returns: vurl.http_response()<table class="fieldTable"></table></div>
         </div>
       </div>
     
     <address>
-      <a href="index.html">API Documentation</a> for pymine, generated by <a href="http://codespeak.net/~mwh/pydoctor/">pydoctor</a> at (date elided).
+      <a href="index.html">API Documentation</a> for pymine, generated by <a href="http://codespeak.net/~mwh/pydoctor/">pydoctor</a> at 2010-02-13 20:51:05.
     </address>
   </body>
 </html>

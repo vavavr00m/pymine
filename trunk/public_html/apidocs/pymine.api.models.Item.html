@@ -19,69 +19,21 @@
     <div>
       
     </div>
-    <div>This is the modelspace representation of the Item object<table class="fieldTable"></table></div>
+    <div class="undocumented">No class docstring</div>
     
     
     <div id="splitTables">
-      <table class="children sortable" id="id26">
+      <table class="children sortable" id="id34">
   
   
   
   
-  <tr class="class">
-    
-    
-    <td>Class</td>
-    <td><a href="pymine.api.models.Item.Meta.html">Meta</a></td>
-    <td><span class="undocumented">Undocumented</span></td>
-  </tr><tr class="method">
+  <tr class="method">
     
     
     <td>Method</td>
-    <td><a href="pymine.api.models.Item.html#__unicode__">__unicode__</a></td>
-    <td><span class="undocumented">Undocumented</span></td>
-  </tr><tr class="method">
-    
-    
-    <td>Method</td>
-    <td><a href="pymine.api.models.Item.html#save_upload_file">save_upload_file</a></td>
-    <td><span>tries to save the uploaded file for later access</span></td>
-  </tr><tr class="method">
-    
-    
-    <td>Method</td>
-    <td><a href="pymine.api.models.Item.html#item_size">item_size</a></td>
-    <td><span>returns the size of the data file; if there is no file,</span></td>
-  </tr><tr class="method">
-    
-    
-    <td>Method</td>
-    <td><a href="pymine.api.models.Item.html#item_type">item_type</a></td>
-    <td><span>if there is a declared item.type, it is returned;</span></td>
-  </tr><tr class="method">
-    
-    
-    <td>Method</td>
-    <td><a href="pymine.api.models.Item.html#item_feed_description">item_feed_description</a></td>
-    <td><span>if there is a data file, the description *is* HTML and is returned,</span></td>
-  </tr><tr class="method">
-    
-    
-    <td>Method</td>
-    <td><a href="pymine.api.models.Item.html#to_structure">to_structure</a></td>
-    <td><span>Splices the virtual itemSize sattr into the Item structure</span></td>
-  </tr><tr class="method">
-    
-    
-    <td>Method</td>
-    <td><a href="pymine.api.models.Item.html#to_atom">to_atom</a></td>
-    <td><span>Creates the structure used in ATOM generation</span></td>
-  </tr><tr class="classmethod">
-    
-    
-    <td>Class Method</td>
-    <td><a href="pymine.api.models.Item.html#filter_queryset">filter_queryset</a></td>
-    <td><span class="undocumented">Undocumented</span></td>
+    <td><a href="pymine.api.models.Item.html#save_files_from">save_files_from</a></td>
+    <td><span>save per-item files for this instance</span></td>
   </tr>
   
 </table>
@@ -89,71 +41,90 @@
         <p>
           Inherited from <a href="pymine.api.models.AbstractThing.html">AbstractThing</a>:
         </p>
-        <table class="children sortable" id="id27">
+        <table class="children sortable" id="id35">
   
   
   
   
-  <tr class="basemethod">
+  <tr class="baseclass">
     
     
-    <td>Method</td>
-    <td><a href="pymine.api.models.AbstractThing.html#update_from_request">update_from_request</a></td>
-    <td><span>update_from_request updates a (possibly blank) instance of a</span></td>
+    <td>Class</td>
+    <td><a href="pymine.api.models.AbstractThing.Meta.html">Meta</a></td>
+    <td><span class="undocumented">Undocumented</span></td>
   </tr><tr class="baseclassmethod">
     
     
     <td>Class Method</td>
-    <td><a href="pymine.api.models.AbstractThing.html#new_from_request">new_from_request</a></td>
-    <td><span class="undocumented">Undocumented</span></td>
+    <td><a href="pymine.api.models.AbstractThing.html#create">create</a></td>
+    <td><span>create a new Thing from a HTTPRequest, overriding with values from 
+kwargs.</span></td>
+  </tr><tr class="baseclassmethod">
+    
+    
+    <td>Class Method</td>
+    <td><a href="pymine.api.models.AbstractThing.html#get">get</a></td>
+    <td><span>return a single model matching kwargs; expunge virtually-deleted ones; 
+if none return None; if multiple, throw exception</span></td>
+  </tr><tr class="baseclassmethod">
+    
+    
+    <td>Class Method</td>
+    <td><a href="pymine.api.models.AbstractThing.html#list">list</a></td>
+    <td><span>return a queryset of models matching kwargs; expunge virtually-deleted 
+ones</span></td>
+  </tr><tr class="baseclassmethod">
+    
+    
+    <td>Class Method</td>
+    <td><a href="pymine.api.models.AbstractThing.html#execute_search_query">execute_search_query</a></td>
+    <td><span>take one queryset and return another, filtered by the content of 
+search_string; this version is a no-op</span></td>
+  </tr><tr class="baseclassmethod">
+    
+    
+    <td>Class Method</td>
+    <td><a href="pymine.api.models.AbstractThing.html#search">search</a></td>
+    <td><span>return a queryset of models matching **kwargs and search_string; expunge
+virtually-deleted ones</span></td>
   </tr><tr class="basemethod">
     
     
     <td>Method</td>
-    <td><a href="pymine.api.models.AbstractThing.html#lookup_mattr">lookup_mattr</a></td>
-    <td><span class="undocumented">Undocumented</span></td>
+    <td><a href="pymine.api.models.AbstractThing.html#update">update</a></td>
+    <td><span>update a single Thing from a HTTPRequest, overriding with values from 
+kwargs</span></td>
   </tr><tr class="basemethod">
     
     
     <td>Method</td>
-    <td><a href="pymine.api.models.AbstractThing.html#get_sattr">get_sattr</a></td>
-    <td><span class="undocumented">Undocumented</span></td>
+    <td><a href="pymine.api.models.AbstractThing.html#delete">delete</a></td>
+    <td><span>gc all the fields and mark this Thing as deleted</span></td>
   </tr><tr class="basemethod">
     
     
     <td>Method</td>
-    <td><a href="pymine.api.models.AbstractThing.html#delete_sattr">delete_sattr</a></td>
-    <td><span class="undocumented">Undocumented</span></td>
+    <td><a href="pymine.api.models.AbstractThing.html#to_structure">to_structure</a></td>
+    <td><span>convert this model m to a dictionary structure s (ie: s-space)</span></td>
   </tr><tr class="basemethod">
     
     
     <td>Method</td>
     <td><a href="pymine.api.models.AbstractThing.html#get_absolute_url">get_absolute_url</a></td>
-    <td><span class="undocumented">Undocumented</span></td>
-  </tr>
-  
-</table>
-      
-        <p>
-          Inherited from <a href="pymine.api.models.AbstractModel.html">AbstractModel</a> (via <a href="pymine.api.models.AbstractThing.html">AbstractThing</a>):
-        </p>
-        <table class="children sortable" id="id28">
-  
-  
-  
-  
-  <tr class="basemethod">
-    
-    
-    <td>Method</td>
-    <td><a href="pymine.api.models.AbstractModel.html#delete">delete</a></td>
-    <td><span class="undocumented">Undocumented</span></td>
+    <td><span>return a url for this object for administrative purposes</span></td>
   </tr><tr class="basemethod">
     
     
     <td>Method</td>
-    <td><a href="pymine.api.models.AbstractModel.html#delete_for_real">delete_for_real</a></td>
-    <td><span class="undocumented">Undocumented</span></td>
+    <td><a href="pymine.api.models.AbstractThing.html#delete_attribute">delete_attribute</a></td>
+    <td><span>erase the value of attribute 'key' (or delete extended attribute 
+'$key')</span></td>
+  </tr><tr class="basemethod">
+    
+    
+    <td>Method</td>
+    <td><a href="pymine.api.models.AbstractThing.html#__unicode__">__unicode__</a></td>
+    <td><span>return the canonical name of this object</span></td>
   </tr>
   
 </table>
@@ -164,112 +135,28 @@
     
     
     <div class="function">
-        <a name="pymine.api.models.Item.__unicode__"></a>
-        <a name="__unicode__"></a>
+        <a name="pymine.api.models.Item.save_files_from"></a>
+        <a name="save_files_from"></a>
         <div class="functionHeader">
         
-        def __unicode__(self):
+        def save_files_from(self, request):
         
       </div>
         <div class="functionBody">
-          
-          <div class="undocumented">Undocumented</div>
-        </div>
-      </div><div class="function">
-        <a name="pymine.api.models.Item.save_upload_file"></a>
-        <a name="save_upload_file"></a>
-        <div class="functionHeader">
-        
-        def save_upload_file(self, f):
-        
-      </div>
-        <div class="functionBody">
-          
-          <div>tries to save the uploaded file for later access<table class="fieldTable"></table></div>
-        </div>
-      </div><div class="function">
-        <a name="pymine.api.models.Item.item_size"></a>
-        <a name="item_size"></a>
-        <div class="functionHeader">
-        
-        def item_size(self):
-        
-      </div>
-        <div class="functionBody">
-          
-          <div>returns the size of the data file; if there is no file, returns the size
-of self.description, or zero<table class="fieldTable"></table></div>
-        </div>
-      </div><div class="function">
-        <a name="pymine.api.models.Item.item_type"></a>
-        <a name="item_type"></a>
-        <div class="functionHeader">
-        
-        def item_type(self):
-        
-      </div>
-        <div class="functionBody">
-          
-          <div>if there is a declared item.type, it is returned; else if there is a 
-data file, return 'application/octet-stream'; else return 'text/html' and 
-assume the description is HTML<table class="fieldTable"></table></div>
-        </div>
-      </div><div class="function">
-        <a name="pymine.api.models.Item.item_feed_description"></a>
-        <a name="item_feed_description"></a>
-        <div class="functionHeader">
-        
-        def item_feed_description(self):
-        
-      </div>
-        <div class="functionBody">
-          
-          <div>if there is a data file, the description *is* HTML and is returned, else
-if self.item_type() suggests HTML, the description is returned, else a 
-hardcoded default is returned<table class="fieldTable"></table></div>
-        </div>
-      </div><div class="function">
-        <a name="pymine.api.models.Item.to_structure"></a>
-        <a name="to_structure"></a>
-        <div class="functionHeader">
-        
-        def to_structure(self):
-        
-      </div>
-        <div class="functionBody">
-          <div class="interfaceinfo">overrides <a href="pymine.api.models.AbstractThing.html#to_structure">pymine.api.models.AbstractThing.to_structure</a></div>
-          <div>Splices the virtual itemSize sattr into the Item structure<table class="fieldTable"></table></div>
-        </div>
-      </div><div class="function">
-        <a name="pymine.api.models.Item.to_atom"></a>
-        <a name="to_atom"></a>
-        <div class="functionHeader">
-        
-        def to_atom(self, feed_mk, relation):
-        
-      </div>
-        <div class="functionBody">
-          
-          <div>Creates the structure used in ATOM generation</p>
-<p>See 
-http://docs.djangoproject.com/en/dev/ref/contrib/syndication/#django.contrib.syndication.SyndicationFeed.add_item<table class="fieldTable"></table></div>
-        </div>
-      </div><div class="function">
-        <a name="pymine.api.models.Item.filter_queryset"></a>
-        <a name="filter_queryset"></a>
-        <div class="functionHeader">
-        @classmethod<br />
-        def filter_queryset(klass, qs, query):
-        
-      </div>
-        <div class="functionBody">
-          <div class="interfaceinfo">overrides <a href="pymine.api.models.AbstractThing.html#filter_queryset">pymine.api.models.AbstractThing.filter_queryset</a></div>
-          <div class="undocumented">Undocumented</div>
+          <div class="interfaceinfo">overrides <a href="pymine.api.models.AbstractThing.html#save_files_from">pymine.api.models.AbstractThing.save_files_from</a></div>
+          <div>save per-item files for this instance</p>
+<p>rules for content type:</p>
+<p>if you declare itemDataType/itemIconType, it wins</p>
+<p>if you do not declare itemDataType/itemIconType, but the browser 
+supplies a multipart-encoding type other than 'application/octet-stream', 
+then that wins.</p>
+<p>otherwise the mimetypes module takes a guess</p>
+<p>if all else fails, it ends up as application/octet-stream<table class="fieldTable"></table></div>
         </div>
       </div>
     
     <address>
-      <a href="index.html">API Documentation</a> for pymine, generated by <a href="http://codespeak.net/~mwh/pydoctor/">pydoctor</a> at (date elided).
+      <a href="index.html">API Documentation</a> for pymine, generated by <a href="http://codespeak.net/~mwh/pydoctor/">pydoctor</a> at 2010-02-13 20:51:05.
     </address>
   </body>
 </html>
