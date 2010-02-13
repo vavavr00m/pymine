@@ -52,34 +52,7 @@ from django.shortcuts import render_to_response
 import os
 import re
 
-##################################################################
-
-mime_table = {
-    '.avi': 'video/x-msvideo',
-    '.css': 'text/css',
-    '.dcr': 'application/x-director',
-    '.gif': 'image/gif',
-    '.htm': 'text/html',
-    '.html': 'text/html',
-    '.ico': 'image/vnd.microsoft.icon',
-    '.jpeg': 'image/jpeg',
-    '.jpg': 'image/jpeg',
-    '.js': 'application/javascript',
-    '.json': 'application/json',
-    '.mov': 'video/quicktime',
-    '.pdf': 'application/pdf',
-    '.png': 'image/png',
-    '.ram': 'audio/x-pn-realaudio',
-    '.rm': 'application/vnd.rn-realmedia',
-    '.swf': 'application/x-shockwave-flash',
-    '.txt': 'text/plain',
-}
-
-def mime_lookup(path):
-    head, tail = os.path.split(path)
-    base, ext = os.path.splitext(tail)
-    ext = ext.lower()
-    return mime_table.get(ext, 'text/plain')
+import mimestuff
 
 ##################################################################
 
@@ -147,7 +120,7 @@ def httpserve_error(url_path):
 def httpserve_file(file_path, content_type):
     fw = FileWrapper(file(file_path), 65536)
     if not content_type:
-	content_type = mime_lookup(file_path)
+	content_type, encoding = mimestuff.lookup.guess_type(file_path)
     response = HttpResponse(fw, content_type=content_type)
     response['Content-Length'] = os.path.getsize(file_path)
     return response
