@@ -19,11 +19,11 @@
     <div>
       
     </div>
-    <div>This is the modelspace representation of the Comment object<table class="fieldTable"></table></div>
+    <div class="undocumented">No class docstring</div>
     
     
     <div id="splitTables">
-      <table class="children sortable" id="id31">
+      <table class="children sortable" id="id36">
   
   
   
@@ -33,26 +33,8 @@
     
     <td>Method</td>
     <td><a href="pymine.api.models.Comment.html#__unicode__">__unicode__</a></td>
-    <td><span class="undocumented">Undocumented</span></td>
-  </tr><tr class="method">
-    
-    
-    <td>Method</td>
-    <td><a href="pymine.api.models.Comment.html#to_structure">to_structure</a></td>
-    <td><span>Splices the textual commentRelationName sattr into the Item 
-structure</span></td>
-  </tr><tr class="classmethod">
-    
-    
-    <td>Class Method</td>
-    <td><a href="pymine.api.models.Comment.html#filter_queryset">filter_queryset</a></td>
-    <td><span class="undocumented">Undocumented</span></td>
-  </tr><tr class="class">
-    
-    
-    <td>Class</td>
-    <td><a href="pymine.api.models.Comment.Meta.html">Meta</a></td>
-    <td><span class="undocumented">Undocumented</span></td>
+    <td><span>return the title of this comment; comments lack a &quot;name&quot; 
+field</span></td>
   </tr>
   
 </table>
@@ -60,71 +42,91 @@ structure</span></td>
         <p>
           Inherited from <a href="pymine.api.models.AbstractThing.html">AbstractThing</a>:
         </p>
-        <table class="children sortable" id="id32">
+        <table class="children sortable" id="id37">
   
   
   
   
-  <tr class="basemethod">
+  <tr class="baseclass">
     
     
-    <td>Method</td>
-    <td><a href="pymine.api.models.AbstractThing.html#update_from_request">update_from_request</a></td>
-    <td><span>update_from_request updates a (possibly blank) instance of a</span></td>
+    <td>Class</td>
+    <td><a href="pymine.api.models.AbstractThing.Meta.html">Meta</a></td>
+    <td><span class="undocumented">Undocumented</span></td>
   </tr><tr class="baseclassmethod">
     
     
     <td>Class Method</td>
-    <td><a href="pymine.api.models.AbstractThing.html#new_from_request">new_from_request</a></td>
-    <td><span class="undocumented">Undocumented</span></td>
+    <td><a href="pymine.api.models.AbstractThing.html#create">create</a></td>
+    <td><span>create a new Thing from a HTTPRequest, overriding with values from 
+kwargs.</span></td>
+  </tr><tr class="baseclassmethod">
+    
+    
+    <td>Class Method</td>
+    <td><a href="pymine.api.models.AbstractThing.html#get">get</a></td>
+    <td><span>return a single model matching kwargs; expunge virtually-deleted ones; 
+if none return None; if multiple, throw exception</span></td>
+  </tr><tr class="baseclassmethod">
+    
+    
+    <td>Class Method</td>
+    <td><a href="pymine.api.models.AbstractThing.html#list">list</a></td>
+    <td><span>return a queryset of models matching kwargs; expunge virtually-deleted 
+ones</span></td>
+  </tr><tr class="baseclassmethod">
+    
+    
+    <td>Class Method</td>
+    <td><a href="pymine.api.models.AbstractThing.html#execute_search_query">execute_search_query</a></td>
+    <td><span>take one queryset and return another, filtered by the content of 
+search_string; this version is a no-op</span></td>
+  </tr><tr class="baseclassmethod">
+    
+    
+    <td>Class Method</td>
+    <td><a href="pymine.api.models.AbstractThing.html#search">search</a></td>
+    <td><span>return a queryset of models matching **kwargs and search_string; expunge
+virtually-deleted ones</span></td>
   </tr><tr class="basemethod">
     
     
     <td>Method</td>
-    <td><a href="pymine.api.models.AbstractThing.html#lookup_mattr">lookup_mattr</a></td>
-    <td><span class="undocumented">Undocumented</span></td>
+    <td><a href="pymine.api.models.AbstractThing.html#update">update</a></td>
+    <td><span>update a single Thing from a HTTPRequest, overriding with values from 
+kwargs</span></td>
   </tr><tr class="basemethod">
     
     
     <td>Method</td>
-    <td><a href="pymine.api.models.AbstractThing.html#get_sattr">get_sattr</a></td>
-    <td><span class="undocumented">Undocumented</span></td>
+    <td><a href="pymine.api.models.AbstractThing.html#save_files_from">save_files_from</a></td>
+    <td><span>stub for file-saving per instance/class; returns True if a change was 
+made</span></td>
   </tr><tr class="basemethod">
     
     
     <td>Method</td>
-    <td><a href="pymine.api.models.AbstractThing.html#delete_sattr">delete_sattr</a></td>
-    <td><span class="undocumented">Undocumented</span></td>
+    <td><a href="pymine.api.models.AbstractThing.html#delete">delete</a></td>
+    <td><span>gc all the fields and mark this Thing as deleted</span></td>
+  </tr><tr class="basemethod">
+    
+    
+    <td>Method</td>
+    <td><a href="pymine.api.models.AbstractThing.html#to_structure">to_structure</a></td>
+    <td><span>convert this model m to a dictionary structure s (ie: s-space)</span></td>
   </tr><tr class="basemethod">
     
     
     <td>Method</td>
     <td><a href="pymine.api.models.AbstractThing.html#get_absolute_url">get_absolute_url</a></td>
-    <td><span class="undocumented">Undocumented</span></td>
-  </tr>
-  
-</table>
-      
-        <p>
-          Inherited from <a href="pymine.api.models.AbstractModel.html">AbstractModel</a> (via <a href="pymine.api.models.AbstractThing.html">AbstractThing</a>):
-        </p>
-        <table class="children sortable" id="id33">
-  
-  
-  
-  
-  <tr class="basemethod">
-    
-    
-    <td>Method</td>
-    <td><a href="pymine.api.models.AbstractModel.html#delete">delete</a></td>
-    <td><span class="undocumented">Undocumented</span></td>
+    <td><span>return a url for this object for administrative purposes</span></td>
   </tr><tr class="basemethod">
     
     
     <td>Method</td>
-    <td><a href="pymine.api.models.AbstractModel.html#delete_for_real">delete_for_real</a></td>
-    <td><span class="undocumented">Undocumented</span></td>
+    <td><a href="pymine.api.models.AbstractThing.html#delete_attribute">delete_attribute</a></td>
+    <td><span>erase the value of attribute 'key' (or delete extended attribute 
+'$key')</span></td>
   </tr>
   
 </table>
@@ -143,38 +145,14 @@ structure</span></td>
         
       </div>
         <div class="functionBody">
-          
-          <div class="undocumented">Undocumented</div>
-        </div>
-      </div><div class="function">
-        <a name="pymine.api.models.Comment.to_structure"></a>
-        <a name="to_structure"></a>
-        <div class="functionHeader">
-        
-        def to_structure(self):
-        
-      </div>
-        <div class="functionBody">
-          <div class="interfaceinfo">overrides <a href="pymine.api.models.AbstractThing.html#to_structure">pymine.api.models.AbstractThing.to_structure</a></div>
-          <div>Splices the textual commentRelationName sattr into the Item 
-structure<table class="fieldTable"></table></div>
-        </div>
-      </div><div class="function">
-        <a name="pymine.api.models.Comment.filter_queryset"></a>
-        <a name="filter_queryset"></a>
-        <div class="functionHeader">
-        @classmethod<br />
-        def filter_queryset(klass, qs, query):
-        
-      </div>
-        <div class="functionBody">
-          <div class="interfaceinfo">overrides <a href="pymine.api.models.AbstractThing.html#filter_queryset">pymine.api.models.AbstractThing.filter_queryset</a></div>
-          <div class="undocumented">Undocumented</div>
+          <div class="interfaceinfo">overrides <a href="pymine.api.models.AbstractThing.html#__unicode__">pymine.api.models.AbstractThing.__unicode__</a></div>
+          <div>return the title of this comment; comments lack a &quot;name&quot; 
+field<table class="fieldTable"></table></div>
         </div>
       </div>
     
     <address>
-      <a href="index.html">API Documentation</a> for pymine, generated by <a href="http://codespeak.net/~mwh/pydoctor/">pydoctor</a> at (date elided).
+      <a href="index.html">API Documentation</a> for pymine, generated by <a href="http://codespeak.net/~mwh/pydoctor/">pydoctor</a> at 2010-02-13 20:51:05.
     </address>
   </body>
 </html>

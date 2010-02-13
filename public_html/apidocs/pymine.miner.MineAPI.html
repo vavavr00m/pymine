@@ -23,7 +23,7 @@
     
     
     <div id="splitTables">
-      <table class="children sortable" id="id47">
+      <table class="children sortable" id="id43">
   
   
   
@@ -44,6 +44,12 @@
     
     
     <td>Method</td>
+    <td><a href="pymine.miner.MineAPI.html#save_cookies">save_cookies</a></td>
+    <td><span>saves any persistent session cookies to disk</span></td>
+  </tr><tr class="method">
+    
+    
+    <td>Method</td>
     <td><a href="pymine.miner.MineAPI.html#login">login</a></td>
     <td><span>Establish session cookies.  Accepts 'username' and 'password'</span></td>
   </tr><tr class="method">
@@ -56,44 +62,20 @@
     
     
     <td>Method</td>
-    <td><a href="pymine.miner.MineAPI.html#save_cookies">save_cookies</a></td>
-    <td><span>saves any persistent session cookies to disk</span></td>
-  </tr><tr class="method">
-    
-    
-    <td>Method</td>
     <td><a href="pymine.miner.MineAPI.html#url_call">url_call</a></td>
     <td><span class="undocumented">Undocumented</span></td>
   </tr><tr class="method">
     
     
     <td>Method</td>
-    <td><a href="pymine.miner.MineAPI.html#dummy">dummy</a></td>
-    <td><span>Do nothing useful</span></td>
-  </tr><tr class="method">
-    
-    
-    <td>Method</td>
-    <td><a href="pymine.miner.MineAPI.html#apply_direct">apply_direct</a></td>
+    <td><a href="pymine.miner.MineAPI.html#apply">apply</a></td>
     <td><span>Invokes url with method using kwargs as POST data if</span></td>
   </tr><tr class="method">
     
     
     <td>Method</td>
-    <td><a href="pymine.miner.MineAPI.html#apply_sub1_direct">apply_sub1_direct</a></td>
+    <td><a href="pymine.miner.MineAPI.html#apply_sub1">apply_sub1</a></td>
     <td><span>Replaces '{1}' in url_template with arg[0]; invokes resulting</span></td>
-  </tr><tr class="method">
-    
-    
-    <td>Method</td>
-    <td><a href="pymine.miner.MineAPI.html#apply_subevery">apply_subevery</a></td>
-    <td><span>For each arg in args replaces '{1}' in url_template with arg;</span></td>
-  </tr><tr class="method">
-    
-    
-    <td>Method</td>
-    <td><a href="pymine.miner.MineAPI.html#apply_sub2_direct">apply_sub2_direct</a></td>
-    <td><span>Replaces '{1}' in url_template with arg[0]; replaces '{2}' in</span></td>
   </tr><tr class="method">
     
     
@@ -104,32 +86,32 @@
     
     
     <td>Method</td>
-    <td><a href="pymine.miner.MineAPI.html#apply_sub1_subevery">apply_sub1_subevery</a></td>
-    <td><span>Replaces '{1}' in url_template with arg[0]; creates new</span></td>
+    <td><a href="pymine.miner.MineAPI.html#apply_sub2">apply_sub2</a></td>
+    <td><span>Replaces '{1}' in url_template with arg[0]; replaces '{2}' in</span></td>
   </tr><tr class="method">
     
     
     <td>Method</td>
     <td><a href="pymine.miner.MineAPI.html#call">call</a></td>
-    <td><span>Args get interpolated into the template (if applicable) and</span></td>
+    <td><span>invokes the apply() function and parameters associated with</span></td>
   </tr><tr class="method">
     
     
     <td>Method</td>
-    <td><a href="pymine.miner.MineAPI.html#call_decode">call_decode</a></td>
-    <td><span class="undocumented">Undocumented</span></td>
+    <td><a href="pymine.miner.MineAPI.html#call_py">call_py</a></td>
+    <td><span>Exactly as-per call() but the result is decoded into a</span></td>
   </tr><tr class="method">
     
     
     <td>Method</td>
     <td><a href="pymine.miner.MineAPI.html#__getattr__">__getattr__</a></td>
-    <td><span class="undocumented">Undocumented</span></td>
+    <td><span>this getattr overrides the default and via a clever and</span></td>
   </tr><tr class="method">
     
     
     <td>Method</td>
-    <td><a href="pymine.miner.MineAPI.html#command_execute">command_execute</a></td>
-    <td><span class="undocumented">Undocumented</span></td>
+    <td><a href="pymine.miner.MineAPI.html#execute_commandline">execute_commandline</a></td>
+    <td><span>Takes an argument list, and executes it</span></td>
   </tr>
   
 </table>
@@ -150,7 +132,7 @@
         <div class="functionBody">
           
           <div>Initialise a MineAPI object; Recognised kwargs include:</p>
-<p>output_format url_prefix username password cookie_file</p>
+<p>api_format url_prefix username password cookie_file</p>
 <p>Automatically calls login() if both username and password are given.<table class="fieldTable"></table></div>
         </div>
       </div><div class="function">
@@ -165,6 +147,18 @@
           
           <div>Define the 'http://site.domain:port' to access your mine, if not already
 provided to __init__()<table class="fieldTable"></table></div>
+        </div>
+      </div><div class="function">
+        <a name="pymine.miner.MineAPI.save_cookies"></a>
+        <a name="save_cookies"></a>
+        <div class="functionHeader">
+        
+        def save_cookies(self):
+        
+      </div>
+        <div class="functionBody">
+          
+          <div>saves any persistent session cookies to disk<table class="fieldTable"></table></div>
         </div>
       </div><div class="function">
         <a name="pymine.miner.MineAPI.login"></a>
@@ -192,18 +186,6 @@ overriding any provided in __init__()<table class="fieldTable"></table></div>
           <div>Call the mine to destroy any session cookies<table class="fieldTable"></table></div>
         </div>
       </div><div class="function">
-        <a name="pymine.miner.MineAPI.save_cookies"></a>
-        <a name="save_cookies"></a>
-        <div class="functionHeader">
-        
-        def save_cookies(self):
-        
-      </div>
-        <div class="functionBody">
-          
-          <div>saves any persistent session cookies to disk<table class="fieldTable"></table></div>
-        </div>
-      </div><div class="function">
         <a name="pymine.miner.MineAPI.url_call"></a>
         <a name="url_call"></a>
         <div class="functionHeader">
@@ -216,23 +198,11 @@ overriding any provided in __init__()<table class="fieldTable"></table></div>
           <div class="undocumented">Undocumented</div>
         </div>
       </div><div class="function">
-        <a name="pymine.miner.MineAPI.dummy"></a>
-        <a name="dummy"></a>
+        <a name="pymine.miner.MineAPI.apply"></a>
+        <a name="apply"></a>
         <div class="functionHeader">
         
-        def dummy(self, method, url_template, *args, **kwargs):
-        
-      </div>
-        <div class="functionBody">
-          
-          <div>Do nothing useful<table class="fieldTable"></table></div>
-        </div>
-      </div><div class="function">
-        <a name="pymine.miner.MineAPI.apply_direct"></a>
-        <a name="apply_direct"></a>
-        <div class="functionHeader">
-        
-        def apply_direct(self, method, url_template, *args, **kwargs):
+        def apply(self, method, url_template, *args, **kwargs):
         
       </div>
         <div class="functionBody">
@@ -241,44 +211,17 @@ overriding any provided in __init__()<table class="fieldTable"></table></div>
 Completely ignores args.<table class="fieldTable"></table></div>
         </div>
       </div><div class="function">
-        <a name="pymine.miner.MineAPI.apply_sub1_direct"></a>
-        <a name="apply_sub1_direct"></a>
+        <a name="pymine.miner.MineAPI.apply_sub1"></a>
+        <a name="apply_sub1"></a>
         <div class="functionHeader">
         
-        def apply_sub1_direct(self, method, url_template, *args, **kwargs):
+        def apply_sub1(self, method, url_template, *args, **kwargs):
         
       </div>
         <div class="functionBody">
           
           <div>Replaces '{1}' in url_template with arg[0]; invokes resulting url with 
 method using kwargs as POST data if appropriate.<table class="fieldTable"></table></div>
-        </div>
-      </div><div class="function">
-        <a name="pymine.miner.MineAPI.apply_subevery"></a>
-        <a name="apply_subevery"></a>
-        <div class="functionHeader">
-        
-        def apply_subevery(self, method, url_template, *args, **kwargs):
-        
-      </div>
-        <div class="functionBody">
-          
-          <div>For each arg in args replaces '{1}' in url_template with arg; invokes 
-resulting url with method using kwargs as POST data if appropriate.<table class="fieldTable"></table></div>
-        </div>
-      </div><div class="function">
-        <a name="pymine.miner.MineAPI.apply_sub2_direct"></a>
-        <a name="apply_sub2_direct"></a>
-        <div class="functionHeader">
-        
-        def apply_sub2_direct(self, method, url_template, *args, **kwargs):
-        
-      </div>
-        <div class="functionBody">
-          
-          <div>Replaces '{1}' in url_template with arg[0]; replaces '{2}' in 
-url_template with arg[1]; invokes resulting url with method using kwargs as
-POST data if appropriate.<table class="fieldTable"></table></div>
         </div>
       </div><div class="function">
         <a name="pymine.miner.MineAPI.apply_sub1_regkey"></a>
@@ -291,22 +234,24 @@ POST data if appropriate.<table class="fieldTable"></table></div>
         <div class="functionBody">
           
           <div>Replaces '{1}' in url_template with arg[0]; invokes resulting url with 
-method using faked-up kwargs {arg[0] : arg[1]}; used to populate individual
-keys in the registry.<table class="fieldTable"></table></div>
+method using faked-up kwargs:</p>
+<p>{ arg[0] : arg[1] } # eg: { 'foo': 42 }</p>
+<p>...because this syntax is used to populate individual keys in the 
+registry (applying { 'foo':42 } to /api/registry/foo.json)<table class="fieldTable"></table></div>
         </div>
       </div><div class="function">
-        <a name="pymine.miner.MineAPI.apply_sub1_subevery"></a>
-        <a name="apply_sub1_subevery"></a>
+        <a name="pymine.miner.MineAPI.apply_sub2"></a>
+        <a name="apply_sub2"></a>
         <div class="functionHeader">
         
-        def apply_sub1_subevery(self, method, url_template, *args, **kwargs):
+        def apply_sub2(self, method, url_template, *args, **kwargs):
         
       </div>
         <div class="functionBody">
           
-          <div>Replaces '{1}' in url_template with arg[0]; creates new template.  For 
-each REMAINING arg in args replaces '{2}' in url_template with arg; invokes
-resulting url with method using kwargs as POST data if appropriate.<table class="fieldTable"></table></div>
+          <div>Replaces '{1}' in url_template with arg[0]; replaces '{2}' in 
+url_template with arg[1]; invokes resulting url with method using kwargs as
+POST data if appropriate.<table class="fieldTable"></table></div>
         </div>
       </div><div class="function">
         <a name="pymine.miner.MineAPI.call"></a>
@@ -318,20 +263,26 @@ resulting url with method using kwargs as POST data if appropriate.<table class=
       </div>
         <div class="functionBody">
           
-          <div>Args get interpolated into the template (if applicable) and Kwargs 
-become POST data (if applicable and not overridden)<table class="fieldTable"></table></div>
+          <div>invokes the apply() function and parameters associated with the command,
+and returns the (presumably) JSON string that results.</p>
+<p>'args' are interpolated into the template (if applicable)</p>
+<p>'kwargs' become POST data (if applicable and not overridden)<table class="fieldTable"></table></div>
         </div>
       </div><div class="function">
-        <a name="pymine.miner.MineAPI.call_decode"></a>
-        <a name="call_decode"></a>
+        <a name="pymine.miner.MineAPI.call_py"></a>
+        <a name="call_py"></a>
         <div class="functionHeader">
         
-        def call_decode(self, command, *args, **kwargs):
+        def call_py(self, command, *args, **kwargs):
         
       </div>
         <div class="functionBody">
           
-          <div class="undocumented">Undocumented</div>
+          <div>Exactly as-per call() but the result is decoded into a python data 
+structure and is returned.</p>
+<p>Do NOT set the format to anything other than default(None - implying 
+json) if you are using this or any of the virtual methods that are provided
+by __getattr__()<table class="fieldTable"></table></div>
         </div>
       </div><div class="function">
         <a name="pymine.miner.MineAPI.__getattr__"></a>
@@ -343,24 +294,58 @@ become POST data (if applicable and not overridden)<table class="fieldTable"></t
       </div>
         <div class="functionBody">
           
-          <div class="undocumented">Undocumented</div>
+          <div>this getattr overrides the default and via a clever and slightly evil 
+kludge implements the following virtual methods:</p>
+<p>create_comment() create_item() create_feed() create_tag() create_vurl() 
+delete_comment() delete_comment_key() delete_item() delete_item_key() 
+delete_registry_key() delete_feed() delete_feed_key() delete_tag() 
+delete_tag_key() delete_vurl() delete_vurl_key() list_comments() 
+list_items() list_registry() list_feeds() list_tags() list_vurls() 
+read_comment() read_comment_key() read_data() read_item() read_item_key() 
+read_registry_key() read_feed() read_feed_key() read_tag() read_tag_key() 
+read_vurl() read_vurl_key() update_comment() update_item() 
+update_registry_key() update_feed() update_tag() update_vurl() 
+version()</p>
+<p>so you can do stuff like:</p>
+<p>m = MineAPI(username='fred, ...') tags = m.list_tags()</p>
+<p>...even though no list_tags() method is defined; this works because 
+__getattr__() traps the attempt to access the nonexistent list_tags method,
+converts underscores to hyphens and then returns a lambda that frontends 
+call_py() with the properly 'command' inserted.</p>
+<p>The net result is: any 'foo-bar' API call is also available as 
+api.foo_bar() yielding python structures.<table class="fieldTable"></table></div>
         </div>
       </div><div class="function">
-        <a name="pymine.miner.MineAPI.command_execute"></a>
-        <a name="command_execute"></a>
+        <a name="pymine.miner.MineAPI.execute_commandline"></a>
+        <a name="execute_commandline"></a>
         <div class="functionHeader">
         
-        def command_execute(self, command, *arglist):
+        def execute_commandline(self, *cmdargs):
         
       </div>
         <div class="functionBody">
           
-          <div class="undocumented">Undocumented</div>
+          <div>Takes an argument list, and executes it</p>
+<p>Any arguments not containing the '=' character go into a dictionary of 
+kwargs that are passed into the followup methods, and eventually into POST 
+data</p>
+<p>Example: create-tag tagName=&quot;foo&quot; tagDescription=&quot;example
+tag&quot;</p>
+<p>Any arguments not containing the '=' character are appended to a plain 
+list that is supplied to the wrapper around the REST API invocation, which 
+may (if you are doing it right) iterate over those arguments and do 
+something useful.</p>
+<p>Example: delete-tag 1 2 5 7 9 ...</p>
+<p>These concepts probably can mix-and-match, but it'd be deeply advanced 
+for anyone to try doing so at the moment.</p>
+<p>This routine also kludges a loop construct atop the api calls for 
+most/all of the deletion routines, for the benefit of commandline users 
+ONLY; programmers talking to the API are expected to use iteration.<table class="fieldTable"></table></div>
         </div>
       </div>
     
     <address>
-      <a href="index.html">API Documentation</a> for pymine, generated by <a href="http://codespeak.net/~mwh/pydoctor/">pydoctor</a> at (date elided).
+      <a href="index.html">API Documentation</a> for pymine, generated by <a href="http://codespeak.net/~mwh/pydoctor/">pydoctor</a> at 2010-02-13 20:51:05.
     </address>
   </body>
 </html>

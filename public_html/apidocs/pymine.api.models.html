@@ -19,237 +19,48 @@
     <div>
       
     </div>
-    <div>PyMine Models</p>
-<p>The transcoder methods - x2y_foo() - below provide a lot of the security
-for pymine, and govern the movement of data between three 'spaces' of data 
-representation; these are:</p>
-<p>r-space - request space, where data are held in a HttpRequest</p>
-<p>s-space - structure space, where data are held in a dict</p>
-<p>m-space - model space, where data are fields in model instances</p>
-<p>The reason for keeping separate spaces is partly philosophic - that 
-there should be a clearly defined breakpoint between the two worlds, and 
-this is it; if we just serialized models and slung them back and forth, the
-mine would be wedded to Django evermore, which is not a good thing;</p>
-<p>If we tried to go the simple route and keep the data structures similar,
-errors would be hard to flush out plus we would tend to do things only the 
-Django way - the Mine API was first written from scratch and driven using 
-'curl' so this is definitely portable.</p>
-<p>Further: certain s-space attributes (eg: 'relationInterests') map to 
-more than one m-space attributes, so these functions provide parsing as 
-well as translation.</p>
-<p>r-space and s-space share exactly the same naming conventions, ie: they 
-use mixedCase key (aka: 's-attribute' or 'sattr') such as 'relationName' 
-and 'tagDescription' and 'itemId' to label data; the only meaningful 
-difference is that in r-space all data are held in HttpRequest objects as 
-strings; when pulled into s-space Python dictionaries, any data which are 
-integers (eg: itemId) are converted to Python integers.</p>
-<p>For obvious reasons it's never necessary to go from s-space to r-space; 
-instead data only ever comes *out* of HttpRequests and *into* structures, 
-hence there are only r2s_foo methods, and indeed only two of those: 
-r2s_string and r2s_int</p>
-<p>Transfers between s-space (dictionary entries such as s['itemId']) and 
-m-space (m.id, where 'm' is a instance of the Item model and 'id' is the 
-Item table primary key) are bidirectional; because m-space and s-space both
-frequently use strings and python integers, and since s-space uses Python 
-ints, many transfers can be handled with simple blind copies using 
-introspection to access the model instance.</p>
-<p>Note: as a general rule m2s routines should not copy-out a None item, 
-blank or null reference; however s2m routines *may* want to copy-in 'None' 
-for purposes of erasure.  All copy routines should check the validity of 
-their source/destination attributes.</p>
-<p>One of the more complex translations between spaces are DateTime 
-objects; in m-space we use whatever Django mandates, and in s-space we use 
-a string representation of the time/date in ISO format, which is very close
-to what ATOM specifies - which in turn is probably what we will standardise
-on eventually<table class="fieldTable"></table></div>
+    <div>docstring goes here<table class="fieldTable"></table></div>
     
     
     <div id="splitTables">
-      <table class="children sortable" id="id4">
+      <table class="children sortable" id="id10">
   
   
   
   
-  <tr class="class">
+  <tr class="function">
+    
+    
+    <td>Function</td>
+    <td><a href="pymine.api.models.html#random_bits">random_bits</a></td>
+    <td><span class="undocumented">Undocumented</span></td>
+  </tr><tr class="class">
     
     
     <td>Class</td>
-    <td><a href="pymine.api.models.AbstractModelField.html">AbstractModelField</a></td>
-    <td><span>This is an factory class that is used to abstract field</span></td>
+    <td><a href="pymine.api.models.Space.html">Space</a></td>
+    <td><span>library of conversion routines for passing stuff between s-space and 
+m-space</span></td>
+  </tr><tr class="class">
+    
+    
+    <td>Class</td>
+    <td><a href="pymine.api.models.AbstractField.html">AbstractField</a></td>
+    <td><span>superclass to frontend model fields and ease porting between GAE and 
+Django</span></td>
   </tr><tr class="class">
     
     
     <td>Class</td>
     <td><a href="pymine.api.models.AbstractModel.html">AbstractModel</a></td>
-    <td><span>AbstractModel is the parent class for all Models below, providing</span></td>
-  </tr><tr class="class">
-    
-    
-    <td>Class</td>
-    <td><a href="pymine.api.models.Registry.html">Registry</a></td>
-    <td><span>key/value pairs for Mine configuration</span></td>
-  </tr><tr class="class">
-    
-    
-    <td>Class</td>
-    <td><a href="pymine.api.models.Minekey.html">Minekey</a></td>
-    <td><span>A Minekey encodes all the data that a subscriber can use to</span></td>
-  </tr><tr class="function">
-    
-    
-    <td>Function</td>
-    <td><a href="pymine.api.models.html#r2s_string">r2s_string</a></td>
-    <td><span>get rname from HttpRequest r's r.POST and populate structure s</span></td>
-  </tr><tr class="function">
-    
-    
-    <td>Function</td>
-    <td><a href="pymine.api.models.html#r2s_int">r2s_int</a></td>
-    <td><span>get rname from HttpRequest r's r.POST and populate structure s</span></td>
-  </tr><tr class="function">
-    
-    
-    <td>Function</td>
-    <td><a href="pymine.api.models.html#m2s_copy">m2s_copy</a></td>
-    <td><span>Copy mattr from m to sattr in s</span></td>
-  </tr><tr class="function">
-    
-    
-    <td>Function</td>
-    <td><a href="pymine.api.models.html#s2m_verbatim">s2m_verbatim</a></td>
-    <td><span>Copy sattr from s to mattr in m</span></td>
-  </tr><tr class="function">
-    
-    
-    <td>Function</td>
-    <td><a href="pymine.api.models.html#s2m_stripstr">s2m_stripstr</a></td>
-    <td><span>Copy sattr from s to mattr in m</span></td>
-  </tr><tr class="function">
-    
-    
-    <td>Function</td>
-    <td><a href="pymine.api.models.html#m2s_dummy">m2s_dummy</a></td>
-    <td><span>m2s routine which raises an exception if it is ever invoked</span></td>
-  </tr><tr class="function">
-    
-    
-    <td>Function</td>
-    <td><a href="pymine.api.models.html#s2m_dummy">s2m_dummy</a></td>
-    <td><span>s2m routine which raises an exception if it is ever invoked</span></td>
-  </tr><tr class="function">
-    
-    
-    <td>Function</td>
-    <td><a href="pymine.api.models.html#m2s_date">m2s_date</a></td>
-    <td><span>Copy a DateTime from m to a isoformat string in s</span></td>
-  </tr><tr class="function">
-    
-    
-    <td>Function</td>
-    <td><a href="pymine.api.models.html#s2m_date">s2m_date</a></td>
-    <td><span>TBD: Copy a DateTime from an isoformat string in s, into m</span></td>
-  </tr><tr class="function">
-    
-    
-    <td>Function</td>
-    <td><a href="pymine.api.models.html#m2s_bool">m2s_bool</a></td>
-    <td><span>Copy a boolean from m to s</span></td>
-  </tr><tr class="function">
-    
-    
-    <td>Function</td>
-    <td><a href="pymine.api.models.html#s2m_bool">s2m_bool</a></td>
-    <td><span>Copy a boolean from s to m</span></td>
-  </tr><tr class="function">
-    
-    
-    <td>Function</td>
-    <td><a href="pymine.api.models.html#m2s_comitemid">m2s_comitemid</a></td>
-    <td><span class="undocumented">Undocumented</span></td>
-  </tr><tr class="function">
-    
-    
-    <td>Function</td>
-    <td><a href="pymine.api.models.html#s2m_comitemid">s2m_comitemid</a></td>
-    <td><span class="undocumented">Undocumented</span></td>
-  </tr><tr class="function">
-    
-    
-    <td>Function</td>
-    <td><a href="pymine.api.models.html#m2s_comrelid">m2s_comrelid</a></td>
-    <td><span class="undocumented">Undocumented</span></td>
-  </tr><tr class="function">
-    
-    
-    <td>Function</td>
-    <td><a href="pymine.api.models.html#s2m_comrelid">s2m_comrelid</a></td>
-    <td><span class="undocumented">Undocumented</span></td>
-  </tr><tr class="function">
-    
-    
-    <td>Function</td>
-    <td><a href="pymine.api.models.html#m2s_tagcloud">m2s_tagcloud</a></td>
-    <td><span class="undocumented">Undocumented</span></td>
-  </tr><tr class="function">
-    
-    
-    <td>Function</td>
-    <td><a href="pymine.api.models.html#m2s_tagimplies">m2s_tagimplies</a></td>
-    <td><span class="undocumented">Undocumented</span></td>
-  </tr><tr class="function">
-    
-    
-    <td>Function</td>
-    <td><a href="pymine.api.models.html#s2m_tagimplies">s2m_tagimplies</a></td>
-    <td><span class="undocumented">Undocumented</span></td>
-  </tr><tr class="function">
-    
-    
-    <td>Function</td>
-    <td><a href="pymine.api.models.html#m2s_itemstatus">m2s_itemstatus</a></td>
-    <td><span class="undocumented">Undocumented</span></td>
-  </tr><tr class="function">
-    
-    
-    <td>Function</td>
-    <td><a href="pymine.api.models.html#s2m_itemstatus">s2m_itemstatus</a></td>
-    <td><span class="undocumented">Undocumented</span></td>
-  </tr><tr class="function">
-    
-    
-    <td>Function</td>
-    <td><a href="pymine.api.models.html#m2s_itemtags">m2s_itemtags</a></td>
-    <td><span class="undocumented">Undocumented</span></td>
-  </tr><tr class="function">
-    
-    
-    <td>Function</td>
-    <td><a href="pymine.api.models.html#s2m_itemtags">s2m_itemtags</a></td>
-    <td><span class="undocumented">Undocumented</span></td>
-  </tr><tr class="function">
-    
-    
-    <td>Function</td>
-    <td><a href="pymine.api.models.html#m2s_relints">m2s_relints</a></td>
-    <td><span class="undocumented">Undocumented</span></td>
-  </tr><tr class="function">
-    
-    
-    <td>Function</td>
-    <td><a href="pymine.api.models.html#s2m_relints">s2m_relints</a></td>
-    <td><span class="undocumented">Undocumented</span></td>
+    <td><span>superclass to frontend models and ease porting between GAE and 
+Django</span></td>
   </tr><tr class="class">
     
     
     <td>Class</td>
     <td><a href="pymine.api.models.AbstractXattr.html">AbstractXattr</a></td>
-    <td><span>AbstractXattr is the parent class for all extended attribute</span></td>
-  </tr><tr class="class">
-    
-    
-    <td>Class</td>
-    <td><a href="pymine.api.models.AbstractThing.html">AbstractThing</a></td>
-    <td><span>The AbstractThing class is a abstract model class that exists to</span></td>
+    <td><span>superclass to frontend extended attributes</span></td>
   </tr><tr class="class">
     
     
@@ -260,20 +71,14 @@ on eventually<table class="fieldTable"></table></div>
     
     
     <td>Class</td>
-    <td><a href="pymine.api.models.Tag.html">Tag</a></td>
-    <td><span>This is the modelspace representation of the Tag object</span></td>
+    <td><a href="pymine.api.models.VurlXattr.html">VurlXattr</a></td>
+    <td><span>vurl extended attributes</span></td>
   </tr><tr class="class">
     
     
     <td>Class</td>
-    <td><a href="pymine.api.models.RelationXattr.html">RelationXattr</a></td>
-    <td><span>relation extended attributes</span></td>
-  </tr><tr class="class">
-    
-    
-    <td>Class</td>
-    <td><a href="pymine.api.models.Relation.html">Relation</a></td>
-    <td><span>This is the modelspace representation of the Relation object</span></td>
+    <td><a href="pymine.api.models.FeedXattr.html">FeedXattr</a></td>
+    <td><span>feed extended attributes</span></td>
   </tr><tr class="class">
     
     
@@ -284,38 +89,56 @@ on eventually<table class="fieldTable"></table></div>
     
     
     <td>Class</td>
-    <td><a href="pymine.api.models.Item.html">Item</a></td>
-    <td><span>This is the modelspace representation of the Item object</span></td>
-  </tr><tr class="class">
-    
-    
-    <td>Class</td>
     <td><a href="pymine.api.models.CommentXattr.html">CommentXattr</a></td>
     <td><span>comment extended attributes</span></td>
   </tr><tr class="class">
     
     
     <td>Class</td>
-    <td><a href="pymine.api.models.Comment.html">Comment</a></td>
-    <td><span>This is the modelspace representation of the Comment object</span></td>
+    <td><a href="pymine.api.models.AbstractThing.html">AbstractThing</a></td>
+    <td><span>superclass for all the major mine types</span></td>
   </tr><tr class="class">
     
     
     <td>Class</td>
-    <td><a href="pymine.api.models.VurlXattr.html">VurlXattr</a></td>
-    <td><span>vurl extended attributes</span></td>
+    <td><a href="pymine.api.models.Tag.html">Tag</a></td>
+    <td><span class="undocumented">No class docstring; 0/1 class methods, 5/5 methods documented</span></td>
   </tr><tr class="class">
     
     
     <td>Class</td>
     <td><a href="pymine.api.models.Vurl.html">Vurl</a></td>
-    <td><span>The Vurl (Vanity URL) model implements URL-shortening and</span></td>
+    <td><span class="undocumented">No class docstring; 3/4 methods, 1/1 static methods documented</span></td>
   </tr><tr class="class">
     
     
     <td>Class</td>
-    <td><a href="pymine.api.models.LogEvent.html">LogEvent</a></td>
+    <td><a href="pymine.api.models.Feed.html">Feed</a></td>
+    <td><span class="undocumented">Undocumented</span></td>
+  </tr><tr class="class">
+    
+    
+    <td>Class</td>
+    <td><a href="pymine.api.models.Item.html">Item</a></td>
+    <td><span class="undocumented">No class docstring; 1/1 methods documented</span></td>
+  </tr><tr class="class">
+    
+    
+    <td>Class</td>
+    <td><a href="pymine.api.models.Comment.html">Comment</a></td>
+    <td><span class="undocumented">No class docstring; 1/1 methods documented</span></td>
+  </tr><tr class="class">
+    
+    
+    <td>Class</td>
+    <td><a href="pymine.api.models.Registry.html">Registry</a></td>
     <td><span>key/value pairs for Mine configuration</span></td>
+  </tr><tr class="class">
+    
+    
+    <td>Class</td>
+    <td><a href="pymine.api.models.Event.html">Event</a></td>
+    <td><span>audit trail for Mine</span></td>
   </tr>
   
 </table>
@@ -326,290 +149,11 @@ on eventually<table class="fieldTable"></table></div>
     
     
     <div class="function">
-        <a name="pymine.api.models.r2s_string"></a>
-        <a name="r2s_string"></a>
+        <a name="pymine.api.models.random_bits"></a>
+        <a name="random_bits"></a>
         <div class="functionHeader">
         
-        def r2s_string(r, rname, s):
-        
-      </div>
-        <div class="functionBody">
-          
-          <div>get rname from HttpRequest r's r.POST and populate structure s with it; 
-assume something else checked existence<table class="fieldTable"></table></div>
-        </div>
-      </div><div class="function">
-        <a name="pymine.api.models.r2s_int"></a>
-        <a name="r2s_int"></a>
-        <div class="functionHeader">
-        
-        def r2s_int(r, rname, s):
-        
-      </div>
-        <div class="functionBody">
-          
-          <div>get rname from HttpRequest r's r.POST and populate structure s with it 
-after converting to int; assume something else checked existence in the 
-first place<table class="fieldTable"></table></div>
-        </div>
-      </div><div class="function">
-        <a name="pymine.api.models.m2s_copy"></a>
-        <a name="m2s_copy"></a>
-        <div class="functionHeader">
-        
-        def m2s_copy(m, mattr, s, sattr):
-        
-      </div>
-        <div class="functionBody">
-          
-          <div>Copy mattr from m to sattr in s<table class="fieldTable"></table></div>
-        </div>
-      </div><div class="function">
-        <a name="pymine.api.models.s2m_verbatim"></a>
-        <a name="s2m_verbatim"></a>
-        <div class="functionHeader">
-        
-        def s2m_verbatim(request, s, sattr, m, mattr):
-        
-      </div>
-        <div class="functionBody">
-          
-          <div>Copy sattr from s to mattr in m<table class="fieldTable"></table></div>
-        </div>
-      </div><div class="function">
-        <a name="pymine.api.models.s2m_stripstr"></a>
-        <a name="s2m_stripstr"></a>
-        <div class="functionHeader">
-        
-        def s2m_stripstr(request, s, sattr, m, mattr):
-        
-      </div>
-        <div class="functionBody">
-          
-          <div>Copy sattr from s to mattr in m<table class="fieldTable"></table></div>
-        </div>
-      </div><div class="function">
-        <a name="pymine.api.models.m2s_dummy"></a>
-        <a name="m2s_dummy"></a>
-        <div class="functionHeader">
-        
-        def m2s_dummy(m, mattr, s, sattr):
-        
-      </div>
-        <div class="functionBody">
-          
-          <div>m2s routine which raises an exception if it is ever invoked<table class="fieldTable"></table></div>
-        </div>
-      </div><div class="function">
-        <a name="pymine.api.models.s2m_dummy"></a>
-        <a name="s2m_dummy"></a>
-        <div class="functionHeader">
-        
-        def s2m_dummy(request, s, sattr, m, mattr):
-        
-      </div>
-        <div class="functionBody">
-          
-          <div>s2m routine which raises an exception if it is ever invoked<table class="fieldTable"></table></div>
-        </div>
-      </div><div class="function">
-        <a name="pymine.api.models.m2s_date"></a>
-        <a name="m2s_date"></a>
-        <div class="functionHeader">
-        
-        def m2s_date(m, mattr, s, sattr):
-        
-      </div>
-        <div class="functionBody">
-          
-          <div>Copy a DateTime from m to a isoformat string in s<table class="fieldTable"></table></div>
-        </div>
-      </div><div class="function">
-        <a name="pymine.api.models.s2m_date"></a>
-        <a name="s2m_date"></a>
-        <div class="functionHeader">
-        
-        def s2m_date(request, s, sattr, m, mattr):
-        
-      </div>
-        <div class="functionBody">
-          
-          <div>TBD: Copy a DateTime from an isoformat string in s, into m<table class="fieldTable"></table></div>
-        </div>
-      </div><div class="function">
-        <a name="pymine.api.models.m2s_bool"></a>
-        <a name="m2s_bool"></a>
-        <div class="functionHeader">
-        
-        def m2s_bool(m, mattr, s, sattr):
-        
-      </div>
-        <div class="functionBody">
-          
-          <div>Copy a boolean from m to s<table class="fieldTable"></table></div>
-        </div>
-      </div><div class="function">
-        <a name="pymine.api.models.s2m_bool"></a>
-        <a name="s2m_bool"></a>
-        <div class="functionHeader">
-        
-        def s2m_bool(request, s, sattr, m, mattr):
-        
-      </div>
-        <div class="functionBody">
-          
-          <div>Copy a boolean from s to m<table class="fieldTable"></table></div>
-        </div>
-      </div><div class="function">
-        <a name="pymine.api.models.m2s_comitemid"></a>
-        <a name="m2s_comitemid"></a>
-        <div class="functionHeader">
-        
-        def m2s_comitemid(m, mattr, s, sattr):
-        
-      </div>
-        <div class="functionBody">
-          
-          <div class="undocumented">Undocumented</div>
-        </div>
-      </div><div class="function">
-        <a name="pymine.api.models.s2m_comitemid"></a>
-        <a name="s2m_comitemid"></a>
-        <div class="functionHeader">
-        
-        def s2m_comitemid(request, s, sattr, m, mattr):
-        
-      </div>
-        <div class="functionBody">
-          
-          <div class="undocumented">Undocumented</div>
-        </div>
-      </div><div class="function">
-        <a name="pymine.api.models.m2s_comrelid"></a>
-        <a name="m2s_comrelid"></a>
-        <div class="functionHeader">
-        
-        def m2s_comrelid(m, mattr, s, sattr):
-        
-      </div>
-        <div class="functionBody">
-          
-          <div class="undocumented">Undocumented</div>
-        </div>
-      </div><div class="function">
-        <a name="pymine.api.models.s2m_comrelid"></a>
-        <a name="s2m_comrelid"></a>
-        <div class="functionHeader">
-        
-        def s2m_comrelid(request, s, sattr, m, mattr):
-        
-      </div>
-        <div class="functionBody">
-          
-          <div class="undocumented">Undocumented</div>
-        </div>
-      </div><div class="function">
-        <a name="pymine.api.models.m2s_tagcloud"></a>
-        <a name="m2s_tagcloud"></a>
-        <div class="functionHeader">
-        
-        def m2s_tagcloud(m, mattr, s, sattr):
-        
-      </div>
-        <div class="functionBody">
-          
-          <div class="undocumented">Undocumented</div>
-        </div>
-      </div><div class="function">
-        <a name="pymine.api.models.m2s_tagimplies"></a>
-        <a name="m2s_tagimplies"></a>
-        <div class="functionHeader">
-        
-        def m2s_tagimplies(m, mattr, s, sattr):
-        
-      </div>
-        <div class="functionBody">
-          
-          <div class="undocumented">Undocumented</div>
-        </div>
-      </div><div class="function">
-        <a name="pymine.api.models.s2m_tagimplies"></a>
-        <a name="s2m_tagimplies"></a>
-        <div class="functionHeader">
-        
-        def s2m_tagimplies(request, s, sattr, m, mattr):
-        
-      </div>
-        <div class="functionBody">
-          
-          <div class="undocumented">Undocumented</div>
-        </div>
-      </div><div class="function">
-        <a name="pymine.api.models.m2s_itemstatus"></a>
-        <a name="m2s_itemstatus"></a>
-        <div class="functionHeader">
-        
-        def m2s_itemstatus(m, mattr, s, sattr):
-        
-      </div>
-        <div class="functionBody">
-          
-          <div class="undocumented">Undocumented</div>
-        </div>
-      </div><div class="function">
-        <a name="pymine.api.models.s2m_itemstatus"></a>
-        <a name="s2m_itemstatus"></a>
-        <div class="functionHeader">
-        
-        def s2m_itemstatus(request, s, sattr, m, mattr):
-        
-      </div>
-        <div class="functionBody">
-          
-          <div class="undocumented">Undocumented</div>
-        </div>
-      </div><div class="function">
-        <a name="pymine.api.models.m2s_itemtags"></a>
-        <a name="m2s_itemtags"></a>
-        <div class="functionHeader">
-        
-        def m2s_itemtags(m, mattr, s, sattr):
-        
-      </div>
-        <div class="functionBody">
-          
-          <div class="undocumented">Undocumented</div>
-        </div>
-      </div><div class="function">
-        <a name="pymine.api.models.s2m_itemtags"></a>
-        <a name="s2m_itemtags"></a>
-        <div class="functionHeader">
-        
-        def s2m_itemtags(request, s, sattr, m, mattr):
-        
-      </div>
-        <div class="functionBody">
-          
-          <div class="undocumented">Undocumented</div>
-        </div>
-      </div><div class="function">
-        <a name="pymine.api.models.m2s_relints"></a>
-        <a name="m2s_relints"></a>
-        <div class="functionHeader">
-        
-        def m2s_relints(m, mattr, s, sattr):
-        
-      </div>
-        <div class="functionBody">
-          
-          <div class="undocumented">Undocumented</div>
-        </div>
-      </div><div class="function">
-        <a name="pymine.api.models.s2m_relints"></a>
-        <a name="s2m_relints"></a>
-        <div class="functionHeader">
-        
-        def s2m_relints(request, s, sattr, m, mattr):
+        def random_bits(nbits):
         
       </div>
         <div class="functionBody">
@@ -619,7 +163,7 @@ first place<table class="fieldTable"></table></div>
       </div>
     
     <address>
-      <a href="index.html">API Documentation</a> for pymine, generated by <a href="http://codespeak.net/~mwh/pydoctor/">pydoctor</a> at (date elided).
+      <a href="index.html">API Documentation</a> for pymine, generated by <a href="http://codespeak.net/~mwh/pydoctor/">pydoctor</a> at 2010-02-13 20:51:05.
     </address>
   </body>
 </html>

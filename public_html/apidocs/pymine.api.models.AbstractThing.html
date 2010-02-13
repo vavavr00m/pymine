@@ -17,109 +17,103 @@
       <a href="classIndex.html#pymine.api.models.AbstractThing">View In Hierarchy</a>
     </p>
     <div>
-      <p>Known subclasses: <a href="pymine.api.models.Comment.html">pymine.api.models.Comment</a>, <a href="pymine.api.models.Item.html">pymine.api.models.Item</a>, <a href="pymine.api.models.Relation.html">pymine.api.models.Relation</a>, <a href="pymine.api.models.Tag.html">pymine.api.models.Tag</a>, <a href="pymine.api.models.Vurl.html">pymine.api.models.Vurl</a></p>
+      <p>Known subclasses: <a href="pymine.api.models.Comment.html">pymine.api.models.Comment</a>, <a href="pymine.api.models.Feed.html">pymine.api.models.Feed</a>, <a href="pymine.api.models.Item.html">pymine.api.models.Item</a>, <a href="pymine.api.models.Tag.html">pymine.api.models.Tag</a>, <a href="pymine.api.models.Vurl.html">pymine.api.models.Vurl</a></p>
     </div>
-    <div>The AbstractThing class is a abstract model class that exists to provide
-a few common methods to the core Mine models.</p>
-<p>It's obviously easy to 'get' or 'set' the fields of a model instance 
-because you can always do &quot;m.field = foo&quot; or something</p>
-<p>What we need to do is:</p>
-<p>1) get the svalue of a sattr that's associated with some model's 
-corresponding mattr</p>
-<p>2) empty/nullify the mattr that corresponds with a model's sattr</p>
-<p>3) create or update, from information held in a HttpRequest 
-(r-space)</p>
-<p>4) return an entire s-structure populated from a model</p>
-<p>Methods are provided below in Thing() to permit the above and then are 
-inherited by most of the Mine models; for this to work there needs to be a 
-small amount of linker logic to bypass major circular dependencies, and 
-that's provided at the end of this file.<table class="fieldTable"></table></div>
+    <div>superclass for all the major mine types<table class="fieldTable"></table></div>
     
     
     <div id="splitTables">
-      <table class="children sortable" id="id12">
+      <table class="children sortable" id="id29">
   
   
   
   
-  <tr class="method">
-    
-    
-    <td>Method</td>
-    <td><a href="pymine.api.models.AbstractThing.html#update_from_request">update_from_request</a></td>
-    <td><span>update_from_request updates a (possibly blank) instance of a</span></td>
-  </tr><tr class="classmethod">
-    
-    
-    <td>Class Method</td>
-    <td><a href="pymine.api.models.AbstractThing.html#new_from_request">new_from_request</a></td>
-    <td><span class="undocumented">Undocumented</span></td>
-  </tr><tr class="method">
-    
-    
-    <td>Method</td>
-    <td><a href="pymine.api.models.AbstractThing.html#lookup_mattr">lookup_mattr</a></td>
-    <td><span class="undocumented">Undocumented</span></td>
-  </tr><tr class="method">
-    
-    
-    <td>Method</td>
-    <td><a href="pymine.api.models.AbstractThing.html#get_sattr">get_sattr</a></td>
-    <td><span class="undocumented">Undocumented</span></td>
-  </tr><tr class="method">
-    
-    
-    <td>Method</td>
-    <td><a href="pymine.api.models.AbstractThing.html#delete_sattr">delete_sattr</a></td>
-    <td><span class="undocumented">Undocumented</span></td>
-  </tr><tr class="method">
-    
-    
-    <td>Method</td>
-    <td><a href="pymine.api.models.AbstractThing.html#to_structure">to_structure</a></td>
-    <td><span class="undocumented">Undocumented</span></td>
-  </tr><tr class="method">
-    
-    
-    <td>Method</td>
-    <td><a href="pymine.api.models.AbstractThing.html#get_absolute_url">get_absolute_url</a></td>
-    <td><span class="undocumented">Undocumented</span></td>
-  </tr><tr class="classmethod">
-    
-    
-    <td>Class Method</td>
-    <td><a href="pymine.api.models.AbstractThing.html#filter_queryset">filter_queryset</a></td>
-    <td><span class="undocumented">Undocumented</span></td>
-  </tr><tr class="class">
+  <tr class="class">
     
     
     <td>Class</td>
     <td><a href="pymine.api.models.AbstractThing.Meta.html">Meta</a></td>
     <td><span class="undocumented">Undocumented</span></td>
-  </tr>
-  
-</table>
-      
-        <p>
-          Inherited from <a href="pymine.api.models.AbstractModel.html">AbstractModel</a>:
-        </p>
-        <table class="children sortable" id="id13">
-  
-  
-  
-  
-  <tr class="basemethod">
+  </tr><tr class="classmethod">
+    
+    
+    <td>Class Method</td>
+    <td><a href="pymine.api.models.AbstractThing.html#create">create</a></td>
+    <td><span>create a new Thing from a HTTPRequest, overriding with values from 
+kwargs.</span></td>
+  </tr><tr class="classmethod">
+    
+    
+    <td>Class Method</td>
+    <td><a href="pymine.api.models.AbstractThing.html#get">get</a></td>
+    <td><span>return a single model matching kwargs; expunge virtually-deleted ones; 
+if none return None; if multiple, throw exception</span></td>
+  </tr><tr class="classmethod">
+    
+    
+    <td>Class Method</td>
+    <td><a href="pymine.api.models.AbstractThing.html#list">list</a></td>
+    <td><span>return a queryset of models matching kwargs; expunge virtually-deleted 
+ones</span></td>
+  </tr><tr class="classmethod">
+    
+    
+    <td>Class Method</td>
+    <td><a href="pymine.api.models.AbstractThing.html#execute_search_query">execute_search_query</a></td>
+    <td><span>take one queryset and return another, filtered by the content of 
+search_string; this version is a no-op</span></td>
+  </tr><tr class="classmethod">
+    
+    
+    <td>Class Method</td>
+    <td><a href="pymine.api.models.AbstractThing.html#search">search</a></td>
+    <td><span>return a queryset of models matching **kwargs and search_string; expunge
+virtually-deleted ones</span></td>
+  </tr><tr class="method">
     
     
     <td>Method</td>
-    <td><a href="pymine.api.models.AbstractModel.html#delete">delete</a></td>
-    <td><span class="undocumented">Undocumented</span></td>
-  </tr><tr class="basemethod">
+    <td><a href="pymine.api.models.AbstractThing.html#update">update</a></td>
+    <td><span>update a single Thing from a HTTPRequest, overriding with values from 
+kwargs</span></td>
+  </tr><tr class="method">
     
     
     <td>Method</td>
-    <td><a href="pymine.api.models.AbstractModel.html#delete_for_real">delete_for_real</a></td>
-    <td><span class="undocumented">Undocumented</span></td>
+    <td><a href="pymine.api.models.AbstractThing.html#save_files_from">save_files_from</a></td>
+    <td><span>stub for file-saving per instance/class; returns True if a change was 
+made</span></td>
+  </tr><tr class="method">
+    
+    
+    <td>Method</td>
+    <td><a href="pymine.api.models.AbstractThing.html#delete">delete</a></td>
+    <td><span>gc all the fields and mark this Thing as deleted</span></td>
+  </tr><tr class="method">
+    
+    
+    <td>Method</td>
+    <td><a href="pymine.api.models.AbstractThing.html#to_structure">to_structure</a></td>
+    <td><span>convert this model m to a dictionary structure s (ie: s-space)</span></td>
+  </tr><tr class="method">
+    
+    
+    <td>Method</td>
+    <td><a href="pymine.api.models.AbstractThing.html#get_absolute_url">get_absolute_url</a></td>
+    <td><span>return a url for this object for administrative purposes</span></td>
+  </tr><tr class="method">
+    
+    
+    <td>Method</td>
+    <td><a href="pymine.api.models.AbstractThing.html#delete_attribute">delete_attribute</a></td>
+    <td><span>erase the value of attribute 'key' (or delete extended attribute 
+'$key')</span></td>
+  </tr><tr class="method">
+    
+    
+    <td>Method</td>
+    <td><a href="pymine.api.models.AbstractThing.html#__unicode__">__unicode__</a></td>
+    <td><span>return the canonical name of this object</span></td>
   </tr>
   
 </table>
@@ -130,79 +124,129 @@ that's provided at the end of this file.<table class="fieldTable"></table></div>
     
     
     <div class="function">
-        <a name="pymine.api.models.AbstractThing.update_from_request"></a>
-        <a name="update_from_request"></a>
-        <div class="functionHeader">
-        @transaction.commit_on_success<br />
-        def update_from_request(self, r, **kwargs):
-        
-      </div>
-        <div class="functionBody">
-          <div class="interfaceinfo">overridden in <a href="pymine.api.models.Tag.html">pymine.api.models.Tag</a></div>
-          <div>update_from_request updates a (possibly blank) instance of a model, with
-data that comes from a HttpRequest (ie: that is in r-space)</p>
-<p>it is used as a backend by new_from_request() which creates a blank 
-model instance, then updates it from the request<table class="fieldTable"></table></div>
-        </div>
-      </div><div class="function">
-        <a name="pymine.api.models.AbstractThing.new_from_request"></a>
-        <a name="new_from_request"></a>
+        <a name="pymine.api.models.AbstractThing.create"></a>
+        <a name="create"></a>
         <div class="functionHeader">
         @classmethod<br />
-        def new_from_request(klass, r, **kwargs):
+        def create(klass, request=None, **kwargs):
         
       </div>
         <div class="functionBody">
           
-          <div class="undocumented">Undocumented</div>
+          <div>create a new Thing from a HTTPRequest, overriding with values from 
+kwargs.</p>
+<p>NB: for Item() ONLY: create one or more new Items() from a HTTPRequest, 
+overriding with values from kwargs; assuming nothing goes wrong, one Item()
+will be created per &quot;data&quot; file submitted in the multipart POST 
+request.  If no &quot;data&quot; file is submitted, only a single non-data 
+Item will result.  The result for a single Item() creation will be a single
+Item(). The result for multiple Item() creation will be a list of multiple 
+Items().  For Item() creation via the API, all this will be made plain via 
+the envelope metadata.<table class="fieldTable"></table></div>
         </div>
       </div><div class="function">
-        <a name="pymine.api.models.AbstractThing.lookup_mattr"></a>
-        <a name="lookup_mattr"></a>
+        <a name="pymine.api.models.AbstractThing.get"></a>
+        <a name="get"></a>
         <div class="functionHeader">
-        
-        def lookup_mattr(self, sattr):
+        @classmethod<br />
+        def get(klass, **kwargs):
         
       </div>
         <div class="functionBody">
           
-          <div class="undocumented">Undocumented</div>
+          <div>return a single model matching kwargs; expunge virtually-deleted ones; 
+if none return None; if multiple, throw exception<table class="fieldTable"></table></div>
         </div>
       </div><div class="function">
-        <a name="pymine.api.models.AbstractThing.get_sattr"></a>
-        <a name="get_sattr"></a>
+        <a name="pymine.api.models.AbstractThing.list"></a>
+        <a name="list"></a>
         <div class="functionHeader">
-        
-        def get_sattr(self, sattr):
+        @classmethod<br />
+        def list(klass, **kwargs):
         
       </div>
         <div class="functionBody">
           
-          <div class="undocumented">Undocumented</div>
+          <div>return a queryset of models matching kwargs; expunge virtually-deleted 
+ones<table class="fieldTable"></table></div>
         </div>
       </div><div class="function">
-        <a name="pymine.api.models.AbstractThing.delete_sattr"></a>
-        <a name="delete_sattr"></a>
+        <a name="pymine.api.models.AbstractThing.execute_search_query"></a>
+        <a name="execute_search_query"></a>
+        <div class="functionHeader">
+        @classmethod<br />
+        def execute_search_query(klass, search_string, qs):
+        
+      </div>
+        <div class="functionBody">
+          
+          <div>take one queryset and return another, filtered by the content of 
+search_string; this version is a no-op<table class="fieldTable"></table></div>
+        </div>
+      </div><div class="function">
+        <a name="pymine.api.models.AbstractThing.search"></a>
+        <a name="search"></a>
+        <div class="functionHeader">
+        @classmethod<br />
+        def search(klass, search_string, **kwargs):
+        
+      </div>
+        <div class="functionBody">
+          
+          <div>return a queryset of models matching **kwargs and search_string; expunge
+virtually-deleted ones<table class="fieldTable"></table></div>
+        </div>
+      </div><div class="function">
+        <a name="pymine.api.models.AbstractThing.update"></a>
+        <a name="update"></a>
         <div class="functionHeader">
         @transaction.commit_on_success<br />
-        def delete_sattr(self, sattr):
+        def update(self, request=None, **kwargs):
         
       </div>
         <div class="functionBody">
           <div class="interfaceinfo">overridden in <a href="pymine.api.models.Tag.html">pymine.api.models.Tag</a></div>
-          <div class="undocumented">Undocumented</div>
+          <div>update a single Thing from a HTTPRequest, overriding with values from 
+kwargs</p>
+<p>kwargs override is needed so that commenters cannot cite commentFromFeed
+in request.POST<table class="fieldTable"></table></div>
+        </div>
+      </div><div class="function">
+        <a name="pymine.api.models.AbstractThing.save_files_from"></a>
+        <a name="save_files_from"></a>
+        <div class="functionHeader">
+        
+        def save_files_from(self, request):
+        
+      </div>
+        <div class="functionBody">
+          <div class="interfaceinfo">overridden in <a href="pymine.api.models.Item.html">pymine.api.models.Item</a></div>
+          <div>stub for file-saving per instance/class; returns True if a change was 
+made<table class="fieldTable"></table></div>
+        </div>
+      </div><div class="function">
+        <a name="pymine.api.models.AbstractThing.delete"></a>
+        <a name="delete"></a>
+        <div class="functionHeader">
+        
+        def delete(self):
+        
+      </div>
+        <div class="functionBody">
+          
+          <div>gc all the fields and mark this Thing as deleted<table class="fieldTable"></table></div>
         </div>
       </div><div class="function">
         <a name="pymine.api.models.AbstractThing.to_structure"></a>
         <a name="to_structure"></a>
         <div class="functionHeader">
         
-        def to_structure(self):
+        def to_structure(self, request=None):
         
       </div>
         <div class="functionBody">
-          <div class="interfaceinfo">overridden in <a href="pymine.api.models.Comment.html">pymine.api.models.Comment</a>, <a href="pymine.api.models.Item.html">pymine.api.models.Item</a>, <a href="pymine.api.models.Relation.html">pymine.api.models.Relation</a>, <a href="pymine.api.models.Vurl.html">pymine.api.models.Vurl</a></div>
-          <div class="undocumented">Undocumented</div>
+          <div class="interfaceinfo">overridden in <a href="pymine.api.models.Vurl.html">pymine.api.models.Vurl</a></div>
+          <div>convert this model m to a dictionary structure s (ie: s-space)<table class="fieldTable"></table></div>
         </div>
       </div><div class="function">
         <a name="pymine.api.models.AbstractThing.get_absolute_url"></a>
@@ -214,24 +258,42 @@ model instance, then updates it from the request<table class="fieldTable"></tabl
       </div>
         <div class="functionBody">
           
-          <div class="undocumented">Undocumented</div>
+          <div>return a url for this object for administrative purposes<table class="fieldTable"></table></div>
         </div>
       </div><div class="function">
-        <a name="pymine.api.models.AbstractThing.filter_queryset"></a>
-        <a name="filter_queryset"></a>
+        <a name="pymine.api.models.AbstractThing.delete_attribute"></a>
+        <a name="delete_attribute"></a>
         <div class="functionHeader">
-        @classmethod<br />
-        def filter_queryset(klass, qs, query):
+        
+        def delete_attribute(self, key):
         
       </div>
         <div class="functionBody">
-          <div class="interfaceinfo">overridden in <a href="pymine.api.models.Comment.html">pymine.api.models.Comment</a>, <a href="pymine.api.models.Item.html">pymine.api.models.Item</a>, <a href="pymine.api.models.Relation.html">pymine.api.models.Relation</a>, <a href="pymine.api.models.Tag.html">pymine.api.models.Tag</a>, <a href="pymine.api.models.Vurl.html">pymine.api.models.Vurl</a></div>
-          <div class="undocumented">Undocumented</div>
+          <div class="interfaceinfo">overridden in <a href="pymine.api.models.Tag.html">pymine.api.models.Tag</a></div>
+          <div>erase the value of attribute 'key' (or delete extended attribute 
+'$key')</p>
+<p>for comparison: get_attribute - is a view frontend upon get_thing() / 
+to_structure() - ie: cheaply coded set_attribute - should be performed via 
+update() update_attribute - ditto list_attributes - should be performed via
+get_thing()</p>
+<p>the only thing missing is deletion.<table class="fieldTable"></table></div>
+        </div>
+      </div><div class="function">
+        <a name="pymine.api.models.AbstractThing.__unicode__"></a>
+        <a name="__unicode__"></a>
+        <div class="functionHeader">
+        
+        def __unicode__(self):
+        
+      </div>
+        <div class="functionBody">
+          <div class="interfaceinfo">overridden in <a href="pymine.api.models.Comment.html">pymine.api.models.Comment</a></div>
+          <div>return the canonical name of this object<table class="fieldTable"></table></div>
         </div>
       </div>
     
     <address>
-      <a href="index.html">API Documentation</a> for pymine, generated by <a href="http://codespeak.net/~mwh/pydoctor/">pydoctor</a> at (date elided).
+      <a href="index.html">API Documentation</a> for pymine, generated by <a href="http://codespeak.net/~mwh/pydoctor/">pydoctor</a> at 2010-02-13 20:51:05.
     </address>
   </body>
 </html>

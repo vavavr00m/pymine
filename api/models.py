@@ -1109,15 +1109,15 @@ class Item(AbstractThing):
 
         rules for content type:
 
-        - if you declare itemDataType / itemIconType, it wins
+        if you declare itemDataType/itemIconType, it wins
 
-        - if you do not declare itemDataType / itemIconType, but the
-          browser supplies a multipart-encoding type other than
-          'application/octet-stream', then that wins.
+        if you do not declare itemDataType/itemIconType, but the
+        browser supplies a multipart-encoding type other than
+        'application/octet-stream', then that wins.
 
-        - otherwise the mimetypes module takes a guess
+        otherwise the mimetypes module takes a guess
 
-        - if all else fails, it ends up as application/octet-stream
+        if all else fails, it ends up as application/octet-stream
         """
 
         save_needed = False

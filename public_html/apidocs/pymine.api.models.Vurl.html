@@ -19,42 +19,20 @@
     <div>
       
     </div>
-    <div>The Vurl (Vanity URL) model implements URL-shortening and remapping, 
-allowing arbitrary cookies to map to much longer URLs, indexable by 
-table-id, &quot;key&quot; (table-id encoded under base58) and 
-&quot;name&quot;, which provides for much elective, longer token names to 
-be used<table class="fieldTable"></table></div>
+    <div class="undocumented">No class docstring</div>
     
     
     <div id="splitTables">
-      <table class="children sortable" id="id36">
+      <table class="children sortable" id="id32">
   
   
   
   
-  <tr class="method">
-    
-    
-    <td>Method</td>
-    <td><a href="pymine.api.models.Vurl.html#__unicode__">__unicode__</a></td>
-    <td><span class="undocumented">Undocumented</span></td>
-  </tr><tr class="class">
-    
-    
-    <td>Class</td>
-    <td><a href="pymine.api.models.Vurl.Meta.html">Meta</a></td>
-    <td><span class="undocumented">Undocumented</span></td>
-  </tr><tr class="staticmethod">
+  <tr class="staticmethod">
     
     
     <td>Static Method</td>
     <td><a href="pymine.api.models.Vurl.html#get_with_vurlkey">get_with_vurlkey</a></td>
-    <td><span class="undocumented">Undocumented</span></td>
-  </tr><tr class="method">
-    
-    
-    <td>Method</td>
-    <td><a href="pymine.api.models.Vurl.html#save">save</a></td>
     <td><span class="undocumented">Undocumented</span></td>
   </tr><tr class="method">
     
@@ -66,13 +44,19 @@ be used<table class="fieldTable"></table></div>
     
     
     <td>Method</td>
+    <td><a href="pymine.api.models.Vurl.html#save">save</a></td>
+    <td><span>override save method to install a name if necessary</span></td>
+  </tr><tr class="method">
+    
+    
+    <td>Method</td>
     <td><a href="pymine.api.models.Vurl.html#to_structure">to_structure</a></td>
     <td><span>Splices the virtual vurlKey/vurlPath sattrs into the Vurl</span></td>
-  </tr><tr class="classmethod">
+  </tr><tr class="method">
     
     
-    <td>Class Method</td>
-    <td><a href="pymine.api.models.Vurl.html#filter_queryset">filter_queryset</a></td>
+    <td>Method</td>
+    <td><a href="pymine.api.models.Vurl.html#http_response">http_response</a></td>
     <td><span class="undocumented">Undocumented</span></td>
   </tr>
   
@@ -81,71 +65,91 @@ be used<table class="fieldTable"></table></div>
         <p>
           Inherited from <a href="pymine.api.models.AbstractThing.html">AbstractThing</a>:
         </p>
-        <table class="children sortable" id="id37">
+        <table class="children sortable" id="id33">
   
   
   
   
-  <tr class="basemethod">
+  <tr class="baseclass">
     
     
-    <td>Method</td>
-    <td><a href="pymine.api.models.AbstractThing.html#update_from_request">update_from_request</a></td>
-    <td><span>update_from_request updates a (possibly blank) instance of a</span></td>
+    <td>Class</td>
+    <td><a href="pymine.api.models.AbstractThing.Meta.html">Meta</a></td>
+    <td><span class="undocumented">Undocumented</span></td>
   </tr><tr class="baseclassmethod">
     
     
     <td>Class Method</td>
-    <td><a href="pymine.api.models.AbstractThing.html#new_from_request">new_from_request</a></td>
-    <td><span class="undocumented">Undocumented</span></td>
+    <td><a href="pymine.api.models.AbstractThing.html#create">create</a></td>
+    <td><span>create a new Thing from a HTTPRequest, overriding with values from 
+kwargs.</span></td>
+  </tr><tr class="baseclassmethod">
+    
+    
+    <td>Class Method</td>
+    <td><a href="pymine.api.models.AbstractThing.html#get">get</a></td>
+    <td><span>return a single model matching kwargs; expunge virtually-deleted ones; 
+if none return None; if multiple, throw exception</span></td>
+  </tr><tr class="baseclassmethod">
+    
+    
+    <td>Class Method</td>
+    <td><a href="pymine.api.models.AbstractThing.html#list">list</a></td>
+    <td><span>return a queryset of models matching kwargs; expunge virtually-deleted 
+ones</span></td>
+  </tr><tr class="baseclassmethod">
+    
+    
+    <td>Class Method</td>
+    <td><a href="pymine.api.models.AbstractThing.html#execute_search_query">execute_search_query</a></td>
+    <td><span>take one queryset and return another, filtered by the content of 
+search_string; this version is a no-op</span></td>
+  </tr><tr class="baseclassmethod">
+    
+    
+    <td>Class Method</td>
+    <td><a href="pymine.api.models.AbstractThing.html#search">search</a></td>
+    <td><span>return a queryset of models matching **kwargs and search_string; expunge
+virtually-deleted ones</span></td>
   </tr><tr class="basemethod">
     
     
     <td>Method</td>
-    <td><a href="pymine.api.models.AbstractThing.html#lookup_mattr">lookup_mattr</a></td>
-    <td><span class="undocumented">Undocumented</span></td>
+    <td><a href="pymine.api.models.AbstractThing.html#update">update</a></td>
+    <td><span>update a single Thing from a HTTPRequest, overriding with values from 
+kwargs</span></td>
   </tr><tr class="basemethod">
     
     
     <td>Method</td>
-    <td><a href="pymine.api.models.AbstractThing.html#get_sattr">get_sattr</a></td>
-    <td><span class="undocumented">Undocumented</span></td>
+    <td><a href="pymine.api.models.AbstractThing.html#save_files_from">save_files_from</a></td>
+    <td><span>stub for file-saving per instance/class; returns True if a change was 
+made</span></td>
   </tr><tr class="basemethod">
     
     
     <td>Method</td>
-    <td><a href="pymine.api.models.AbstractThing.html#delete_sattr">delete_sattr</a></td>
-    <td><span class="undocumented">Undocumented</span></td>
+    <td><a href="pymine.api.models.AbstractThing.html#delete">delete</a></td>
+    <td><span>gc all the fields and mark this Thing as deleted</span></td>
   </tr><tr class="basemethod">
     
     
     <td>Method</td>
     <td><a href="pymine.api.models.AbstractThing.html#get_absolute_url">get_absolute_url</a></td>
-    <td><span class="undocumented">Undocumented</span></td>
-  </tr>
-  
-</table>
-      
-        <p>
-          Inherited from <a href="pymine.api.models.AbstractModel.html">AbstractModel</a> (via <a href="pymine.api.models.AbstractThing.html">AbstractThing</a>):
-        </p>
-        <table class="children sortable" id="id38">
-  
-  
-  
-  
-  <tr class="basemethod">
-    
-    
-    <td>Method</td>
-    <td><a href="pymine.api.models.AbstractModel.html#delete">delete</a></td>
-    <td><span class="undocumented">Undocumented</span></td>
+    <td><span>return a url for this object for administrative purposes</span></td>
   </tr><tr class="basemethod">
     
     
     <td>Method</td>
-    <td><a href="pymine.api.models.AbstractModel.html#delete_for_real">delete_for_real</a></td>
-    <td><span class="undocumented">Undocumented</span></td>
+    <td><a href="pymine.api.models.AbstractThing.html#delete_attribute">delete_attribute</a></td>
+    <td><span>erase the value of attribute 'key' (or delete extended attribute 
+'$key')</span></td>
+  </tr><tr class="basemethod">
+    
+    
+    <td>Method</td>
+    <td><a href="pymine.api.models.AbstractThing.html#__unicode__">__unicode__</a></td>
+    <td><span>return the canonical name of this object</span></td>
   </tr>
   
 </table>
@@ -156,35 +160,11 @@ be used<table class="fieldTable"></table></div>
     
     
     <div class="function">
-        <a name="pymine.api.models.Vurl.__unicode__"></a>
-        <a name="__unicode__"></a>
-        <div class="functionHeader">
-        
-        def __unicode__(self):
-        
-      </div>
-        <div class="functionBody">
-          
-          <div class="undocumented">Undocumented</div>
-        </div>
-      </div><div class="function">
         <a name="pymine.api.models.Vurl.get_with_vurlkey"></a>
         <a name="get_with_vurlkey"></a>
         <div class="functionHeader">
         @staticmethod<br />
         def get_with_vurlkey(encoded):
-        
-      </div>
-        <div class="functionBody">
-          
-          <div class="undocumented">Undocumented</div>
-        </div>
-      </div><div class="function">
-        <a name="pymine.api.models.Vurl.save"></a>
-        <a name="save"></a>
-        <div class="functionHeader">
-        @transaction.commit_on_success<br />
-        def save(self):
         
       </div>
         <div class="functionBody">
@@ -204,6 +184,18 @@ be used<table class="fieldTable"></table></div>
           <div class="undocumented">Undocumented</div>
         </div>
       </div><div class="function">
+        <a name="pymine.api.models.Vurl.save"></a>
+        <a name="save"></a>
+        <div class="functionHeader">
+        
+        def save(self):
+        
+      </div>
+        <div class="functionBody">
+          
+          <div>override save method to install a name if necessary<table class="fieldTable"></table></div>
+        </div>
+      </div><div class="function">
         <a name="pymine.api.models.Vurl.to_structure"></a>
         <a name="to_structure"></a>
         <div class="functionHeader">
@@ -221,21 +213,21 @@ readonly, we have no real option but to kludge this right here as duplicate
 information.<table class="fieldTable"></table></div>
         </div>
       </div><div class="function">
-        <a name="pymine.api.models.Vurl.filter_queryset"></a>
-        <a name="filter_queryset"></a>
+        <a name="pymine.api.models.Vurl.http_response"></a>
+        <a name="http_response"></a>
         <div class="functionHeader">
-        @classmethod<br />
-        def filter_queryset(klass, qs, query):
+        
+        def http_response(self):
         
       </div>
         <div class="functionBody">
-          <div class="interfaceinfo">overrides <a href="pymine.api.models.AbstractThing.html#filter_queryset">pymine.api.models.AbstractThing.filter_queryset</a></div>
+          
           <div class="undocumented">Undocumented</div>
         </div>
       </div>
     
     <address>
-      <a href="index.html">API Documentation</a> for pymine, generated by <a href="http://codespeak.net/~mwh/pydoctor/">pydoctor</a> at (date elided).
+      <a href="index.html">API Documentation</a> for pymine, generated by <a href="http://codespeak.net/~mwh/pydoctor/">pydoctor</a> at 2010-02-13 20:51:05.
     </address>
   </body>
 </html>

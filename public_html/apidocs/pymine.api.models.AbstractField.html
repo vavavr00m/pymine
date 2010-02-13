@@ -1,0 +1,313 @@
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+  "DTD/xhtml1-strict.dtd">
+<html>
+  <head>
+    <title>API docs for &ldquo;pymine.api.models.AbstractField&rdquo;</title>
+    <meta content="text/html;charset=utf-8" http-equiv="Content-Type" />
+    <link href="apidocs.css" type="text/css" rel="stylesheet" />
+    
+    
+  </head>
+  <body>
+    <h1 class="class">Class p.a.m.AbstractField:</h1>
+    <p>
+      <span id="part">Part of <a href="pymine.html">pymine</a>.<a href="pymine.api.html">api</a>.<a href="pymine.api.models.html">models</a></span>
+      
+      <a href="classIndex.html#pymine.api.models.AbstractField">View In Hierarchy</a>
+    </p>
+    <div>
+      
+    </div>
+    <div>superclass to frontend model fields and ease porting between GAE and 
+Django</p>
+<p>todo: merge the garbage collection config into the options for each 
+field<table class="fieldTable"></table></div>
+    
+    
+    <div id="splitTables">
+      <table class="children sortable" id="id16">
+  
+  
+  
+  
+  <tr class="class">
+    
+    
+    <td>Class</td>
+    <td><a href="pymine.api.models.AbstractField.Meta.html">Meta</a></td>
+    <td><span class="undocumented">Undocumented</span></td>
+  </tr><tr class="staticmethod">
+    
+    
+    <td>Static Method</td>
+    <td><a href="pymine.api.models.AbstractField.html#parse">parse</a></td>
+    <td><span>Argument parser/translater for AbstractField.</span></td>
+  </tr><tr class="staticmethod">
+    
+    
+    <td>Static Method</td>
+    <td><a href="pymine.api.models.AbstractField.html#bool">bool</a></td>
+    <td><span>implements a bool (true/false)</span></td>
+  </tr><tr class="staticmethod">
+    
+    
+    <td>Static Method</td>
+    <td><a href="pymine.api.models.AbstractField.html#choice">choice</a></td>
+    <td><span>implements a choices-field (max length of an encoded choice is 1 
+character)</span></td>
+  </tr><tr class="staticmethod">
+    
+    
+    <td>Static Method</td>
+    <td><a href="pymine.api.models.AbstractField.html#created">created</a></td>
+    <td><span>implements created date</span></td>
+  </tr><tr class="staticmethod">
+    
+    
+    <td>Static Method</td>
+    <td><a href="pymine.api.models.AbstractField.html#datetime">datetime</a></td>
+    <td><span>implements date/time field</span></td>
+  </tr><tr class="staticmethod">
+    
+    
+    <td>Static Method</td>
+    <td><a href="pymine.api.models.AbstractField.html#file">file</a></td>
+    <td><span>implements a file</span></td>
+  </tr><tr class="staticmethod">
+    
+    
+    <td>Static Method</td>
+    <td><a href="pymine.api.models.AbstractField.html#integer">integer</a></td>
+    <td><span>implements an integer</span></td>
+  </tr><tr class="staticmethod">
+    
+    
+    <td>Static Method</td>
+    <td><a href="pymine.api.models.AbstractField.html#last_modified">last_modified</a></td>
+    <td><span>implements last_modified date</span></td>
+  </tr><tr class="staticmethod">
+    
+    
+    <td>Static Method</td>
+    <td><a href="pymine.api.models.AbstractField.html#reference">reference</a></td>
+    <td><span>implements foreign-keys</span></td>
+  </tr><tr class="staticmethod">
+    
+    
+    <td>Static Method</td>
+    <td><a href="pymine.api.models.AbstractField.html#reflist">reflist</a></td>
+    <td><span>implements list-of-foreign-keys; AbstractField.parses out 'pivot' 
+argument</span></td>
+  </tr><tr class="staticmethod">
+    
+    
+    <td>Static Method</td>
+    <td><a href="pymine.api.models.AbstractField.html#slug">slug</a></td>
+    <td><span>implements a slug (alphanumeric string, no spaces)</span></td>
+  </tr><tr class="staticmethod">
+    
+    
+    <td>Static Method</td>
+    <td><a href="pymine.api.models.AbstractField.html#string">string</a></td>
+    <td><span>implements string</span></td>
+  </tr><tr class="staticmethod">
+    
+    
+    <td>Static Method</td>
+    <td><a href="pymine.api.models.AbstractField.html#text">text</a></td>
+    <td><span>implements a text area / text of arbitrary size</span></td>
+  </tr><tr class="staticmethod">
+    
+    
+    <td>Static Method</td>
+    <td><a href="pymine.api.models.AbstractField.html#url">url</a></td>
+    <td><span>implements a URL string</span></td>
+  </tr>
+  
+</table>
+      
+      
+    </div>
+    
+    
+    
+    <div class="function">
+        <a name="pymine.api.models.AbstractField.parse"></a>
+        <a name="parse"></a>
+        <div class="functionHeader">
+        @staticmethod<br />
+        def parse(input):
+        
+      </div>
+        <div class="functionBody">
+          
+          <div>Argument parser/translater for AbstractField.</p>
+<p>One dict comes in, another goes out.</p>
+<p>implements unique, symmetrical, storage, upload_to, pivot<table class="fieldTable"></table></div>
+        </div>
+      </div><div class="function">
+        <a name="pymine.api.models.AbstractField.bool"></a>
+        <a name="bool"></a>
+        <div class="functionHeader">
+        @staticmethod<br />
+        def bool(default):
+        
+      </div>
+        <div class="functionBody">
+          
+          <div>implements a bool (true/false)<table class="fieldTable"></table></div>
+        </div>
+      </div><div class="function">
+        <a name="pymine.api.models.AbstractField.choice"></a>
+        <a name="choice"></a>
+        <div class="functionHeader">
+        @staticmethod<br />
+        def choice(choices):
+        
+      </div>
+        <div class="functionBody">
+          
+          <div>implements a choices-field (max length of an encoded choice is 1 
+character)<table class="fieldTable"></table></div>
+        </div>
+      </div><div class="function">
+        <a name="pymine.api.models.AbstractField.created"></a>
+        <a name="created"></a>
+        <div class="functionHeader">
+        @staticmethod<br />
+        def created():
+        
+      </div>
+        <div class="functionBody">
+          
+          <div>implements created date<table class="fieldTable"></table></div>
+        </div>
+      </div><div class="function">
+        <a name="pymine.api.models.AbstractField.datetime"></a>
+        <a name="datetime"></a>
+        <div class="functionHeader">
+        @staticmethod<br />
+        def datetime(**kwargs):
+        
+      </div>
+        <div class="functionBody">
+          
+          <div>implements date/time field<table class="fieldTable"></table></div>
+        </div>
+      </div><div class="function">
+        <a name="pymine.api.models.AbstractField.file"></a>
+        <a name="file"></a>
+        <div class="functionHeader">
+        @staticmethod<br />
+        def file(**kwargs):
+        
+      </div>
+        <div class="functionBody">
+          
+          <div>implements a file<table class="fieldTable"></table></div>
+        </div>
+      </div><div class="function">
+        <a name="pymine.api.models.AbstractField.integer"></a>
+        <a name="integer"></a>
+        <div class="functionHeader">
+        @staticmethod<br />
+        def integer(default):
+        
+      </div>
+        <div class="functionBody">
+          
+          <div>implements an integer<table class="fieldTable"></table></div>
+        </div>
+      </div><div class="function">
+        <a name="pymine.api.models.AbstractField.last_modified"></a>
+        <a name="last_modified"></a>
+        <div class="functionHeader">
+        @staticmethod<br />
+        def last_modified():
+        
+      </div>
+        <div class="functionBody">
+          
+          <div>implements last_modified date<table class="fieldTable"></table></div>
+        </div>
+      </div><div class="function">
+        <a name="pymine.api.models.AbstractField.reference"></a>
+        <a name="reference"></a>
+        <div class="functionHeader">
+        @staticmethod<br />
+        def reference(what, **kwargs):
+        
+      </div>
+        <div class="functionBody">
+          
+          <div>implements foreign-keys<table class="fieldTable"></table></div>
+        </div>
+      </div><div class="function">
+        <a name="pymine.api.models.AbstractField.reflist"></a>
+        <a name="reflist"></a>
+        <div class="functionHeader">
+        @staticmethod<br />
+        def reflist(what, **kwargs):
+        
+      </div>
+        <div class="functionBody">
+          
+          <div>implements list-of-foreign-keys; AbstractField.parses out 'pivot' 
+argument<table class="fieldTable"></table></div>
+        </div>
+      </div><div class="function">
+        <a name="pymine.api.models.AbstractField.slug"></a>
+        <a name="slug"></a>
+        <div class="functionHeader">
+        @staticmethod<br />
+        def slug(**kwargs):
+        
+      </div>
+        <div class="functionBody">
+          
+          <div>implements a slug (alphanumeric string, no spaces)<table class="fieldTable"></table></div>
+        </div>
+      </div><div class="function">
+        <a name="pymine.api.models.AbstractField.string"></a>
+        <a name="string"></a>
+        <div class="functionHeader">
+        @staticmethod<br />
+        def string(**kwargs):
+        
+      </div>
+        <div class="functionBody">
+          
+          <div>implements string<table class="fieldTable"></table></div>
+        </div>
+      </div><div class="function">
+        <a name="pymine.api.models.AbstractField.text"></a>
+        <a name="text"></a>
+        <div class="functionHeader">
+        @staticmethod<br />
+        def text(**kwargs):
+        
+      </div>
+        <div class="functionBody">
+          
+          <div>implements a text area / text of arbitrary size<table class="fieldTable"></table></div>
+        </div>
+      </div><div class="function">
+        <a name="pymine.api.models.AbstractField.url"></a>
+        <a name="url"></a>
+        <div class="functionHeader">
+        @staticmethod<br />
+        def url(**kwargs):
+        
+      </div>
+        <div class="functionBody">
+          
+          <div>implements a URL string<table class="fieldTable"></table></div>
+        </div>
+      </div>
+    
+    <address>
+      <a href="index.html">API Documentation</a> for pymine, generated by <a href="http://codespeak.net/~mwh/pydoctor/">pydoctor</a> at 2010-02-13 20:51:05.
+    </address>
+  </body>
+</html>
