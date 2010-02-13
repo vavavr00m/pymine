@@ -29,7 +29,9 @@ from django.utils.encoding import iri_to_uri
 from django.utils.http import urlquote
 
 import base64
+import itertools
 import os
+import re
 import string
 
 import util.base58 as base58
@@ -95,7 +97,7 @@ class Space:
     class r2s_lib:
 	@staticmethod
 	def bool(r, s, sattr):
-	    """copy a field from a request, to a bool in a structure"""
+	    """copy a field from a request to a bool in a structure"""
 	    s[sattr] = True if int(r.POST[sattr]) else False
 
 	@staticmethod
@@ -117,7 +119,7 @@ class Space:
 	@staticmethod
 	def noop(r, s, sattr, m, mattr):
 	    """do notihng"""
-            pass
+	    pass
 
 	@staticmethod
 	def comment_from_feed(r, s, sattr, m, mattr):
@@ -136,34 +138,14 @@ class Space:
 	@staticmethod
 	def feed_interests(r, s, sattr, m, mattr):
 	    """insert tags regarding which the feed is interested"""
-	    dst = m.interests
-	    dst.clear()
+	    m.interests.clear()
+	    m.interests_require.clear()
+	    m.interests_exclude.clear()
 	    for x in s[sattr].split():
-		dst.add(Tag.get_or_auto_tag(r, x))
-
-	@staticmethod
-	def feed_interests_exclude(r, s, sattr, m, mattr):
-	    """insert tags regarding which the feed is not interested"""
-	    dst = m.interests_exclude
-	    dst.clear()
-	    for x in s[sattr].split():
-		dst.add(Tag.get_or_auto_tag(r, x))
-
-	@staticmethod
-	def feed_interests_require(r, s, sattr, m, mattr):
-	    """insert tags regarding which the feed mandates requirement"""
-	    dst = m.interests_require
-	    dst.clear()
-	    for x in s[sattr].split():
-		dst.add(Tag.get_or_auto_tag(r, x))
-
-	@staticmethod
-	def item_for_feeds(r, s, sattr, m, mattr):
-	    """insert feeds to which the item is explicitly to be fed"""
-	    dst = m.for_feeds
-	    dst.clear()
-	    for x in s[sattr].split():
-		dst.add(Feed.get(name=x))
+		if x.startswith('require:'): m.interests_require.add(Tag.get_or_auto_tag(r, x[8:]))
+		elif x.startswith('exclude:'): m.interests_exclude.add(Tag.get_or_auto_tag(r, x[8:]))
+		elif x.startswith('except:'): m.interests_exclude.add(Tag.get_or_auto_tag(r, x[7:])) # common typo
+		else: m.interests.add(Tag.get_or_auto_tag(r, x))
 
 	@staticmethod
 	def item_links_to_items(r, s, sattr, m, mattr):
@@ -174,20 +156,15 @@ class Space:
 		dst.add(Item.get(id=int(x)))
 
 	@staticmethod
-	def item_not_feeds(r, s, sattr, m, mattr):
-	    """insert feeds for which the item is explicitly banned"""
-	    dst = m.for_feeds
-	    dst.clear()
-	    for x in s[sattr].split():
-		dst.add(Feed.get(name=x))
-
-	@staticmethod
 	def item_tags(r, s, sattr, m, mattr):
 	    """ """
-	    dst = m.tags
-	    dst.clear()
+	    m.tags.clear()
+	    m.for_feeds.clear()
+	    m.not_feeds.clear()
 	    for x in s[sattr].split():
-		dst.add(Tag.get_or_auto_tag(r, x))
+		if x.startswith('for:'): m.for_feeds.add(Feed.get(name=x[4:]))
+		elif x.startswith('not:'): m.not_feeds.add(Feed.get(name=x[4:]))
+		else: m.tags.add(Tag.get_or_auto_tag(r, x))
 
 	@staticmethod
 	def item_status(r, s, sattr, m, mattr):
@@ -231,7 +208,7 @@ class Space:
 	@staticmethod
 	def noop(r, m, mattr, s, sattr):
 	    """do nothing"""
-            pass
+	    pass
 
 	@staticmethod
 	def comment_from_feed(r, m, mattr, s, sattr):
@@ -246,29 +223,9 @@ class Space:
 	@staticmethod
 	def feed_interests(r, m, mattr, s, sattr):
 	    """these tags are relevant to my interests"""
-	    src = m.interests
-	    x = " ".join([ x.name for x in src.all() ])
-	    if x: s[sattr] = x
-
-	@staticmethod
-	def feed_interests_exclude(r, m, mattr, s, sattr):
-	    """these tags are not relevant to my interests"""
-	    src = m.interests_exclude
-	    x = " ".join([ x.name for x in src.all() ])
-	    if x: s[sattr] = x
-
-	@staticmethod
-	def feed_interests_require(r, m, mattr, s, sattr):
-	    """these tags are required for my interest"""
-	    src = m.interests_require
-	    x = " ".join([ x.name for x in src.all() ])
-	    if x: s[sattr] = x
-
-	@staticmethod
-	def item_for_feeds(r, m, mattr, s, sattr):
-	    """this item is destined for..."""
-	    src = m.for_feeds
-	    x = " ".join([ x.name for x in src.all() ])
+	    x = " ".join(x for x in itertools.chain([ i.name for i in m.interests.all() ],
+						    [ "require:%s" % i.name for i in m.interests_require.all() ],
+						    [ "exclude:%s" % i.name for i in m.interests_exclude.all() ]))
 	    if x: s[sattr] = x
 
 	@staticmethod
@@ -279,17 +236,12 @@ class Space:
 	    if x: s[sattr] = x
 
 	@staticmethod
-	def item_not_feeds(r, m, mattr, s, sattr):
-	    """this item is banned from being seen by..."""
-	    src = m.not_feeds
-	    x = " ".join([ x.name for x in src.all() ])
-	    if x: s[sattr] = x
-
-	@staticmethod
 	def item_tags(r, m, mattr, s, sattr):
 	    """this item is tagged..."""
-	    src = m.tags
-	    x = " ".join([ x.name for x in src.all() ])
+	    # i like this bit of code
+	    x = " ".join(x for x in itertools.chain([ i.name for i in m.tags.all() ],
+						    [ "for:%s" % i.name for i in m.for_feeds.all() ],
+						    [ "not:%s" % i.name for i in m.not_feeds.all() ]))
 	    if x: s[sattr] = x
 
 	@staticmethod
@@ -369,6 +321,16 @@ class Space:
 	    pass
 
 	@staticmethod
+	def reflist_tags3(m, mattr):
+	    """trash a field in a model, by unreferencing the contents (not secure delete). requires save()"""
+	    pass
+
+	@staticmethod
+	def reflist_interests3(m, mattr):
+	    """trash a field in a model, by unreferencing the contents (not secure delete). requires save()"""
+	    pass
+
+	@staticmethod
 	def file(m, mattr):
 	    """trash a file in a model by deleting it (not likely to be secure delete).  requires save()"""
 	    pass
@@ -396,13 +358,9 @@ class Space:
 	    'commentFromFeed': True,
 	    'commentUponItem': True,
 	    'feedInterests': True,
-	    'feedInterestsExclude': True,
-	    'feedInterestsRequire': True,
 	    'itemData': True,
-	    'itemForFeeds': True,
 	    'itemIcon': True,
 	    'itemLinksToItems': True,
-	    'itemNotFeeds': True,
 	    'itemTags': True,
 	    'tagCloud': True,
 	    'tagImplies': True,
@@ -614,6 +572,7 @@ class AbstractXattr(AbstractModel):
 
     key = AbstractField.slug()
     value = AbstractField.text()
+    parent = None
 
     def __unicode__(self):
 	"""return the name of this xattr"""
@@ -626,10 +585,10 @@ class TagXattr(AbstractXattr):
 
     class Meta:
 	ordering = ['key']
-	unique_together = ('tag', 'key')
+	unique_together = ('parent', 'key')
 	verbose_name = 'TagXattr'
 
-    tag = AbstractField.reference('Tag')
+    parent = AbstractField.reference('Tag')
 
 ##################################################################
 
@@ -638,10 +597,10 @@ class VurlXattr(AbstractXattr):
 
     class Meta:
 	ordering = ['key']
-	unique_together = ('vurl', 'key')
+	unique_together = ('parent', 'key')
 	verbose_name = 'VurlXattr'
 
-    vurl = AbstractField.reference('Vurl')
+    parent = AbstractField.reference('Vurl')
 
 ##################################################################
 
@@ -650,10 +609,10 @@ class FeedXattr(AbstractXattr):
 
     class Meta:
 	ordering = ['key']
-	unique_together = ('feed', 'key')
+	unique_together = ('parent', 'key')
 	verbose_name = 'FeedXattr'
 
-    feed = AbstractField.reference('Feed')
+    parent = AbstractField.reference('Feed')
 
 ##################################################################
 
@@ -662,10 +621,10 @@ class ItemXattr(AbstractXattr):
 
     class Meta:
 	ordering = ['key']
-	unique_together = ('item', 'key')
+	unique_together = ('parent', 'key')
 	verbose_name = 'ItemXattr'
 
-    item = AbstractField.reference('Item')
+    parent = AbstractField.reference('Item')
 
 ##################################################################
 
@@ -674,10 +633,10 @@ class CommentXattr(AbstractXattr):
 
     class Meta:
 	ordering = ['key']
-	unique_together = ('comment', 'key')
+	unique_together = ('parent', 'key')
 	verbose_name = 'CommentXattr'
 
-    comment = AbstractField.reference('Comment')
+    parent = AbstractField.reference('Comment')
 
 ##################################################################
 ##################################################################
@@ -792,8 +751,13 @@ class AbstractThing(AbstractModel):
 	if i_changed_something:
 	    self.save()
 
-        # stage 3: xattr saving
-        # todo
+	# stage 3: xattr saving
+        for x in request.POST:
+            if re.match(r'^\$\w+$', x):
+                key = x[1:]
+                xattr, created = self.xattr_class.objects.get_or_create(key=key, parent=self)
+                xattr.value = value=request.POST[x]
+                xattr.save()
 
 	# stage 4: file saving
 	# do this by subclassing
@@ -811,8 +775,13 @@ class AbstractThing(AbstractModel):
     def to_structure(self, request=None): # this is the primary consumer of m2s
 	"""convert this model m to a dictionary structure s (ie: s-space)"""
 	s = {}
+
 	for mattr in self.m2s.keys():
 	    self.m2s[mattr](request, self, s)
+
+	for xattr in self.xattr_class.objects.all(): # trust in the uniqueness constraint
+	    s['$' + xattr.key] = xattr.value
+
 	return s
 
     def get_absolute_url(self):
@@ -890,7 +859,7 @@ class Tag(AbstractThing):
 	"""
 	# update all the tags with this data
 	for tag in tgraph.keys():
-	    tag = Tag.objects.get(id=tag.id) # potentially dirty, reload
+	    tag = Tag.get(id=tag.id) # potentially dirty, reload
 	    tag.__update_cloud_field()
 
     def __expand_cloud_graph(self):
@@ -952,7 +921,7 @@ class Tag(AbstractThing):
 	tgraph = self.__expand_cloud_graph()
 	retval = super(Tag, self).update(r, **kwargs)
 	self.__update_cloud_graph(tgraph)
-	retval = Tag.objects.get(id=retval.id) # reload, possibly dirty
+	retval = Tag.get(id=retval.id) # reload, possibly dirty
 	return retval
 
     @classmethod
@@ -964,7 +933,7 @@ class Tag(AbstractThing):
 		t.__update_cloud_graph(tgraph)
 		t.save()
 	else:
-	    t = Tag.objects.get(name=name)
+	    t = Tag.get(name=name)
 	return t
 
 ##################################################################
@@ -1048,9 +1017,7 @@ class Feed(AbstractThing):
 	'description': dict(r2s='verbatim', s2m='copy', m2s='copy'),
 	'embargo_after': dict(s2m='date', m2s='date'),
 	'embargo_before': dict(s2m='date', m2s='date'),
-	'interests': dict(gc='reflist', s2m='feed_interests', m2s='feed_interests'),
-	'interests_exclude': dict(gc='reflist', s2m='feed_interests_exclude', m2s='feed_interests_exclude'),
-	'interests_require': dict(gc='reflist', s2m='feed_interests_require', m2s='feed_interests_require'),
+	'interests': dict(gc='reflist_interests3', s2m='feed_interests', m2s='feed_interests'),
 	'is_considered_public': dict(gc='falsify'),
 	'name': dict(gc='munge', s2m='copy', m2s='copy'),
 	'permitted_networks': dict(s2m='copy', m2s='copy'),
@@ -1063,8 +1030,8 @@ class Feed(AbstractThing):
     embargo_after = AbstractField.datetime(required=False)
     embargo_before = AbstractField.datetime(required=False)
     interests = AbstractField.reflist(Tag, pivot='feeds_with_tag', required=False)
-    interests_exclude = AbstractField.reflist(Tag, pivot='feeds_excluding', required=False)
-    interests_require = AbstractField.reflist(Tag, pivot='feeds_requiring', required=False)
+    interests_exclude = AbstractField.reflist(Tag, pivot='feeds_excluding', required=False) # augments 'interests'
+    interests_require = AbstractField.reflist(Tag, pivot='feeds_requiring', required=False) # augments 'interests'
     is_considered_public = AbstractField.bool(False)
     name = AbstractField.slug(unique=True)
     permitted_networks = AbstractField.string(required=False)
@@ -1086,7 +1053,6 @@ class Item(AbstractThing):
 	'data_remote_url': dict(s2m='copy', m2s='copy'),
 	'data_type': dict(s2m='copy', m2s='copy'),
 	'description': dict(r2s='verbatim', s2m='copy', m2s='copy'),
-	'for_feeds': dict(gc='reflist', s2m='item_for_feeds', m2s='item_for_feeds'),
 	'hide_after': dict(s2m='date', m2s='date'),
 	'hide_before': dict(s2m='date', m2s='date'),
 	'icon': dict(gc='file'),
@@ -1096,9 +1062,8 @@ class Item(AbstractThing):
 	'is_considered_public': dict(gc='falsify'),
 	'links_to_items': dict(gc='reflist', s2m='item_links_to_items', m2s='item_links_to_items'),
 	'name': dict(gc='munge', s2m='copy', m2s='copy'),
-	'not_feeds': dict(gc='reflist', s2m='item_not_feeds', m2s='item_not_feeds'),
 	'status': dict(gc='item_status', s2m='item_status', m2s='item_status'),
-	'tags': dict(gc='reflist', s2m='item_tags', m2s='item_tags'),
+	'tags': dict(gc='reflist_tags3', s2m='item_tags', m2s='item_tags'),
 	}
     (xattr_class, thing_prefix, r2s, s2m, m2s, gc) = Space.compile(attr_map)
 
@@ -1108,7 +1073,7 @@ class Item(AbstractThing):
     data_remote_url = AbstractField.url(required=False)
     data_type = AbstractField.string(required=False)
     description = AbstractField.text(required=False)
-    for_feeds = AbstractField.reflist(Feed, pivot='items_explicitly_for', required=False)
+    for_feeds = AbstractField.reflist(Feed, pivot='items_explicitly_for', required=False) # augments 'tags'
     hide_after = AbstractField.datetime(required=False)
     hide_before = AbstractField.datetime(required=False)
     icon = AbstractField.file(storage=icon_fss, upload_to=fss_yyyymmdd, required=False)
@@ -1118,7 +1083,7 @@ class Item(AbstractThing):
     is_considered_public = AbstractField.bool(False)
     links_to_items = AbstractField.reflist('Item', pivot='item_linked_from', required=False)
     name = AbstractField.string()
-    not_feeds = AbstractField.reflist(Feed, pivot='items_explicitly_not', required=False)
+    not_feeds = AbstractField.reflist(Feed, pivot='items_explicitly_not', required=False) # augments 'tags'
     status = AbstractField.choice(item_status_choices)
     tags = AbstractField.reflist(Tag, pivot='items_tagged', required=False)
 

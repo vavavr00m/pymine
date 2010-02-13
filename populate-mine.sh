@@ -43,11 +43,11 @@ Minectl new-tags chardonnay:white-wine rioja:red-wine
 Minectl new-tags red-burgundy:red-wine white-burgundy:white-wine burgundy:red-wine,white-wine # latter->both
 
 # set up some feeds
-Minectl new-feed alec 1 "Alec Muffett" food drink animals themineproject
+Minectl new-feed alec 1 "Alec Muffett" food drink animals themineproject exclude:shoes
 Minectl new-feed adriana 1 "Adriana Lukas" food drink shoes cats motorcycles themineproject
 Minectl new-feed carrie 1 "Carrie Bishop" food drink sneakers themineproject
 Minectl new-feed ben 1 "Ben Laurie" food drink cats motorcycles
-Minectl new-feed perry 1 "Perry deHavilland" hippos red-wine
+Minectl new-feed perry 1 "Perry deHavilland" hippos require:booze
 
 ###
 # upload a batch of objects without individual tagging

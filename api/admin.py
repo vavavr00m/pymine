@@ -131,7 +131,7 @@ admin.site.register(Vurl, VurlAdmin)
 ##################################################################
 
 class TagXattrAdmin(admin.ModelAdmin):
-    list_display = ('tag', 'key', 'value', 'last_modified', 'created')
+    list_display = ('parent', 'key', 'value', 'last_modified', 'created')
     search_fields = ['key', 'value']
     list_filter = ['created']
     date_hierarchy = 'created'
@@ -141,7 +141,7 @@ admin.site.register(TagXattr, TagXattrAdmin)
 ##################################################################
 
 class CommentXattrAdmin(admin.ModelAdmin):
-    list_display = ('comment', 'key', 'value', 'last_modified', 'created')
+    list_display = ('parent', 'key', 'value', 'last_modified', 'created')
     search_fields = ['key', 'value']
     list_filter = ['created']
     date_hierarchy = 'created'
@@ -151,7 +151,7 @@ admin.site.register(CommentXattr, CommentXattrAdmin)
 ##################################################################
 
 class ItemXattrAdmin(admin.ModelAdmin):
-    list_display = ('item', 'key', 'value', 'last_modified', 'created')
+    list_display = ('parent', 'key', 'value', 'last_modified', 'created')
     search_fields = ['key', 'value']
     list_filter = ['created']
     date_hierarchy = 'created'
@@ -161,7 +161,7 @@ admin.site.register(ItemXattr, ItemXattrAdmin)
 ##################################################################
 
 class FeedXattrAdmin(admin.ModelAdmin):
-    list_display = ('feed', 'key', 'value', 'last_modified', 'created')
+    list_display = ('parent', 'key', 'value', 'last_modified', 'created')
     search_fields = ['key', 'value']
     list_filter = ['created']
     date_hierarchy = 'created'
@@ -171,7 +171,7 @@ admin.site.register(FeedXattr, FeedXattrAdmin)
 ##################################################################
 
 class VurlXattrAdmin(admin.ModelAdmin):
-    list_display = ('vurl', 'key', 'value', 'last_modified', 'created')
+    list_display = ('parent', 'key', 'value', 'last_modified', 'created')
     search_fields = ['key', 'value']
     list_filter = ['created']
     date_hierarchy = 'created'

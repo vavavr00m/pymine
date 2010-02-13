@@ -30,7 +30,9 @@ import util.cheatxml as cheatxml
 import util.httpserve as httpserve
 
 def HTTP_METHOD_NOAUTH(request, *args, **kwargs):
-    """deal with a non-API HTTP request : GET and POST methods"""
+    """
+    deal with a non-API HTTP request : GET and POST methods
+    """
 
     if request.method == 'POST':
         viewlist = kwargs.pop('POST', None)
@@ -53,7 +55,9 @@ def HTTP_METHOD(request, *args, **kwargs):
 
 @login_required
 def API_REST(request, *args, **kwargs):
-    """deal with an API HTTP request : GET, POST and DELETE methods"""
+    """
+    deal with an API HTTP request : GET, POST and DELETE methods
+    """
 
     if ((request.method == 'DELETE') or
         (request.method == 'POST' and request.POST.get('_method', None) == 'DELETE')):
@@ -79,6 +83,9 @@ def API_REST(request, *args, **kwargs):
     viewargs = viewlist[1:]
 
     # API calls give us an response envelope / structure; we have to format it
+    print 'args', args
+    print 'viewargs', viewargs
+    print 'kwargs', kwargs
     envelope = view(request, *viewargs, **kwargs)
 
     # coersce to the output format

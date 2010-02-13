@@ -142,9 +142,9 @@ def get_thing_attr(request, thyng, id, attr, **kwargs):
     implements: GET /api/vurl/(ID)/(ATTR).(FMT)
     returns: ..
     """
-    m = thyng.get(id=int(mid))
+    m = thyng.get(id=int(id))
     s = m.to_structure()
-    return Envelope(request, s[sattr]) # throw exception if not there
+    return Envelope(request, s[attr]) # throw exception if not there
 
 ##################################################################
 
