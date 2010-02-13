@@ -52,13 +52,13 @@ Minectl new-feed perry 1 "Perry deHavilland" hippos red-wine
 ###
 # upload a batch of objects without individual tagging
 
-Minectl upload -t themineproject -s public $SAMPLES/*.pdf # wasn't that easy?
+Minectl upload -t themineproject -s sharable $SAMPLES/*.pdf # wasn't that easy?
 
 ###
 # highly verbose special cases for tag testing
 while read file tags
 do
-    Minectl upload -s public -t "$tags" $SAMPLES/$file
+    Minectl upload -s sharable -t "$tags" $SAMPLES/$file
 done <<EOF
 adriana.jpg photos themineproject
 alecm.png photos themineproject
@@ -92,7 +92,7 @@ Minectl create-vurl vurlLink=http://www.google.co.uk/ # autoname
 file=public_html/testdata/austen.txt
 
 # audio
-Minectl upload -t themineproject -s public $SAMPLES/*.mp3
+Minectl upload -t themineproject -s sharable $SAMPLES/*.mp3
 
 # done
 exit 0

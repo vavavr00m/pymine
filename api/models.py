@@ -71,10 +71,14 @@ for short, long in item_status_choices:
     status_lookup[long] = short
 
 status_aliases = {
-    'secret':   '0',
+    'inaccessible': '0',
     'linkable': '3',
-    'private':  '6',
-    'shared':   '9',
+    'citable': '6',
+    'sharable': '9',
+
+    'private': '6', # adriana-private = linkable/citable, but without citation
+    'shared': '6', # adriana-shared = sharable, but without is_considered_public
+    # no entry for adriana-public, which = sharable + is_considered_public
 }
 status_lookup.update(status_aliases)
 
@@ -110,6 +114,11 @@ class Space:
 	    s[sattr] = str(r.POST[sattr])
 
     class s2m_lib:
+	@staticmethod
+	def noop(r, s, sattr, m, mattr):
+	    """do notihng"""
+            pass
+
 	@staticmethod
 	def comment_from_feed(r, s, sattr, m, mattr):
 	    """insert reference from a comment to the feed from which it was sourced"""
@@ -220,63 +229,68 @@ class Space:
     # m2s must currently check for null before copy/set
     class m2s_lib:
 	@staticmethod
+	def noop(r, m, mattr, s, sattr):
+	    """do nothing"""
+            pass
+
+	@staticmethod
 	def comment_from_feed(r, m, mattr, s, sattr):
 	    """what feed is the comment from?"""
-            s[sattr] = getattr(m, mattr).name
+	    s[sattr] = getattr(m, mattr).name
 
 	@staticmethod
 	def comment_upon_item(r, m, mattr, s, sattr):
 	    """what item is the comment upon"""
-            s[sattr] = getattr(m, mattr).id
+	    s[sattr] = getattr(m, mattr).id
 
 	@staticmethod
 	def feed_interests(r, m, mattr, s, sattr):
 	    """these tags are relevant to my interests"""
-            src = m.interests
-            x = " ".join([ x.name for x in src.all() ])
-            if x: s[sattr] = x
+	    src = m.interests
+	    x = " ".join([ x.name for x in src.all() ])
+	    if x: s[sattr] = x
 
 	@staticmethod
 	def feed_interests_exclude(r, m, mattr, s, sattr):
 	    """these tags are not relevant to my interests"""
-            src = m.interests_exclude
-            x = " ".join([ x.name for x in src.all() ])
-            if x: s[sattr] = x
+	    src = m.interests_exclude
+	    x = " ".join([ x.name for x in src.all() ])
+	    if x: s[sattr] = x
 
 	@staticmethod
 	def feed_interests_require(r, m, mattr, s, sattr):
 	    """these tags are required for my interest"""
-            src = m.interests_require
-            x = " ".join([ x.name for x in src.all() ])
-            if x: s[sattr] = x
+	    src = m.interests_require
+	    x = " ".join([ x.name for x in src.all() ])
+	    if x: s[sattr] = x
 
 	@staticmethod
 	def item_for_feeds(r, m, mattr, s, sattr):
 	    """this item is destined for..."""
-            src = m.for_feeds
-            x = " ".join([ x.name for x in src.all() ])
-            if x: s[sattr] = x
+	    src = m.for_feeds
+	    x = " ".join([ x.name for x in src.all() ])
+	    if x: s[sattr] = x
 
 	@staticmethod
 	def item_links_to_items(r, m, mattr, s, sattr):
-            """this item contains..."""
-            src = m.links_to_items
-            x = " ".join([ str(x.id) for x in src.all() ])
-            if x: s[sattr] = x
+	    """this item contains..."""
+	    src = m.links_to_items
+	    x = " ".join([ str(x.id) for x in src.all() ])
+	    if x: s[sattr] = x
 
 	@staticmethod
 	def item_not_feeds(r, m, mattr, s, sattr):
 	    """this item is banned from being seen by..."""
-            src = m.not_feeds
-            x = " ".join([ x.name for x in src.all() ])
-            if x: s[sattr] = x
+	    src = m.not_feeds
+	    x = " ".join([ x.name for x in src.all() ])
+	    if x: s[sattr] = x
 
 	@staticmethod
 	def item_tags(r, m, mattr, s, sattr):
-            """this item is tagged..."""
-            src = m.tags
-            x = " ".join([ x.name for x in src.all() ])
-            if x: s[sattr] = x
+	    """this item is tagged..."""
+	    src = m.tags
+	    x = " ".join([ x.name for x in src.all() ])
+	    if x: s[sattr] = x
 
 	@staticmethod
 	def item_status(r, m, mattr, s, sattr):
@@ -285,17 +299,17 @@ class Space:
 
 	@staticmethod
 	def tag_cloud(r, m, mattr, s, sattr):
-            """this tag has the following cloud of indirect implications..."""
-            src = m.cloud
-            x = ' '.join([ x.name for x in src.all() ])
-            if x: s[sattr] = x
+	    """this tag has the following cloud of indirect implications..."""
+	    src = m.cloud
+	    x = ' '.join([ x.name for x in src.all() ])
+	    if x: s[sattr] = x
 
 	@staticmethod
 	def tag_implies(r, m, mattr, s, sattr):
-            """this tag has the following implications..."""
-            src = m.implies
-            x = ' '.join([ x.name for x in src.all() ])
-            if x: s[sattr] = x
+	    """this tag has the following implications..."""
+	    src = m.implies
+	    x = ' '.join([ x.name for x in src.all() ])
+	    if x: s[sattr] = x
 
 	@staticmethod
 	def bool(r, m, mattr, s, sattr):
@@ -398,16 +412,18 @@ class Space:
 	    """to be called when methud exists but is empty"""
 	    raise RuntimeError, 'blank methud for %s, %s, %s' % (direction, mattr, sattr)
 
-	prefix = attr_map.pop('__prefix__')
+	thing_prefix = attr_map.pop('__thing_prefix__')
+	xattr_class = attr_map.pop('__xattr_class__')
 
-	# for an explanation of the weird closure default arguments, see:
-	# http://code.activestate.com/recipes/502271/ regarding test2()
+	# for an explanation of the weird closure default-arguments
+	# syntax, see: http://code.activestate.com/recipes/502271/
+	# regarding test2()
 
 	for mattr in attr_map.keys():
 	    table = attr_map[mattr]
-	    sattr = prefix + "".join([ string.capitalize(x) for x in mattr.split("_") ])
+	    sattr = thing_prefix + "".join([ string.capitalize(x) for x in mattr.split("_") ])
 
-	    # print prefix + "." + mattr, "->", sattr
+	    # print thing_prefix + "." + mattr, "->", sattr
 	    # print table
 
 	    if 'm2s' in table:
@@ -456,14 +472,18 @@ class Space:
 	    else:
 		gc[mattr] = lambda m: gc_lib.nullify(m, mattr) # default nullify()
 
-	return (prefix, r2s, s2m, m2s, gc)
+	return (xattr_class, thing_prefix, r2s, s2m, m2s, gc)
 
 ##################################################################
 ##################################################################
 ##################################################################
 
 class AbstractField:
-    """superclass to frontend model fields and ease porting between GAE and Django"""
+    """
+    superclass to frontend model fields and ease porting between GAE and Django
+
+    todo: merge the garbage collection config into the options for each field
+    """
 
     STRING_SHORT = 256 # bytes
 
@@ -670,10 +690,11 @@ class AbstractThing(AbstractModel):
 	abstract = True
 
     attr_map = {
-	'__prefix__': "thing",
+	'__thing_prefix__': "thing",
+	'__xattr_class__': None,
 	}
 
-    (prefix, r2s, s2m, m2s, gc) = Space.compile(attr_map)
+    (xattr_class, thing_prefix, r2s, s2m, m2s, gc) = Space.compile(attr_map)
 
     id = 0
     name = 'thing'
@@ -717,8 +738,8 @@ class AbstractThing(AbstractModel):
     def search(klass, search_string, **kwargs):
 	"""return a queryset of models matching **kwargs and search_string; expunge virtually-deleted ones"""
 	return klass.execute_search_query(search_string, klass.list(**kwargs))
-    
-    @transaction.commit_on_success # <- rollback if it raises an exception                                                                                       
+
+    @transaction.commit_on_success # <- rollback if it raises an exception
     def update(self, request=None, **kwargs):
 	"""
 	update a single Thing from a HTTPRequest, overriding with values from kwargs
@@ -771,7 +792,10 @@ class AbstractThing(AbstractModel):
 	if i_changed_something:
 	    self.save()
 
-	# stage 3: file saving
+        # stage 3: xattr saving
+        # todo
+
+	# stage 4: file saving
 	# do this by subclassing
 
 	# done
@@ -812,22 +836,23 @@ class AbstractThing(AbstractModel):
 
 class Tag(AbstractThing):
     attr_map = {
-	'__prefix__': "tag",
+	'__thing_prefix__': "tag",
+	'__xattr_class__': TagXattr,
 	'id': dict(r2s='integer', s2m='copy', m2s='copy'),
 	'created': dict(gc='skip', s2m='date', m2s='date'),
 	'last_modified': dict(gc='skip', s2m='date', m2s='date'),
 
-	'name': dict(gc='munge', s2m='copy', m2s='copy'),
+	'cloud': dict(gc='reflist', m2s='tag_cloud'),
 	'description': dict(r2s='verbatim', s2m='copy', m2s='copy'),
 	'implies': dict(gc='reflist', s2m='tag_implies', m2s='tag_implies'),
-	'cloud': dict(gc='reflist', m2s='tag_cloud'),
+	'name': dict(gc='munge', s2m='copy', m2s='copy'),
 	}
-    (prefix, r2s, s2m, m2s, gc) = Space.compile(attr_map)
+    (xattr_class, thing_prefix, r2s, s2m, m2s, gc) = Space.compile(attr_map)
 
-    name = AbstractField.slug(unique=True)
+    cloud = AbstractField.reflist('self', symmetrical=False, pivot='clouded_by', required=False)
     description = AbstractField.text(required=False)
     implies = AbstractField.reflist('self', symmetrical=False, pivot='implied_by', required=False)
-    cloud = AbstractField.reflist('self', symmetrical=False, pivot='clouded_by', required=False)
+    name = AbstractField.slug(unique=True)
 
     def __update_cloud_field(self):
 	""" """
@@ -908,11 +933,11 @@ class Tag(AbstractThing):
 	    self.__update_cloud_graph(tgraph)
 
     @transaction.commit_on_success # <- rollback if it raises an exception
-    def update_from_request(self, r, **kwargs):
+    def update(self, r, **kwargs):
 	"""
-	This method overrides AbstractThing.update_from_request() and
-	acts as a hook to detect changes in the Tag implications that
-	might trigger a recalculation of the Tag cloud.
+	This method overrides AbstractThing.update() and acts as a
+	hook to detect changes in the Tag implications that might
+	trigger a recalculation of the Tag cloud.
 
 	There is a performance impact here which needs to be
 	considered; we *ought* to determine whether something has
@@ -925,7 +950,7 @@ class Tag(AbstractThing):
 	"""
 
 	tgraph = self.__expand_cloud_graph()
-	retval = super(Tag, self).update_from_request(r, **kwargs)
+	retval = super(Tag, self).update(r, **kwargs)
 	self.__update_cloud_graph(tgraph)
 	retval = Tag.objects.get(id=retval.id) # reload, possibly dirty
 	return retval
@@ -946,23 +971,24 @@ class Tag(AbstractThing):
 
 class Vurl(AbstractThing):
     attr_map = {
-	'__prefix__': "vurl",
+	'__thing_prefix__': "vurl",
+	'__xattr_class__': VurlXattr,
 	'id': dict(r2s='integer', s2m='copy', m2s='copy'),
 	'created': dict(gc='skip', s2m='date', m2s='date'),
 	'last_modified': dict(gc='skip', s2m='date', m2s='date'),
 
-	'name': dict(gc='munge', s2m='copy', m2s='copy'),
-	'link': dict(gc='munge', s2m='copy', m2s='copy'),
-	'invalid_before': dict(s2m='date', m2s='date'),
 	'invalid_after': dict(s2m='date', m2s='date'),
+	'invalid_before': dict(s2m='date', m2s='date'),
+	'link': dict(gc='munge', s2m='copy', m2s='copy'),
+	'name': dict(gc='munge', s2m='copy', m2s='copy'),
 	'use_temporary_redirect': dict(gc='falsify', r2s='bool', s2m='bool', m2s='bool'),
 	}
-    (prefix, r2s, s2m, m2s, gc) = Space.compile(attr_map)
+    (xattr_class, thing_prefix, r2s, s2m, m2s, gc) = Space.compile(attr_map)
 
-    name = AbstractField.slug(unique=True)
-    link = AbstractField.text(unique=True)
-    invalid_before = AbstractField.datetime(required=False)
     invalid_after = AbstractField.datetime(required=False)
+    invalid_before = AbstractField.datetime(required=False)
+    link = AbstractField.text(unique=True)
+    name = AbstractField.slug(unique=True)
     use_temporary_redirect = AbstractField.bool(False)
 
     @staticmethod
@@ -1012,128 +1038,118 @@ class Vurl(AbstractThing):
 
 class Feed(AbstractThing):
     attr_map = {
-	'__prefix__': "feed",
+	'__thing_prefix__': "feed",
+	'__xattr_class__': FeedXattr,
 	'id': dict(r2s='integer', s2m='copy', m2s='copy'),
 	'created': dict(gc='skip', s2m='date', m2s='date'),
 	'last_modified': dict(gc='skip', s2m='date', m2s='date'),
 
-	'name': dict(gc='munge', s2m='copy', m2s='copy'),
-	'version': dict(gc='zeroify', r2s='integer', s2m='copy', m2s='copy'),
+	'content_constraints': dict(s2m='copy', m2s='copy'),
 	'description': dict(r2s='verbatim', s2m='copy', m2s='copy'),
 	'embargo_after': dict(s2m='date', m2s='date'),
 	'embargo_before': dict(s2m='date', m2s='date'),
 	'interests': dict(gc='reflist', s2m='feed_interests', m2s='feed_interests'),
 	'interests_exclude': dict(gc='reflist', s2m='feed_interests_exclude', m2s='feed_interests_exclude'),
 	'interests_require': dict(gc='reflist', s2m='feed_interests_require', m2s='feed_interests_require'),
+	'is_considered_public': dict(gc='falsify'),
+	'name': dict(gc='munge', s2m='copy', m2s='copy'),
 	'permitted_networks': dict(s2m='copy', m2s='copy'),
-	'content_constraints': dict(s2m='copy', m2s='copy'),
-	'is_private': dict(gc='falsify', r2s='bool', s2m='bool', m2s='bool'),
+	'version': dict(gc='zeroify', r2s='integer', s2m='copy', m2s='copy'),
 	}
-    (prefix, r2s, s2m, m2s, gc) = Space.compile(attr_map)
+    (xattr_class, thing_prefix, r2s, s2m, m2s, gc) = Space.compile(attr_map)
 
-    name = AbstractField.slug(unique=True)
-    version = AbstractField.integer(1)
+    content_constraints = AbstractField.string(required=False)
     description = AbstractField.text(required=False)
     embargo_after = AbstractField.datetime(required=False)
     embargo_before = AbstractField.datetime(required=False)
     interests = AbstractField.reflist(Tag, pivot='feeds_with_tag', required=False)
     interests_exclude = AbstractField.reflist(Tag, pivot='feeds_excluding', required=False)
     interests_require = AbstractField.reflist(Tag, pivot='feeds_requiring', required=False)
+    is_considered_public = AbstractField.bool(False)
+    name = AbstractField.slug(unique=True)
     permitted_networks = AbstractField.string(required=False)
-    content_constraints = AbstractField.string(required=False)
-    is_broadcast = AbstractField.bool(False)
+    version = AbstractField.integer(1)
 
 ##################################################################
 
 class Item(AbstractThing):
     attr_map = {
-	'__prefix__': "item",
+	'__thing_prefix__': "item",
+	'__xattr_class__': ItemXattr,
 	'id': dict(r2s='integer', s2m='copy', m2s='copy'),
 	'created': dict(gc='skip', s2m='date', m2s='date'),
 	'last_modified': dict(gc='skip', s2m='date', m2s='date'),
 
-	'name': dict(gc='munge', s2m='copy', m2s='copy'),
-	'status': dict(gc='item_status', s2m='item_status', m2s='item_status'),
+	'data': dict(gc='file'),
+	'data_ciphertext_digest': dict(s2m='copy', m2s='copy'),
+	'data_encryption_key': dict(s2m='copy', m2s='copy'),
+	'data_remote_url': dict(s2m='copy', m2s='copy'),
+	'data_type': dict(s2m='copy', m2s='copy'),
 	'description': dict(r2s='verbatim', s2m='copy', m2s='copy'),
+	'for_feeds': dict(gc='reflist', s2m='item_for_feeds', m2s='item_for_feeds'),
 	'hide_after': dict(s2m='date', m2s='date'),
 	'hide_before': dict(s2m='date', m2s='date'),
-	'tags': dict(gc='reflist', s2m='item_tags', m2s='item_tags'),
-	'for_feeds': dict(gc='reflist', s2m='item_for_feeds', m2s='item_for_feeds'),
-	'not_feeds': dict(gc='reflist', s2m='item_not_feeds', m2s='item_not_feeds'),
-	'data_type': dict(s2m='copy', m2s='copy'),
-	'data_remote_url': dict(s2m='copy', m2s='copy'),
-	'links_to_items': dict(gc='reflist', s2m='item_links_to_items', m2s='item_links_to_items'),
-	'encryption_method': dict(s2m='copy', m2s='copy'),
-	'digest_method': dict(s2m='copy', m2s='copy'),
-	'encryption_key': dict(s2m='copy', m2s='copy'),
-	'ciphertext_digest': dict(s2m='copy', m2s='copy'),
-	'icon_type': dict(s2m='copy', m2s='copy'),
-	'icon_ciphertext_digest': dict(s2m='copy', m2s='copy'),
-
-	'data': dict(gc='file'),
 	'icon': dict(gc='file'),
+	'icon_ciphertext_digest': dict(s2m='copy', m2s='copy'),
+	'icon_encryption_key': dict(s2m='copy', m2s='copy'),
+	'icon_type': dict(s2m='copy', m2s='copy'),
+	'is_considered_public': dict(gc='falsify'),
+	'links_to_items': dict(gc='reflist', s2m='item_links_to_items', m2s='item_links_to_items'),
+	'name': dict(gc='munge', s2m='copy', m2s='copy'),
+	'not_feeds': dict(gc='reflist', s2m='item_not_feeds', m2s='item_not_feeds'),
+	'status': dict(gc='item_status', s2m='item_status', m2s='item_status'),
+	'tags': dict(gc='reflist', s2m='item_tags', m2s='item_tags'),
 	}
-    (prefix, r2s, s2m, m2s, gc) = Space.compile(attr_map)
+    (xattr_class, thing_prefix, r2s, s2m, m2s, gc) = Space.compile(attr_map)
 
-    name = AbstractField.string()
-    status = AbstractField.choice(item_status_choices)
+    data = AbstractField.file(storage=item_fss, upload_to=fss_yyyymmdd, required=False)
+    data_ciphertext_digest = AbstractField.text(required=False)
+    data_encryption_key = AbstractField.text(required=False)
+    data_remote_url = AbstractField.url(required=False)
+    data_type = AbstractField.string(required=False)
     description = AbstractField.text(required=False)
+    for_feeds = AbstractField.reflist(Feed, pivot='items_explicitly_for', required=False)
     hide_after = AbstractField.datetime(required=False)
     hide_before = AbstractField.datetime(required=False)
-    tags = AbstractField.reflist(Tag, pivot='items_tagged', required=False)
-    for_feeds = AbstractField.reflist(Feed, pivot='items_explicitly_for', required=False)
-    not_feeds = AbstractField.reflist(Feed, pivot='items_explicitly_not', required=False)
-    is_visible_to_broadcast_feeds = AbstractField.bool(False)
-
-    data = AbstractField.file(storage=item_fss, upload_to=fss_yyyymmdd, required=False) # not translated
-    data_type = AbstractField.string(required=False)
-    data_remote_url = AbstractField.url(required=False)
-
-    links_to_items = AbstractField.reflist('Item', pivot='item_linked_from', required=False)
-
-    encryption_method = AbstractField.text(required=False)
-    digest_method = AbstractField.text(required=False)
-    encryption_key = AbstractField.text(required=False)
-    ciphertext_digest = AbstractField.text(required=False)
-
-    icon = AbstractField.file(storage=icon_fss, upload_to=fss_yyyymmdd, required=False) # not translated
-    icon_type = AbstractField.string(required=False)
+    icon = AbstractField.file(storage=icon_fss, upload_to=fss_yyyymmdd, required=False)
     icon_ciphertext_digest = AbstractField.text(required=False)
+    icon_encryption_key = AbstractField.text(required=False)
+    icon_type = AbstractField.string(required=False)
+    is_considered_public = AbstractField.bool(False)
+    links_to_items = AbstractField.reflist('Item', pivot='item_linked_from', required=False)
+    name = AbstractField.string()
+    not_feeds = AbstractField.reflist(Feed, pivot='items_explicitly_not', required=False)
+    status = AbstractField.choice(item_status_choices)
+    tags = AbstractField.reflist(Tag, pivot='items_tagged', required=False)
 
 ##################################################################
 
 class Comment(AbstractThing):
     attr_map = {
-	'__prefix__': "comment",
+	'__thing_prefix__': "comment",
+	'__xattr_class__': CommentXattr,
 	'id': dict(r2s='integer', s2m='copy', m2s='copy'),
 	'created': dict(gc='skip', s2m='date', m2s='date'),
 	'last_modified': dict(gc='skip', s2m='date', m2s='date'),
 
-	'title': dict(gc='munge', s2m='copy', m2s='copy'),
 	'body': dict(r2s='verbatim', s2m='copy', m2s='copy'),
 	'from_feed': dict(s2m='comment_from_feed', m2s='comment_from_feed'), # r2s=string, not integer!
+	'response': dict(gc='file'),
+	'response_ciphertext_digest': dict(s2m='copy', m2s='copy'),
+	'response_encryption_key': dict(s2m='copy', m2s='copy'),
+	'title': dict(gc='munge', s2m='copy', m2s='copy'),
 	'upon_item': dict(r2s='integer', s2m='comment_upon_item', m2s='comment_upon_item'),
-	'encryption_method': dict(s2m='copy', m2s='copy'),
-	'digest_method': dict(s2m='copy', m2s='copy'),
-	'encryption_key': dict(s2m='copy', m2s='copy'),
-	'ciphertext_digest': dict(s2m='copy', m2s='copy'),
-
-	'data': dict(gc='file'),
 	}
 
-    (prefix, r2s, s2m, m2s, gc) = Space.compile(attr_map)
+    (xattr_class, thing_prefix, r2s, s2m, m2s, gc) = Space.compile(attr_map)
 
-    title = AbstractField.string()
     body = AbstractField.text(required=False)
     from_feed = AbstractField.reference(Feed, required=False)
+    response = AbstractField.file(storage=comment_fss, upload_to=fss_yyyymmdd, required=False) # not translated
+    response_ciphertext_digest = AbstractField.text(required=False)
+    response_encryption_key = AbstractField.text(required=False)
+    title = AbstractField.string()
     upon_item = AbstractField.reference(Item, required=False)
-
-    data = AbstractField.file(storage=comment_fss, upload_to=fss_yyyymmdd, required=False) # not translated
-
-    encryption_method = AbstractField.text(required=False)
-    digest_method = AbstractField.text(required=False)
-    encryption_key = AbstractField.text(required=False)
-    ciphertext_digest = AbstractField.text(required=False)
 
     def __unicode__(self):
 	"""return the title of this comment; comments lack a "name" field"""
@@ -1192,11 +1208,11 @@ class Registry(AbstractModel): # not a Thing
 class Event(AbstractModel): # not a Thing
     """audit trail for Mine"""
 
-    message = AbstractField.string()
     alert = AbstractField.bool(False)
-
     feed = AbstractField.reference(Feed, required=False)
-    item = AbstractField.reference(Item, required=False)
     ip_address = AbstractField.string(required=False)
+    item = AbstractField.reference(Item, required=False)
+    message = AbstractField.string()
     method = AbstractField.string(required=False)
     url = AbstractField.string(required=False)
+
