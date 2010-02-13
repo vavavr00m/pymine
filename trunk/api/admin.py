@@ -68,7 +68,7 @@ class FeedAdmin(admin.ModelAdmin):
                                  'content_constraints', 
                                  'embargo_before', 
                                  'embargo_after',
-                                 'is_broadcast', 
+                                 'is_considered_public', 
                                  ]}), 
         ]
 
