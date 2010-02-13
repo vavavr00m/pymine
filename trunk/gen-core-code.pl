@@ -70,7 +70,7 @@
      'RATTR', '?P<rattr>[_A-Za-z]\w*',
 
      # structure attribute name, ditto with optional '$' prefix for Xattrs
-     'ATTR', '?P<sattr>\$?[_A-Za-z]\w*',
+     'ATTR', '?P<attr>\$?[_A-Za-z]\w*',
 
      # token: a plausible, safe dummy filename
      'TOKEN', '?P<token>[\-\.\w]*',
