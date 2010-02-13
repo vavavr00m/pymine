@@ -83,9 +83,9 @@ def API_REST(request, *args, **kwargs):
     viewargs = viewlist[1:]
 
     # API calls give us an response envelope / structure; we have to format it
-    print 'args', args
-    print 'viewargs', viewargs
-    print 'kwargs', kwargs
+    # print 'args', args
+    # print 'viewargs', viewargs
+    # print 'kwargs', kwargs
     envelope = view(request, *viewargs, **kwargs)
 
     # coersce to the output format

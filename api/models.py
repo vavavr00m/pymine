@@ -30,6 +30,7 @@ from django.utils.http import urlquote
 
 import base64
 import itertools
+import mimetypes
 import os
 import re
 import string
@@ -118,7 +119,7 @@ class Space:
     class s2m_lib:
 	@staticmethod
 	def noop(r, s, sattr, m, mattr):
-	    """do notihng"""
+	    """do nothing"""
 	    pass
 
 	@staticmethod
@@ -356,6 +357,7 @@ class Space:
 
 	defer_table = {
 	    'commentFromFeed': True,
+	    'commentResponse': True,
 	    'commentUponItem': True,
 	    'feedInterests': True,
 	    'itemData': True,
@@ -384,24 +386,13 @@ class Space:
 	    # print thing_prefix + "." + mattr, "->", sattr
 	    # print table
 
-	    if 'm2s' in table:
-		methud = getattr(Space.m2s_lib, table['m2s'])
-		if not methud:
-		    barf('m2s', mattr, sattr)
-
-		def m2s_closure(r, m, s, mattr=mattr, sattr=sattr, methud=methud):
-		    if getattr(m, mattr):
-			methud(r, m, mattr, s, sattr)
-
-		m2s[mattr] = m2s_closure
-
-	    if 's2m' in table:
+	    if 's2m' in table: # goes first, provides defaults
 		methud = getattr(Space.s2m_lib, table['s2m'])
 		if not methud:
 		    barf('s2m', mattr, sattr)
 
 		def s2m_closure(r, s, m, sattr=sattr, mattr=mattr, methud=methud):
-		    if sattr in s:
+		    if (sattr in s):
 			methud(r, s, sattr, m, mattr)
 
 		def r2s_closure(r, s, sattr=sattr):
@@ -421,6 +412,17 @@ class Space:
 			methud(r, s, sattr)
 
 		r2s[sattr] = r2s_closure
+
+	    if 'm2s' in table:
+		methud = getattr(Space.m2s_lib, table['m2s'])
+		if not methud:
+		    barf('m2s', mattr, sattr)
+
+		def m2s_closure(r, m, s, mattr=mattr, sattr=sattr, methud=methud):
+		    if getattr(m, mattr):
+			methud(r, m, mattr, s, sattr)
+
+		m2s[mattr] = m2s_closure
 
 	    if mattr == 'id':
 		pass # id fields do not get gc'ed
@@ -711,7 +713,7 @@ class AbstractThing(AbstractModel):
 
 	# update shadow structure from request and kwargs
 	for sattr in self.r2s.keys():
-
+	    # print 'processing r2s', sattr
 	    if sattr in kwargs:
 		s[sattr] = kwargs[sattr]
 	    elif request and sattr in request.POST:
@@ -723,11 +725,10 @@ class AbstractThing(AbstractModel):
 
 	# stage 1: undeferred
 	i_changed_something = False
-
 	for sattr in self.s2m.keys():
-
 	    defer, methud = self.s2m[sattr]
 	    if not defer:
+		# print 'processing s2m1', sattr, methud
 		methud(request, s, self)
 		i_changed_something = True
 
@@ -740,30 +741,34 @@ class AbstractThing(AbstractModel):
 
 	# stage 2: deferred
 	i_changed_something = False
-
 	for sattr in self.s2m.keys():
-
 	    defer, methud = self.s2m[sattr]
 	    if defer:
+		# print 'processing s2m2', sattr, methud
 		methud(request, s, self)
 		i_changed_something = True
 
-	if i_changed_something:
+        # stage 3: file saving
+        i_saved_a_file = self.save_files_from(request)
+
+        # hmmm?
+	if i_changed_something or i_saved_a_file:
 	    self.save()
 
-	# stage 3: xattr saving
-        for x in request.POST:
-            if re.match(r'^\$\w+$', x):
-                key = x[1:]
-                xattr, created = self.xattr_class.objects.get_or_create(key=key, parent=self)
-                xattr.value = value=request.POST[x]
-                xattr.save()
+	# stage 4: xattr saving
+	for x in request.POST:
+	    if re.match(r'^\$[_A-Za-z]\w{0,127}$', x): # match the url regexp constraint
+		# print 'processing xattr', xattr
+		key = x[1:]
+		xattr, created = self.xattr_class.objects.get_or_create(key=key, parent=self)
+		xattr.value = request.POST[x]
+		xattr.save()
 
-	# stage 4: file saving
-	# do this by subclassing
-
-	# done
 	return self
+
+    def save_files_from(self, request):
+        """stub for file-saving per instance/class; returns True if a change was made"""
+        return False
 
     def delete(self): # this is the primary consumer of gc
 	"""gc all the fields and mark this Thing as deleted"""
@@ -793,9 +798,20 @@ class AbstractThing(AbstractModel):
 	"""
 	erase the value of attribute 'key' (or delete extended attribute '$key')
 
-	get_, set_, update_, and list_attributes are performed via views()
+	for comparison:
+	get_attribute - is a view frontend upon get_thing() / to_structure() - ie: cheaply coded
+	set_attribute - should be performed via update()
+	update_attribute - ditto
+	list_attributes - should be performed via get_thing()
+
+	the only thing missing is deletion.
 	"""
-	pass
+
+	if key.startswith('$'):
+	    xattr = self.xattr_class.objects.get(key=key[1:], parent=self)
+	    xattr.delete()
+	else:
+	    pass # do something with GC here
 
     def __unicode__(self):
 	"""return the canonical name of this object"""
@@ -1086,6 +1102,65 @@ class Item(AbstractThing):
     not_feeds = AbstractField.reflist(Feed, pivot='items_explicitly_not', required=False) # augments 'tags'
     status = AbstractField.choice(item_status_choices)
     tags = AbstractField.reflist(Tag, pivot='items_tagged', required=False)
+
+    def save_files_from(self, request):
+        """
+        save per-item files for this instance
+
+        rules for content type:
+
+        - if you declare itemDataType / itemIconType, it wins
+
+        - if you do not declare itemDataType / itemIconType, but the
+          browser supplies a multipart-encoding type other than
+          'application/octet-stream', then that wins.
+
+        - otherwise the mimetypes module takes a guess
+
+        - if all else fails, it ends up as application/octet-stream
+        """
+
+        save_needed = False
+
+        if 'itemData' in request.FILES:
+            uf = request.FILES['itemData'] # grab the uploaded file
+            ct = uf.content_type # what does the browser call the content type?
+
+            if self.data_type:
+                pass
+            elif ct and ct != 'application/octet-stream':
+                self.data_type = ct
+            else:
+                ct, enc = mimetypes.guess_type(uf.name)
+                if ct:
+                    self.data_type = ct
+                else:
+                    self.data_type = 'application/octet-stream'
+                    
+            name = str(self.id) + '.' + uf.name
+            self.data.save(name, uf)
+            save_needed = True
+
+        if 'itemIcon' in request.FILES:
+            uf = request.FILES['itemIcon'] # grab the uploaded file
+            ct = uf.content_type # what does the browser call the content type?
+
+            if self.icon_type:
+                pass
+            elif ct and ct != 'application/octet-stream':
+                self.icon_type = ct
+            else:
+                ct, enc = mimetypes.guess_type(uf.name)
+                if ct:
+                    self.icon_type = ct
+                else:
+                    self.icon_type = 'application/octet-stream'
+
+            name = str(self.id) + '.' + uf.name
+            self.icon.save(name, uf)
+            save_needed = True
+
+        return save_needed
 
 ##################################################################
 
