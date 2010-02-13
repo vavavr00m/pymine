@@ -18,9 +18,12 @@
 """docstring goes here""" # :-)
 
 from django.conf import settings
+from django.http import HttpResponse
 
 from envelope import Envelope
-from models import Comment
+from models import Comment, Item
+
+import util.httpserve as httpserve
 
 ##################################################################
 
@@ -218,7 +221,18 @@ def read_item_data(request, id, token, **kwargs):
     implements: GET /api/data/(ID)(/TOKEN)
     returns: ...
     """
-    pass
+
+    m = Item.get(id=int(id))
+    ct = m.data_type
+
+    if m.data:
+        f = m.data.chunks()
+        response = HttpResponse(f, content_type=ct)
+        response['Content-Length'] = m.data.size
+    else:
+        response = None
+
+    return response
 
 ##################################################################
 
@@ -230,8 +244,7 @@ def read_item_icon(request, id, token, **kwargs):
     implements: GET /api/icon/(ID)(/TOKEN)
     returns: ...
     """
-    s = {}
-    return Envelope(request, s)
+    return httpserve.httpserve_path(request, 'images/icon.png')
 
 ##################################################################
 
