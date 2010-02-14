@@ -26,27 +26,6 @@ import re
 
 import util.mimestuff as mimestuff
 
-try:
-    from models import Feed, Item
-except:
-
-    class Feed:
-        id = 1
-        version = 1
-        @classmethod 
-        def get(*args, **kwargs):
-            return Feed()
-        
-    class Item:
-        id = 1
-        version = 1
-        data_type = 'text/plain'
-        icon_type = 'image/png'
-        @classmethod 
-        def get(*args, **kwargs):
-            return Item()
-        def synthetic_extension(self):
-            return "pdf"
 
 # minekey format:
 # hmac/fid/fversion/iid/depth/type.ext

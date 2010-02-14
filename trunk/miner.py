@@ -1,7 +1,7 @@
 #!/usr/bin/python
 
 ##
-## Copyright 2009 Adriana Lukas & Alec Muffett
+## Copyright 2009-10 Adriana Lukas & Alec Muffett
 ##
 ## Licensed under the Apache License, Version 2.0 (the "License"); you
 ## may not use this file except in compliance with the License. You
@@ -204,11 +204,18 @@ class MineAPI:
                 'method': 'GET',
                 'url_template': 'api/comment/{1}/{2}.json',
                 },
+
             'read-data': {
                 'function': None,
                 'method': 'GET',
-                'url_template': 'api/item/IID',
+                'url_template': 'api/data/IID',
                 },
+            'read-icon': {
+                'function': None,
+                'method': 'GET',
+                'url_template': 'api/icon/IID',
+                },
+
             'read-item': {
                 'function': self.apply_sub1,
                 'method': 'GET',

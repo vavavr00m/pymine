@@ -20,8 +20,8 @@
 import miner
 import getpass
 
-url = 'http://themineproject.dyndns.org:9862'
-u = 'alecm'
+url = 'http://site.domain:9862'
+u = 'pymine'
 p = getpass.getpass()
 
 api = miner.MineAPI(username=u, password=p, url_prefix=url)
