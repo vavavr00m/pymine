@@ -23,17 +23,41 @@
     
     
     <div id="splitTables">
-      <table class="children sortable" id="id32">
+      <table class="children sortable" id="id34">
   
   
   
   
-  <tr class="method">
+  <tr class="classmethod">
+    
+    
+    <td>Class Method</td>
+    <td><a href="pymine.api.models.Item.html#create">create</a></td>
+    <td><span>Create one or more new Items() from a HTTPRequest, overriding</span></td>
+  </tr><tr class="method">
     
     
     <td>Method</td>
     <td><a href="pymine.api.models.Item.html#save_files_from">save_files_from</a></td>
     <td><span>save per-item files for this instance</span></td>
+  </tr><tr class="method">
+    
+    
+    <td>Method</td>
+    <td><a href="pymine.api.models.Item.html#item_size">item_size</a></td>
+    <td><span>returns the size of the data file; if there is no file,</span></td>
+  </tr><tr class="method">
+    
+    
+    <td>Method</td>
+    <td><a href="pymine.api.models.Item.html#item_type">item_type</a></td>
+    <td><span>if there is a declared item.type, it is returned;</span></td>
+  </tr><tr class="method">
+    
+    
+    <td>Method</td>
+    <td><a href="pymine.api.models.Item.html#to_structure">to_structure</a></td>
+    <td><span class="undocumented">Undocumented</span></td>
   </tr>
   
 </table>
@@ -41,7 +65,7 @@
         <p>
           Inherited from <a href="pymine.api.models.AbstractThing.html">AbstractThing</a>:
         </p>
-        <table class="children sortable" id="id33">
+        <table class="children sortable" id="id35">
   
   
   
@@ -52,13 +76,6 @@
     <td>Class</td>
     <td><a href="pymine.api.models.AbstractThing.Meta.html">Meta</a></td>
     <td><span class="undocumented">Undocumented</span></td>
-  </tr><tr class="baseclassmethod">
-    
-    
-    <td>Class Method</td>
-    <td><a href="pymine.api.models.AbstractThing.html#create">create</a></td>
-    <td><span>create a new Thing from a HTTPRequest, overriding with values from 
-kwargs.</span></td>
   </tr><tr class="baseclassmethod">
     
     
@@ -104,12 +121,6 @@ kwargs</span></td>
     
     
     <td>Method</td>
-    <td><a href="pymine.api.models.AbstractThing.html#to_structure">to_structure</a></td>
-    <td><span>convert this model m to a dictionary structure s (ie: s-space)</span></td>
-  </tr><tr class="basemethod">
-    
-    
-    <td>Method</td>
     <td><a href="pymine.api.models.AbstractThing.html#get_absolute_url">get_absolute_url</a></td>
     <td><span>return a url for this object for administrative purposes</span></td>
   </tr><tr class="basemethod">
@@ -135,11 +146,37 @@ kwargs</span></td>
     
     
     <div class="function">
+        <a name="pymine.api.models.Item.create"></a>
+        <a name="create"></a>
+        <div class="functionHeader">
+        @classmethod<br />
+        def create(klass, request=None, **kwargs):
+        
+      </div>
+        <div class="functionBody">
+          <div class="interfaceinfo">overrides <a href="pymine.api.models.AbstractThing.html#create">pymine.api.models.AbstractThing.create</a></div>
+          <div>Create one or more new Items() from a HTTPRequest, overriding with 
+values from kwargs</p>
+<p>Assuming nothing goes wrong, one Item() will be created per 
+&quot;itemData&quot; file submitted in the multipart POST request; they 
+will all have the same iconData, etc, if specified.</p>
+<p>If no &quot;data&quot; file is submitted, only a single non-data Item 
+will result.</p>
+<p>The result for a single Item() creation will be a single Item().</p>
+<p>The result for multiple Item() creation will be a list of multiple 
+Items() a-la &quot;list_items()&quot;</p>
+<p>For Item() creation via the API, all this will be made plain via the 
+envelope metadata.</p>
+<p>kwargs is used as a backchannel to Item.save_files_from() to tell it 
+which file needs saving; thus is it important that Thing.update pass that 
+data onwards.<table class="fieldTable"></table></div>
+        </div>
+      </div><div class="function">
         <a name="pymine.api.models.Item.save_files_from"></a>
         <a name="save_files_from"></a>
         <div class="functionHeader">
         
-        def save_files_from(self, request):
+        def save_files_from(self, request, **kwargs):
         
       </div>
         <div class="functionBody">
@@ -153,10 +190,49 @@ then that wins.</p>
 <p>otherwise the mimetypes module takes a guess</p>
 <p>if all else fails, it ends up as application/octet-stream<table class="fieldTable"></table></div>
         </div>
+      </div><div class="function">
+        <a name="pymine.api.models.Item.item_size"></a>
+        <a name="item_size"></a>
+        <div class="functionHeader">
+        
+        def item_size(self):
+        
+      </div>
+        <div class="functionBody">
+          
+          <div>returns the size of the data file; if there is no file, returns the size
+of self.description, or zero<table class="fieldTable"></table></div>
+        </div>
+      </div><div class="function">
+        <a name="pymine.api.models.Item.item_type"></a>
+        <a name="item_type"></a>
+        <div class="functionHeader">
+        
+        def item_type(self):
+        
+      </div>
+        <div class="functionBody">
+          
+          <div>if there is a declared item.type, it is returned; else if there is a 
+data file, return 'application/octet-stream'; else return 'text/html' and 
+assume the description is HTML<table class="fieldTable"></table></div>
+        </div>
+      </div><div class="function">
+        <a name="pymine.api.models.Item.to_structure"></a>
+        <a name="to_structure"></a>
+        <div class="functionHeader">
+        
+        def to_structure(self):
+        
+      </div>
+        <div class="functionBody">
+          <div class="interfaceinfo">overrides <a href="pymine.api.models.AbstractThing.html#to_structure">pymine.api.models.AbstractThing.to_structure</a></div>
+          <div class="undocumented">Undocumented</div>
+        </div>
       </div>
     
     <address>
-      <a href="index.html">API Documentation</a> for pymine, generated by <a href="http://codespeak.net/~mwh/pydoctor/">pydoctor</a> at 2010-02-14 07:37:49.
+      <a href="index.html">API Documentation</a> for pymine, generated by <a href="http://codespeak.net/~mwh/pydoctor/">pydoctor</a> at (date elided).
     </address>
   </body>
 </html>

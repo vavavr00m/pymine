@@ -80,6 +80,6 @@ dbdump:
 
 docs:
 	( cd public_html ; pydoctor --add-package=../../pymine --project-name="pymine" --make-html )
-	( cd public_html/apidocs ; perl -pi~ -e "s/2009-\d{1,2}-\d{1,2} \d\d:\d\d:\d\d/(date elided)/go" *.html )
+	( cd public_html/apidocs ; perl -pi~ -e "s/201\d-\d{1,2}-\d{1,2} \d\d:\d\d:\d\d/(date elided)/go" *.html )
 	( cd public_html/apidocs ; rm *~ )
 	@echo DID YOU REMEMBER TO DO 'make clobber' FIRST?
