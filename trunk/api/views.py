@@ -36,7 +36,7 @@ def create_comment(request, idz, **kwargs):
     returns: an envelope containing the comment structure
     """
     m = Comment.create(request, commentUponItem=int(idz))
-    return Envelope(request, m.to_structure())
+    return Envelope(request, result={ m.thing_prefix : m.to_structure() })
 
 ##################################################################
 
@@ -52,7 +52,15 @@ def create_thing(request, thyng, **kwargs):
     returns: an envelope containing the thing structure
     """
     m = thyng.create(request)
-    return Envelope(request, m.to_structure())
+
+    convert = getattr(m, 'to_structure', None)
+
+    if convert:
+        s = { m.thing_prefix : convert() }
+    else: # is a list or something that we assume to be sane
+        s = m
+
+    return Envelope(request, result=s)
 
 ##################################################################
 
@@ -66,7 +74,7 @@ def delete_registry_attr(request, rattr, **kwargs):
     """
     m = Registry.get(key=rattr)
     m.delete()
-    return Envelope(request, None)
+    return Envelope(request, result=0)
 
 ##################################################################
 
@@ -83,9 +91,9 @@ def delete_thing(request, thyng, id, **kwargs):
     returns: an empty envelope
     """
 
-    m = thing.get(id=int(id))
+    m = thyng.get(id=int(id))
     m.delete()
-    return Envelope(request, None)
+    return Envelope(request, result=0)
 
 ##################################################################
 
@@ -103,7 +111,7 @@ def delete_thing_attr(request, thyng, id, attr, **kwargs):
     """
     m = thyng.get(id=int(id))
     m.delete_attribute(attr)
-    return Envelope(request, m.to_structure())
+    return Envelope(request, result={ m.thing_prefix : m.to_structure() })
 
 ##################################################################
 
@@ -116,7 +124,7 @@ def encode_minekey(request, **kwargs):
     returns: ...
     """
     s = {}
-    return Envelope(request, s)
+    return Envelope(request, result=s)
 
 ##################################################################
 
@@ -129,7 +137,7 @@ def get_registry_attr(request, rattr, **kwargs):
     returns: ...
     """
     m = Registry.get(key=rattr)
-    return Envelope(request, m.value)
+    return Envelope(request, result=m.value)
 
 ##################################################################
 
@@ -147,7 +155,7 @@ def get_thing_attr(request, thyng, id, attr, **kwargs):
     """
     m = thyng.get(id=int(id))
     s = m.to_structure()
-    return Envelope(request, s[attr]) # throw exception if not there
+    return Envelope(request, result=s[attr]) # throw exception if not there
 
 ##################################################################
 
@@ -174,7 +182,7 @@ def list_comments(request, idz, **kwargs):
         qs = Comment.execute_search_query(request.REQUEST['query'], qs)
 
     result = [ { m.thing_prefix : m.to_structure() } for m in qs ]
-    return Envelope(request, result)
+    return Envelope(request, result=result)
 
 ##################################################################
 
@@ -188,7 +196,7 @@ def list_registry(request, **kwargs):
     """
     qs = Registry.objects.all()
     result = [ m.to_structure() for m in qs ]
-    return Envelope(request, result)
+    return Envelope(request, result=result)
 
 ##################################################################
 
@@ -209,7 +217,7 @@ def list_things(request, thyng, **kwargs):
         qs = thyng.execute_search_query(request.REQUEST['query'], qs)
 
     result = [ { m.thing_prefix : m.to_structure() } for m in qs ]
-    return Envelope(request, result)
+    return Envelope(request, result=result)
 
 ##################################################################
 
@@ -261,7 +269,7 @@ def read_thing(request, thyng, id, **kwargs):
     returns: ...
     """
     m = thyng.get(id=int(id))
-    return Envelope(request, m.to_structure())
+    return Envelope(request, result={ m.thing_prefix : m.to_structure() })
 
 ##################################################################
 
@@ -278,7 +286,7 @@ def read_version(request, **kwargs):
         'softwareRevision': settings.MINE_SOFTWARE_VERSION,
         'mineApiVersion': settings.MINE_API_VERSION,
         }
-    return Envelope(request, s)
+    return Envelope(request, result=s)
 
 ##################################################################
 
@@ -295,7 +303,7 @@ def update_registry_attr(request, rattr, **kwargs):
     if not created: # then it will need updating                                                                       
         m.value = v
         m.save();
-    return Envelope(request, m.to_structure())
+    return Envelope(request, result=m.to_structure())
 
 ##################################################################
 
@@ -313,6 +321,6 @@ def update_thing(request, thyng, id, **kwargs):
     """
     m = thyng.get(id=int(id))
     m = m.update(request)
-    return Envelope(request, m.to_structure())
+    return Envelope(request, result={ m.thing_prefix : m.to_structure() })
 
 ##################################################################
