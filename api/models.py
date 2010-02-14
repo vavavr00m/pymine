@@ -1003,8 +1003,8 @@ class Vurl(AbstractThing):
 	information.
 	"""
 
-	vk = self.vurlkey()
 	s = super(Vurl, self).to_structure()
+	vk = self.vurlkey()
 	s['vurlKey'] = vk
 	s['vurlPathShort'] = "/get/k/%s" % vk
 	s['vurlPathLong'] =  "/get/n/%s" % self.name
@@ -1050,6 +1050,13 @@ class Feed(AbstractThing):
     permitted_networks = AbstractField.string(required=False)
     version = AbstractField.integer(1)
 
+    def to_structure(self):
+	"""
+        """
+        s = super(Feed, self).to_structure()
+        s['feedUrl'] = 'TBD'
+        return s
+
 ##################################################################
 
 class Item(AbstractThing):
@@ -1063,7 +1070,7 @@ class Item(AbstractThing):
 	'data': dict(gc='file'),
 	'data_ciphertext_digest': dict(s2m='copy', m2s='copy'),
 	'data_encryption_key': dict(s2m='copy', m2s='copy'),
-	'data_remote_url': dict(s2m='copy', m2s='copy'),
+	'data_remote_storage_url': dict(s2m='copy', m2s='copy'),
 	'data_type': dict(s2m='copy', m2s='copy'),
 	'description': dict(r2s='verbatim', s2m='copy', m2s='copy'),
 	'hide_after': dict(s2m='date', m2s='date'),
@@ -1083,7 +1090,7 @@ class Item(AbstractThing):
     data = AbstractField.file(storage=item_fss, upload_to=fss_yyyymmdd, required=False)
     data_ciphertext_digest = AbstractField.text(required=False)
     data_encryption_key = AbstractField.text(required=False)
-    data_remote_url = AbstractField.url(required=False)
+    data_remote_storage_url = AbstractField.url(required=False)
     data_type = AbstractField.string(required=False)
     description = AbstractField.text(required=False)
     for_feeds = AbstractField.reflist(Feed, pivot='items_explicitly_for', required=False) # augments 'tags'
@@ -1099,6 +1106,8 @@ class Item(AbstractThing):
     not_feeds = AbstractField.reflist(Feed, pivot='items_explicitly_not', required=False) # augments 'tags'
     status = AbstractField.choice(item_status_choices)
     tags = AbstractField.reflist(Tag, pivot='items_tagged', required=False)
+
+    backdoor_key = 'single uploaded file to do'
 
     @classmethod
     def create(klass, request=None, **kwargs):
@@ -1132,17 +1141,20 @@ class Item(AbstractThing):
         if len(uploaded_files) <= 1: # zero or one files uploaded
             margs = {}
             m = Item(**margs)
+            if Item.backdoor_key in kwargs:
+                del kwargs[Item.backdoor_key] # sanitation
             return m.update(request, **kwargs)
 
         # else we have multiple data files...
         result = []
 
+        # TBD: This will probably go wrong with icon uploads.
         for f in uploaded_files:
             margs = {}
             m = Item(**margs)
             kw2 = {} # create a shadow kwargs
             kw2.update(kwargs) # duplicate the master copy into it
-            kw2['actual uploaded file'] = f # overwrite the target cleanly
+            kw2[Item.backdoor_key] = f # overwrite the target cleanly
             m.update(request, **kw2)
             result.append( { m.thing_prefix : m.to_structure() } )
         return result
@@ -1167,8 +1179,8 @@ class Item(AbstractThing):
         save_needed = False
 
         if 'itemData' in request.FILES:
-            # grab the uploaded file
-            uf = kwargs.get('actual uploaded file', request.FILES['itemData'])
+            # grab the uploaded file, make sure to check the multifile backchannel
+            uf = kwargs.get(Item.backdoor_key, request.FILES['itemData'])
             ct = uf.content_type # what does the browser call the content type?
 
             if self.data_type:
@@ -1207,6 +1219,47 @@ class Item(AbstractThing):
 
         return save_needed
 
+    def item_size(self):
+        """                                                                                                                                          
+        returns the size of the data file; if there is no file,                                                                                      
+        returns the size of self.description, or zero                                                                                                
+        """
+
+        if self.data:
+            return self.data.size
+        elif self.description:
+            return len(self.description)
+        else:
+            return 0
+
+    def item_type(self):
+        """                                                                                                                                          
+        if there is a declared item.type, it is returned;                                                                                            
+        else if there is a data file, return 'application/octet-stream';                                                                             
+        else return 'text/html' and assume the description is HTML                                                                                   
+        """
+
+        if self.data_type:
+            return self.data_type
+        elif self.data:
+            return 'application/octet-stream'
+        else:
+            return 'text/html'
+
+    def to_structure(self):
+	"""
+        """
+        s = super(Item, self).to_structure()
+
+        s['itemType'] = self.item_type()
+        s['itemSize'] = self.item_size()
+        if self.data:
+            s['itemHasFile'] = 1
+        else:
+            s['itemHasFile'] = 0
+
+        return s
+
 ##################################################################
 
 class Comment(AbstractThing):
@@ -1235,6 +1288,12 @@ class Comment(AbstractThing):
     response_encryption_key = AbstractField.text(required=False)
     title = AbstractField.string()
     upon_item = AbstractField.reference(Item, required=False)
+
+    def to_structure(self):
+	"""
+        """
+        s = super(Comment, self).to_structure()
+        return s
 
     def __unicode__(self):
 	"""return the title of this comment; comments lack a "name" field"""

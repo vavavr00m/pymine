@@ -56,9 +56,9 @@ def create_thing(request, thyng, **kwargs):
     convert = getattr(m, 'to_structure', None)
 
     if convert:
-        s = { m.thing_prefix : convert() }
+	s = { m.thing_prefix : convert() }
     else: # is a list or something that we assume to be sane
-        s = m
+	s = m
 
     return Envelope(request, result=s)
 
@@ -171,15 +171,15 @@ def list_comments(request, idz, **kwargs):
     iid = int(idz)
 
     if iid == 0:
-        qs = Comment.list()
+	qs = Comment.list()
     else:
-        item = Item.get(id=iid)
-        qs = item.comment_set.filter(is_deleted=False)
+	item = Item.get(id=iid)
+	qs = item.comment_set.filter(is_deleted=False)
 
     qs = qs.filter(is_deleted=False)
 
     if 'query' in request.REQUEST:
-        qs = Comment.execute_search_query(request.REQUEST['query'], qs)
+	qs = Comment.execute_search_query(request.REQUEST['query'], qs)
 
     result = [ { m.thing_prefix : m.to_structure() } for m in qs ]
     return Envelope(request, result=result)
@@ -214,7 +214,7 @@ def list_things(request, thyng, **kwargs):
     qs = thyng.list()
 
     if 'query' in request.REQUEST:
-        qs = thyng.execute_search_query(request.REQUEST['query'], qs)
+	qs = thyng.execute_search_query(request.REQUEST['query'], qs)
 
     result = [ { m.thing_prefix : m.to_structure() } for m in qs ]
     return Envelope(request, result=result)
@@ -234,11 +234,11 @@ def read_item_data(request, id, token, **kwargs):
     ct = m.data_type
 
     if m.data:
-        f = m.data.chunks()
-        response = HttpResponse(f, content_type=ct)
-        response['Content-Length'] = m.data.size
+	f = m.data.chunks()
+	response = HttpResponse(f, content_type=ct)
+	response['Content-Length'] = m.data.size
     else:
-        response = None
+	response = None
 
     return response
 
@@ -282,10 +282,10 @@ def read_version(request, **kwargs):
     returns: ...
     """
     s = {
-        'softwareName': settings.MINE_SOFTWARE_NAME,
-        'softwareRevision': settings.MINE_SOFTWARE_VERSION,
-        'mineApiVersion': settings.MINE_API_VERSION,
-        }
+	'softwareName': settings.MINE_SOFTWARE_NAME,
+	'softwareRevision': settings.MINE_SOFTWARE_VERSION,
+	'mineApiVersion': settings.MINE_API_VERSION,
+	}
     return Envelope(request, result=s)
 
 ##################################################################
@@ -300,9 +300,9 @@ def update_registry_attr(request, rattr, **kwargs):
     """
     v = request.POST[rattr]
     m, created = Registry.objects.get_or_create(key=rattr, defaults={ 'value': v })
-    if not created: # then it will need updating                                                                       
-        m.value = v
-        m.save();
+    if not created: # then it will need updating
+	m.value = v
+	m.save();
     return Envelope(request, result=m.to_structure())
 
 ##################################################################
