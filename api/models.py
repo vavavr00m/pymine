@@ -294,22 +294,22 @@ class Space:
 	@staticmethod
 	def nullify(m, mattr):
 	    """trash a field in a model, by nulling it (not secure delete). requires save()"""
-	    setattr(m, matter, None)
+	    setattr(m, mattr, None)
 
 	@staticmethod
 	def blankify(m, mattr):
 	    """trash a field in a model by blanking it (not secure delete). requires save()"""
-	    setattr(m, matter, "")
+	    setattr(m, mattr, "")
 
 	@staticmethod
 	def zeroify(m, mattr):
 	    """trash a field in a model by setting it to 0 (not secure delete). requires save()"""
-	    setattr(m, matter, 0)
+	    setattr(m, mattr, 0)
 
 	@staticmethod
 	def falsify(m, mattr):
 	    """trash a field in a model by setting it to False (not secure delete). requires save()"""
-	    setattr(m, matter, False)
+	    setattr(m, mattr, False)
 
 	@staticmethod
 	def munge(m, mattr):
@@ -428,9 +428,14 @@ class Space:
 		pass # id fields do not get gc'ed
 	    elif 'gc' in table:
 		methud = getattr(Space.gc_lib, table['gc'])
-		gc[mattr] = lambda m: methud(m, mattr)
+                def gc_closure(m, mattr=mattr):
+                    methud(m, mattr)
+		gc[mattr] = gc_closure
 	    else:
-		gc[mattr] = lambda m: gc_lib.nullify(m, mattr) # default nullify()
+		methud = Space.gc_lib.nullify # default
+                def gc_closure(m, mattr=mattr):
+                    methud(m, mattr)
+		gc[mattr] = gc_closure
 
 	return (xattr_class, thing_prefix, r2s, s2m, m2s, gc)
 
@@ -666,15 +671,7 @@ class AbstractThing(AbstractModel):
 	"""
 	create a new Thing from a HTTPRequest, overriding with values from kwargs.
 
-	NB: for Item() ONLY: create one or more new Items() from a
-	HTTPRequest, overriding with values from kwargs; assuming
-	nothing goes wrong, one Item() will be created per "data" file
-	submitted in the multipart POST request.  If no "data" file is
-	submitted, only a single non-data Item will result.  The
-	result for a single Item() creation will be a single Item().
-	The result for multiple Item() creation will be a list of
-	multiple Items().  For Item() creation via the API, all this
-	will be made plain via the envelope metadata.
+        nb: Item() overrides this in order to do multi-file uploads
 	"""
 	margs = {}
 	m = klass(**margs)
@@ -749,7 +746,7 @@ class AbstractThing(AbstractModel):
 		i_changed_something = True
 
         # stage 3: file saving
-        i_saved_a_file = self.save_files_from(request)
+        i_saved_a_file = self.save_files_from(request, **kwargs)
 
         # hmmm?
 	if i_changed_something or i_saved_a_file:
@@ -766,7 +763,7 @@ class AbstractThing(AbstractModel):
 
 	return self
 
-    def save_files_from(self, request):
+    def save_files_from(self, request, **kwargs):
         """stub for file-saving per instance/class; returns True if a change was made"""
         return False
 
@@ -1103,7 +1100,54 @@ class Item(AbstractThing):
     status = AbstractField.choice(item_status_choices)
     tags = AbstractField.reflist(Tag, pivot='items_tagged', required=False)
 
-    def save_files_from(self, request):
+    @classmethod
+    def create(klass, request=None, **kwargs):
+	"""
+	Create one or more new Items() from a HTTPRequest, overriding
+	with values from kwargs
+
+        Assuming nothing goes wrong, one Item() will be created per
+	"itemData" file submitted in the multipart POST request; they
+	will all have the same iconData, etc, if specified.
+
+        If no "data" file is submitted, only a single non-data Item
+	will result.  
+
+        The result for a single Item() creation will be a single
+	Item().  
+
+        The result for multiple Item() creation will be a list of
+	multiple Items() a-la "list_items()"  
+
+        For Item() creation via the API, all this will be made plain
+	via the envelope metadata.
+
+        kwargs is used as a backchannel to Item.save_files_from() to
+        tell it which file needs saving; thus is it important that
+        Thing.update pass that data onwards.
+	"""
+
+        uploaded_files = request.FILES.getlist('itemData')
+
+        if len(uploaded_files) <= 1: # zero or one files uploaded
+            margs = {}
+            m = Item(**margs)
+            return m.update(request, **kwargs)
+
+        # else we have multiple data files...
+        result = []
+
+        for f in uploaded_files:
+            margs = {}
+            m = Item(**margs)
+            kw2 = {} # create a shadow kwargs
+            kw2.update(kwargs) # duplicate the master copy into it
+            kw2['actual uploaded file'] = f # overwrite the target cleanly
+            m.update(request, **kw2)
+            result.append( { m.thing_prefix : m.to_structure() } )
+        return result
+
+    def save_files_from(self, request, **kwargs):
         """
         save per-item files for this instance
 
@@ -1123,7 +1167,8 @@ class Item(AbstractThing):
         save_needed = False
 
         if 'itemData' in request.FILES:
-            uf = request.FILES['itemData'] # grab the uploaded file
+            # grab the uploaded file
+            uf = kwargs.get('actual uploaded file', request.FILES['itemData'])
             ct = uf.content_type # what does the browser call the content type?
 
             if self.data_type:

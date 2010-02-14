@@ -38,6 +38,12 @@ def __push(buffer, token):
 def __descend(buffer, depth, *arguments):
     for arg in arguments:
 
+        # a quick check for things or registry items
+        #conversion_method = getattr(arg, 'to_structure', None)
+        #if conversion_method:
+        #    arg = conversion_method()
+        #...we now return you to your normal service...
+
 	if isinstance(arg, int) \
                 or isinstance(arg, long) \
                 or isinstance(arg, float) \
@@ -72,7 +78,9 @@ def __descend(buffer, depth, *arguments):
 		__push(buffer, '<%s>' % k)
 
 		nested = (isinstance(v, dict) or \
-                              (isinstance(v, list) and isinstance(v[0], dict)))
+                              (isinstance(v, list) and 
+                               len(v) > 0 and
+                               isinstance(v[0], dict)))
 
                 if nested:
 		    __newline(buffer)
@@ -84,7 +92,6 @@ def __descend(buffer, depth, *arguments):
 		__newline(buffer)
 
 	    return True
-
 	else:
 	    raise RuntimeError, 'unknown type for argument %s %s' % (str(arg), type(arg))
 
