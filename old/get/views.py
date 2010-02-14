@@ -61,7 +61,7 @@ def read_minekey(request, minekey, *args, **kwargs):
 	    return retval
 
     # catch all
-    except Exception, e:        
+    except Exception, e:
 	raise
 
 ## rest: POST /get/MINEKEY
@@ -81,7 +81,7 @@ def submit_minekey(request, minekey, *args, **kwargs):
     Pass the desired output format in as a 'format' parameter with
     values in ('rdr', 'raw', 'xml', 'json')
     """
-    
+
     # check the minekey
     mk = Minekey.parse(minekey, request=request)
     mk.validate_against(request, 'put')
@@ -90,15 +90,15 @@ def submit_minekey(request, minekey, *args, **kwargs):
     desired_format = request.POST.get('format', 'raw')
 
     if desired_format not in ('rdr', 'raw', 'xml', 'json'): # safety check
-        raise RuntimeError, 'bad output format selected'
+	raise RuntimeError, 'bad output format selected'
 
     # pull relevant data together
     comment_args = {
-        'commentTitle': request.POST.get('commentTitle', None),
-        'commentBody': request.POST.get('commentBody', None),
-        'commentItemId': mk.iid,
-        'commentRelationId': mk.rid,
-        }
+	'commentTitle': request.POST.get('commentTitle', None),
+	'commentBody': request.POST.get('commentBody', None),
+	'commentItemId': mk.iid,
+	'commentRelationId': mk.rid,
+	}
 
     # create a Comment
     m = Comment.new_from_request(None, **comment_args) # null http request = safer
@@ -111,27 +111,27 @@ def submit_minekey(request, minekey, *args, **kwargs):
 
     # coersce to output format - copied from API_CALL()
     if desired_format == 'rdr':
-        dest = request.REQUEST['redirect_success']
-        return HttpResponseRedirect(dest) # fast 302 redirect to page
+	dest = request.REQUEST['redirect_success']
+	return HttpResponseRedirect(dest) # fast 302 redirect to page
     elif desired_format == 'raw':
-        if settings.DEBUG:
-            mimetype="text/plain" # so we can see what's going on
-        else:
-            mimetype="application/octet-stream"
-        data = str(retval.get('result', ''))
+	if settings.DEBUG:
+	    mimetype="text/plain" # so we can see what's going on
+	else:
+	    mimetype="application/octet-stream"
+	data = str(retval.get('result', ''))
     elif desired_format == 'xml':
-        mimetype="application/xml"
-        data = cheatxml.dumps(retval)
+	mimetype="application/xml"
+	data = cheatxml.dumps(retval)
     elif desired_format == 'json':
-        mimetype="application/json"
-        data = json.dumps(retval, sort_keys=True, indent=2)
+	mimetype="application/json"
+	data = json.dumps(retval, sort_keys=True, indent=2)
 
     # return
     return HttpResponse(data, mimetype=mimetype)
 
 ## rest: POST /get/m
 ## function: field_minekey
-## declared args: 
+## declared args:
 def field_minekey(request, *args, **kwargs):
     """
     field_minekey() is a POST-based frontend for both read_minekey()
@@ -159,13 +159,13 @@ def field_minekey(request, *args, **kwargs):
     if not minekey: raise RuntimeError, 'no minekey provided in POST data'
 
     mk = Minekey.parse(minekey, request=request)
-    
+
     if mk.method == 'get':
-        return read_minekey(request, minekey, *args, **kwargs)
+	return read_minekey(request, minekey, *args, **kwargs)
     elif mk.method == 'put':
-        return submit_minekey(request, minekey, *args, **kwargs)
+	return submit_minekey(request, minekey, *args, **kwargs)
     else:
-        raise RuntimeError, "illegal minekey, should have trapped by now, this can't happen"
+	raise RuntimeError, "illegal minekey, should have trapped by now, this can't happen"
 
 ## rest: GET /get/i/VID
 ## function: redirect_vid

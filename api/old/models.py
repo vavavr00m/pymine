@@ -441,8 +441,8 @@ class Minekey:
     @classmethod
     def encrypt(klass, x, iv):
 	"""encrypt x and return the result prefixed by the IV; will pad
-        plaintext with trailing whitespace as needed to satisfy the
-        crypto algorithm"""
+	plaintext with trailing whitespace as needed to satisfy the
+	crypto algorithm"""
 	l = len(x)
 	if (l % 16): # if not a 16-byte message, pad with whitespace
 	    y =  '%*s' % (-(((l // 16) + 1) * 16), x)
@@ -453,7 +453,7 @@ class Minekey:
 
     def clone(self):
 	"""clone this minekey for further futzing; if you do futz manually,
-        remember to do minekey.validate()"""
+	remember to do minekey.validate()"""
 	retval = Minekey(method=self.method,
 			 rid=self.rid,
 			 rvsn=self.rvsn,
@@ -715,9 +715,9 @@ class Minekey:
 	# load relation
 	r = self.get_relation()
 
-        # check if deleted
-        if r.is_deleted:
-            raise RuntimeError, "relation is deleted: " + str(r)
+	# check if deleted
+	if r.is_deleted:
+	    raise RuntimeError, "relation is deleted: " + str(r)
 
 	# check against relation IP address
 	if r.network_pattern:
@@ -741,9 +741,9 @@ class Minekey:
 	if self.iid:
 	    i = self.get_item()
 
-            # check deleted
-            if i.is_deleted:
-                raise RuntimeError, 'item is deleted'
+	    # check deleted
+	    if i.is_deleted:
+		raise RuntimeError, 'item is deleted'
 
 	    # check if the item is shared/public
 	    if i.status not in ('P', 'S'):
@@ -782,9 +782,9 @@ def r2s_bool(r, rname, s):
     checked existence in the first place
     """
     if r.POST[rname] == '':
-        s[rname] = False
+	s[rname] = False
     else:
-        s[rname] = True
+	s[rname] = True
 
 ##################################################################
 
@@ -1870,15 +1870,15 @@ class Item(AbstractThing):
 
 	# work out our enclosure
 
-        # tbd: truncate the url down to a fake filename + valid
-        # extension, and check that it makes any sense at all; ie:
-        # fake up a replacement or self.file.name and use here and
-        # below?
+	# tbd: truncate the url down to a fake filename + valid
+	# extension, and check that it makes any sense at all; ie:
+	# fake up a replacement or self.file.name and use here and
+	# below?
 
-        if self.data:
-            fake_filename = self.data.name
-        else:
-            fake_filename = 'enclosure.bin'
+	if self.data:
+	    fake_filename = self.data.name
+	else:
+	    fake_filename = 'enclosure.bin'
 
 	iteminfo['enclosure'] = \
 	    feedgenerator.Enclosure(url='%s/%s' % (iteminfo['link'], fake_filename),
@@ -2074,10 +2074,10 @@ class Vurl(AbstractThing):
 	return s
 
     def http_response(self):
-        if self.is_temporary_redirect:
-            return HttpResponseRedirect(self.link)
-        else:
-            return HttpResponsePermanentRedirect(self.link)
+	if self.is_temporary_redirect:
+	    return HttpResponseRedirect(self.link)
+	else:
+	    return HttpResponsePermanentRedirect(self.link)
 
     @classmethod
     def filter_queryset(klass, qs, query):

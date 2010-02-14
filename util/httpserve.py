@@ -139,8 +139,8 @@ def httpserve_directory(file_path):
     files.sort()
 
     for file in files:
-        if file.startswith("."):
-            continue
+	if file.startswith("."):
+	    continue
 	if os.path.isdir(os.path.join(file_path, file)):
 	    list.append(dict(name=file,
 			     link='%s/' % file,

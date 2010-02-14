@@ -8,19 +8,19 @@ class sphinx_command(Command):
     user_options = []
 
     def initialize_options(self):
-        pass
+	pass
 
     def finalize_options(self):
-        pass
+	pass
 
     def run(self):
-        import sphinx, shutil, os
-        if os.path.exists("docs/build/html"):
-            shutil.rmtree("docs/build/html")
+	import sphinx, shutil, os
+	if os.path.exists("docs/build/html"):
+	    shutil.rmtree("docs/build/html")
 
-        self.mkpath("docs/build/html")
+	self.mkpath("docs/build/html")
 
-        sphinx.main(["-E", "docs", "docs/build/html"])
+	sphinx.main(["-E", "docs", "docs/build/html"])
 
 setup(name='poster',
       version=version,
@@ -32,13 +32,13 @@ files via HTTP without having to load the entire file into memory first.
 poster provides support for both streaming POST requests as well as
 multipart/form-data encoding of string or file parameters""",
       classifiers=[
-          "Intended Audience :: Developers",
-          "License :: OSI Approved :: MIT License",
-          "Natural Language :: English",
-          "Programming Language :: Python",
-          "Topic :: Internet :: WWW/HTTP",
-          "Topic :: Software Development :: Libraries :: Python Modules",
-          ],
+	  "Intended Audience :: Developers",
+	  "License :: OSI Approved :: MIT License",
+	  "Natural Language :: English",
+	  "Programming Language :: Python",
+	  "Topic :: Internet :: WWW/HTTP",
+	  "Topic :: Software Development :: Libraries :: Python Modules",
+	  ],
       keywords='python http post multipart/form-data file upload',
       author='Chris AtLee',
       author_email='chris@atlee.ca',

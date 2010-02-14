@@ -31,8 +31,8 @@ class RegistryAdmin(admin.ModelAdmin):
     list_filter = ['created']
     date_hierarchy = 'created'
     fieldsets = [
-        (None, {'fields': ['key', 'value']}), 
-        ]
+	(None, {'fields': ['key', 'value']}),
+	]
 
 admin.site.register(Registry, RegistryAdmin)
 
@@ -54,9 +54,9 @@ class TagAdmin(admin.ModelAdmin):
     list_filter = ['created']
     date_hierarchy = 'created'
     fieldsets = [
-        (None, {'fields': ['name']}), 
-        ('Advanced', {'fields': ['description', 'implies']}), 
-        ]
+	(None, {'fields': ['name']}),
+	('Advanced', {'fields': ['description', 'implies']}),
+	]
 
 admin.site.register(Tag, TagAdmin)
 
@@ -68,10 +68,10 @@ class RelationAdmin(admin.ModelAdmin):
     list_filter = ['created']
     date_hierarchy = 'created'
     fieldsets = [
-        (None, {'fields': ['name', 'version', 'description']}), 
-        ('Interests', {'fields': ['interests', 'interests_required', 'interests_excluded']}), 
-        ('Advanced', {'fields': ['network_pattern', 'embargo_before', 'embargo_after'], 'classes': ['collapse']}), 
-        ]
+	(None, {'fields': ['name', 'version', 'description']}),
+	('Interests', {'fields': ['interests', 'interests_required', 'interests_excluded']}),
+	('Advanced', {'fields': ['network_pattern', 'embargo_before', 'embargo_after'], 'classes': ['collapse']}),
+	]
 
 admin.site.register(Relation, RelationAdmin)
 
@@ -83,10 +83,10 @@ class ItemAdmin(admin.ModelAdmin):
     list_filter = ['created']
     date_hierarchy = 'created'
     fieldsets = [
-        (None, {'fields': ['name', 'status', 'data', 'type', 'description']}), 
-        ('Tags', {'fields': ['tags', 'item_for_relations', 'item_not_relations']}), 
-        ('Advanced', {'fields': ['feed_link', 'hide_before', 'hide_after'], 'classes': ['collapse']}), 
-        ]
+	(None, {'fields': ['name', 'status', 'data', 'type', 'description']}),
+	('Tags', {'fields': ['tags', 'item_for_relations', 'item_not_relations']}),
+	('Advanced', {'fields': ['feed_link', 'hide_before', 'hide_after'], 'classes': ['collapse']}),
+	]
 
 admin.site.register(Item, ItemAdmin)
 
@@ -98,9 +98,9 @@ class CommentAdmin(admin.ModelAdmin):
     list_filter = ['created']
     date_hierarchy = 'created'
     fieldsets = [
-        (None, {'fields': ['title', 'body']}), 
-        ('Advanced', {'fields': ['item', 'relation']}), 
-        ]
+	(None, {'fields': ['title', 'body']}),
+	('Advanced', {'fields': ['item', 'relation']}),
+	]
 
 admin.site.register(Comment, CommentAdmin)
 
@@ -112,8 +112,8 @@ class VurlAdmin(admin.ModelAdmin):
     list_filter = ['created']
     date_hierarchy = 'created'
     fieldsets = [
-        (None, {'fields': ['name', 'link', 'is_temporary_redirect']}), 
-        ]
+	(None, {'fields': ['name', 'link', 'is_temporary_redirect']}),
+	]
 
 admin.site.register(Vurl, VurlAdmin)
 

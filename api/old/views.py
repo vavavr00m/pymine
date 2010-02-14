@@ -41,8 +41,8 @@ def construct_retval(request, result, **kwargs):
     template['exit'] = kwargs.get('exit', 0)
     template['status'] = kwargs.get('status', 'ok')
 
-    if result: 
-        template['result'] = result
+    if result:
+	template['result'] = result
 
     # inputs:
     # query (dealt with elsewhere)
@@ -171,15 +171,15 @@ def list_comments(request, iid, *args, **kwargs):
     item_id = int(iid)
 
     if item_id == 0:
-        models = Comment.objects
+	models = Comment.objects
     else:
-        item = Item.objects.get(id=item_id)
-        models = item.comment_set
+	item = Item.objects.get(id=item_id)
+	models = item.comment_set
 
     qs = models.filter(is_deleted=False)
 
     if 'query' in request.REQUEST:
-        qs = Comment.filter_queryset(qs, request.REQUEST['query'])
+	qs = Comment.filter_queryset(qs, request.REQUEST['query'])
 
     result = [ { m.sattr_prefix : m.to_structure() } for m in qs ]
     return construct_retval(request, result)
@@ -204,24 +204,23 @@ def import_mine(request, efmt, *args, **kwargs):
 
 ## rest: POST /api/item.FMT
 ## function: create_item
-## declared args: 
+## declared args:
 def create_item(request, *args, **kwargs):
     """create_item() returns ..."""
     return create_foo(request, Item)
 
 ## rest: GET /api/item.FMT
 ## function: list_items
-## declared args: 
+## declared args:
 def list_items(request, *args, **kwargs):
     """list_items() returns ..."""
     qs = Item.objects.filter(is_deleted=False)
 
     if 'query' in request.REQUEST:
-        qs = Item.filter_queryset(qs, request.REQUEST['query'])
+	qs = Item.filter_queryset(qs, request.REQUEST['query'])
 
     result = [ { m.sattr_prefix : m.to_structure() } for m in qs ]
     return construct_retval(request, result)
-
 
 ## rest: GET /api/item/IID
 ## function: read_item_data
@@ -232,31 +231,31 @@ def read_item_data(request, iid, *args, **kwargs): # <--------------------------
     mk = kwargs.get('minekey', None)
 
     if mk and mk.iid == iid:
-        m = mk.get_item()
+	m = mk.get_item()
     else:
-        m = Item.objects.get(id=int(iid))
+	m = Item.objects.get(id=int(iid))
 
     ct = m.item_type()
 
     # if we can have context and we can rewrite
-    if mk and ct in ('text/html', 'application/mine+xml'): 
-        if m.data:
-            content = m.data.read()
-        else:
-            content = m.item_feed_description()
+    if mk and ct in ('text/html', 'application/mine+xml'):
+	if m.data:
+	    content = m.data.read()
+	else:
+	    content = m.item_feed_description()
 
-        rewrite = mk.rewrite_html(content)
-        response = HttpResponse(rewrite, content_type=ct)
-        response['Content-Length'] = len(rewrite)
+	rewrite = mk.rewrite_html(content)
+	response = HttpResponse(rewrite, content_type=ct)
+	response['Content-Length'] = len(rewrite)
 
     elif m.data: # else if there's a file
-        fw = m.data.chunks()
-        response = HttpResponse(fw, content_type=ct)
-        response['Content-Length'] = m.data.size
+	fw = m.data.chunks()
+	response = HttpResponse(fw, content_type=ct)
+	response['Content-Length'] = m.data.size
 
     else: # default
-        response = HttpResponse(m.item_feed_description(), content_type=ct)
-        response['Content-Length'] = m.item_size()
+	response = HttpResponse(m.item_feed_description(), content_type=ct)
+	response['Content-Length'] = m.item_size()
 
     return response
 
@@ -311,7 +310,7 @@ def get_item_key(request, iid, sattr, *args, **kwargs):
 
 ## rest: GET /api/registry.FMT
 ## function: list_registry
-## declared args: 
+## declared args:
 def list_registry(request, *args, **kwargs):
     """list_registry() returns ..."""
     qs = Registry.objects.all()
@@ -326,8 +325,8 @@ def amend_registry_key(request, rattr, *args, **kwargs):
     v = request.POST[rattr]
     m, created = Registry.objects.get_or_create(key=rattr, defaults={ 'value': v })
     if not created: # then it will need updating
-        m.value = v
-        m.save();
+	m.value = v
+	m.save();
     return construct_retval(request, m.to_structure())
 
 ## function: delete_registry_key
@@ -350,20 +349,20 @@ def get_registry_key(request, rattr, *args, **kwargs):
 
 ## rest: POST /api/relation.FMT
 ## function: create_relation
-## declared args: 
+## declared args:
 def create_relation(request, *args, **kwargs):
     """create_relation() returns ..."""
     return create_foo(request, Relation)
 
 ## rest: GET /api/relation.FMT
 ## function: list_relations
-## declared args: 
+## declared args:
 def list_relations(request, *args, **kwargs):
     """list_relations() returns ..."""
     qs = Relation.objects.filter(is_deleted=False)
 
     if 'query' in request.REQUEST:
-        qs = Relation.filter_queryset(qs, request.REQUEST['query'])
+	qs = Relation.filter_queryset(qs, request.REQUEST['query'])
 
     result = [ { m.sattr_prefix : m.to_structure() } for m in qs ]
     return construct_retval(request, result)
@@ -405,20 +404,20 @@ def get_relation_key(request, rid, sattr, *args, **kwargs):
 
 ## rest: POST /api/tag.FMT
 ## function: create_tag
-## declared args: 
+## declared args:
 def create_tag(request, *args, **kwargs):
     """create_tag() returns ..."""
     return create_foo(request, Tag)
 
 ## rest: GET /api/tag.FMT
 ## function: list_tags
-## declared args: 
+## declared args:
 def list_tags(request, *args, **kwargs):
     """list_tags() returns ..."""
     qs = Tag.objects.filter(is_deleted=False)
 
     if 'query' in request.REQUEST:
-        qs = Tag.filter_queryset(qs, request.REQUEST['query'])
+	qs = Tag.filter_queryset(qs, request.REQUEST['query'])
 
     result = [ { m.sattr_prefix : m.to_structure() } for m in qs ]
     return construct_retval(request, result)
@@ -463,54 +462,54 @@ def get_tag_key(request, tid, sattr, *args, **kwargs):
 ## declared args: rid
 def encode_minekey1(request, rid, *args, **kwargs):
     """encode_minekey1(rid) returns ..."""
-    nyi() 
+    nyi()
 
 ## rest: GET /api/url/RID/IID.FMT
 ## function: encode_minekey2
 ## declared args: rid iid
 def encode_minekey2(request, rid, iid, *args, **kwargs):
     """encode_minekey2(rid, iid) returns ..."""
-    nyi() 
+    nyi()
 
 ## rest: GET /api/url/RID/RVSN/IID.FMT
 ## function: encode_minekey3
 ## declared args: rid rvsn iid
 def encode_minekey3(request, rid, rvsn, iid, *args, **kwargs):
     """encode_minekey3(rid, rvsn, iid) returns ..."""
-    nyi() 
+    nyi()
 
 ##################################################################
 
 ## rest: GET /api/version.FMT
 ## function: read_version
-## declared args: 
+## declared args:
 def read_version(request, *args, **kwargs):
     """read_version() returns ..."""
     result = {
-        'softwareName': settings.MINE_SOFTWARE_NAME,
-        'softwareRevision': settings.MINE_SOFTWARE_VERSION,
-        'mineApiVersion': settings.MINE_API_VERSION,
-        }
+	'softwareName': settings.MINE_SOFTWARE_NAME,
+	'softwareRevision': settings.MINE_SOFTWARE_VERSION,
+	'mineApiVersion': settings.MINE_API_VERSION,
+	}
     return construct_retval(request, result)
 
 ##################################################################
 
 ## rest: POST /api/vurl.FMT
 ## function: create_vurl
-## declared args: 
+## declared args:
 def create_vurl(request, *args, **kwargs):
     """create_vurl() returns ..."""
     return create_foo(request, Vurl)
 
 ## rest: GET /api/vurl.FMT
 ## function: list_vurls
-## declared args: 
+## declared args:
 def list_vurls(request, *args, **kwargs):
     """list_vurls() returns ..."""
     qs = Vurl.objects.filter(is_deleted=False)
 
     if 'query' in request.REQUEST:
-        qs = Vurl.filter_queryset(qs, request.REQUEST['query'])
+	qs = Vurl.filter_queryset(qs, request.REQUEST['query'])
 
     result = [ { m.sattr_prefix : m.to_structure() } for m in qs ]
     return construct_retval(request, result)

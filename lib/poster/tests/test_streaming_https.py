@@ -32,47 +32,47 @@ server_thread.start()
 
 class TestStreaming(TestCase):
     def _open(self, url, params=None, headers=None):
-        if headers is None:
-            headers = {}
-        req = urllib2.Request("https://localhost:%i/%s" % (port, url), params,
-                headers)
-        return urllib2.urlopen(req)
+	if headers is None:
+	    headers = {}
+	req = urllib2.Request("https://localhost:%i/%s" % (port, url), params,
+		headers)
+	return urllib2.urlopen(req)
 
     def test_basic(self):
-        response = self._open("testing123")
+	response = self._open("testing123")
 
-        self.assertEqual(response.read(), "OK")
-        self.assertEqual(request.path, "/testing123")
+	self.assertEqual(response.read(), "OK")
+	self.assertEqual(request.path, "/testing123")
 
-        response.close()
+	response.close()
 
     def test_basic2(self):
-        response = self._open("testing?foo=bar")
+	response = self._open("testing?foo=bar")
 
-        self.assertEqual(response.read(), "OK")
-        self.assertEqual(request.path, "/testing")
-        self.assertEqual(params.get("foo"), "bar")
+	self.assertEqual(response.read(), "OK")
+	self.assertEqual(request.path, "/testing")
+	self.assertEqual(params.get("foo"), "bar")
 
-        response.close()
+	response.close()
 
     def test_nonstream_uploadfile(self):
-        datagen, headers = poster.encode.multipart_encode([
-            poster.encode.MultipartParam.from_file("file", __file__),
-            poster.encode.MultipartParam("foo", "bar")])
+	datagen, headers = poster.encode.multipart_encode([
+	    poster.encode.MultipartParam.from_file("file", __file__),
+	    poster.encode.MultipartParam("foo", "bar")])
 
-        data = "".join(datagen)
+	data = "".join(datagen)
 
-        response = self._open("upload", data, headers)
-        self.assertEqual(params.get("file").file.read(),
-                open(__file__).read())
-        self.assertEqual(params.get("foo"), "bar")
+	response = self._open("upload", data, headers)
+	self.assertEqual(params.get("file").file.read(),
+		open(__file__).read())
+	self.assertEqual(params.get("foo"), "bar")
 
     def test_stream_uploadfile(self):
-        datagen, headers = poster.encode.multipart_encode([
-            poster.encode.MultipartParam.from_file("file", __file__),
-            poster.encode.MultipartParam("foo", "bar")])
+	datagen, headers = poster.encode.multipart_encode([
+	    poster.encode.MultipartParam.from_file("file", __file__),
+	    poster.encode.MultipartParam("foo", "bar")])
 
-        response = self._open("upload", datagen, headers)
-        self.assertEqual(params.get("file").file.read(),
-                open(__file__).read())
-        self.assertEqual(params.get("foo"), "bar")
+	response = self._open("upload", datagen, headers)
+	self.assertEqual(params.get("file").file.read(),
+		open(__file__).read())
+	self.assertEqual(params.get("foo"), "bar")

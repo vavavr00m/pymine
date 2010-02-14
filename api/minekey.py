@@ -26,7 +26,6 @@ import re
 
 import util.mimestuff as mimestuff
 
-
 # minekey format:
 # hmac/fid/fversion/iid/depth/type.ext
 # type in ( data, icon, submit )
@@ -81,11 +80,11 @@ class MineKey:
 	"""
 	does a variety of sanity checks on self and throws a RuntimeError if surprised
 
-        returns the stripped hmac string
+	returns the stripped hmac string
 
-        for a minekey such as "HASH/42/1/11/2/data.dat" - the
-        validation covers everything from "HASH" to "data" inclusive;
-        the trailing ".dat" is considered advisory.
+	for a minekey such as "HASH/42/1/11/2/data.dat" - the
+	validation covers everything from "HASH" to "data" inclusive;
+	the trailing ".dat" is considered advisory.
 	"""
 
 	def errmsg(x):
@@ -103,10 +102,10 @@ class MineKey:
 	if self.__type not in ('data', 'icon', 'submit'):
 	    raise RuntimeError, errmsg('type not in permitted set')
 
-        f = self.get_feed()
+	f = self.get_feed()
 
-        if f.version != self.__fversion:
-            raise RuntimeError, errmsg("database feed version %d not equal to minekey feed version %d" % (f.version, self.__fversion))
+	if f.version != self.__fversion:
+	    raise RuntimeError, errmsg("database feed version %d not equal to minekey feed version %d" % (f.version, self.__fversion))
 
 	hmac_key = '12345678901234567890123456789012'
 	hmac_pad = '________________________________'
@@ -121,16 +120,16 @@ class MineKey:
 	return hash
 
     def get_feed(self):
-        """return a (cached) copy of the feed object corresponding to this minekey"""
-        if not self.__feed_cached:
-            self.__feed_cached = Feed.get(id=self.__fid)
-        return self.__feed_cached
+	"""return a (cached) copy of the feed object corresponding to this minekey"""
+	if not self.__feed_cached:
+	    self.__feed_cached = Feed.get(id=self.__fid)
+	return self.__feed_cached
 
     def get_item(self):
-        if not self.__item_cached:
-            if self.__iid:
-                self.__item_cached = Item.get(id=self.__iid)
-        return self.__item_cached
+	if not self.__item_cached:
+	    if self.__iid:
+		self.__item_cached = Item.get(id=self.__iid)
+	return self.__item_cached
 
     def key(self):
 	"""
@@ -143,20 +142,20 @@ class MineKey:
 
 	hash = self.validate()
 
-        if self.__iid == 0:
-            ext = 'feed'
-        else:
-            i = self.get_item() # if None, something is wrong so let it barf
+	if self.__iid == 0:
+	    ext = 'feed'
+	else:
+	    i = self.get_item() # if None, something is wrong so let it barf
 
-            if self.__type == 'data':
-                ext = mimestuff.lookup.guess_extension(i.data_type)
-            elif self.__type == 'icon':
-                ext = mimestuff.lookup.guess_extension(i.icon_type)
-            elif self.__type == 'submit':
-                ext = '.cgi'
+	    if self.__type == 'data':
+		ext = mimestuff.lookup.guess_extension(i.data_type)
+	    elif self.__type == 'icon':
+		ext = mimestuff.lookup.guess_extension(i.icon_type)
+	    elif self.__type == 'submit':
+		ext = '.cgi'
 
-        if not ext:
-            ext = '.dat'
+	if not ext:
+	    ext = '.dat'
 
 	return "%s/%s%s" % (hash, str(self), ext)
 
@@ -241,10 +240,10 @@ class MineKey:
 	return retval
 
     def spawn_icon_self(self):
-        """
-        return spawn_icon for self
-        """
-        return self.spawn_icon(self.__iid)
+	"""
+	return spawn_icon for self
+	"""
+	return self.spawn_icon(self.__iid)
 
     def spawn_submit_self(self):
 	"""
@@ -277,63 +276,63 @@ class MineKey:
     # THIS NEEDS A REWRITE
 
     def rewrite_html(self, html):
-        """
-        using the context of this minekey, rewrite the blob of HTML
-        (argument) looking for strings of the form:
+	"""
+	using the context of this minekey, rewrite the blob of HTML
+	(argument) looking for strings of the form:
 
-        HREF=/api/data/99
-        HREF=/api/data/99/dummy.html
-        HREF='/api/data/99/dummy.html'
-        HREF="/api/data/99"
-        SRC=/api/icon/99/dummy.png
-        SRC='/api/icon/99'
-        SRC="/api/icon/99/dummy.png"
+	HREF=/api/data/99
+	HREF=/api/data/99/dummy.html
+	HREF='/api/data/99/dummy.html'
+	HREF="/api/data/99"
+	SRC=/api/icon/99/dummy.png
+	SRC='/api/icon/99'
+	SRC="/api/icon/99/dummy.png"
 
-        ...where 99 is an example iid; the rewriter replacing the 99
-        with the results of self.spawn_iid(iid).permalink() - in other
-        words a URL customised to retreive that item/iid with
-        decremented depth.
+	...where 99 is an example iid; the rewriter replacing the 99
+	with the results of self.spawn_iid(iid).permalink() - in other
+	words a URL customised to retreive that item/iid with
+	decremented depth.
 
-        The rewriter tries to be semi-clever, but not very, alas; it
-        does not check that we are currently inside a <TAG> before
-        rewriting such strings.  When BeautifulSoup comes in, that
-        will change.
+	The rewriter tries to be semi-clever, but not very, alas; it
+	does not check that we are currently inside a <TAG> before
+	rewriting such strings.  When BeautifulSoup comes in, that
+	will change.
 
-        if the /api/icon/99/dummy.png URL is prefixed with either a
-        single or double-quote, the rewriter checks that the substring
-        to be rewritten ends with a corresponding quote; this is
-        inadequate but should hope with unbalanced quotation marks
-        during development.
+	if the /api/icon/99/dummy.png URL is prefixed with either a
+	single or double-quote, the rewriter checks that the substring
+	to be rewritten ends with a corresponding quote; this is
+	inadequate but should hope with unbalanced quotation marks
+	during development.
 
-        if the URL does NOT begine with a quote characer, the rewriter
-        ignores what the last character of the matched string,
-        irrespective of whether it is a quote character or not.
+	if the URL does NOT begine with a quote characer, the rewriter
+	ignores what the last character of the matched string,
+	irrespective of whether it is a quote character or not.
 
-        if any sanity-check fails, the rewriter simply does not
-        rewrite the HTML.
-        """
+	if any sanity-check fails, the rewriter simply does not
+	rewrite the HTML.
+	"""
 
-        def rewrite_link(mo):
-            """backend link rewriter for code clarity"""
-            action = mo.group(1)
-            quote = mo.group(2)
-            what = mo.group(3)
-            iid = int(mo.group(4))
-            suffix = mo.group(5)
+	def rewrite_link(mo):
+	    """backend link rewriter for code clarity"""
+	    action = mo.group(1)
+	    quote = mo.group(2)
+	    what = mo.group(3)
+	    iid = int(mo.group(4))
+	    suffix = mo.group(5)
 
-            if quote and (not suffix.endswith(quote)):
-                return mo.group(0)
-            
-            if what == 'data':
-                rewrite = self.spawn_iid(iid).permalink()
-            elif what == 'icon':
-                rewrite = self.spawn_icon(iid).permalink()
-            else:
-                return mo.group(0)
+	    if quote and (not suffix.endswith(quote)):
+		return mo.group(0)
 
-            return '%s="%s"' % (action, rewrite)
+	    if what == 'data':
+		rewrite = self.spawn_iid(iid).permalink()
+	    elif what == 'icon':
+		rewrite = self.spawn_icon(iid).permalink()
+	    else:
+		return mo.group(0)
 
-        return self.html_re.sub(rewrite_link, html)
+	    return '%s="%s"' % (action, rewrite)
+
+	return self.html_re.sub(rewrite_link, html)
 
 ##################################################################
 
@@ -360,7 +359,7 @@ if __name__ == '__main__':
     print y.permalink()
 
     print y.spawn_submit_self()
-    
+
     print mk.rewrite_html('--<A HREF="/api/data/11">foo</A>--')
     print mk.rewrite_html('--<A HREF="/api/icon/11">foo</A>--')
 

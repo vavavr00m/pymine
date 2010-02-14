@@ -32,7 +32,7 @@ def initialise_crypto():
     mine_hmac_pad = base64.urlsafe_b64encode(os.urandom(nbytes))
     Registry.set_encoded('__MINE_HMAC_KEY__', mine_hmac_key, False)
     Registry.set_encoded('__MINE_HMAC_PAD__', mine_hmac_pad, False)
- 
+
 def create_user(username, password):
     u = User()
     u.username = username
@@ -48,11 +48,11 @@ def usage():
 
 def main(argv):
     cmds = {
-        'create-user': create_user,
-        'init-crypto': initialise_crypto,
-        'set': Registry.set,
-        'set-encoded': Registry.set_encoded,
-        }
+	'create-user': create_user,
+	'init-crypto': initialise_crypto,
+	'set': Registry.set,
+	'set-encoded': Registry.set_encoded,
+	}
     fn = cmds.get(argv[0], usage)
     fn(*argv[1:])
 

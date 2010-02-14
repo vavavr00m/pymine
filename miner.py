@@ -71,244 +71,244 @@ class MineAPI:
 	urllib2.install_opener(urllib2.build_opener(urllib2.HTTPCookieProcessor(self.cookie_jar)))
 
 	self.command_table = {
-            'create-comment': {
-                'function': self.apply_sub1,
-                'method': 'POST',
-                'url_template': 'api/comment/item/{1}.json',
-                'multipart': True,
-                },
-            'create-item': {
-                'function': self.apply,
-                'method': 'POST',
-                'url_template': 'api/item.json',
-                'multipart': True,
-                },
-            'create-feed': {
-                'function': self.apply,
-                'method': 'POST',
-                'url_template': 'api/feed.json',
-                },
-            'create-tag': {
-                'function': self.apply,
-                'method': 'POST',
-                'url_template': 'api/tag.json',
-                },
-            'create-vurl': {
-                'function': self.apply,
-                'method': 'POST',
-                'url_template': 'api/vurl.json',
-                },
-            'delete-comment': {
-                'function': self.apply_sub1,
-                'method': 'DELETE',
-                'url_template': 'api/comment/{1}.json',
-                'ITERATION_HACK': 1,
-                },
-            'delete-comment-key': {
-                'function': self.apply_sub1,
-                'method': 'DELETE',
-                'url_template': 'api/comment/{1}/{2}.json',
-                'ITERATION_HACK': 2,
-                },
-            'delete-item': {
-                'function': self.apply_sub1,
-                'method': 'DELETE',
-                'url_template': 'api/item/{1}.json',
-                'ITERATION_HACK': 1,
-                },
-            'delete-item-key': {
-                'function': self.apply_sub2,
-                'method': 'DELETE',
-                'url_template': 'api/item/{1}/{2}.json',
-                'ITERATION_HACK': 2,
-                },
-            'delete-registry-key': {
-                'function': self.apply_sub1,
-                'method': 'DELETE',
-                'url_template': 'api/registry/{1}.json',
-                'ITERATION_HACK': 1,
-                },
-            'delete-feed': {
-                'function': self.apply_sub1,
-                'method': 'DELETE',
-                'url_template': 'api/feed/{1}.json',
-                'ITERATION_HACK': 1,
-                },
-            'delete-feed-key': {
-                'function': self.apply_sub2,
-                'method': 'DELETE',
-                'url_template': 'api/feed/{1}/{2}.json',
-                'ITERATION_HACK': 2,
-                },
-            'delete-tag': {
-                'function': self.apply_sub1,
-                'method': 'DELETE',
-                'url_template': 'api/tag/{1}.json',
-                'ITERATION_HACK': 1,
-                },
-            'delete-tag-key': {
-                'function': self.apply_sub2,
-                'method': 'DELETE',
-                'url_template': 'api/tag/{1}/{2}.json',
-                'ITERATION_HACK': 2,
-                },
-            'delete-vurl': {
-                'function': self.apply_sub1,
-                'method': 'DELETE',
-                'url_template': 'api/vurl/{1}.json',
-                'ITERATION_HACK': 1,
-                },
-            'delete-vurl-key': {
-                'function': self.apply_sub2,
-                'method': 'DELETE',
-                'url_template': 'api/vurl/{1}/{2}.json',
-                'ITERATION_HACK': 2,
-                },
-            'list-comments': {
-                'function': self.apply,
-                'method': 'GET',
-                'url_template': 'api/comment.json',
-                },
-            'list-items': {
-                'function': self.apply,
-                'method': 'GET',
-                'url_template': 'api/item.json',
-                },
-            'list-registry': {
-                'function': self.apply,
-                'method': 'GET',
-                'url_template': 'api/registry.json',
-                },
-            'list-feeds': {
-                'function': self.apply,
-                'method': 'GET',
-                'url_template': 'api/feed.json',
-                },
-            'list-tags': {
-                'function': self.apply,
-                'method': 'GET',
-                'url_template': 'api/tag.json',
-                },
-            'list-vurls': {
-                'function': self.apply,
-                'method': 'GET',
-                'url_template': 'api/vurl.json',
-                },
-            'read-comment': {
-                'function': self.apply_sub1,
-                'method': 'GET',
-                'url_template': 'api/comment/{1}.json',
-                },
-            'read-comment-key': {
-                'function': self.apply_sub2,
-                'method': 'GET',
-                'url_template': 'api/comment/{1}/{2}.json',
-                },
+	    'create-comment': {
+		'function': self.apply_sub1,
+		'method': 'POST',
+		'url_template': 'api/comment/item/{1}.json',
+		'multipart': True,
+		},
+	    'create-item': {
+		'function': self.apply,
+		'method': 'POST',
+		'url_template': 'api/item.json',
+		'multipart': True,
+		},
+	    'create-feed': {
+		'function': self.apply,
+		'method': 'POST',
+		'url_template': 'api/feed.json',
+		},
+	    'create-tag': {
+		'function': self.apply,
+		'method': 'POST',
+		'url_template': 'api/tag.json',
+		},
+	    'create-vurl': {
+		'function': self.apply,
+		'method': 'POST',
+		'url_template': 'api/vurl.json',
+		},
+	    'delete-comment': {
+		'function': self.apply_sub1,
+		'method': 'DELETE',
+		'url_template': 'api/comment/{1}.json',
+		'ITERATION_HACK': 1,
+		},
+	    'delete-comment-key': {
+		'function': self.apply_sub1,
+		'method': 'DELETE',
+		'url_template': 'api/comment/{1}/{2}.json',
+		'ITERATION_HACK': 2,
+		},
+	    'delete-item': {
+		'function': self.apply_sub1,
+		'method': 'DELETE',
+		'url_template': 'api/item/{1}.json',
+		'ITERATION_HACK': 1,
+		},
+	    'delete-item-key': {
+		'function': self.apply_sub2,
+		'method': 'DELETE',
+		'url_template': 'api/item/{1}/{2}.json',
+		'ITERATION_HACK': 2,
+		},
+	    'delete-registry-key': {
+		'function': self.apply_sub1,
+		'method': 'DELETE',
+		'url_template': 'api/registry/{1}.json',
+		'ITERATION_HACK': 1,
+		},
+	    'delete-feed': {
+		'function': self.apply_sub1,
+		'method': 'DELETE',
+		'url_template': 'api/feed/{1}.json',
+		'ITERATION_HACK': 1,
+		},
+	    'delete-feed-key': {
+		'function': self.apply_sub2,
+		'method': 'DELETE',
+		'url_template': 'api/feed/{1}/{2}.json',
+		'ITERATION_HACK': 2,
+		},
+	    'delete-tag': {
+		'function': self.apply_sub1,
+		'method': 'DELETE',
+		'url_template': 'api/tag/{1}.json',
+		'ITERATION_HACK': 1,
+		},
+	    'delete-tag-key': {
+		'function': self.apply_sub2,
+		'method': 'DELETE',
+		'url_template': 'api/tag/{1}/{2}.json',
+		'ITERATION_HACK': 2,
+		},
+	    'delete-vurl': {
+		'function': self.apply_sub1,
+		'method': 'DELETE',
+		'url_template': 'api/vurl/{1}.json',
+		'ITERATION_HACK': 1,
+		},
+	    'delete-vurl-key': {
+		'function': self.apply_sub2,
+		'method': 'DELETE',
+		'url_template': 'api/vurl/{1}/{2}.json',
+		'ITERATION_HACK': 2,
+		},
+	    'list-comments': {
+		'function': self.apply,
+		'method': 'GET',
+		'url_template': 'api/comment.json',
+		},
+	    'list-items': {
+		'function': self.apply,
+		'method': 'GET',
+		'url_template': 'api/item.json',
+		},
+	    'list-registry': {
+		'function': self.apply,
+		'method': 'GET',
+		'url_template': 'api/registry.json',
+		},
+	    'list-feeds': {
+		'function': self.apply,
+		'method': 'GET',
+		'url_template': 'api/feed.json',
+		},
+	    'list-tags': {
+		'function': self.apply,
+		'method': 'GET',
+		'url_template': 'api/tag.json',
+		},
+	    'list-vurls': {
+		'function': self.apply,
+		'method': 'GET',
+		'url_template': 'api/vurl.json',
+		},
+	    'read-comment': {
+		'function': self.apply_sub1,
+		'method': 'GET',
+		'url_template': 'api/comment/{1}.json',
+		},
+	    'read-comment-key': {
+		'function': self.apply_sub2,
+		'method': 'GET',
+		'url_template': 'api/comment/{1}/{2}.json',
+		},
 
-            'read-data': {
-                'function': None,
-                'method': 'GET',
-                'url_template': 'api/data/IID',
-                },
-            'read-icon': {
-                'function': None,
-                'method': 'GET',
-                'url_template': 'api/icon/IID',
-                },
+	    'read-data': {
+		'function': None,
+		'method': 'GET',
+		'url_template': 'api/data/IID',
+		},
+	    'read-icon': {
+		'function': None,
+		'method': 'GET',
+		'url_template': 'api/icon/IID',
+		},
 
-            'read-item': {
-                'function': self.apply_sub1,
-                'method': 'GET',
-                'url_template': 'api/item/{1}.json',
-                },
-            'read-item-key': {
-                'function': self.apply_sub2,
-                'method': 'GET',
-                'url_template': 'api/item/{1}/{2}.json',
-                },
-            'read-registry-key': {
-                'function': self.apply_sub1,
-                'method': 'GET',
-                'url_template': 'api/registry/{1}.json',
-                },
-            'read-feed': {
-                'function': self.apply_sub1,
-                'method': 'GET',
-                'url_template': 'api/feed/{1}.json',
-                },
-            'read-feed-key': {
-                'function': self.apply_sub2,
-                'method': 'GET',
-                'url_template': 'api/feed/{1}/{2}.json',
-                },
-            'read-tag': {
-                'function': self.apply_sub1,
-                'method': 'GET',
-                'url_template': 'api/tag/{1}.json',
-                },
-            'read-tag-key': {
-                'function': self.apply_sub2,
-                'method': 'GET',
-                'url_template': 'api/tag/{1}/{2}.json',
-                },
-            'read-vurl': {
-                'function': self.apply_sub1,
-                'method': 'GET',
-                'url_template': 'api/vurl/{1}.json',
-                },
-            'read-vurl-key': {
-                'function': self.apply_sub2,
-                'method': 'GET',
-                'url_template': 'api/vurl/{1}/{2}.json',
-                },
-            'update-comment': {
-                'function': self.apply_sub1,
-                'method': 'POST',
-                'url_template': 'api/comment/{1}.json',
-                },
-            'update-item': {
-                'function': self.apply_sub1,
-                'method': 'POST',
-                'url_template': 'api/item/{1}.json',
-                },
-            'update-registry-key': {
-                'function': self.apply_sub1_regkey,
-                'method': 'POST',
-                'url_template': 'api/registry/{1}.json',
-                },
-            'update-feed': {
-                'function': self.apply_sub1,
-                'method': 'POST',
-                'url_template': 'api/feed/{1}.json',
-                },
-            'update-tag': {
-                'function': self.apply_sub1,
-                'method': 'POST',
-                'url_template': 'api/tag/{1}.json',
-                },
-            'update-vurl': {
-                'function': self.apply_sub1,
-                'method': 'POST',
-                'url_template': 'api/vurl/{1}.json',
-                },
-            'version': {
-                'function': self.apply,
-                'method': 'GET',
-                'url_template': 'api/version.json',
-                },
+	    'read-item': {
+		'function': self.apply_sub1,
+		'method': 'GET',
+		'url_template': 'api/item/{1}.json',
+		},
+	    'read-item-key': {
+		'function': self.apply_sub2,
+		'method': 'GET',
+		'url_template': 'api/item/{1}/{2}.json',
+		},
+	    'read-registry-key': {
+		'function': self.apply_sub1,
+		'method': 'GET',
+		'url_template': 'api/registry/{1}.json',
+		},
+	    'read-feed': {
+		'function': self.apply_sub1,
+		'method': 'GET',
+		'url_template': 'api/feed/{1}.json',
+		},
+	    'read-feed-key': {
+		'function': self.apply_sub2,
+		'method': 'GET',
+		'url_template': 'api/feed/{1}/{2}.json',
+		},
+	    'read-tag': {
+		'function': self.apply_sub1,
+		'method': 'GET',
+		'url_template': 'api/tag/{1}.json',
+		},
+	    'read-tag-key': {
+		'function': self.apply_sub2,
+		'method': 'GET',
+		'url_template': 'api/tag/{1}/{2}.json',
+		},
+	    'read-vurl': {
+		'function': self.apply_sub1,
+		'method': 'GET',
+		'url_template': 'api/vurl/{1}.json',
+		},
+	    'read-vurl-key': {
+		'function': self.apply_sub2,
+		'method': 'GET',
+		'url_template': 'api/vurl/{1}/{2}.json',
+		},
+	    'update-comment': {
+		'function': self.apply_sub1,
+		'method': 'POST',
+		'url_template': 'api/comment/{1}.json',
+		},
+	    'update-item': {
+		'function': self.apply_sub1,
+		'method': 'POST',
+		'url_template': 'api/item/{1}.json',
+		},
+	    'update-registry-key': {
+		'function': self.apply_sub1_regkey,
+		'method': 'POST',
+		'url_template': 'api/registry/{1}.json',
+		},
+	    'update-feed': {
+		'function': self.apply_sub1,
+		'method': 'POST',
+		'url_template': 'api/feed/{1}.json',
+		},
+	    'update-tag': {
+		'function': self.apply_sub1,
+		'method': 'POST',
+		'url_template': 'api/tag/{1}.json',
+		},
+	    'update-vurl': {
+		'function': self.apply_sub1,
+		'method': 'POST',
+		'url_template': 'api/vurl/{1}.json',
+		},
+	    'version': {
+		'function': self.apply,
+		'method': 'GET',
+		'url_template': 'api/version.json',
+		},
 
-            'login': {
-                'function': self.apply,
-                'method': 'POST',
-                'url_template': 'login.html',
-                'skip_login_check': True,
-                },
-            'logout': {
-                'function': self.apply,
-                'method': 'GET',
-                'url_template': 'logout.html',
-                },
-            }
+	    'login': {
+		'function': self.apply,
+		'method': 'POST',
+		'url_template': 'login.html',
+		'skip_login_check': True,
+		},
+	    'logout': {
+		'function': self.apply,
+		'method': 'GET',
+		'url_template': 'logout.html',
+		},
+	    }
 
 	if self.username and self.password:
 	    self.login()
@@ -342,7 +342,7 @@ class MineAPI:
 	password = kwargs.get('password', self.password)
 	if not password:
 	    raise RuntimeError, 'no password provided'
-        self.call('login', username=username, password=password)
+	self.call('login', username=username, password=password)
 
     def logout(self, **kwargs):
 	"""
@@ -355,26 +355,26 @@ class MineAPI:
     # STUFF WHICH TALKS TO THE MINE VIA THE REST API
 
     def url_call(self, method, url_suffix, form_data):
-        """
-        """
+	"""
+	"""
 	url = "%s/%s" % (self.url_prefix, url_suffix)
 	encoded_data = None
 
-        if self.api_format:
-            url = re.sub(r'\.json$', r'.%s' % self.api_format, url)
+	if self.api_format:
+	    url = re.sub(r'\.json$', r'.%s' % self.api_format, url)
 
-        if self.verbose:
-            print "****"
-            print "> %s %s %s" % (method, url, str(form_data))
+	if self.verbose:
+	    print "****"
+	    print "> %s %s %s" % (method, url, str(form_data))
 
 	if method == 'DELETE':
-            form_data['_method'] = 'DELETE'
+	    form_data['_method'] = 'DELETE'
 	    encoded_data = urllib.urlencode(form_data)
 	    request = urllib2.Request(url, encoded_data)
 	    response = urllib2.urlopen(request)
 	elif method == 'POST':
-            if '_method' in form_data:
-                raise RuntimeError, 'inexplicable use of _method in POST: %s' % form_data['_method']
+	    if '_method' in form_data:
+		raise RuntimeError, 'inexplicable use of _method in POST: %s' % form_data['_method']
 	    encoded_data = urllib.urlencode(form_data)
 	    request = urllib2.Request(url, encoded_data)
 	    response = urllib2.urlopen(request)
@@ -384,14 +384,14 @@ class MineAPI:
 	else:
 	    raise RuntimeError, 'unknown method: %s' % method
 
-        retval = response.read()
+	retval = response.read()
 
-        if self.verbose:
-            print "****"
-            print response.geturl()
-            print response.info()
-            print
-            print retval
+	if self.verbose:
+	    print "****"
+	    print response.geturl()
+	    print response.info()
+	    print
+	    print retval
 
 	return retval
 
@@ -420,10 +420,10 @@ class MineAPI:
 	Replaces 'E{lb}1E{rb}' in url_template with arg[0]; invokes resulting
 	url with method using faked-up kwargs:
 
-        E{lb} arg[0] : arg[1] E{rb} # eg: E{lb} 'foo': 42 E{rb}
+	E{lb} arg[0] : arg[1] E{rb} # eg: E{lb} 'foo': 42 E{rb}
 
-        ...because this syntax is used to populate individual keys in
-        the registry (applying E{lb} 'foo':42 E{rb} to /api/registry/foo.json)
+	...because this syntax is used to populate individual keys in
+	the registry (applying E{lb} 'foo':42 E{rb} to /api/registry/foo.json)
 	"""
 
 	url_suffix = url_template.replace('{1}', args[0])
@@ -445,35 +445,35 @@ class MineAPI:
 
     def call(self, command, *args, **kwargs):
 	"""
-        invokes the apply() function and parameters associated with
-        the command, and returns the (presumably) JSON string that
-        results.
+	invokes the apply() function and parameters associated with
+	the command, and returns the (presumably) JSON string that
+	results.
 
-        'args' are interpolated into the template (if applicable)
+	'args' are interpolated into the template (if applicable)
 
-        'kwargs' become POST data (if applicable and not overridden)
+	'kwargs' become POST data (if applicable and not overridden)
 	"""
 
 	if command in self.command_table:
-            cmdopts = self.command_table[command]
-            function = cmdopts.get('function', None)
-            method = cmdopts.get('method', None)
-            template = cmdopts.get('url_template', None)
+	    cmdopts = self.command_table[command]
+	    function = cmdopts.get('function', None)
+	    method = cmdopts.get('method', None)
+	    template = cmdopts.get('url_template', None)
 	    retval = function(method, template, *args, **kwargs)
 	    if not retval:
-                raise RuntimeError, 'request returned no data'
+		raise RuntimeError, 'request returned no data'
 	    return retval
 	else:
 	    raise RuntimeError, 'unknown command: %s' % command
 
     def call_py(self, command, *args, **kwargs):
 	"""
-        Exactly as-per call() but the result is decoded into a
-        python data structure and is returned.
+	Exactly as-per call() but the result is decoded into a
+	python data structure and is returned.
 
-        Do NOT set the format to anything other than default(None -
-        implying json) if you are using this or any of the virtual
-        methods that are provided by __getattr__()
+	Do NOT set the format to anything other than default(None -
+	implying json) if you are using this or any of the virtual
+	methods that are provided by __getattr__()
 	"""
 	return simplejson.loads(self.call(command, *args, **kwargs))
 
@@ -484,35 +484,35 @@ class MineAPI:
 
     def __getattr__(self, attr):
 	"""
-        this getattr overrides the default and via a clever and
-        slightly evil kludge implements the following virtual methods:
+	this getattr overrides the default and via a clever and
+	slightly evil kludge implements the following virtual methods:
 
-        create_comment() create_item() create_feed() create_tag()
-        create_vurl() delete_comment() delete_comment_key()
-        delete_item() delete_item_key() delete_registry_key()
-        delete_feed() delete_feed_key() delete_tag()
-        delete_tag_key() delete_vurl() delete_vurl_key()
-        list_comments() list_items() list_registry() list_feeds()
-        list_tags() list_vurls() read_comment() read_comment_key()
-        read_data() read_item() read_item_key() read_registry_key()
-        read_feed() read_feed_key() read_tag() read_tag_key()
-        read_vurl() read_vurl_key() update_comment() update_item()
-        update_registry_key() update_feed() update_tag()
-        update_vurl() version()
+	create_comment() create_item() create_feed() create_tag()
+	create_vurl() delete_comment() delete_comment_key()
+	delete_item() delete_item_key() delete_registry_key()
+	delete_feed() delete_feed_key() delete_tag()
+	delete_tag_key() delete_vurl() delete_vurl_key()
+	list_comments() list_items() list_registry() list_feeds()
+	list_tags() list_vurls() read_comment() read_comment_key()
+	read_data() read_item() read_item_key() read_registry_key()
+	read_feed() read_feed_key() read_tag() read_tag_key()
+	read_vurl() read_vurl_key() update_comment() update_item()
+	update_registry_key() update_feed() update_tag()
+	update_vurl() version()
 
-        so you can do stuff like:
+	so you can do stuff like:
 
-        m = MineAPI(username='fred, ...')
-        tags = m.list_tags()
+	m = MineAPI(username='fred, ...')
+	tags = m.list_tags()
 
-        ...even though no list_tags() method is defined; this works
-        because __getattr__() traps the attempt to access the
-        nonexistent list_tags method, converts underscores to hyphens
-        and then returns a lambda that frontends call_py() with
-        the properly 'command' inserted.
+	...even though no list_tags() method is defined; this works
+	because __getattr__() traps the attempt to access the
+	nonexistent list_tags method, converts underscores to hyphens
+	and then returns a lambda that frontends call_py() with
+	the properly 'command' inserted.
 
-        The net result is: any 'foo-bar' API call is also available as
-        api.foo_bar() yielding python structures.
+	The net result is: any 'foo-bar' API call is also available as
+	api.foo_bar() yielding python structures.
 	"""
 
 	command = attr.replace('_', '-')
@@ -532,60 +532,60 @@ class MineAPI:
 
     def execute_commandline(self, *cmdargs):
 	"""
-        Takes an argument list, and executes it
+	Takes an argument list, and executes it
 
-        Any arguments not containing the '=' character go into a
-        dictionary of kwargs that are passed into the followup
-        methods, and eventually into POST data
+	Any arguments not containing the '=' character go into a
+	dictionary of kwargs that are passed into the followup
+	methods, and eventually into POST data
 
-        Example: create-tag tagName="foo" tagDescription="example tag"
+	Example: create-tag tagName="foo" tagDescription="example tag"
 
-        Any arguments not containing the '=' character are appended to
-        a plain list that is supplied to the wrapper around the REST
-        API invocation, which may (if you are doing it right) iterate
-        over those arguments and do something useful.
+	Any arguments not containing the '=' character are appended to
+	a plain list that is supplied to the wrapper around the REST
+	API invocation, which may (if you are doing it right) iterate
+	over those arguments and do something useful.
 
-        Example: delete-tag 1 2 5 7 9 ...
+	Example: delete-tag 1 2 5 7 9 ...
 
-        These concepts probably can mix-and-match, but it'd be deeply
-        advanced for anyone to try doing so at the moment.
+	These concepts probably can mix-and-match, but it'd be deeply
+	advanced for anyone to try doing so at the moment.
 
-        This routine also kludges a loop construct atop the api calls
-        for most/all of the deletion routines, for the benefit of
-        commandline users ONLY; programmers talking to the API are
-        expected to use iteration.
+	This routine also kludges a loop construct atop the api calls
+	for most/all of the deletion routines, for the benefit of
+	commandline users ONLY; programmers talking to the API are
+	expected to use iteration.
 	"""
 
-        command = cmdargs.pop(0)
+	command = cmdargs.pop(0)
 	args = []
 	kwargs = {}
 
-        if command in self.command_table:
-            cmdopts = self.command_table[command]
-        else:
-            raise RuntimeError, 'unknown command: %s' % command
+	if command in self.command_table:
+	    cmdopts = self.command_table[command]
+	else:
+	    raise RuntimeError, 'unknown command: %s' % command
 
-        iteration_kludge = cmdopts.get('ITERATION_HACK', 0)
+	iteration_kludge = cmdopts.get('ITERATION_HACK', 0)
 
-        if iteration_kludge == 0:
-            for x in cmdargs:
-                try:
-                    i = x.index('=')
-                    k = x[0:i]
-                    v = x[i+1:]
-                    kwargs[k] = v
-                except ValueError:
-                    args.append(x)
-            print self.call(command, *args, **kwargs)
-        elif iteration_kludge == 1:
-            for x in cmdargs:
-                args[0] = x
-                print self.call(command, *args, **kwargs)
-        elif iteration_kludge == 2:
-            args[0] = cmdargs.pop(0)
-            for x in cmdargs:
-                args[1] = x
-                print self.call(command, *args, **kwargs)
+	if iteration_kludge == 0:
+	    for x in cmdargs:
+		try:
+		    i = x.index('=')
+		    k = x[0:i]
+		    v = x[i+1:]
+		    kwargs[k] = v
+		except ValueError:
+		    args.append(x)
+	    print self.call(command, *args, **kwargs)
+	elif iteration_kludge == 1:
+	    for x in cmdargs:
+		args[0] = x
+		print self.call(command, *args, **kwargs)
+	elif iteration_kludge == 2:
+	    args[0] = cmdargs.pop(0)
+	    for x in cmdargs:
+		args[1] = x
+		print self.call(command, *args, **kwargs)
 
 ##################################################################
 ##################################################################
@@ -599,7 +599,6 @@ class MineAPI:
 # -m / --mine http://site.domain:port
 # TODO: GETOPT THIS
 
-
 if __name__ == "__main__":
 
     root = os.environ['MINE_ROOT_URL']
@@ -611,7 +610,7 @@ if __name__ == "__main__":
     m = MineAPI(url_prefix=root, username=u, verbose=v, password=p)
 
     try:
-        m.execute_commandline(sys.argv[1:])
+	m.execute_commandline(sys.argv[1:])
 	m.save_cookies() # probably pointless since session cookies are not marked persistent
 
     except HTTPError as e:
