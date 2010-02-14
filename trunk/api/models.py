@@ -428,13 +428,13 @@ class Space:
 		pass # id fields do not get gc'ed
 	    elif 'gc' in table:
 		methud = getattr(Space.gc_lib, table['gc'])
-                def gc_closure(m, mattr=mattr):
-                    methud(m, mattr)
+		def gc_closure(m, mattr=mattr):
+		    methud(m, mattr)
 		gc[mattr] = gc_closure
 	    else:
 		methud = Space.gc_lib.nullify # default
-                def gc_closure(m, mattr=mattr):
-                    methud(m, mattr)
+		def gc_closure(m, mattr=mattr):
+		    methud(m, mattr)
 		gc[mattr] = gc_closure
 
 	return (xattr_class, thing_prefix, r2s, s2m, m2s, gc)
@@ -671,7 +671,7 @@ class AbstractThing(AbstractModel):
 	"""
 	create a new Thing from a HTTPRequest, overriding with values from kwargs.
 
-        nb: Item() overrides this in order to do multi-file uploads
+	nb: Item() overrides this in order to do multi-file uploads
 	"""
 	margs = {}
 	m = klass(**margs)
@@ -745,10 +745,10 @@ class AbstractThing(AbstractModel):
 		methud(request, s, self)
 		i_changed_something = True
 
-        # stage 3: file saving
-        i_saved_a_file = self.save_files_from(request, **kwargs)
+	# stage 3: file saving
+	i_saved_a_file = self.save_files_from(request, **kwargs)
 
-        # hmmm?
+	# hmmm?
 	if i_changed_something or i_saved_a_file:
 	    self.save()
 
@@ -764,8 +764,8 @@ class AbstractThing(AbstractModel):
 	return self
 
     def save_files_from(self, request, **kwargs):
-        """stub for file-saving per instance/class; returns True if a change was made"""
-        return False
+	"""stub for file-saving per instance/class; returns True if a change was made"""
+	return False
 
     def delete(self): # this is the primary consumer of gc
 	"""gc all the fields and mark this Thing as deleted"""
@@ -1052,10 +1052,10 @@ class Feed(AbstractThing):
 
     def to_structure(self):
 	"""
-        """
-        s = super(Feed, self).to_structure()
-        s['feedUrl'] = 'TBD'
-        return s
+	"""
+	s = super(Feed, self).to_structure()
+	s['feedUrl'] = 'TBD'
+	return s
 
 ##################################################################
 
@@ -1115,150 +1115,150 @@ class Item(AbstractThing):
 	Create one or more new Items() from a HTTPRequest, overriding
 	with values from kwargs
 
-        Assuming nothing goes wrong, one Item() will be created per
+	Assuming nothing goes wrong, one Item() will be created per
 	"itemData" file submitted in the multipart POST request; they
 	will all have the same iconData, etc, if specified.
 
-        If no "data" file is submitted, only a single non-data Item
-	will result.  
+	If no "data" file is submitted, only a single non-data Item
+	will result.
 
-        The result for a single Item() creation will be a single
-	Item().  
+	The result for a single Item() creation will be a single
+	Item().
 
-        The result for multiple Item() creation will be a list of
-	multiple Items() a-la "list_items()"  
+	The result for multiple Item() creation will be a list of
+	multiple Items() a-la "list_items()"
 
-        For Item() creation via the API, all this will be made plain
+	For Item() creation via the API, all this will be made plain
 	via the envelope metadata.
 
-        kwargs is used as a backchannel to Item.save_files_from() to
-        tell it which file needs saving; thus is it important that
-        Thing.update pass that data onwards.
+	kwargs is used as a backchannel to Item.save_files_from() to
+	tell it which file needs saving; thus is it important that
+	Thing.update pass that data onwards.
 	"""
 
-        uploaded_files = request.FILES.getlist('itemData')
+	uploaded_files = request.FILES.getlist('itemData')
 
-        if len(uploaded_files) <= 1: # zero or one files uploaded
-            margs = {}
-            m = Item(**margs)
-            if Item.backdoor_key in kwargs:
-                del kwargs[Item.backdoor_key] # sanitation
-            return m.update(request, **kwargs)
+	if len(uploaded_files) <= 1: # zero or one files uploaded
+	    margs = {}
+	    m = Item(**margs)
+	    if Item.backdoor_key in kwargs:
+		del kwargs[Item.backdoor_key] # sanitation
+	    return m.update(request, **kwargs)
 
-        # else we have multiple data files...
-        result = []
+	# else we have multiple data files...
+	result = []
 
-        # TBD: This will probably go wrong with icon uploads.
-        for f in uploaded_files:
-            margs = {}
-            m = Item(**margs)
-            kw2 = {} # create a shadow kwargs
-            kw2.update(kwargs) # duplicate the master copy into it
-            kw2[Item.backdoor_key] = f # overwrite the target cleanly
-            m.update(request, **kw2)
-            result.append( { m.thing_prefix : m.to_structure() } )
-        return result
+	# TBD: This will probably go wrong with icon uploads.
+	for f in uploaded_files:
+	    margs = {}
+	    m = Item(**margs)
+	    kw2 = {} # create a shadow kwargs
+	    kw2.update(kwargs) # duplicate the master copy into it
+	    kw2[Item.backdoor_key] = f # overwrite the target cleanly
+	    m.update(request, **kw2)
+	    result.append( { m.thing_prefix : m.to_structure() } )
+	return result
 
     def save_files_from(self, request, **kwargs):
-        """
-        save per-item files for this instance
+	"""
+	save per-item files for this instance
 
-        rules for content type:
+	rules for content type:
 
-        if you declare itemDataType/itemIconType, it wins
+	if you declare itemDataType/itemIconType, it wins
 
-        if you do not declare itemDataType/itemIconType, but the
-        browser supplies a multipart-encoding type other than
-        'application/octet-stream', then that wins.
+	if you do not declare itemDataType/itemIconType, but the
+	browser supplies a multipart-encoding type other than
+	'application/octet-stream', then that wins.
 
-        otherwise the mimetypes module takes a guess
+	otherwise the mimetypes module takes a guess
 
-        if all else fails, it ends up as application/octet-stream
-        """
+	if all else fails, it ends up as application/octet-stream
+	"""
 
-        save_needed = False
+	save_needed = False
 
-        if 'itemData' in request.FILES:
-            # grab the uploaded file, make sure to check the multifile backchannel
-            uf = kwargs.get(Item.backdoor_key, request.FILES['itemData'])
-            ct = uf.content_type # what does the browser call the content type?
+	if 'itemData' in request.FILES:
+	    # grab the uploaded file, make sure to check the multifile backchannel
+	    uf = kwargs.get(Item.backdoor_key, request.FILES['itemData'])
+	    ct = uf.content_type # what does the browser call the content type?
 
-            if self.data_type:
-                pass
-            elif ct and ct != 'application/octet-stream':
-                self.data_type = ct
-            else:
-                ct, enc = mimetypes.guess_type(uf.name)
-                if ct:
-                    self.data_type = ct
-                else:
-                    self.data_type = 'application/octet-stream'
-                    
-            name = str(self.id) + '.' + uf.name
-            self.data.save(name, uf)
-            save_needed = True
+	    if self.data_type:
+		pass
+	    elif ct and ct != 'application/octet-stream':
+		self.data_type = ct
+	    else:
+		ct, enc = mimetypes.guess_type(uf.name)
+		if ct:
+		    self.data_type = ct
+		else:
+		    self.data_type = 'application/octet-stream'
 
-        if 'itemIcon' in request.FILES:
-            uf = request.FILES['itemIcon'] # grab the uploaded file
-            ct = uf.content_type # what does the browser call the content type?
+	    name = str(self.id) + '.' + uf.name
+	    self.data.save(name, uf)
+	    save_needed = True
 
-            if self.icon_type:
-                pass
-            elif ct and ct != 'application/octet-stream':
-                self.icon_type = ct
-            else:
-                ct, enc = mimetypes.guess_type(uf.name)
-                if ct:
-                    self.icon_type = ct
-                else:
-                    self.icon_type = 'application/octet-stream'
+	if 'itemIcon' in request.FILES:
+	    uf = request.FILES['itemIcon'] # grab the uploaded file
+	    ct = uf.content_type # what does the browser call the content type?
 
-            name = str(self.id) + '.' + uf.name
-            self.icon.save(name, uf)
-            save_needed = True
+	    if self.icon_type:
+		pass
+	    elif ct and ct != 'application/octet-stream':
+		self.icon_type = ct
+	    else:
+		ct, enc = mimetypes.guess_type(uf.name)
+		if ct:
+		    self.icon_type = ct
+		else:
+		    self.icon_type = 'application/octet-stream'
 
-        return save_needed
+	    name = str(self.id) + '.' + uf.name
+	    self.icon.save(name, uf)
+	    save_needed = True
+
+	return save_needed
 
     def item_size(self):
-        """                                                                                                                                          
-        returns the size of the data file; if there is no file,                                                                                      
-        returns the size of self.description, or zero                                                                                                
-        """
+	"""
+	returns the size of the data file; if there is no file,
+	returns the size of self.description, or zero
+	"""
 
-        if self.data:
-            return self.data.size
-        elif self.description:
-            return len(self.description)
-        else:
-            return 0
+	if self.data:
+	    return self.data.size
+	elif self.description:
+	    return len(self.description)
+	else:
+	    return 0
 
     def item_type(self):
-        """                                                                                                                                          
-        if there is a declared item.type, it is returned;                                                                                            
-        else if there is a data file, return 'application/octet-stream';                                                                             
-        else return 'text/html' and assume the description is HTML                                                                                   
-        """
+	"""
+	if there is a declared item.type, it is returned;
+	else if there is a data file, return 'application/octet-stream';
+	else return 'text/html' and assume the description is HTML
+	"""
 
-        if self.data_type:
-            return self.data_type
-        elif self.data:
-            return 'application/octet-stream'
-        else:
-            return 'text/html'
+	if self.data_type:
+	    return self.data_type
+	elif self.data:
+	    return 'application/octet-stream'
+	else:
+	    return 'text/html'
 
     def to_structure(self):
 	"""
-        """
-        s = super(Item, self).to_structure()
+	"""
+	s = super(Item, self).to_structure()
 
-        s['itemType'] = self.item_type()
-        s['itemSize'] = self.item_size()
-        if self.data:
-            s['itemHasFile'] = 1
-        else:
-            s['itemHasFile'] = 0
+	s['itemType'] = self.item_type()
+	s['itemSize'] = self.item_size()
+	if self.data:
+	    s['itemHasFile'] = 1
+	else:
+	    s['itemHasFile'] = 0
 
-        return s
+	return s
 
 ##################################################################
 
@@ -1291,9 +1291,9 @@ class Comment(AbstractThing):
 
     def to_structure(self):
 	"""
-        """
-        s = super(Comment, self).to_structure()
-        return s
+	"""
+	s = super(Comment, self).to_structure()
+	return s
 
     def __unicode__(self):
 	"""return the title of this comment; comments lack a "name" field"""

@@ -30,42 +30,41 @@ def parse(input):
     where no 'foo:' is given, the 'token' is used.
     """
     retval = {
-        'query': [],
-        'require': [],
-        'exclude': [],
-        }
+	'query': [],
+	'require': [],
+	'exclude': [],
+	}
 
     for token in input.split():
-        if token.startswith('+'):
-            destination = 'require'
-            token = token[1:]
-        elif token.startswith('-'):
-            destination = 'exclude'
-            token = token[1:]
-        else:
-            destination = 'query'
+	if token.startswith('+'):
+	    destination = 'require'
+	    token = token[1:]
+	elif token.startswith('-'):
+	    destination = 'exclude'
+	    token = token[1:]
+	else:
+	    destination = 'query'
 
-        i = token.find(':')
+	i = token.find(':')
 
-        if i >= 0:
-            key = token[0:i]
-            value = token[i+1:]
-        else:
-            key = 'token'
-            value = token
+	if i >= 0:
+	    key = token[0:i]
+	    value = token[i+1:]
+	else:
+	    key = 'token'
+	    value = token
 
-        retval[destination].append((key,value))
+	retval[destination].append((key,value))
 
     return retval
 
-
 if __name__ == '__main__':
 
-    for i in ('foo', 
-              'foo +bar -baz', 
-              'foo +bar -baz type:audio/mp3 +inname:wibble -size:-100k', 
-              'foo: +bar: -baz:',
-              ):
-        print i
-        print str(parse(i))
-        print 
+    for i in ('foo',
+	      'foo +bar -baz',
+	      'foo +bar -baz type:audio/mp3 +inname:wibble -size:-100k',
+	      'foo: +bar: -baz:',
+	      ):
+	print i
+	print str(parse(i))
+	print

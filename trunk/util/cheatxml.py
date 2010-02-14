@@ -39,9 +39,9 @@ def __descend(buffer, depth, *arguments):
     for arg in arguments:
 
 	if isinstance(arg, int) \
-                or isinstance(arg, long) \
-                or isinstance(arg, float) \
-                or isinstance(arg, bool):
+		or isinstance(arg, long) \
+		or isinstance(arg, float) \
+		or isinstance(arg, bool):
 	    __push(buffer, str(arg))
 	    return False
 
@@ -56,8 +56,8 @@ def __descend(buffer, depth, *arguments):
 	elif isinstance(arg, tuple) or isinstance(arg, list):
 	    trip = False
 	    for v in arg:
-		if trip and not isinstance(v, dict): 
-                    __space(buffer)
+		if trip and not isinstance(v, dict):
+		    __space(buffer)
 		__descend(buffer, depth, v)
 		trip = True
 	    return False
@@ -72,11 +72,11 @@ def __descend(buffer, depth, *arguments):
 		__push(buffer, '<%s>' % k)
 
 		nested = (isinstance(v, dict) or \
-                              (isinstance(v, list) and 
-                               len(v) > 0 and
-                               isinstance(v[0], dict)))
+			      (isinstance(v, list) and
+			       len(v) > 0 and
+			       isinstance(v[0], dict)))
 
-                if nested:
+		if nested:
 		    __newline(buffer)
 
 		if __descend(buffer, depth+1, arg[k]) or nested:
@@ -103,8 +103,8 @@ if __name__ == '__main__':
 	'integer': 42,
 	'string': 'this is a string',
 	'list': (1, 2, 3),
-        'html': '<foo>bar&baz</foo>',
-        'complex': [ {'A':99}, {'B':98}, {'C':97} ],
+	'html': '<foo>bar&baz</foo>',
+	'complex': [ {'A':99}, {'B':98}, {'C':97} ],
 	}
     bar = foo.copy()
     baz = foo.copy()

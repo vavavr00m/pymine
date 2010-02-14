@@ -31,8 +31,8 @@ class RegistryAdmin(admin.ModelAdmin):
     list_filter = ['created']
     date_hierarchy = 'created'
     fieldsets = [
-        (None, {'fields': ['key', 'value']}), 
-        ]
+	(None, {'fields': ['key', 'value']}),
+	]
 
 admin.site.register(Registry, RegistryAdmin)
 
@@ -48,9 +48,9 @@ class TagAdmin(admin.ModelAdmin):
     list_filter = ['created']
     date_hierarchy = 'created'
     fieldsets = [
-        (None, {'fields': ['name']}), 
-        ('Advanced', {'fields': ['description', 'implies']}), 
-        ]
+	(None, {'fields': ['name']}),
+	('Advanced', {'fields': ['description', 'implies']}),
+	]
 
 admin.site.register(Tag, TagAdmin)
 
@@ -62,15 +62,15 @@ class FeedAdmin(admin.ModelAdmin):
     list_filter = ['created']
     date_hierarchy = 'created'
     fieldsets = [
-        (None, {'fields': ['name', 'version', 'description']}), 
-        ('Interests', {'fields': ['interests', 'interests_require', 'interests_exclude']}), 
-        ('Advanced', {'fields': ['permitted_networks', 
-                                 'content_constraints', 
-                                 'embargo_before', 
-                                 'embargo_after',
-                                 'is_considered_public', 
-                                 ]}), 
-        ]
+	(None, {'fields': ['name', 'version', 'description']}),
+	('Interests', {'fields': ['interests', 'interests_require', 'interests_exclude']}),
+	('Advanced', {'fields': ['permitted_networks',
+				 'content_constraints',
+				 'embargo_before',
+				 'embargo_after',
+				 'is_considered_public',
+				 ]}),
+	]
 
 admin.site.register(Feed, FeedAdmin)
 
@@ -82,17 +82,17 @@ class ItemAdmin(admin.ModelAdmin):
     list_filter = ['created']
     date_hierarchy = 'created'
     fieldsets = [
-        (None, {'fields': ['name', 'status', 'description']}), 
-        ('Data', {'fields': ['data_type', 
-                             'data',  
-                             'icon_type', 
-                             'icon', 
-                             'links_to_items',
-                             'data_remote_storage_url',
-                             ]}), 
-        ('Tags', {'fields': ['tags', 'for_feeds', 'not_feeds']}), 
-        ('Advanced', {'fields': ['hide_before', 'hide_after']}), 
-        ]
+	(None, {'fields': ['name', 'status', 'description']}),
+	('Data', {'fields': ['data_type',
+			     'data',
+			     'icon_type',
+			     'icon',
+			     'links_to_items',
+			     'data_remote_storage_url',
+			     ]}),
+	('Tags', {'fields': ['tags', 'for_feeds', 'not_feeds']}),
+	('Advanced', {'fields': ['hide_before', 'hide_after']}),
+	]
 
 admin.site.register(Item, ItemAdmin)
 
@@ -104,9 +104,9 @@ class CommentAdmin(admin.ModelAdmin):
     list_filter = ['created']
     date_hierarchy = 'created'
     fieldsets = [
-        (None, {'fields': ['title', 'body']}), 
-        ('Advanced', {'fields': ['upon_item', 'from_feed']}), 
-        ]
+	(None, {'fields': ['title', 'body']}),
+	('Advanced', {'fields': ['upon_item', 'from_feed']}),
+	]
 
 admin.site.register(Comment, CommentAdmin)
 
@@ -118,9 +118,9 @@ class VurlAdmin(admin.ModelAdmin):
     list_filter = ['created']
     date_hierarchy = 'created'
     fieldsets = [
-        (None, {'fields': ['name', 'link', 'use_temporary_redirect']}), 
-        ('Advanced', {'fields': ['invalid_before', 'invalid_after']}), 
-        ]
+	(None, {'fields': ['name', 'link', 'use_temporary_redirect']}),
+	('Advanced', {'fields': ['invalid_before', 'invalid_after']}),
+	]
 
 admin.site.register(Vurl, VurlAdmin)
 

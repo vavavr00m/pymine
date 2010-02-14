@@ -96,10 +96,10 @@ def generate(request, mk, *args, **kwargs):
 	#print "considering %s" % item.name
 
 	for item_tag in item.tags.all():
-            if item_tag in cloud_cache:
-                item_cloud = cloud_cache[item_tag]
-            else:
-                item_cloud = cloud_cache[item_tag] = item_tag.cloud.all()
+	    if item_tag in cloud_cache:
+		item_cloud = cloud_cache[item_tag]
+	    else:
+		item_cloud = cloud_cache[item_tag] = item_tag.cloud.all()
 
 	    #print "examining %s -> %s" % (item_tag, str(item_cloud))
 	    if hates:
@@ -146,36 +146,36 @@ def generate(request, mk, *args, **kwargs):
 
     # per-relationship constraints
     if False and constraints:
-        rules = minesearch.parse(constraints)
+	rules = minesearch.parse(constraints)
 
-        if len(rules['query']):
-            q = Q()
-            for key, value in rules['query']:
-                if key == 'token':
-                    q = q | Q(name__icontains=value) | Q(description__icontains=value)
-                elif key == 'type':
-                    q = q | Q(type__iexact=value)
-                else:
-                    raise RuntimeError, 'do not understand feed query: %s' % key
-            qs = qs.filter(q)
+	if len(rules['query']):
+	    q = Q()
+	    for key, value in rules['query']:
+		if key == 'token':
+		    q = q | Q(name__icontains=value) | Q(description__icontains=value)
+		elif key == 'type':
+		    q = q | Q(type__iexact=value)
+		else:
+		    raise RuntimeError, 'do not understand feed query: %s' % key
+	    qs = qs.filter(q)
 
-        if len(rules['require']):
-            for key, value in rules['require']:
-                if key == 'token':
-                    qs = qs.filter(Q(name__icontains=value) | Q(description__icontains=value))
-                elif key == 'type':
-                    qs = qs.filter(type__iexact=value)
-                else:
-                    raise RuntimeError, 'do not understand feed requirement: %s' % key
+	if len(rules['require']):
+	    for key, value in rules['require']:
+		if key == 'token':
+		    qs = qs.filter(Q(name__icontains=value) | Q(description__icontains=value))
+		elif key == 'type':
+		    qs = qs.filter(type__iexact=value)
+		else:
+		    raise RuntimeError, 'do not understand feed requirement: %s' % key
 
-        if len(rules['exclude']):
-            for key, value in rules['exclude']:
-                if key == 'token':
-                    qs = qs.exclude(Q(name__icontains=value) | Q(description__icontains=value))
-                elif key == 'type':
-                    qs = qs.exclude(type__iexact=value)
-                else:
-                    raise RuntimeError, 'do not understand feed exclusion: %s' % key
+	if len(rules['exclude']):
+	    for key, value in rules['exclude']:
+		if key == 'token':
+		    qs = qs.exclude(Q(name__icontains=value) | Q(description__icontains=value))
+		elif key == 'type':
+		    qs = qs.exclude(type__iexact=value)
+		else:
+		    raise RuntimeError, 'do not understand feed exclusion: %s' % key
 
     # slice it
     qs = qs[:slicesize]
@@ -217,12 +217,12 @@ def generate(request, mk, *args, **kwargs):
 
     return HttpResponse(feed.writeString('UTF-8'), mimetype='application/atom+xml')
 
-# TBD TO BE DONE - 
+# TBD TO BE DONE -
 # DOES THE FEED GENERATION BELONG HERE?  SHOULD IT NOT BE SPLIT INTO LIST-OF-ITEMS GENERATION *AND* FEED CREATION *AND* RESPONSE
 # MOST IMPORTANTLY: DOES IT USE REPLICATE THE LOGIC OF
 # VALIDATE_AGAINST() RE: EMBARGOES, ETC...  CAN WE MERGE/COLLATE THE
 # FUNCTIONALITY TO REMOVE REPLICATION?
-# SHOULD VALIDATE_AGAINST BECOME VALIDATE_RELATIONSHIP?  
+# SHOULD VALIDATE_AGAINST BECOME VALIDATE_RELATIONSHIP?
 # IS THERE YET NO NOT:RELATION TESTING FOR ITEM FETCHES?
 # BREAK SLICESIZE OUT INTO A SETTING?  EVENTUALLY MAKE IT SINCE-LAST-ACCESS BASED RETREIVAL?
 

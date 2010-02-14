@@ -23,15 +23,15 @@ import views as get
 from pymine.views import REST_NOAUTH
 
 urlpatterns = patterns('',
-                       (r'^n/(?P<suffix>.+)$',
-                        REST_NOAUTH, { 'GET': get.redirect_vurlname }),
-                       (r'^m$',
-                        REST_NOAUTH, { 'POST': get.field_minekey }),
-                       (r'^k/(?P<vurlkey>[-_A-Za-z0-9]+)$',
-                        REST_NOAUTH, { 'GET': get.redirect_vurlkey }),
-                       (r'^i/(?P<vid>[1-9]\d*)$',
-                        REST_NOAUTH, { 'GET': get.redirect_vid }),
-                       (r'^(?P<minekey>[-_A-Za-z0-9]+=*)(/(.*))?$',
-                        REST_NOAUTH, { 'GET': get.read_minekey,
-                                       'POST': get.submit_minekey }),
-                       )
+		       (r'^n/(?P<suffix>.+)$',
+			REST_NOAUTH, { 'GET': get.redirect_vurlname }),
+		       (r'^m$',
+			REST_NOAUTH, { 'POST': get.field_minekey }),
+		       (r'^k/(?P<vurlkey>[-_A-Za-z0-9]+)$',
+			REST_NOAUTH, { 'GET': get.redirect_vurlkey }),
+		       (r'^i/(?P<vid>[1-9]\d*)$',
+			REST_NOAUTH, { 'GET': get.redirect_vid }),
+		       (r'^(?P<minekey>[-_A-Za-z0-9]+=*)(/(.*))?$',
+			REST_NOAUTH, { 'GET': get.read_minekey,
+				       'POST': get.submit_minekey }),
+		       )

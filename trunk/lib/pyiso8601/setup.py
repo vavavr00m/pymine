@@ -25,7 +25,7 @@ Changes
 0.1.3
 -----
 
-* Fixed the microsecond handling, the generated microsecond values were 
+* Fixed the microsecond handling, the generated microsecond values were
   way too small. Fixes issue 9.
 
 0.1.2
@@ -34,7 +34,7 @@ Changes
 * Adding ParseError to __all__ in iso8601 module, allows people to import it.
   Addresses issue 7.
 * Be a little more flexible when dealing with dates without leading zeroes.
-  This violates the spec a little, but handles more dates as seen in the 
+  This violates the spec a little, but handles more dates as seen in the
   field. Addresses issue 6.
 * Allow date/time separators other than T.
 

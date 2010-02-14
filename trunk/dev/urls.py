@@ -29,8 +29,8 @@ urlpatterns = patterns('',
 # ensure that any changes are made via the generator.
 
 urlpatterns += patterns('',
-                        (r'^home\.html$',
-                         HTTP_METHOD, { 'GET' : [ dev.render, 'dev/tbd.html' ], }),
-                        )
+			(r'^home\.html$',
+			 HTTP_METHOD, { 'GET' : [ dev.render, 'dev/tbd.html' ], }),
+			)
 
 ##################################################################

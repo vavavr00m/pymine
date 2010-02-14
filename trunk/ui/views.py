@@ -127,7 +127,7 @@ def read_thing(request, template, thyng, id, **kwargs):
     implements: GET /ui/read/vurl/(ID).html
     returns: ...
     """
-    s = api.read_thing(request, thyng, id) 
+    s = api.read_thing(request, thyng, id)
     return render_to_response(template, s)
 
 ##################################################################
@@ -168,7 +168,7 @@ def update_thing(request, template, thyng, id, **kwargs):
     implements: GET /ui/update/vurl/(ID).html
     returns: ...
     """
-    s = api.update_thing(request, thyng, id) 
+    s = api.update_thing(request, thyng, id)
     return render_to_response(template, s)
 
 ##################################################################

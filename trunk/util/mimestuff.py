@@ -29,57 +29,57 @@ class lookup:
     """
 
     __e2t = {
-        '.avi': 'video/x-msvideo',
-        '.css': 'text/css',
-        '.dcr': 'application/x-director',
-        '.gif': 'image/gif',
-        '.htm': 'text/html',
-        '.html': 'text/html',
-        '.ico': 'image/vnd.microsoft.icon',
-        '.jpeg': 'image/jpeg',
-        '.jpg': 'image/jpeg',
-        '.js': 'application/javascript',
-        '.json': 'application/json',
-        '.mov': 'video/quicktime',
-        '.pdf': 'application/pdf',
-        '.ps': 'application/postscript',
-        '.png': 'image/png',
-        '.ram': 'audio/x-pn-realaudio',
-        '.rm': 'application/vnd.rn-realmedia',
-        '.swf': 'application/x-shockwave-flash',
-        '.txt': 'text/plain',
-        }
+	'.avi': 'video/x-msvideo',
+	'.css': 'text/css',
+	'.dcr': 'application/x-director',
+	'.gif': 'image/gif',
+	'.htm': 'text/html',
+	'.html': 'text/html',
+	'.ico': 'image/vnd.microsoft.icon',
+	'.jpeg': 'image/jpeg',
+	'.jpg': 'image/jpeg',
+	'.js': 'application/javascript',
+	'.json': 'application/json',
+	'.mov': 'video/quicktime',
+	'.pdf': 'application/pdf',
+	'.ps': 'application/postscript',
+	'.png': 'image/png',
+	'.ram': 'audio/x-pn-realaudio',
+	'.rm': 'application/vnd.rn-realmedia',
+	'.swf': 'application/x-shockwave-flash',
+	'.txt': 'text/plain',
+	}
 
     __t2e = {}
 
     for e, t in __e2t.items():
-        __t2e[t] = e
+	__t2e[t] = e
 
     @staticmethod
     def guess_type(path):
-        """see mimetypes.guess_type()"""
-        head, tail = os.path.split(path)
-        base, ext = os.path.splitext(tail)
-        ext = ext.lower()
+	"""see mimetypes.guess_type()"""
+	head, tail = os.path.split(path)
+	base, ext = os.path.splitext(tail)
+	ext = ext.lower()
 
-        type = lookup.__e2t.get(ext, None)
-        enc = None
-        if not type:
-            type, enc = mimetypes.guess_type(path)
-        if not type:
-            type = 'application/octet-stream'
-            enc = None
-        return (type, enc)
+	type = lookup.__e2t.get(ext, None)
+	enc = None
+	if not type:
+	    type, enc = mimetypes.guess_type(path)
+	if not type:
+	    type = 'application/octet-stream'
+	    enc = None
+	return (type, enc)
 
     @staticmethod
     def guess_extension(type):
-        """see mimetypes.guess_extension()"""
-        ext = lookup.__t2e.get(type, None)
-        if not ext:
-            ext = mimetypes.guess_extension(type)
-        if not ext:
-            ext = '.dat'
-        return ext
+	"""see mimetypes.guess_extension()"""
+	ext = lookup.__t2e.get(type, None)
+	if not ext:
+	    ext = mimetypes.guess_extension(type)
+	if not ext:
+	    ext = '.dat'
+	return ext
 
 if __name__ == '__main__':
     print lookup.guess_type('1.txt')

@@ -67,7 +67,6 @@ def REST_NOAUTH(request, *args, **kwargs):
     el.close()
     return response
 
-
 ##################################################################
 
 @login_required()
@@ -154,7 +153,7 @@ def API_CALL(request, *args, **kwargs):
 
 ## rest: GET /
 ## function: root_mine
-## declared args: 
+## declared args:
 def root_mine(request, *args, **kwargs):
     """root_mine() returns ..."""
     s = {}
@@ -162,14 +161,14 @@ def root_mine(request, *args, **kwargs):
 
 ## rest: GET /favicon.ico
 ## function: root_favicon
-## declared args: 
+## declared args:
 def root_favicon(request, *args, **kwargs):
     """root_favicon() returns ..."""
     return handle_pub(request, 'images/favicon.ico', *args, **kwargs)
 
 ## rest: GET /pub/
 ## function: root_pub
-## declared args: 
+## declared args:
 def root_pub(request, *args, **kwargs):
     """root_pub() returns ..."""
     return handle_pub(request, '', *args, **kwargs)

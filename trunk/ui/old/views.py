@@ -36,7 +36,7 @@ def create_comment(request, iid, *args, **kwargs):
 
 ## rest: GET /ui/create/item.html
 ## function: create_item
-## declared args: 
+## declared args:
 def create_item(request, *args, **kwargs):
     """create_item() returns ..."""
     s = {}
@@ -44,7 +44,7 @@ def create_item(request, *args, **kwargs):
 
 ## rest: GET /ui/create/relation.html
 ## function: create_relation
-## declared args: 
+## declared args:
 def create_relation(request, *args, **kwargs):
     """create_relation() returns ..."""
     s = {}
@@ -52,7 +52,7 @@ def create_relation(request, *args, **kwargs):
 
 ## rest: GET /ui/create/tag.html
 ## function: create_tag
-## declared args: 
+## declared args:
 def create_tag(request, *args, **kwargs):
     """create_tag() returns ..."""
     s = {}
@@ -60,7 +60,7 @@ def create_tag(request, *args, **kwargs):
 
 ## rest: GET /ui/create/text.html
 ## function: create_text
-## declared args: 
+## declared args:
 def create_text(request, *args, **kwargs):
     """create_text() returns ..."""
     s = {}
@@ -68,7 +68,7 @@ def create_text(request, *args, **kwargs):
 
 ## rest: GET /ui/create/vurl.html
 ## function: create_vurl
-## declared args: 
+## declared args:
 def create_vurl(request, *args, **kwargs):
     """create_vurl() returns ..."""
     s = {}
@@ -76,7 +76,7 @@ def create_vurl(request, *args, **kwargs):
 
 ## rest: GET /ui/dash/comments.html
 ## function: dash_comments
-## declared args: 
+## declared args:
 def dash_comments(request, *args, **kwargs):
     """dash_comments() returns ..."""
     iid = 0
@@ -86,7 +86,7 @@ def dash_comments(request, *args, **kwargs):
 
 ## rest: GET /ui/dash/items.html
 ## function: dash_items
-## declared args: 
+## declared args:
 def dash_items(request, *args, **kwargs):
     """dash_items() returns ..."""
     s = api.list_items(request, *args, **kwargs)
@@ -94,7 +94,7 @@ def dash_items(request, *args, **kwargs):
 
 ## rest: GET /ui/dash/relations.html
 ## function: dash_relations
-## declared args: 
+## declared args:
 def dash_relations(request, *args, **kwargs):
     """dash_relations() returns ..."""
     s = api.list_relations(request, *args, **kwargs)
@@ -102,7 +102,7 @@ def dash_relations(request, *args, **kwargs):
 
 ## rest: GET /ui/dash/search.html
 ## function: dash_search
-## declared args: 
+## declared args:
 def dash_search(request, *args, **kwargs):
     """dash_search() returns ..."""
     s = {}
@@ -110,7 +110,7 @@ def dash_search(request, *args, **kwargs):
 
 ## rest: GET /ui/dash/settings.html
 ## function: dash_settings
-## declared args: 
+## declared args:
 def dash_settings(request, *args, **kwargs):
     """dash_settings() returns ..."""
     s = {}
@@ -118,7 +118,7 @@ def dash_settings(request, *args, **kwargs):
 
 ## rest: GET /ui/dash/tags.html
 ## function: dash_tags
-## declared args: 
+## declared args:
 def dash_tags(request, *args, **kwargs):
     """dash_tags() returns ..."""
     s = api.list_tags(request, *args, **kwargs)
@@ -126,7 +126,7 @@ def dash_tags(request, *args, **kwargs):
 
 ## rest: GET /ui/dash/vurls.html
 ## function: dash_vurls
-## declared args: 
+## declared args:
 def dash_vurls(request, *args, **kwargs):
     """dash_vurls() returns ..."""
     s = api.list_vurls(request, *args, **kwargs)
@@ -183,7 +183,7 @@ def list_comments(request, iid, *args, **kwargs):
 
 ## rest: GET /ui/list/items.html
 ## function: list_items
-## declared args: 
+## declared args:
 def list_items(request, *args, **kwargs):
     """list_items() returns ..."""
     s = api.list_items(request, *args, **kwargs)
@@ -191,7 +191,7 @@ def list_items(request, *args, **kwargs):
 
 ## rest: GET /ui/list/relations.html
 ## function: list_relations
-## declared args: 
+## declared args:
 def list_relations(request, *args, **kwargs):
     """list_relations() returns ..."""
     s = api.list_relations(request, *args, **kwargs)
@@ -199,7 +199,7 @@ def list_relations(request, *args, **kwargs):
 
 ## rest: GET /ui/list/tags.html
 ## function: list_tags
-## declared args: 
+## declared args:
 def list_tags(request, *args, **kwargs):
     """list_tags() returns ..."""
     s = api.list_tags(request, *args, **kwargs)
@@ -207,7 +207,7 @@ def list_tags(request, *args, **kwargs):
 
 ## rest: GET /ui/list/vurls.html
 ## function: list_vurls
-## declared args: 
+## declared args:
 def list_vurls(request, *args, **kwargs):
     """list_vurls() returns ..."""
     s = api.list_vurls(request, *args, **kwargs)
@@ -255,7 +255,7 @@ def read_vurl(request, vid, *args, **kwargs):
 
 ## rest: GET /ui/search/comments.html
 ## function: search_comments
-## declared args: 
+## declared args:
 def search_comments(request, *args, **kwargs):
     """search_comments() returns ..."""
     s = {}
@@ -263,7 +263,7 @@ def search_comments(request, *args, **kwargs):
 
 ## rest: GET /ui/search/items.html
 ## function: search_items
-## declared args: 
+## declared args:
 def search_items(request, *args, **kwargs):
     """search_items() returns ..."""
     s = {}
@@ -271,7 +271,7 @@ def search_items(request, *args, **kwargs):
 
 ## rest: GET /ui/search/relations.html
 ## function: search_relations
-## declared args: 
+## declared args:
 def search_relations(request, *args, **kwargs):
     """search_relations() returns ..."""
     s = {}
@@ -279,7 +279,7 @@ def search_relations(request, *args, **kwargs):
 
 ## rest: GET /ui/search/tags.html
 ## function: search_tags
-## declared args: 
+## declared args:
 def search_tags(request, *args, **kwargs):
     """search_tags() returns ..."""
     s = {}
@@ -287,7 +287,7 @@ def search_tags(request, *args, **kwargs):
 
 ## rest: GET /ui/search/vurls.html
 ## function: search_vurls
-## declared args: 
+## declared args:
 def search_vurls(request, *args, **kwargs):
     """search_vurls() returns ..."""
     s = {}
@@ -335,7 +335,7 @@ def update_vurl(request, vid, *args, **kwargs):
 
 ## rest: GET /ui/version.html
 ## function: read_version
-## declared args: 
+## declared args:
 def read_version(request, *args, **kwargs):
     """read_version() returns ..."""
     s = api.read_version(request, *args, **kwargs)
