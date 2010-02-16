@@ -28,32 +28,42 @@ class lookup:
     with a small hardcoded cache of sanity
     """
 
+    # primary and *distinct* extensions
     __e2t = {
-	'.avi': 'video/x-msvideo',
-	'.css': 'text/css',
-	'.dcr': 'application/x-director',
-	'.gif': 'image/gif',
-	'.htm': 'text/html',
-	'.html': 'text/html',
-	'.ico': 'image/vnd.microsoft.icon',
-	'.jpeg': 'image/jpeg',
-	'.jpg': 'image/jpeg',
-	'.js': 'application/javascript',
-	'.json': 'application/json',
-	'.mov': 'video/quicktime',
-	'.pdf': 'application/pdf',
-	'.ps': 'application/postscript',
-	'.png': 'image/png',
-	'.ram': 'audio/x-pn-realaudio',
-	'.rm': 'application/vnd.rn-realmedia',
-	'.swf': 'application/x-shockwave-flash',
-	'.txt': 'text/plain',
+        '.avi':   'video/x-msvideo',
+        '.css':   'text/css',
+        '.dcr':   'application/x-director',
+        '.gif':   'image/gif',
+        '.html':  'text/html',
+        '.ico':   'image/vnd.microsoft.icon',
+        '.jpg':   'image/jpeg',
+        '.js':    'application/javascript',
+        '.json':  'application/json',
+        '.mov':   'video/quicktime',
+        '.pdf':   'application/pdf',
+        '.png':   'image/png',
+        '.ps':    'application/postscript',
+        '.ram':   'audio/x-pn-realaudio',
+        '.rm':    'application/vnd.rn-realmedia',
+        '.swf':   'application/x-shockwave-flash',
+        '.txt':   'text/plain',
 	}
 
+    # secondary and non-distinct extensions (ie: aliases)
+    __e2t_aliases = {
+        '.jpeg':  'image/jpeg',
+        '.htm':   'text/html',
+        }
+
+    # reverse translation table
     __t2e = {}
 
+    # reverse the translation table with primary names
     for e, t in __e2t.items():
 	__t2e[t] = e
+
+    # back up with the common aliases
+    __e2t.update(__e2t_aliases)
 
     @staticmethod
     def guess_type(path):

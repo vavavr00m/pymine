@@ -17,10 +17,12 @@
 
 """docstring goes here""" # :-)
 
+from django.conf import settings
 from django.contrib.auth.decorators import login_required
-from django.http import HttpResponse, HttpResponseRedirect, HttpResponseForbidden, HttpResponseNotAllowed, HttpResponsePermanentRedirect
+from django.http import HttpResponse, HttpResponseForbidden, HttpResponseNotAllowed, HttpResponseNotFound, HttpResponsePermanentRedirect, HttpResponseRedirect
 from django.shortcuts import render_to_response
 
+from api.minekey import MineKey
 from api.models import Vurl
 
 import django.utils.simplejson as json
@@ -153,7 +155,25 @@ def minekey_read(request, mk_hmac, mk_fid, mk_fversion, mk_iid, mk_depth, mk_typ
     implements: GET /key/(MK_HMAC)/(MK_FID)/(MK_FVERSION)/(MK_IID)/(MK_DEPTH)/(MK_TYPE).(MK_EXT)
     returns: ...
     """
-    pass
+
+    if mk_type not in ('data', 'icon'):
+        return HttpResponseNotFound('bad minekey method for GET')
+
+    mk = MineKey(hmac=mk_hmac, 
+                 fid=mk_fid, 
+                 fversion=mk_fversion, 
+                 iid=mk_iid,
+                 depth=mk_depth,
+                 type=mk_type,
+                 ext=mk_ext)
+
+    try:
+        mk.validate()
+    except:
+        if settings.DEBUG: raise
+        return HttpResponseNotFound('bad minekey validation')
+
+    return HttpResponse( "%s is ok for %s" % (str(mk), mk_type) )
 
 ##################################################################
 
