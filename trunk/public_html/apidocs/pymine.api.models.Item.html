@@ -44,14 +44,26 @@
     
     
     <td>Method</td>
-    <td><a href="pymine.api.models.Item.html#item_size">item_size</a></td>
+    <td><a href="pymine.api.models.Item.html#get_data_size">get_data_size</a></td>
     <td><span>returns the size of the data file; if there is no file,</span></td>
   </tr><tr class="method">
     
     
     <td>Method</td>
-    <td><a href="pymine.api.models.Item.html#item_type">item_type</a></td>
+    <td><a href="pymine.api.models.Item.html#get_data_type">get_data_type</a></td>
     <td><span>if there is a declared item.type, it is returned;</span></td>
+  </tr><tr class="method">
+    
+    
+    <td>Method</td>
+    <td><a href="pymine.api.models.Item.html#get_icon_size">get_icon_size</a></td>
+    <td><span class="undocumented">Undocumented</span></td>
+  </tr><tr class="method">
+    
+    
+    <td>Method</td>
+    <td><a href="pymine.api.models.Item.html#get_icon_type">get_icon_type</a></td>
+    <td><span class="undocumented">Undocumented</span></td>
   </tr><tr class="method">
     
     
@@ -191,11 +203,11 @@ then that wins.</p>
 <p>if all else fails, it ends up as application/octet-stream<table class="fieldTable"></table></div>
         </div>
       </div><div class="function">
-        <a name="pymine.api.models.Item.item_size"></a>
-        <a name="item_size"></a>
+        <a name="pymine.api.models.Item.get_data_size"></a>
+        <a name="get_data_size"></a>
         <div class="functionHeader">
         
-        def item_size(self):
+        def get_data_size(self):
         
       </div>
         <div class="functionBody">
@@ -204,11 +216,11 @@ then that wins.</p>
 of self.description, or zero<table class="fieldTable"></table></div>
         </div>
       </div><div class="function">
-        <a name="pymine.api.models.Item.item_type"></a>
-        <a name="item_type"></a>
+        <a name="pymine.api.models.Item.get_data_type"></a>
+        <a name="get_data_type"></a>
         <div class="functionHeader">
         
-        def item_type(self):
+        def get_data_type(self):
         
       </div>
         <div class="functionBody">
@@ -216,6 +228,30 @@ of self.description, or zero<table class="fieldTable"></table></div>
           <div>if there is a declared item.type, it is returned; else if there is a 
 data file, return 'application/octet-stream'; else return 'text/html' and 
 assume the description is HTML<table class="fieldTable"></table></div>
+        </div>
+      </div><div class="function">
+        <a name="pymine.api.models.Item.get_icon_size"></a>
+        <a name="get_icon_size"></a>
+        <div class="functionHeader">
+        
+        def get_icon_size(self):
+        
+      </div>
+        <div class="functionBody">
+          
+          <div class="undocumented">Undocumented</div>
+        </div>
+      </div><div class="function">
+        <a name="pymine.api.models.Item.get_icon_type"></a>
+        <a name="get_icon_type"></a>
+        <div class="functionHeader">
+        
+        def get_icon_type(self):
+        
+      </div>
+        <div class="functionBody">
+          
+          <div class="undocumented">Undocumented</div>
         </div>
       </div><div class="function">
         <a name="pymine.api.models.Item.to_structure"></a>

@@ -1219,7 +1219,7 @@ class Item(AbstractThing):
 
 	return save_needed
 
-    def item_size(self):
+    def get_data_size(self):
 	"""
 	returns the size of the data file; if there is no file,
 	returns the size of self.description, or zero
@@ -1232,7 +1232,7 @@ class Item(AbstractThing):
 	else:
 	    return 0
 
-    def item_type(self):
+    def get_data_type(self):
 	"""
 	if there is a declared item.type, it is returned;
 	else if there is a data file, return 'application/octet-stream';
@@ -1246,13 +1246,23 @@ class Item(AbstractThing):
 	else:
 	    return 'text/html'
 
+    def get_icon_size(self):
+	"""
+	"""
+        return 0
+
+    def get_icon_type(self):
+	"""
+	"""
+        return 'image/png'
+
     def to_structure(self):
 	"""
 	"""
 	s = super(Item, self).to_structure()
 
-	s['itemType'] = self.item_type()
-	s['itemSize'] = self.item_size()
+	s['itemType'] = self.get_data_type()
+	s['itemSize'] = self.get_data_size()
 	if self.data:
 	    s['itemHasFile'] = 1
 	else:

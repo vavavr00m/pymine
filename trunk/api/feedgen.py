@@ -16,17 +16,3 @@
 ##
 
 """docstring goes here""" # :-)
-
-from django.conf import settings
-
-class Envelope(dict):
-    """
-    wrapper-class atop 'dict' to provide a few extra methods
-    """
-
-    def __init__(self, request, **kwargs):
-
-	self.update(kwargs)
-
-        if settings.DEBUG:
-            self['__mine_debug_enabled__'] = 1

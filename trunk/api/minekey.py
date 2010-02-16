@@ -19,6 +19,8 @@
 a minekey is the tuple of data necessary to access items in a mine
 """
 
+from api.models import Feed, Item
+
 import base64
 import hashlib
 import hmac
@@ -51,14 +53,15 @@ class MineKey:
 	request: request object for URL-generation purposes
 	"""
 
-	self.__depth = kwargs.get('depth', -1)
-	self.__fid = kwargs.get('fid', -1)
-	self.__fversion = kwargs.get('fversion', -1)
-	self.__iid = kwargs.get('iid', -1)
+	self.__depth = int(kwargs.get('depth', -1))
+	self.__fid = int(kwargs.get('fid', -1))
+	self.__fversion = int(kwargs.get('fversion', -1))
+	self.__iid = int(kwargs.get('iid', -1))
 	self.__type = kwargs.get('type', None)
 
 	self.__request = kwargs.get('request', None)
 	self.__hmac_supplied = kwargs.get('hmac', None)
+	self.__ext_supplied = kwargs.get('ext', None)
 	self.__item_cached = None
 	self.__feed_cached = None
 
@@ -105,7 +108,7 @@ class MineKey:
 	f = self.get_feed()
 
 	if f.version != self.__fversion:
-	    raise RuntimeError, errmsg("database feed version %d not equal to minekey feed version %d" % (f.version, self.__fversion))
+	    raise RuntimeError, errmsg("DB fversion %d not equal to MK fversion %d" % (f.version, self.__fversion))
 
 	hmac_key = '12345678901234567890123456789012'
 	hmac_pad = '________________________________'
@@ -148,9 +151,9 @@ class MineKey:
 	    i = self.get_item() # if None, something is wrong so let it barf
 
 	    if self.__type == 'data':
-		ext = mimestuff.lookup.guess_extension(i.data_type)
+		ext = mimestuff.lookup.guess_extension(i.get_data_type())
 	    elif self.__type == 'icon':
-		ext = mimestuff.lookup.guess_extension(i.icon_type)
+		ext = mimestuff.lookup.guess_extension(i.get_icon_type())
 	    elif self.__type == 'submit':
 		ext = '.cgi'
 
@@ -339,55 +342,26 @@ class MineKey:
 if __name__ == '__main__':
     foo = {
 	'type': 'data',
-	'fid': 42,
+	'fid': 2,
 	'fversion': 1,
-	'iid': 69,
+	'iid': 3,
 	'depth': 3,
 	}
 
     mk = MineKey(**foo)
-    print mk
-    print mk.key()
-    print mk.permalink()
+    print "1", mk
+    print "2", mk.key()
+    print "3", mk.permalink()
 
     x = mk.spawn_submit_self()
-    print x
-    print x.permalink()
+    print "4", x.key()
 
-    y = mk.spawn_iid(100)
-    print y
-    print y.permalink()
+    y = mk.spawn_iid(4)
+    print "5", y.key()
+    print "6", y.spawn_submit_self().key()
 
-    print y.spawn_submit_self()
 
-    print mk.rewrite_html('--<A HREF="/api/data/11">foo</A>--')
-    print mk.rewrite_html('--<A HREF="/api/icon/11">foo</A>--')
+    print "7", mk.rewrite_html('--<A HREF="/api/data/1">foo</A>--')
+    print "8", mk.rewrite_html('--<A HREF="/api/icon/2">foo</A>--')
+    print "9", mk.rewrite_html('--<A HREF="/api/submit/3">foo</A>--')
 
-    print mk.rewrite_html('--<A HREF="/api/data/12" >foo</A>--')
-    print mk.rewrite_html('--<A HREF="/api/icon/12" >foo</A>--')
-
-    print mk.rewrite_html('--<A HREF="/api/data/13/">foo</A>--')
-    print mk.rewrite_html('--<A HREF="/api/icon/13/">foo</A>--')
-
-    print mk.rewrite_html('--<A HREF="/api/data/14/bar">foo</A>--')
-    print mk.rewrite_html('--<A HREF="/api/icon/14/bar">foo</A>--')
-
-    print mk.rewrite_html('--<A HREF="/api/data/15/bar" >foo</A>--')
-    print mk.rewrite_html('--<A HREF="/api/icon/15/bar" >foo</A>--')
-
-    print mk.rewrite_html('--<A HREF="/api/data/16/bar" x>foo</A>--')
-    print mk.rewrite_html('--<A HREF="/api/icon/16/bar" x>foo</A>--')
-
-    print mk.rewrite_html('--<A HREF="/api/data/17/bar\' x>foo</A>--')
-    print mk.rewrite_html('--<A HREF="/api/icon/17/bar\' x>foo</A>--')
-
-    print mk.rewrite_html('--<A HREF="/API/DATA/18">FOO</A>--')
-    print mk.rewrite_html('--<A HREF="/API/ICON/18">FOO</A>--')
-
-    a = """
-<A HREF="/api/data/20/bar">foo</A>
-<A HREF="/api/data/21/bar">foo</A>
-<A HREF="/api/data/22/bar">foo</A>
-"""
-
-    print mk.rewrite_html(a)
