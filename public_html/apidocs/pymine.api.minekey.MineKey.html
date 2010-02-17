@@ -34,6 +34,12 @@
     <td>Method</td>
     <td><a href="pymine.api.minekey.MineKey.html#__init__">__init__</a></td>
     <td><span>Create a nu-format minekey.</span></td>
+  </tr><tr class="classmethod">
+    
+    
+    <td>Class Method</td>
+    <td><a href="pymine.api.minekey.MineKey.html#get_feed_minekey_for">get_feed_minekey_for</a></td>
+    <td><span>assuming 'feed' is a valid Feed object instance, return a</span></td>
   </tr><tr class="method">
     
     
@@ -45,9 +51,20 @@ format:</span></td>
     
     
     <td>Method</td>
+    <td><a href="pymine.api.minekey.MineKey.html#EMSG">EMSG</a></td>
+    <td><span>create a diag string to drop into an exception</span></td>
+  </tr><tr class="method">
+    
+    
+    <td>Method</td>
     <td><a href="pymine.api.minekey.MineKey.html#validate">validate</a></td>
-    <td><span>does a variety of sanity checks on self and throws a RuntimeError if 
-surprised</span></td>
+    <td><span>does a variety of sanity checks on self and throws a</span></td>
+  </tr><tr class="method">
+    
+    
+    <td>Method</td>
+    <td><a href="pymine.api.minekey.MineKey.html#get_hmac">get_hmac</a></td>
+    <td><span>computes and returns the hmac for this minekey</span></td>
   </tr><tr class="method">
     
     
@@ -61,6 +78,12 @@ minekey</span></td>
     <td>Method</td>
     <td><a href="pymine.api.minekey.MineKey.html#get_item">get_item</a></td>
     <td><span class="undocumented">Undocumented</span></td>
+  </tr><tr class="method">
+    
+    
+    <td>Method</td>
+    <td><a href="pymine.api.minekey.MineKey.html#get_ext">get_ext</a></td>
+    <td><span>return a viable extention for this key</span></td>
   </tr><tr class="method">
     
     
@@ -90,7 +113,7 @@ following format:</span></td>
     
     
     <td>Method</td>
-    <td><a href="pymine.api.minekey.MineKey.html#spawn_iid">spawn_iid</a></td>
+    <td><a href="pymine.api.minekey.MineKey.html#spawn_data">spawn_data</a></td>
     <td><span>from this minekey, spawn a new minekey object for the same</span></td>
   </tr><tr class="method">
     
@@ -108,8 +131,26 @@ following format:</span></td>
     
     
     <td>Method</td>
+    <td><a href="pymine.api.minekey.MineKey.html#spawn_submit">spawn_submit</a></td>
+    <td><span>from this minekey, spawn a new minekey object for comment</span></td>
+  </tr><tr class="method">
+    
+    
+    <td>Method</td>
     <td><a href="pymine.api.minekey.MineKey.html#spawn_submit_self">spawn_submit_self</a></td>
     <td><span>from this minekey, spawn a new minekey object for comment</span></td>
+  </tr><tr class="method">
+    
+    
+    <td>Method</td>
+    <td><a href="pymine.api.minekey.MineKey.html#access_check">access_check</a></td>
+    <td><span>checks the per-feed security policy and enforces it</span></td>
+  </tr><tr class="method">
+    
+    
+    <td>Method</td>
+    <td><a href="pymine.api.minekey.MineKey.html#response">response</a></td>
+    <td><span>returns the appropriate http response for this minekey</span></td>
   </tr><tr class="method">
     
     
@@ -130,17 +171,41 @@ following format:</span></td>
         <a name="__init__"></a>
         <div class="functionHeader">
         
-        def __init__(self, **kwargs):
+        def __init__(self, request, **kwargs):
         
       </div>
         <div class="functionBody">
           
           <div>Create a nu-format minekey.</p>
+<p>request: request object for URL-generation purposes</p>
 <p>kwargs include: type: one of ('data', 'icon', 'submit') fid: integer 
 feed id &gt; 0 fversion: integer feed version number &gt; 0 iid: integer 
 item id &gt;= 0 depth: integer depth &gt; 0 ext: regexp ^\w+$ hmac: hmac 
-against which to check this minekey request: request object for 
-URL-generation purposes<table class="fieldTable"></table></div>
+against which to check this minekey</p>
+<p>if either 'hmac' is supplied, or if kwargs[enforce_hmac_check] evaluates
+to True, a hmac test is performed; this option is provided to allow the 
+programmer to ENFORCE a hmac check, just in case something higher-up 
+permits code to slide through that sets hmac=None/False/0<table class="fieldTable"></table></div>
+        </div>
+      </div><div class="function">
+        <a name="pymine.api.minekey.MineKey.get_feed_minekey_for"></a>
+        <a name="get_feed_minekey_for"></a>
+        <div class="functionHeader">
+        @classmethod<br />
+        def get_feed_minekey_for(klass, request, feed):
+        
+      </div>
+        <div class="functionBody">
+          
+          <div>assuming 'feed' is a valid Feed object instance, return a minekey which 
+eventually will yield the ATOM feed for this Feed</p>
+<p>There once was a time when Feed objects were called 'Relations' because 
+they held data pertinent to the Relationship between a mine user and one of
+his subscribers; this concept seemed to the programmer to be distinct from 
+(say) the ATOM feeds that would be generated.</p>
+<p>However this terminology was deemed &quot;confusing&quot; by the 
+designers and so instead we have Feed objects (one thing) which generate 
+ATOM feeds (another thing entirely) - obvious, n'est-ce pas?<table class="fieldTable"></table></div>
         </div>
       </div><div class="function">
         <a name="pymine.api.minekey.MineKey.__str__"></a>
@@ -157,6 +222,18 @@ format:</p>
 <p>fid/fversion/iid/depth/type<table class="fieldTable"></table></div>
         </div>
       </div><div class="function">
+        <a name="pymine.api.minekey.MineKey.EMSG"></a>
+        <a name="EMSG"></a>
+        <div class="functionHeader">
+        
+        def EMSG(self, *args):
+        
+      </div>
+        <div class="functionBody">
+          
+          <div>create a diag string to drop into an exception<table class="fieldTable"></table></div>
+        </div>
+      </div><div class="function">
         <a name="pymine.api.minekey.MineKey.validate"></a>
         <a name="validate"></a>
         <div class="functionHeader">
@@ -167,11 +244,26 @@ format:</p>
         <div class="functionBody">
           
           <div>does a variety of sanity checks on self and throws a RuntimeError if 
-surprised</p>
-<p>returns the stripped hmac string</p>
-<p>for a minekey such as &quot;HASH/42/1/11/2/data.dat&quot; - the 
-validation covers everything from &quot;HASH&quot; to &quot;data&quot; 
+surprised; this does not enforce security checks (see access_check()) but 
+instead checks the plausible validity of the key itself.</p>
+<p>for a minekey such as &quot;HMAC/42/1/11/2/data.dat&quot; - the 
+validation covers everything from &quot;HMAC&quot; to &quot;data&quot; 
 inclusive; the trailing &quot;.dat&quot; is considered advisory.<table class="fieldTable"></table></div>
+        </div>
+      </div><div class="function">
+        <a name="pymine.api.minekey.MineKey.get_hmac"></a>
+        <a name="get_hmac"></a>
+        <div class="functionHeader">
+        
+        def get_hmac(self, enforce_hmac_check=False):
+        
+      </div>
+        <div class="functionBody">
+          
+          <div>computes and returns the hmac for this minekey</p>
+<p>if enforce_hmac_check evaluates as True (default False) then the 
+computed hmac is compared against the hmac declared at instantiation; if 
+there is a difference, an exception is thrown.<table class="fieldTable"></table></div>
         </div>
       </div><div class="function">
         <a name="pymine.api.minekey.MineKey.get_feed"></a>
@@ -199,6 +291,18 @@ minekey<table class="fieldTable"></table></div>
           <div class="undocumented">Undocumented</div>
         </div>
       </div><div class="function">
+        <a name="pymine.api.minekey.MineKey.get_ext"></a>
+        <a name="get_ext"></a>
+        <div class="functionHeader">
+        
+        def get_ext(self):
+        
+      </div>
+        <div class="functionBody">
+          
+          <div>return a viable extention for this key<table class="fieldTable"></table></div>
+        </div>
+      </div><div class="function">
         <a name="pymine.api.minekey.MineKey.key"></a>
         <a name="key"></a>
         <div class="functionHeader">
@@ -210,8 +314,9 @@ minekey<table class="fieldTable"></table></div>
           
           <div>validates, and then returns the minekey information WITH hmac, in the 
 following format:</p>
-<p>hmac/fid/fversion/iid/depth/type.ext</p>
-<p>...the central portion being generated by __str__()<table class="fieldTable"></table></div>
+<p>hmac/[fid/fversion/iid/depth/type].ext</p>
+<p>...the [central portion] being generated by __str__() and protected by 
+hmac<table class="fieldTable"></table></div>
         </div>
       </div><div class="function">
         <a name="pymine.api.minekey.MineKey.permalink"></a>
@@ -253,11 +358,11 @@ set in the minekey constructor, or in a parent thereof<table class="fieldTable">
 <p>if you do futz manually, remember to do minekey.validate()<table class="fieldTable"></table></div>
         </div>
       </div><div class="function">
-        <a name="pymine.api.minekey.MineKey.spawn_iid"></a>
-        <a name="spawn_iid"></a>
+        <a name="pymine.api.minekey.MineKey.spawn_data"></a>
+        <a name="spawn_data"></a>
         <div class="functionHeader">
         
-        def spawn_iid(self, iid):
+        def spawn_data(self, iid):
         
       </div>
         <div class="functionBody">
@@ -291,6 +396,19 @@ but for a different iid's icon, decrementing depth<table class="fieldTable"></ta
           <div>return spawn_icon for self<table class="fieldTable"></table></div>
         </div>
       </div><div class="function">
+        <a name="pymine.api.minekey.MineKey.spawn_submit"></a>
+        <a name="spawn_submit"></a>
+        <div class="functionHeader">
+        
+        def spawn_submit(self, iid):
+        
+      </div>
+        <div class="functionBody">
+          
+          <div>from this minekey, spawn a new minekey object for comment submission, 
+setting depth=1 if depth is currently legal<table class="fieldTable"></table></div>
+        </div>
+      </div><div class="function">
         <a name="pymine.api.minekey.MineKey.spawn_submit_self"></a>
         <a name="spawn_submit_self"></a>
         <div class="functionHeader">
@@ -302,6 +420,30 @@ but for a different iid's icon, decrementing depth<table class="fieldTable"></ta
           
           <div>from this minekey, spawn a new minekey object for comment submission, 
 setting depth=1 if depth is currently legal<table class="fieldTable"></table></div>
+        </div>
+      </div><div class="function">
+        <a name="pymine.api.minekey.MineKey.access_check"></a>
+        <a name="access_check"></a>
+        <div class="functionHeader">
+        
+        def access_check(self):
+        
+      </div>
+        <div class="functionBody">
+          
+          <div>checks the per-feed security policy and enforces it<table class="fieldTable"></table></div>
+        </div>
+      </div><div class="function">
+        <a name="pymine.api.minekey.MineKey.response"></a>
+        <a name="response"></a>
+        <div class="functionHeader">
+        
+        def response(self):
+        
+      </div>
+        <div class="functionBody">
+          
+          <div>returns the appropriate http response for this minekey<table class="fieldTable"></table></div>
         </div>
       </div><div class="function">
         <a name="pymine.api.minekey.MineKey.rewrite_html"></a>
@@ -320,7 +462,7 @@ HREF='/api/data/99/dummy.html' HREF=&quot;/api/data/99&quot;
 SRC=/api/icon/99/dummy.png SRC='/api/icon/99' 
 SRC=&quot;/api/icon/99/dummy.png&quot;</p>
 <p>...where 99 is an example iid; the rewriter replacing the 99 with the 
-results of self.spawn_iid(iid).permalink() - in other words a URL 
+results of self.spawn_data(iid).permalink() - in other words a URL 
 customised to retreive that item/iid with decremented depth.</p>
 <p>The rewriter tries to be semi-clever, but not very, alas; it does not 
 check that we are currently inside a &lt;TAG&gt; before rewriting such 
@@ -329,7 +471,7 @@ strings.  When BeautifulSoup comes in, that will change.</p>
 double-quote, the rewriter checks that the substring to be rewritten ends 
 with a corresponding quote; this is inadequate but should hope with 
 unbalanced quotation marks during development.</p>
-<p>if the URL does NOT begine with a quote characer, the rewriter ignores 
+<p>if the URL does NOT begin with a quote character, the rewriter ignores 
 what the last character of the matched string, irrespective of whether it 
 is a quote character or not.</p>
 <p>if any sanity-check fails, the rewriter simply does not rewrite the 
