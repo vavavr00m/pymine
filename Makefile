@@ -38,7 +38,7 @@ perms:
 	chmod 755 `find . -name "*.sh"`
 
 setup:
-	sh mine-setup.sh
+	sh tools/minesetup.sh
 	make perms
 
 hard-reset: clobber # brute-force rebuild from scratch

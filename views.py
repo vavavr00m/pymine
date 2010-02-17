@@ -19,8 +19,11 @@
 
 from django.conf import settings
 from django.contrib.auth.decorators import login_required
-from django.http import HttpResponse, HttpResponseForbidden, HttpResponseNotAllowed, HttpResponseNotFound, HttpResponsePermanentRedirect, HttpResponseRedirect
 from django.shortcuts import render_to_response
+
+from django.http import HttpResponse, HttpResponseForbidden, \
+    HttpResponseNotAllowed, HttpResponseNotFound, \
+    HttpResponsePermanentRedirect, HttpResponseRedirect
 
 from api.minekey import MineKey
 from api.models import Vurl
@@ -153,27 +156,27 @@ def minekey_read(request, mk_hmac, mk_fid, mk_fversion, mk_iid, mk_depth, mk_typ
     """
     arguments: request, mk_hmac, mk_fid, mk_fversion, mk_iid, mk_depth, mk_type, mk_ext, **kwargs
     implements: GET /key/(MK_HMAC)/(MK_FID)/(MK_FVERSION)/(MK_IID)/(MK_DEPTH)/(MK_TYPE).(MK_EXT)
-    returns: ...
+    returns: a suitable HttpResponse object
     """
 
     if mk_type not in ('data', 'icon'):
-        return HttpResponseNotFound('bad minekey method for GET')
-
-    mk = MineKey(hmac=mk_hmac, 
-                 fid=mk_fid, 
-                 fversion=mk_fversion, 
-                 iid=mk_iid,
-                 depth=mk_depth,
-                 type=mk_type,
-                 ext=mk_ext)
+	return HttpResponseNotFound('bad minekey method for GET')
 
     try:
-        mk.validate()
+        mk = MineKey(request, 
+                     hmac=mk_hmac, 
+                     fid=mk_fid, 
+                     fversion=mk_fversion, 
+                     iid=mk_iid, 
+                     depth=mk_depth, 
+                     type=mk_type, 
+                     ext=mk_ext,
+                     enforce_hmac_check=True)
     except:
-        if settings.DEBUG: raise
-        return HttpResponseNotFound('bad minekey validation')
+	if settings.DEBUG: raise
+	return HttpResponseNotFound('bad minekey validation')
 
-    return HttpResponse( "%s is ok for %s" % (str(mk), mk_type) )
+    return mk.response()
 
 ##################################################################
 
@@ -183,9 +186,27 @@ def minekey_submit(request, mk_hmac, mk_fid, mk_fversion, mk_iid, mk_depth, mk_t
     """
     arguments: request, mk_hmac, mk_fid, mk_fversion, mk_iid, mk_depth, mk_type, mk_ext, **kwargs
     implements: POST /key/(MK_HMAC)/(MK_FID)/(MK_FVERSION)/(MK_IID)/(MK_DEPTH)/(MK_TYPE).(MK_EXT)
-    returns: ...
+    returns: a suitable HttpResponse object
     """
-    pass
+
+    if mk_type not in ('submit'):
+	return HttpResponseNotFound('bad minekey method for POST')
+
+    try:
+        mk = MineKey(request, 
+                     hmac=mk_hmac, 
+                     fid=mk_fid, 
+                     fversion=mk_fversion, 
+                     iid=mk_iid, 
+                     depth=mk_depth, 
+                     type=mk_type, 
+                     ext=mk_ext,
+                     enforce_hmac_check=True)
+    except:
+	if settings.DEBUG: raise
+	return HttpResponseNotFound('bad minekey validation')
+
+    return mk.response()
 
 ##################################################################
 

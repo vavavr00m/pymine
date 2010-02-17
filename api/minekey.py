@@ -19,6 +19,10 @@
 a minekey is the tuple of data necessary to access items in a mine
 """
 
+from django.http import HttpResponse, HttpResponseForbidden, \
+    HttpResponseNotAllowed, HttpResponseNotFound, \
+    HttpResponsePermanentRedirect, HttpResponseRedirect
+
 from api.models import Feed, Item
 
 import base64
@@ -38,9 +42,11 @@ import util.mimestuff as mimestuff
 # hmac is base64_web with stripped "="
 
 class MineKey:
-    def __init__(self, **kwargs):
+    def __init__(self, request, **kwargs):
 	"""
 	Create a nu-format minekey.
+
+	request: request object for URL-generation purposes
 
 	kwargs include:
 	type: one of ('data', 'icon', 'submit')
@@ -50,8 +56,15 @@ class MineKey:
 	depth: integer depth > 0
 	ext: regexp ^\w+$
 	hmac: hmac against which to check this minekey
-	request: request object for URL-generation purposes
+
+	if either 'hmac' is supplied, or if kwargs[enforce_hmac_check]
+	evaluates to True, a hmac test is performed; this option is
+	provided to allow the programmer to ENFORCE a hmac check, just
+	in case something higher-up permits code to slide through that
+	sets hmac=None/False/0
 	"""
+
+	self.__request = request
 
 	self.__depth = int(kwargs.get('depth', -1))
 	self.__fid = int(kwargs.get('fid', -1))
@@ -59,11 +72,38 @@ class MineKey:
 	self.__iid = int(kwargs.get('iid', -1))
 	self.__type = kwargs.get('type', None)
 
-	self.__request = kwargs.get('request', None)
 	self.__hmac_supplied = kwargs.get('hmac', None)
 	self.__ext_supplied = kwargs.get('ext', None)
 	self.__item_cached = None
 	self.__feed_cached = None
+
+	self.validate()
+
+	enforce_hmac_check = kwargs.get('enforce_hmac_check', False) or self.__hmac_supplied
+
+	if enforce_hmac_check:
+	    self.get_hmac(True)
+
+    @classmethod
+    def get_feed_minekey_for(klass, request, feed):
+	"""
+	assuming 'feed' is a valid Feed object instance, return a
+	minekey which eventually will yield the ATOM feed for this
+	Feed
+
+	There once was a time when Feed objects were called
+	'Relations' because they held data pertinent to the
+	Relationship between a mine user and one of his subscribers;
+	this concept seemed to the programmer to be distinct from
+	(say) the ATOM feeds that would be generated.
+
+	However this terminology was deemed "confusing" by the
+	designers and so instead we have Feed objects (one thing)
+	which generate ATOM feeds (another thing entirely) - obvious,
+	n'est-ce pas?
+	"""
+
+	return MineKey(request, type='data', fid=feed.id, fversion=feed.version, iid=0, depth=3)
 
     def __str__(self):
 	"""
@@ -79,36 +119,43 @@ class MineKey:
 	    self.__type,
 	    )
 
+    def EMSG(self, *args):
+	"""create a diag string to drop into an exception"""
+	msg = " ".join([ str(x) for x in args ])
+	return "MineKey error: %s [%s]" % (msg, str(self))
+
     def validate(self):
 	"""
-	does a variety of sanity checks on self and throws a RuntimeError if surprised
+	does a variety of sanity checks on self and throws a
+	RuntimeError if surprised; this does not enforce security
+	checks (see access_check()) but instead checks the plausible
+	validity of the key itself.
 
-	returns the stripped hmac string
-
-	for a minekey such as "HASH/42/1/11/2/data.dat" - the
-	validation covers everything from "HASH" to "data" inclusive;
+	for a minekey such as "HMAC/42/1/11/2/data.dat" - the
+	validation covers everything from "HMAC" to "data" inclusive;
 	the trailing ".dat" is considered advisory.
 	"""
 
-	def errmsg(x):
-	    """ """
-	    return "MineKey fails validation: %s [%s]" % (x, str(self))
-
 	if self.__fid <= 0:
-	    raise RuntimeError, errmsg('fid <= 0')
+	    raise RuntimeError, self.EMSG('fid <= 0')
 	if self.__fversion <= 0:
-	    raise RuntimeError, errmsg('fversion <= 0')
+	    raise RuntimeError, self.EMSG('fversion <= 0')
 	if self.__iid < 0:
-	    raise RuntimeError, errmsg('iid < 0')
+	    raise RuntimeError, self.EMSG('iid < 0')
 	if self.__depth not in (3, 2, 1, 0):
-	    raise RuntimeError, errmsg('depth not in bounds')
+	    raise RuntimeError, self.EMSG('depth not in bounds')
 	if self.__type not in ('data', 'icon', 'submit'):
-	    raise RuntimeError, errmsg('type not in permitted set')
+	    raise RuntimeError, self.EMSG('type not in permitted set')
 
-	f = self.get_feed()
+    def get_hmac(self, enforce_hmac_check=False):
+	"""
+	computes and returns the hmac for this minekey
 
-	if f.version != self.__fversion:
-	    raise RuntimeError, errmsg("DB fversion %d not equal to MK fversion %d" % (f.version, self.__fversion))
+	if enforce_hmac_check evaluates as True (default False) then
+	the computed hmac is compared against the hmac declared at
+	instantiation; if there is a difference, an exception is
+	thrown.
+	"""
 
 	hmac_key = '12345678901234567890123456789012'
 	hmac_pad = '________________________________'
@@ -116,10 +163,10 @@ class MineKey:
 	h.update(hmac_pad)
 	hash = base64.urlsafe_b64encode(h.digest()).rstrip('=')
 
-	if self.__hmac_supplied:
+	if enforce_hmac_check:
 	    if self.__hmac_supplied != hash:
-		raise RuntimeError, errmsg('computed hmac "%s" does not match supplied hmac "%s"' %
-					   (hash, self.__hmac_supplied))
+		raise RuntimeError, self.EMSG('computed hmac "%s" != supplied hmac "%s"' %
+					      (hash, self.__hmac_supplied))
 	return hash
 
     def get_feed(self):
@@ -134,33 +181,42 @@ class MineKey:
 		self.__item_cached = Item.get(id=self.__iid)
 	return self.__item_cached
 
+    def get_ext(self):
+	"""return a viable extention for this key"""
+
+	if self.__type == 'submit':
+	    return '.post'
+
+	elif self.__type == 'data':
+	    if self.__iid == 0:
+		return ".feed"
+	    else:
+		i = self.get_item()
+		return mimestuff.lookup.guess_extension(i.get_data_type()) or ".dat"
+
+	elif self.__type == 'icon':
+	    if self.__iid == 0:
+		return ".png"  # TBD: HAVE AN ICON FOR THE USER/MINE OWNER???
+	    else:
+		i = self.get_item()
+		return mimestuff.lookup.guess_extension(i.get_icon_type()) or ".dat"
+	else:
+	    return ".this-cant-happen"
+
     def key(self):
 	"""
 	validates, and then returns the minekey information WITH hmac, in the following format:
 
-	hmac/fid/fversion/iid/depth/type.ext
+	hmac/[fid/fversion/iid/depth/type].ext
 
-	...the central portion being generated by __str__()
+	...the [central portion] being generated by __str__() and protected by hmac
 	"""
 
-	hash = self.validate()
+	self.validate()
+	hmac = self.get_hmac()
+	ext = self.get_ext()
 
-	if self.__iid == 0:
-	    ext = 'feed'
-	else:
-	    i = self.get_item() # if None, something is wrong so let it barf
-
-	    if self.__type == 'data':
-		ext = mimestuff.lookup.guess_extension(i.get_data_type())
-	    elif self.__type == 'icon':
-		ext = mimestuff.lookup.guess_extension(i.get_icon_type())
-	    elif self.__type == 'submit':
-		ext = '.cgi'
-
-	if not ext:
-	    ext = '.dat'
-
-	return "%s/%s%s" % (hash, str(self), ext)
+	return "%s/%s%s" % (hmac, str(self), ext)
 
     def permalink(self):
 	"""
@@ -202,13 +258,11 @@ class MineKey:
 	    'fversion': self.__fversion,
 	    'iid': self.__iid,
 	    'type': self.__type,
-
-	    'request': self.__request,
 	    }
 
-	return MineKey(**foo)
+	return MineKey(self.__request, **foo)
 
-    def spawn_iid(self, iid):
+    def spawn_data(self, iid):
 	"""
 	from this minekey, spawn a new minekey object for the same
 	fid/fversion, but for a different iid, decrementing depth
@@ -248,7 +302,7 @@ class MineKey:
 	"""
 	return self.spawn_icon(self.__iid)
 
-    def spawn_submit_self(self):
+    def spawn_submit(self, iid):
 	"""
 	from this minekey, spawn a new minekey object for comment
 	submission, setting depth=1 if depth is currently legal
@@ -262,21 +316,61 @@ class MineKey:
 
 	retval = self.clone()
 	retval.__type = 'submit'
+	retval.__iid = iid
 	retval.__depth = 1 # forced to 1, hence check above
 	retval.validate() # if we futz with it, we must validate
 	return retval
 
+    def spawn_submit_self(self):
+	"""
+	from this minekey, spawn a new minekey object for comment
+	submission, setting depth=1 if depth is currently legal
+	"""
+	return self.spawn_submit(self.__iid)
+
+    def access_check(self):
+	"""
+	checks the per-feed security policy and enforces it
+	"""
+
+        # check ToD against global embargo time
+
+        # check against permitted global IP addresses (WHITELIST/BLACKLIST)
+
+	# check if feed exists / is deleted
+	f = self.get_feed()
+
+	# check feed version
+	if f.version != self.__fversion:
+	    raise RuntimeError, self.EMSG("DB fversion %d not equal to MK fversion %d for %d" %
+				       (f.version,
+					self.__fversion,
+					self.__fid))
+
+        # check ToD against feed embargo time
+
+        # check against permitted feed IP addresses
+
+        # if DATA&&IID>0 or ICON&&IID>0
+        ## check if item exists / is deleted
+        ## check if the item is shared sufficiently enough
+	## check if not: restriction applies on Item
+        ## check if feed has exclude:<Tag> pertinent to the Item
+
+    def response(self):
+	"""returns the appropriate http response for this minekey"""
+	self.access_check() # abort if the access checks fail
+	return HttpResponse( "woot!" )
+
+    ##################################################################
+    ##################################################################
     ##################################################################
 
     # THIS NEEDS A REWRITE
     # THIS NEEDS A REWRITE
     # THIS NEEDS A REWRITE
 
-    html_re = re.compile(r"""(SRC|HREF)\s*=\s*(['"]?)/api/(DATA|ICON)/(\d+)([^\s\>]*)""", re.IGNORECASE)
-
-    # THIS NEEDS A REWRITE
-    # THIS NEEDS A REWRITE
-    # THIS NEEDS A REWRITE
+    html_re = re.compile(r"""(SRC|HREF)\s*=\s*(['"]?)/api/(DATA|ICON|SUBMIT)/(\d+)([^\s\>]*)""", re.IGNORECASE)
 
     def rewrite_html(self, html):
 	"""
@@ -292,7 +386,7 @@ class MineKey:
 	SRC="/api/icon/99/dummy.png"
 
 	...where 99 is an example iid; the rewriter replacing the 99
-	with the results of self.spawn_iid(iid).permalink() - in other
+	with the results of self.spawn_data(iid).permalink() - in other
 	words a URL customised to retreive that item/iid with
 	decremented depth.
 
@@ -307,7 +401,7 @@ class MineKey:
 	inadequate but should hope with unbalanced quotation marks
 	during development.
 
-	if the URL does NOT begine with a quote characer, the rewriter
+	if the URL does NOT begin with a quote character, the rewriter
 	ignores what the last character of the matched string,
 	irrespective of whether it is a quote character or not.
 
@@ -327,9 +421,11 @@ class MineKey:
 		return mo.group(0)
 
 	    if what == 'data':
-		rewrite = self.spawn_iid(iid).permalink()
+		rewrite = self.spawn_data(iid).permalink()
 	    elif what == 'icon':
 		rewrite = self.spawn_icon(iid).permalink()
+	    elif what == 'submit':
+		rewrite = self.spawn_submit(iid).permalink()
 	    else:
 		return mo.group(0)
 
@@ -337,31 +433,48 @@ class MineKey:
 
 	return self.html_re.sub(rewrite_link, html)
 
-##################################################################
+    ##################################################################
+    ##################################################################
+    ##################################################################
 
 if __name__ == '__main__':
     foo = {
 	'type': 'data',
 	'fid': 2,
 	'fversion': 1,
-	'iid': 3,
+	'iid': 0,
 	'depth': 3,
 	}
 
-    mk = MineKey(**foo)
-    print "1", mk
-    print "2", mk.key()
-    print "3", mk.permalink()
+    mk = MineKey(None, **foo)
+    print "1a", mk
+    print "1b", mk.key()
+    print "1c", mk.permalink()
 
     x = mk.spawn_submit_self()
-    print "4", x.key()
+    print "2", x.key()
 
-    y = mk.spawn_iid(4)
-    print "5", y.key()
-    print "6", y.spawn_submit_self().key()
+    y = mk.spawn_data(4)
+    print "3", y.key()
 
+    print "4", y.spawn_submit_self().key()
 
-    print "7", mk.rewrite_html('--<A HREF="/api/data/1">foo</A>--')
+    print "5a", mk.rewrite_html('--<A HREF=/api/data/1.jpg/foo>foo</A>--')
+    print "5b", mk.rewrite_html('--<A HREF=/api/data/1.jpg/foo>foo</A>--')
+    print "5c", mk.rewrite_html('--<A HREF=/api/data/1..../foo>foo</A>--')
+    print "5d", mk.rewrite_html('--<A HREF=/api/data/1..../foo>foo</A>--')
+    print "5e", mk.rewrite_html('--<A HREF=/api/data/1..../foo>foo</A>--')
+    print "5f", mk.rewrite_html('--<A HREF=/api/data/1..../foo>foo</A>--')
+
+    print "7a", mk.rewrite_html('--<A HREF="/api/data/1">foo</A>--')
+    print "7b", mk.rewrite_html('--<A HREF="/api/data/1.pdf">foo</A>--')
+    print "7c", mk.rewrite_html('--<A HREF="/api/data/1.jpg">foo</A>--')
+
     print "8", mk.rewrite_html('--<A HREF="/api/icon/2">foo</A>--')
+
     print "9", mk.rewrite_html('--<A HREF="/api/submit/3">foo</A>--')
+
+    print "10a", mk.rewrite_html('--<A HREF="/api/data/0">foo</A>--')
+    print "10b", mk.rewrite_html('--<A HREF="/api/icon/0">foo</A>--')
+    print "10c", mk.rewrite_html('--<A HREF="/api/submit/0">foo</A>--')
 
