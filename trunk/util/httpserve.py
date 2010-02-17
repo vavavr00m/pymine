@@ -46,7 +46,7 @@ performance issues".
 """
 
 from django.conf import settings
-from django.http import Http404, HttpResponse, HttpResponseRedirect
+from django.http import HttpResponseNotFound, HttpResponse, HttpResponseRedirect
 from django.core.servers.basehttp import FileWrapper
 from django.shortcuts import render_to_response
 import os
@@ -113,7 +113,7 @@ def cleanpath(old):
 ##################################################################
 
 def httpserve_error(url_path):
-    return Http404(url_path)
+    return HttpResponseNotFound(url_path)
 
 ##################################################################
 

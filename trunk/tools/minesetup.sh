@@ -4,6 +4,8 @@ echo ""
 echo setting up pymine in `pwd` via $0 $@
 echo ""
 
+MINECONFIG=./tools/mineconfig.py
+
 DJANGO() {
     parent=`( cd .. ; pwd )` # horrible kludge but it saves typing
     env PYTHONPATH=$PYTHONPATH:$parent DJANGO_SETTINGS_MODULE=pymine.settings "$@"
@@ -111,7 +113,8 @@ do
 	MINE_USER_PASSWORD=""
     fi
 done
-DJANGO ./mineconfig.py create-user "$MINE_USER" "$MINE_USER_PASSWORD"
+
+DJANGO $MINECONFIG create-user "$MINE_USER" "$MINE_USER_PASSWORD"
 
 echo ""
 echo "Enter a password for SUPER USER '$MINE_SUPERUSER'"
@@ -119,7 +122,7 @@ python manage.py createsuperuser --username $MINE_SUPERUSER --email $MINE_USER_E
 
 echo ""
 echo setting up crypto seeds and keys...
-DJANGO ./mineconfig.py init-crypto || exit 1
+DJANGO $MINECONFIG init-crypto || exit 1
 
 echo ""
 echo done.
