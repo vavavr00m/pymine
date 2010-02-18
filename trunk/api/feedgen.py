@@ -16,3 +16,9 @@
 ##
 
 """docstring goes here""" # :-)
+
+class render_queryset_as_atom(request, qs):
+    pass
+
+class generate_feed_queryset(request, for_whom):
+    pass
