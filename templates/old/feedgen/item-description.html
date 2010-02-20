@@ -1,0 +1,54 @@
+<!-- METAINFO -->
+size: {{size}} bytes <br/>
+type: {{content_type}} <br/>
+description:<br/>
+<hr/>
+<div>
+{{description|safe}}
+</div>
+<hr/>
+
+<!-- RENDERING -->
+{% if has_file %}
+rendering:<br/>
+{% ifequal type 'image/jpeg' %}
+<IMG SRC='{{link}}' />
+{% else %} 
+{% ifequal type 'image/gif' %}
+<IMG SRC='{{link}}' />
+{% else %} 
+{% ifequal type 'image/png' %}
+<IMG SRC='{{link}}' />
+{% else %} 
+{% ifequal type 'audio/mpeg' %}
+<div id='mediaplayer{{id}}'></div>
+<script type='text/javascript' src='{{http_path}}pub/mediaplayer/swfobject.js'></script>
+<script type='text/javascript'>
+  var so = new SWFObject('{{http_path}}pub/mediaplayer/player.swf','ply','470','20','9','#ffffff');
+  so.addParam('allowfullscreen','true');
+  so.addParam('allowscriptaccess','always');
+  so.addParam('wmode','opaque');
+  so.addVariable('file','{{link}}/{{filename}}');
+  so.write('mediaplayer{{id}}');
+</script></p>
+{% else %} 
+(i don't yet know how to render {{type}} inside a feed)
+{% endifequal %}
+{% endifequal %}
+{% endifequal %}
+{% endifequal %}
+<hr/>
+{% endif %}
+
+<!-- COMMENTING -->
+comment title and body:<br/>
+<form method='POST' action='{{comment_url}}'>
+<input type='hidden' name='redirect_success' value='about:blank'>
+<input type='hidden' name='format' value='rdr'>
+<input name='commentTitle' value='' size='66' />
+<br/>
+<textarea name='commentBody' cols='66' rows='4'></textarea>
+<br/>
+<input type='submit' name='submit' value='submit' />
+<input type='reset' name='reset' value='reset' />
+</form>
