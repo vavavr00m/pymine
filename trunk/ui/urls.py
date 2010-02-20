@@ -107,7 +107,7 @@ urlpatterns += patterns('',
 			(r'^update/vurl/(?P<id>[1-9]\d*)\.html$',
 			 HTTP_METHOD, { 'GET' : [ ui.update_thing, 'update/vurl.html', Vurl ], }),
 			(r'^version\.html$',
-			 HTTP_METHOD, { 'GET' : [ ui.version, 'version.html' ], }),
+			 HTTP_METHOD, { 'GET' : [ ui.version, 'read/version.html' ], }),
 			)
 
 ##################################################################

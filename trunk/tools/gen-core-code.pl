@@ -356,7 +356,7 @@ ui  GET  /ui/update/item/(ID).html      update-thing    template:'update/item.ht
 ui  GET  /ui/update/tag/(ID).html       update-thing    template:'update/tag.html'       thyng:Tag
 ui  GET  /ui/update/vurl/(ID).html      update-thing    template:'update/vurl.html'      thyng:Vurl
 
-ui  GET  /ui/version.html               version         template:'version.html'
+ui  GET  /ui/version.html               version         template:'read/version.html'
 
 ##################################################################
 
