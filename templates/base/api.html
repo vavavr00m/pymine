@@ -5,24 +5,22 @@
 <h3>{% block heading %}generic heading{% endblock %}</h3>
 
 {% if result %}
-{% block listing_iterate_results %}
-<ul>
-{% for key, value in result.items %}<li>{{key}}: {{value}}</li>{% endfor %}
-</ul>
-{% endblock %} <!-- listing_iterate_results -->
+	{% block listing_iterate_results %}
+	<ul>
+	{% for key, value in result.items %}<li>{{key}}: {{value}}</li>{% endfor %}
+	</ul>
+	{% endblock %} <!-- listing_iterate_results -->
 {% else %}
-no result returned by api call
+	no 'result' returned by API call
 {% endif %}
 {% endblock %} <!-- content -->
 
 {% block content_error_status %}
-{% if exit %}<p class="error">omg wtf bbq?</p>{% endif %}
+	{% if exit %}<p class="error">omg wtf bbq?</p>{% endif %}
 {% endblock %}
 
 {% block envelope %}
 <ul>
-<li>debug info</li>
-<li>result: {{result}}</li>
-<li>exit: {{exit}}</li>
+<li>debug info here</li>
 </ul>
 {% endblock %} <!-- envelope -->

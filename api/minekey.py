@@ -103,7 +103,12 @@ class MineKey:
 	n'est-ce pas?
 	"""
 
-	return MineKey(request, type='data', fid=feed.id, fversion=feed.version, iid=0, depth=3)
+	return MineKey(request,
+		       type='data',
+		       fid=feed.id,
+		       fversion=feed.version,
+		       iid=0,
+		       depth=3)
 
     def __str__(self):
 	"""
@@ -119,7 +124,7 @@ class MineKey:
 	    self.__type,
 	    )
 
-    def EMSG(self, *args):
+    def mkerr(self, *args):
 	"""create a diag string to drop into an exception"""
 	msg = " ".join([ str(x) for x in args ])
 	return "MineKey error: %s [%s]" % (msg, str(self))
@@ -137,15 +142,15 @@ class MineKey:
 	"""
 
 	if self.__fid <= 0:
-	    raise RuntimeError, self.EMSG('fid <= 0')
+	    raise RuntimeError, self.mkerr('fid <= 0')
 	if self.__fversion <= 0:
-	    raise RuntimeError, self.EMSG('fversion <= 0')
+	    raise RuntimeError, self.mkerr('fversion <= 0')
 	if self.__iid < 0:
-	    raise RuntimeError, self.EMSG('iid < 0')
+	    raise RuntimeError, self.mkerr('iid < 0')
 	if self.__depth not in (3, 2, 1, 0):
-	    raise RuntimeError, self.EMSG('depth not in bounds')
+	    raise RuntimeError, self.mkerr('depth not in bounds')
 	if self.__type not in ('data', 'icon', 'submit'):
-	    raise RuntimeError, self.EMSG('type not in permitted set')
+	    raise RuntimeError, self.mkerr('type not in permitted set')
 
     def get_hmac(self, enforce_hmac_check=False):
 	"""
@@ -165,7 +170,7 @@ class MineKey:
 
 	if enforce_hmac_check:
 	    if self.__hmac_supplied != hash:
-		raise RuntimeError, self.EMSG('computed hmac "%s" != supplied hmac "%s"' %
+		raise RuntimeError, self.mkerr('computed hmac "%s" != supplied hmac "%s"' %
 					      (hash, self.__hmac_supplied))
 	return hash
 
@@ -333,29 +338,29 @@ class MineKey:
 	checks the per-feed security policy and enforces it
 	"""
 
-        # check ToD against global embargo time
+	# check ToD against global embargo time
 
-        # check against permitted global IP addresses (WHITELIST/BLACKLIST)
+	# check against permitted global IP addresses (WHITELIST/BLACKLIST)
 
 	# check if feed exists / is deleted
 	f = self.get_feed()
 
 	# check feed version
 	if f.version != self.__fversion:
-	    raise RuntimeError, self.EMSG("DB fversion %d not equal to MK fversion %d for %d" %
-				       (f.version,
-					self.__fversion,
-					self.__fid))
+	    raise RuntimeError, self.mkerr("DB fversion %d not equal to MK fversion %d for %d" %
+					   (f.version,
+					    self.__fversion,
+					    self.__fid))
 
-        # check ToD against feed embargo time
+	# check ToD against feed embargo time
 
-        # check against permitted feed IP addresses
+	# check against permitted feed IP addresses (WHITELIST)
 
-        # if DATA&&IID>0 or ICON&&IID>0
-        ## check if item exists / is deleted
-        ## check if the item is shared sufficiently enough
+	# if DATA&&IID>0 or ICON&&IID>0
+	## check if item exists / is deleted
+	## check if the item is shared sufficiently enough
 	## check if not: restriction applies on Item
-        ## check if feed has exclude:<Tag> pertinent to the Item
+	## check if feed has exclude:<Tag> pertinent to the Item
 
     def response(self):
 	"""returns the appropriate http response for this minekey"""

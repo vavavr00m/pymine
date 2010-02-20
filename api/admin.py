@@ -82,7 +82,7 @@ class ItemAdmin(admin.ModelAdmin):
     list_filter = ['created']
     date_hierarchy = 'created'
     fieldsets = [
-	(None, {'fields': ['name', 'status', 'description']}),
+	(None, {'fields': ['name', 'status', 'is_considered_public', 'description']}),
 	('Data', {'fields': ['data_type',
 			     'data',
 			     'icon_type',
