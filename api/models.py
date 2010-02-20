@@ -58,12 +58,11 @@ fss_yyyymmdd = '%Y-%m/%d'
 ##################################################################
 
 item_status_choices = (
-    ( '0', 'completely-inaccessible' ),
-    ( '3', 'merely-linkable-from-other-items-in-feeds' ),
-    ( '6', 'exposed-to-feeds-via-explicit-citation' ),
-    ( '9', 'exposed-to-feeds-via-tags' ),
-    # In all instances, additional per-item "not:feedname" explicit tagging will be honoured.
-    # In all instances, additional per-feed "exclude:tag" explicit tagging will be honoured.
+    ( '0', 'totally-inaccessible' ),
+    ( '1', 'exposed-via-citation' ),
+    ( '2', 'exposed-via-tagging' ),
+    # In all access, per-item "not:feedname" explicit tagging will be honoured.
+    # In feed generation, additional per-feed "exclude:tag" explicit tagging will be honoured.
     )
 
 # create a status-lookup table, long->short and short->long
@@ -74,14 +73,12 @@ for short, long in item_status_choices:
     status_lookup[long] = short
 
 status_aliases = {
+    'citable': '1',
+    'citeable': '1',
+    'inaccessable': '0',
     'inaccessible': '0',
-    'linkable': '3',
-    'citable': '6',
-    'sharable': '9',
-
-    'private': '6', # adriana-private = linkable/citable, but without citation
-    'shared': '6', # adriana-shared = sharable, but without is_considered_public
-    # no entry for adriana-public, which = sharable + is_considered_public
+    'sharable': '2',
+    'shareable': '2',
 }
 status_lookup.update(status_aliases)
 

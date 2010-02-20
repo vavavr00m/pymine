@@ -1,0 +1,46 @@
+<div class="widget">
+{% include 'widget/tinymce.html' %}
+<form method="POST" enctype="multipart/form-data" action="/api/item.rdr">
+<input type="hidden" name="redirect_success" value="/ui/list/items.html">
+
+item title:
+<br/>
+<input name="itemName" value="" size="66" />
+<br/>
+
+item tags:
+<br/>
+<input name="itemTags" value="" size="66">
+<br/>
+<input type="checkbox" name="auto_tag" checked /> create any tags that don't already exist
+<br/>
+
+item text:
+<a href="javascript:toggleEditor('itemDescription');">(add/remove editor)</a>
+<br/>
+<textarea name="itemDescription" cols="66" rows="15"></textarea>
+<br/>
+
+file(s) to attach: (optional, one/multiple)
+<br/>
+<input type="file" name="itemData">
+<br/>
+
+file type: (optional, browser should populate)
+<br/>
+<input name="itemType" value="" size="66">
+<br/>
+
+publication status:
+<br/>
+<input type="radio" name="itemStatus" value="inaccessible" /> inaccessible
+<input type="radio" name="itemStatus" value="citable" /> citable
+<input type="radio" name="itemStatus" value="shareable" checked /> shareable
+<br/>
+<input type="checkbox" name="itemIsConsideredPublic" /> safe enough to share in "public" feeds 
+<br/>
+
+<input type="submit" name="save" value="create item" />
+<input type="reset" name="reset" value="reset form" />
+</form>
+</div>

@@ -1,0 +1,32 @@
+<div class="widget">
+{% include 'widget/tinymce.html' %}
+<form method="POST" enctype="multipart/form-data" action="/api/feed.rdr">
+<input type="hidden" name="redirect_success" value="/ui/list/feeds.html">
+
+feed name:
+<br/>
+<input name="feedName" value="" size="33" />
+<br/>
+
+feed tags/interests: (ie: tags, space-separated, optional)
+<br/>
+<input name="feedInterests" value="" size="66">
+<br/>
+<input type="checkbox" name="auto_tag" checked> create any tags that don't already exist
+<br/>
+
+feed description: (optional)
+<a href="javascript:toggleEditor('feedDescription');">(add/remove editor)</a>
+<br/>
+<textarea name="feedDescription" cols="66" rows="5"></textarea>
+<br/>
+
+feed feed-content restriction: (optional)
+<br/>
+<input name="feedFeedConstraints" value="" size="33" />
+<br/>
+
+<input type="submit" name="save" value="create feed" />
+<input type="reset" name="reset" value="reset form" />
+</form>
+</div>

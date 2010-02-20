@@ -1,0 +1,30 @@
+<div class="widget">
+{% include 'widget/tinymce.html' %}
+<form method="POST" enctype="multipart/form-data" action="/api/comment/{{result.commentId}}.rdr">
+<input type="hidden" name="redirect_success" value="/ui/list/comments/0.html">
+
+comment title:
+<br/>
+<input name="commentTitle" value="{{result.commentTitle}}" size="33" />
+<br/>
+
+comment body: (optional)
+<a href="javascript:toggleEditor('commentBody');">(add/remove editor)</a>
+<br/>
+<textarea name="commentBody" cols="66" rows="5">{{result.commentBody}}</textarea>
+<br/>
+
+feed id: (numeric)
+<br/>
+<input name="commentFeedId" value="{{result.commentFeedId}}" size="5">
+<br/>
+
+item id: (numeric)
+<br/>
+<input name="commentItemId" value="{{result.commentItemId}}" size="5">
+<br/>
+
+<input type="submit" name="save" value="update comment" />
+<input type="reset" name="reset" value="reset form" />
+</form>
+</div>
