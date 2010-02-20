@@ -47,6 +47,9 @@ hard-reset: clobber # brute-force rebuild from scratch
 
 ##################################################################
 
+
+# THESE ARE PROBABLY THE TWO THINGS YOU NEED TO USE
+
 client:
 	@echo trying to open http://$(IP_ADDRESS_AND_PORT)/
 	-test -x /usr/bin/gnome-open && gnome-open http://$(IP_ADDRESS_AND_PORT)/
@@ -56,9 +59,6 @@ server:
 	python manage.py runserver $(IP_ADDRESS_AND_PORT)
 
 ##################################################################
-
-start:
-	python manage.py startapp api
 
 shell:
 	python manage.py shell

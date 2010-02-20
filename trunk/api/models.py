@@ -1261,8 +1261,8 @@ class Item(AbstractThing):
 	"""
 	s = super(Item, self).to_structure()
 
-	s['itemType'] = self.get_data_type()
-	s['itemSize'] = self.get_data_size()
+	s['itemDataSize'] = self.get_data_size()
+	s['itemIconSize'] = self.get_icon_size()
 	if self.data:
 	    s['itemHasFile'] = 1
 	else:

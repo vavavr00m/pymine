@@ -93,7 +93,7 @@ def list_comments(request, template, idz, **kwargs):
     implements: GET /ui/list/comments/(IDZ).html
     returns: ...
     """
-    s = api.list_comments(request, iiz)
+    s = api.list_comments(request, idz)
     s['itemId'] = idz # NEEDED HACK TO SUPPORT PAGE
     return render_to_response(template, s)
 
