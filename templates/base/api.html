@@ -1,0 +1,10 @@
+{% extends "base/page.html" %}
+
+{% block content %}
+<h3>{% block content_heading %}generic block content_heading from api.html{% endblock %}</h3>
+{% if result %}
+{% block content_result %}{{ result }}{% endblock %}
+{% else %}
+no 'result' returned by API call
+{% endif %}
+{% endblock %} <!-- content -->

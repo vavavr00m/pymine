@@ -1,0 +1,15 @@
+<div class="widget">
+{% for individual in result|slice:":5" %}
+<ul>
+{% for type, hash in individual.items %}
+<li>
+{{hash.itemId}}
+|
+<A HREF="/api/data/{{hash.itemId}}">{{hash.itemName}}</A>
+|
+<A HREF="/ui/update/item/{{hash.itemId}}.html">{{hash.itemDescription|removetags:"a p"|truncatewords:8}} ...</A>
+</li>
+{% endfor %}
+</ul>
+{% endfor %}
+</div>

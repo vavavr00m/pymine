@@ -1,0 +1,10 @@
+{% extends 'base/page.html' %}
+
+{% block content %}{% include 'widget/create-feed.html' %}{% endblock %}
+
+{% block title %}create feed{% endblock %}
+
+{% block context_sidebar %}
+{% include "sidebar/feeds.html" %}
+{% endblock %}
+{% block nav_feeds %}id=current{% endblock %}

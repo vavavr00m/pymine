@@ -1,0 +1,17 @@
+{% extends "base/api.html" %}
+
+{% block content_heading %}generic block content_heading from api-list.html{% endblock %}
+
+{% block content_result %}
+{% for wrapper_dict in result %}
+<dl {% block api_list_dl_opts %}{% endblock %}>
+{% for object_type, object_values in wrapper_dict.items %}
+{% for k, v in object_values.items %}
+<dt>{{k}}</dt>
+<dd>{{v}}</dd>
+{% endfor %}
+{% endfor %}
+</dl>
+{% endfor %}
+{% endblock %} <!-- content_result -->
+
