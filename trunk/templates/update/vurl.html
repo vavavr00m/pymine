@@ -1,0 +1,11 @@
+{% extends 'base/page.html' %}
+
+{% block content %}
+<h3>updating {{result.vurl.vurlId}} | {{result.vurl.vurlName}}</h3>
+{% include 'widget/action-vurl.html' %}
+{% include 'widget/update-vurl.html' %}
+<a href="/admin/api/vurl/{{result.vurl.vurlId}}/">
+<button>use the django admin editor for this vurl</button>
+</a>
+{% endblock %}
+{% block nav_vurls %}id=current{% endblock %}

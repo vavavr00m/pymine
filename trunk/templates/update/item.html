@@ -1,0 +1,11 @@
+{% extends 'base/page.html' %}
+
+{% block content %}
+<h3>updating {{result.item.itemId}} | {{result.item.itemName}}</h3>
+{% include 'widget/action-item.html' %}
+{% include 'widget/update-item.html' %}
+<a href="/admin/api/item/{{result.item.itemId}}/">
+<button>use the django admin editor for this item</button>
+</a>
+{% endblock %}
+{% block nav_items %}id=current{% endblock %}

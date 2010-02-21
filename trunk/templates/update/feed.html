@@ -1,0 +1,11 @@
+{% extends 'base/page.html' %}
+
+{% block content %}
+<h3>updating {{result.feed.feedId}} | {{result.feed.feedName}}</h3>
+{% include 'widget/action-feed.html' %}
+{% include 'widget/update-feed.html' %}
+<a href="/admin/api/feed/{{result.feed.feedId}}/">
+<button>use the django admin editor for this feed</button>
+</a>
+{% endblock %}
+{% block nav_feeds %}id=current{% endblock %}

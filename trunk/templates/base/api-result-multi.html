@@ -1,6 +1,8 @@
 {% extends "base/api.html" %}
 
-{% block content_heading %}generic block content_heading from api-list.html{% endblock %}
+{% block content_heading %}
+generic block content_heading from api-result-multi.html
+{% endblock %}
 
 {% block content_result %}
 {% for wrapper_dict in result %}
@@ -13,5 +15,4 @@
 {% endfor %}
 </dl>
 {% endfor %}
-{% endblock %} <!-- content_result -->
-
+{% endblock %}

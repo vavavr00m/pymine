@@ -1028,7 +1028,7 @@ class Feed(AbstractThing):
 	'embargo_after': dict(s2m='date', m2s='date'),
 	'embargo_before': dict(s2m='date', m2s='date'),
 	'interests': dict(gc='reflist_interests3', s2m='feed_interests', m2s='feed_interests'),
-	'is_considered_public': dict(gc='falsify'),
+	'is_considered_public': dict(gc='falsify', r2s='bool', s2m='bool', m2s='bool'),
 	'name': dict(gc='munge', s2m='copy', m2s='copy'),
 	'permitted_networks': dict(s2m='copy', m2s='copy'),
 	'version': dict(gc='zeroify', r2s='integer', s2m='copy', m2s='copy'),
@@ -1076,7 +1076,7 @@ class Item(AbstractThing):
 	'icon_ciphertext_digest': dict(s2m='copy', m2s='copy'),
 	'icon_encryption_key': dict(s2m='copy', m2s='copy'),
 	'icon_type': dict(s2m='copy', m2s='copy'),
-	'is_considered_public': dict(gc='falsify'),
+	'is_considered_public': dict(gc='falsify', r2s='bool', s2m='bool', m2s='bool'),
 	'links_to_items': dict(gc='reflist', s2m='item_links_to_items', m2s='item_links_to_items'),
 	'name': dict(gc='munge', s2m='copy', m2s='copy'),
 	'status': dict(gc='item_status', s2m='item_status', m2s='item_status'),
@@ -1260,10 +1260,9 @@ class Item(AbstractThing):
 
 	s['itemDataSize'] = self.get_data_size()
 	s['itemIconSize'] = self.get_icon_size()
+
 	if self.data:
 	    s['itemHasFile'] = 1
-	else:
-	    s['itemHasFile'] = 0
 
 	return s
 
