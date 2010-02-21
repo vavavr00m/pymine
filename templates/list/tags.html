@@ -1,5 +1,34 @@
-{% extends 'base/api-result-multi.html' %}
+{% extends "base/api-result-multi.html" %}
 
-{% block content_heading %}list tags{% endblock %}
+{% block title %}tags listing{% endblock %}
 
-{% block api_list_dl_opts %}class="tag"{% endblock %}
+{% block content_heading %}tags listing{% endblock %}
+
+{% block listing_per_wrapper_dict %}
+<div class="listtag {% cycle 'odd' 'even' %}">
+
+<h4>{{wrapper_dict.tag.tagName}}</h4>
+
+{% include 'widget/action2-tag.html' %}
+
+{% if wrapper_dict.tag.tagDescription %}
+<p class="listdesc">
+{{wrapper_dict.tag.tagDescription|safe}}
+</p>
+{% endif %}
+
+<ul class="listmeta">
+{% if wrapper_dict.tag.tagImplies %}
+<li>implies: {{wrapper_dict.tag.tagImplies}}</li>
+{% endif %}
+<li>clouds: {{wrapper_dict.tag.tagCloud}}</li>
+</ul>
+
+</div>
+{% endblock %}
+
+{% block context_sidebar %}
+{% include "sidebar/tags.html" %}
+{% include "sidebar/tag-search.html" %}
+{% endblock %}
+{% block nav_tags %}id=current{% endblock %}

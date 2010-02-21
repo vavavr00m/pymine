@@ -110,7 +110,7 @@ def list_things(request, template, thyng, **kwargs):
     implements: GET /ui/list/vurls.html
     returns: ...
     """
-    s = api.list_things(request, Item)
+    s = api.list_things(request, thyng)
     return render_to_response(template, s)
 
 ##################################################################

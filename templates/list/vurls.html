@@ -1,5 +1,28 @@
-{% extends 'base/api-result-multi.html' %}
+{% extends "base/api-result-multi.html" %}
 
-{% block content_heading %}list vurls{% endblock %}
+{% block title %}vurls listing{% endblock %}
 
-{% block api_list_dl_opts %}class="vurl"{% endblock %}
+{% block content_heading %}vurls listing{% endblock %}
+
+{% block listing_per_wrapper_dict %}
+<div class="listvurl {% cycle 'odd' 'even' %}">
+
+<h4>{{wrapper_dict.vurl.vurlName}}</h4>
+
+{% include 'widget/action2-vurl.html' %}
+
+<ul class="listmeta">
+<li>type: {% if wrapper_dict.vurl.vurlIsTemporaryRedirect %}temporary{% else %}permanent{% endif %}</li>
+<li>short link: {{wrapper_dict.vurl.vurlPathShort}}</li>
+<li>named link: {{wrapper_dict.vurl.vurlPathLong}}</li>
+<li>original url: {{wrapper_dict.vurl.vurlLink}}</li>
+</ul>
+
+</div>
+{% endblock %}
+
+{% block context_sidebar %}
+{% include "sidebar/vurls.html" %}
+{% include "sidebar/vurl-search.html" %}
+{% endblock %}
+{% block nav_vurls %}id=current{% endblock %}
