@@ -18,9 +18,11 @@
 {% endif %}
 
 <ul class="listmeta">
-<li>interests: {{wrapper_dict.feed.feedInterests}}</li>
-<li>constraints: {{wrapper_dict.feed.feedFeedConstraints}}</li>
 <li>version: {{wrapper_dict.feed.feedVersion}}</li>
+<li>tags/interests: {{wrapper_dict.feed.feedInterests}}</li>
+{% if wrapper_dict.feed.feedFeedConstraints %}
+<li>constraints: {{wrapper_dict.feed.feedFeedConstraints}}</li>
+{% endif %}
 </ul>
 
 </div>
