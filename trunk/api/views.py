@@ -281,12 +281,12 @@ def read_version(request, **kwargs):
     implements: GET /api/version.(FMT)
     returns: ...
     """
-    s = {
+    vinfo = {
 	'softwareName': settings.MINE_SOFTWARE_NAME,
 	'softwareRevision': settings.MINE_SOFTWARE_VERSION,
 	'mineApiVersion': settings.MINE_API_VERSION,
 	}
-    return Envelope(request, result=s)
+    return Envelope(request, result=dict(version=vinfo))
 
 ##################################################################
 

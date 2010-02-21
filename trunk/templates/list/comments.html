@@ -1,5 +1,36 @@
-{% extends 'base/api-result-multi.html' %}
+{% extends "base/api-result-multi.html" %}
 
-{% block content_heading %}list comments{% endblock %}
+{% block title %}
+comments{% ifnotequal itemId "0" %} for item {{itemId}}{% endifnotequal %}
+{% endblock %}
 
-{% block api_list_dl_opts %}class="comment"{% endblock %}
+{% block content_heading %}
+comments{% ifnotequal itemId "0" %} for item {{itemId}}{% endifnotequal %}
+{% endblock %}
+
+{% block listing_per_wrapper_dict %}
+<div class="listcomment {% cycle 'odd' 'even' %}">
+
+<h4>{{wrapper_dict.comment.commentTitle}}</h4>
+
+{% include 'widget/action2-comment.html' %}
+
+{% if wrapper_dict.comment.commentBody %}
+<p class="listdesc">
+{{wrapper_dict.comment.commentBody}}
+</p>
+{% endif %}
+
+<ul class="listmeta">
+<li>feed name: {{wrapper_dict.comment.commentFeedName}}</li>
+<li>item name: {{wrapper_dict.comment.commentItemName}}</li>
+</ul>
+
+</div>
+{% endblock %}
+
+{% block context_sidebar %}
+{% include "sidebar/comments.html" %}
+{% include "sidebar/comment-search.html" %}
+{% endblock %}
+{% block nav_comments %}id=current{% endblock %}

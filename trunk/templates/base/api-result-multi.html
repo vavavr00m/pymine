@@ -6,6 +6,7 @@ generic block content_heading from api-result-multi.html
 
 {% block content_result %}
 {% for wrapper_dict in result %}
+{% block listing_per_wrapper_dict %}
 <dl {% block api_list_dl_opts %}{% endblock %}>
 {% for object_type, object_values in wrapper_dict.items %}
 {% for k, v in object_values.items %}
@@ -14,5 +15,6 @@ generic block content_heading from api-result-multi.html
 {% endfor %}
 {% endfor %}
 </dl>
+{% endblock %} <!-- listing_per_wrapper_dict -->
 {% endfor %}
-{% endblock %}
+{% endblock %} <!-- content_result -->

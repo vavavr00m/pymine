@@ -1,5 +1,41 @@
-{% extends 'base/api-result-multi.html' %}
+{% extends "base/api-result-multi.html" %}
 
-{% block content_heading %}list items{% endblock %}
+{% block title %}items listing{% endblock %}
 
-{% block api_list_dl_opts %}class="item"{% endblock %}
+{% block content_heading %}items listing{% endblock %}
+
+{% block listing_per_wrapper_dict %}
+<div class="listitem {{wrapper_dict.item.itemStatus}}">
+
+<h4>{{wrapper_dict.item.itemId}} | {{wrapper_dict.item.itemName}}</h4>
+
+{% include 'widget/action2-item.html' %}
+
+{% if wrapper_dict.item.itemHasFile %}
+<a href="/api/data/{{wrapper_dict.item.itemId}}">
+<img src='/api/icon/{{wrapper_dict.item.itemId}}'/>
+</a>
+{% endif %}
+
+{% if wrapper_dict.item.itemDescription %}
+<p class="listdesc">
+{{wrapper_dict.item.itemDescription|safe}}
+</p>
+{% endif %}
+
+<ul class="listmeta">
+<li>id: {{wrapper_dict.item.itemId}}</li>
+<li>tags: {{wrapper_dict.item.itemTags}}</li>
+<li>status: {{wrapper_dict.item.itemStatus}}</li>
+<li>size: {{wrapper_dict.item.itemDataSize}}</li>
+<li>type: {{wrapper_dict.item.itemDataType}}</li>
+</ul>
+
+</div>
+{% endblock %}
+
+{% block context_sidebar %}
+{% include "sidebar/items.html" %}
+{% include "sidebar/item-search.html" %}
+{% endblock %}
+{% block nav_items %}id=current{% endblock %}
