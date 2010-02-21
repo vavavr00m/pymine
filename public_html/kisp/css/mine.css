@@ -154,3 +154,9 @@ input.taglist,
 .ac_results {
 	text-align:left;
 }
+
+.taglist-widget li .remove {
+	font-weight:bold;
+	color:#C66;
+	cursor:pointer;
+}
