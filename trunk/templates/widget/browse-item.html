@@ -1,13 +1,13 @@
 <div class="widget">
-{% for individual in result|slice:":5" %}
+{% for wrapper_dict in result|slice:":5" %}
 <ul>
-{% for type, hash in individual.items %}
+{% for object_type, object_values in wrapper_dict.items %}
 <li>
-{{hash.itemId}}
+{{object_values.itemId}}
 |
-<A HREF="/api/data/{{hash.itemId}}">{{hash.itemName}}</A>
+<A HREF="/api/data/{{object_values.itemId}}">{{object_values.itemName}}</A>
 |
-<A HREF="/ui/update/item/{{hash.itemId}}.html">{{hash.itemDescription|removetags:"a p"|truncatewords:8}} ...</A>
+<A HREF="/ui/update/item/{{object_values.itemId}}.html">{{object_values.itemDescription|removetags:"a p"|truncatewords:8}} ...</A>
 </li>
 {% endfor %}
 </ul>

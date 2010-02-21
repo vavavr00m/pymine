@@ -1,18 +1,18 @@
 <div class="widget">
-{% for individual in result|slice:":5" %}
+{% for wrapper_dict in result|slice:":5" %}
 <ul>
-{% for type, hash in individual.items %}
+{% for object_type, object_values in wrapper_dict.items %}
 <li>
-<A HREF="/ui/update/feed/{{hash.commentFeedId}}.html">{{hash.commentFeedName}}</A>
+<A HREF="/ui/update/feed/{{object_values.commentFromFeedId}}.html">{{object_values.commentFromFeed}}</A>
 on
-<A HREF="/api/data/{{hash.commentItemId}}">{{hash.commentItemName|truncatewords:8}}</A>
+<A HREF="/api/data/{{object_values.commentUponItem}}">{{object_values.commentUponItemName|truncatewords:8}}</A>
 |
-<A HREF="/ui/read/item/{{hash.commentItemId}}.html">info</A>
+<A HREF="/ui/read/item/{{object_values.commentUponItem}}.html">info</A>
 |
-<A HREF="/ui/update/item/{{hash.commentItemId}}.html">edit</A>
+<A HREF="/ui/update/item/{{object_values.commentUponItem}}.html">edit</A>
 <br/>
-<A HREF="/ui/update/comment/{{hash.commentId}}.html">
-{{hash.commentTitle}} | {{hash.commentBody|removetags:"a p"|truncatewords:10}}
+<A HREF="/ui/update/comment/{{object_values.commentId}}.html">
+{{object_values.commentTitle}} | {{object_values.commentBody|removetags:"a p"|truncatewords:10}}
 </A>
 </li>
 {% endfor %}

@@ -48,7 +48,7 @@ class TagAdmin(admin.ModelAdmin):
     list_filter = ['created']
     date_hierarchy = 'created'
     fieldsets = [
-	(None, {'fields': ['name']}),
+	(None, {'fields': ['name', 'is_deleted']}),
 	('Advanced', {'fields': ['description', 'implies']}),
 	]
 
@@ -62,7 +62,7 @@ class FeedAdmin(admin.ModelAdmin):
     list_filter = ['created']
     date_hierarchy = 'created'
     fieldsets = [
-	(None, {'fields': ['name', 'version', 'description']}),
+	(None, {'fields': ['name', 'is_deleted', 'version', 'description']}),
 	('Interests', {'fields': ['interests', 'interests_require', 'interests_exclude']}),
 	('Advanced', {'fields': ['permitted_networks',
 				 'content_constraints',
@@ -82,7 +82,8 @@ class ItemAdmin(admin.ModelAdmin):
     list_filter = ['created']
     date_hierarchy = 'created'
     fieldsets = [
-	(None, {'fields': ['name', 'status', 'is_considered_public', 'description']}),
+	(None, {'fields': ['name', 'is_deleted', 'status', 
+                           'is_considered_public', 'description']}),
 	('Data', {'fields': ['data_type',
 			     'data',
 			     'icon_type',
@@ -104,7 +105,7 @@ class CommentAdmin(admin.ModelAdmin):
     list_filter = ['created']
     date_hierarchy = 'created'
     fieldsets = [
-	(None, {'fields': ['title', 'body']}),
+	(None, {'fields': ['title', 'is_deleted', 'body']}),
 	('Advanced', {'fields': ['upon_item', 'from_feed']}),
 	]
 
@@ -113,12 +114,13 @@ admin.site.register(Comment, CommentAdmin)
 ##################################################################
 
 class VurlAdmin(admin.ModelAdmin):
-    list_display = ('name', 'link', 'use_temporary_redirect', 'last_modified', 'created')
+    list_display = ('name', 'link', 
+                    'use_temporary_redirect', 'last_modified', 'created')
     search_fields = ['name']
     list_filter = ['created']
     date_hierarchy = 'created'
     fieldsets = [
-	(None, {'fields': ['name', 'link', 'use_temporary_redirect']}),
+	(None, {'fields': ['name', 'is_deleted', 'link', 'use_temporary_redirect']}),
 	('Advanced', {'fields': ['invalid_before', 'invalid_after']}),
 	]
 
