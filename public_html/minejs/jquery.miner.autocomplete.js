@@ -2,6 +2,7 @@
  * Autocomplete resource for the Mine API, Richard Marr
  *
  * Based on jQuery Autocomplete plugin 1.1 by Jörn Zaefferer (c) 2009 Jörn Zaefferer
+ * http://docs.jquery.com/Plugins/Autocomplete
  *
  * Dual licensed under the MIT and GPL licenses:
  *   http://www.opensource.org/licenses/mit-license.php
@@ -180,8 +181,11 @@ $.Autocompleter = function(input, options) {
 					}
 				}
 			}
-			if( typeof fn == "function" ) fn(result);
-			else $input.trigger("result", result && [result.data, result.value]);
+			if ( typeof fn == "function" ) {
+				fn(result);
+			} else {
+				$input.trigger("result", result && [result.data, result.value]);
+			}
 		}
 		$.each(trimWords($input.val()), function(i, value) {
 			request(value, findValueCallback, findValueCallback);
