@@ -16,7 +16,7 @@
  *  - like "your are not logged in"
  * - feature: delete tags
  * - feature: let the mine api do the filtering instead of the js
- * - feature: add new tag
+ * - feature: add new tag DONE
  * - feature: show implied tags in tagcloud DONE
  * - feature: hide already selected tags in tagpicker
  *  - should also load implied tags for the existing tags
@@ -56,6 +56,7 @@
 				tagRetreiver = new that.TagRetreiver(that);
 				that.addAutoCompleteBehaviour(input);
 				that.addKeyDownBehaviour(input);
+				that.addKeyRemoveTagBehaviour(ul);
 				return hiddenInput;
 			},
 			replaceHTML : function(el) {
@@ -124,9 +125,9 @@
 			},
 			insertTagLi : function(name, implied) {
 				if (implied && implied.length) {
-					ul.append('<li class="has-implied">'+name+' &lt; '+implied.join(' ')+'</li>')
+					ul.append('<li class="has-implied" tag="'+name+'">'+name+' &lt; '+implied.join(' ')+' <span class="remove" title="remove">X</span></li>')
 				} else {
-					ul.append('<li>'+name+'</li>')
+					ul.append('<li tag="'+name+'">'+name+' <span class="remove" title="remove">X</span></li>')
 				}
 			},
 			filter : function() {
@@ -150,8 +151,14 @@
 							break;
 					}
 				})
-				
-				
+			},
+			addKeyRemoveTagBehaviour : function(ul) {
+				ul.click(function(e) {
+					var el = $(e.originalTarget);
+					if(el.hasClass("remove")) {
+						that.removeTag(el.closest("li").attr("tag"));
+					}
+				})
 			},
 			addTag : function(name, implied) {
 				if ($.inArray(name, tags)==-1) {
@@ -159,6 +166,11 @@
 					hiddenInput.attr("value", tags.join(" "));
 					that.insertTagLi(name, implied);
 				}
+			},
+			removeTag : function(name) {
+				ul.find("li[tag="+name+"]").remove();
+				tags = $.grep(tags, function(t){return t!=name});
+				hiddenInput.attr("value", tags.join(" "));
 			},
 			TagRetreiver : function(tagLister) {
 					var completeResult = null;
