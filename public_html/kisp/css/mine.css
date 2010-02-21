@@ -155,6 +155,9 @@ input.taglist,
 	color:#F66;
 	background:#FCC;
 }
+.taglist-widget .current {
+	background:yellow;
+}
 .taglist-widget .implies span {
 	color:#999;
 }
