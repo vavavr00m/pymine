@@ -1,21 +1,21 @@
 <div class="widget">
 <!-- no tinymce here, the vurl text doesn't need it. -->
-<form method="POST" enctype="multipart/form-data" action="/api/vurl/{{result.vurlId}}.rdr">
+<form method="POST" enctype="multipart/form-data" action="/api/vurl/{{result.vurl.vurlId}}.rdr">
 <input type="hidden" name="redirect_success" value="/ui/list/vurls.html">
 
 long url:
 <br/>
-<textarea name="vurlLink" cols="66" rows="5">{{result.vurlLink}}</textarea>
+<textarea name="vurlLink" cols="66" rows="5">{{result.vurl.vurlLink}}</textarea>
 <br/>
 
 vurl name: (optional)
 <br/>
-<input name="vurlName" value="{{result.vurlName}}" size="33" />
+<input name="vurlName" value="{{result.vurl.vurlName}}" size="33" />
 <br/>
 
 temporary redirect:
 <br/>
-<input type="checkbox" name="vurlIsTemporaryRedirect" {% if result.vurlIsTemporaryRedirect %}checked{% endif %} />
+<input type="checkbox" name="vurlIsTemporaryRedirect" {% if result.vurl.vurlIsTemporaryRedirect %}checked{% endif %} />
 <br/>
 
 <input type="submit" name="save" value="update vurl" />

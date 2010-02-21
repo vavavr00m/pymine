@@ -181,7 +181,7 @@ def version(request, template, **kwargs):
     implements: GET /ui/version.html
     returns: ...
     """
-    s = api.read_version()
+    s = api.read_version(request)
     return render_to_response(template, s)
 
 ##################################################################
