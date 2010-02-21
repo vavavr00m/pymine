@@ -8,3 +8,16 @@
 {% include "sidebar/items.html" %}
 {% endblock %}
 {% block nav_items %}id=current{% endblock %}
+
+{% block html_header_extra %}
+<script type="text/javascript" language="javascript" src="/pub/minejs/jquery.min.js"></script>
+<script type="text/javascript" language="javascript" src="/pub/minejs/jquery.miner.js"></script>
+<script type="text/javascript" language="javascript" src="/pub/minejs/jquery.miner.autocomplete.js"></script>
+<script type="text/javascript" language="javascript" src="/pub/minejs/jquery.miner.taglist.js"></script>
+<script type="text/javascript">
+	$(function($){
+		$("input.taglist").taglist();
+	});
+</script>
+{% endblock %}
+
