@@ -1,0 +1,15 @@
+{% extends "base/page.html" %}
+
+{% block nav_items %}id="current"{% endblock %}
+
+{% block title %}search items{% endblock %}
+
+{% block heading %}search items{% endblock %}
+
+{% block content %}
+{% include 'widget/search-item.html' %}
+{% endblock %}
+
+{% block context_sidebar %}
+{% include "sidebar/items.html" %}
+{% endblock %}
