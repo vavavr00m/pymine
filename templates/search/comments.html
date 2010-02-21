@@ -1,0 +1,15 @@
+{% extends "base/page.html" %}
+
+{% block nav_comments %}id="current"{% endblock %}
+
+{% block title %}search comments{% endblock %}
+
+{% block heading %}search comments{% endblock %}
+
+{% block content %}
+{% include 'widget/search-comment.html' %}
+{% endblock %}
+
+{% block context_sidebar %}
+{% include "sidebar/comments.html" %}
+{% endblock %}

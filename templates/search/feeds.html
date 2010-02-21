@@ -1,0 +1,15 @@
+{% extends "base/page.html" %}
+
+{% block nav_feeds %}id="current"{% endblock %}
+
+{% block title %}search feeds{% endblock %}
+
+{% block heading %}search feeds{% endblock %}
+
+{% block content %}
+{% include 'widget/search-feed.html' %}
+{% endblock %}
+
+{% block context_sidebar %}
+{% include "sidebar/feeds.html" %}
+{% endblock %}

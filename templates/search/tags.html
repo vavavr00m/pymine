@@ -1,0 +1,15 @@
+{% extends "base/page.html" %}
+
+{% block nav_tags %}id="current"{% endblock %}
+
+{% block title %}search tags{% endblock %}
+
+{% block heading %}search tags{% endblock %}
+
+{% block content %}
+{% include 'widget/search-tag.html' %}
+{% endblock %}
+
+{% block context_sidebar %}
+{% include "sidebar/tags.html" %}
+{% endblock %}
