@@ -45,8 +45,9 @@ ul.actions li {
 
  /* =ListItem
 ----------------------------------------------------------------------------- */
-.listitem {margin-left: 25px;}
+.listitem {margin-left: 25px; clear:both }
 .listitem h4 {font-size: 1.2em;}
+.listitem img {float: left; margin-right:10px; margin-left:30px}
 .listitem.private {background-color:#ffeeee}
 .listitem.shared {background-color:#ffffdd}
 .listitem.public {background-color:#f4f4f4}
