@@ -1299,6 +1299,9 @@ class Comment(AbstractThing):
 	"""
 	"""
 	s = super(Comment, self).to_structure()
+        f = self.from_feed
+        if f:
+            s['commentFromFeedId'] = f.id
 	return s
 
     def __unicode__(self):
