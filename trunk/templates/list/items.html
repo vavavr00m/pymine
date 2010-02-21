@@ -1,8 +1,14 @@
 {% extends "base/api-result-multi.html" %}
 
+
+
 {% block title %}items listing{% endblock %}
 
+
+
 {% block content_heading %}items listing{% endblock %}
+
+
 
 {% block listing_per_wrapper_dict %}
 <div class="listitem {{wrapper_dict.item.itemStatus}}">
@@ -11,16 +17,16 @@
 
 {% include 'widget/action2-item.html' %}
 
-{% if wrapper_dict.item.itemHasFile %}
-<a href="/api/data/{{wrapper_dict.item.itemId}}">
-<img src='/api/icon/{{wrapper_dict.item.itemId}}'/>
-</a>
-{% endif %}
-
 {% if wrapper_dict.item.itemDescription %}
 <p class="listdesc">
 {{wrapper_dict.item.itemDescription|safe}}
 </p>
+{% endif %}
+
+{% if wrapper_dict.item.itemHasFile %}
+<a href="/api/data/{{wrapper_dict.item.itemId}}">
+<img src='/api/icon/{{wrapper_dict.item.itemId}}'/>
+</a>
 {% endif %}
 
 <ul class="listmeta">
