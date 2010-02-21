@@ -10,18 +10,40 @@
  *
  */
 
+/**
+ * TODO:
+ * - bug: handle errors on ajax
+ *  - like "your are not logged in"
+ * - feature: delete tags
+ * - feature: let the mine api do the filtering instead of the js
+ * - feature: add new tag
+ * - feature: show implied tags in tagcloud
+ * - feature: hide already selected tags in tagpicker
+ */
 ;(function($) {
 	
 	// wrap the generic autocomplete functionality (which can be reused) with tag-list specific code
 	// replace a input element with a nice tagpicker, the input element becomes a hidden one, which can just be posted
-	$.fn.extend({
-		taglist: function() {
-			var input;
-			var hiddenInput;
-			var ul;
-			var tags;
-			
-			var replaceHTML = function(el) {
+	var tagLister = new(function() {
+		var that = this;
+		var input;
+		var hiddenInput;
+		var ul;
+		var tags;
+		var tagRetreiver;
+				
+		$.extend(this, {
+			init : function() {
+				// "this" in this context is the element on which the tagLister is working
+				var el = this;
+
+				tags = that.extractExistingTags(el);
+				that.replaceHTML(el);
+				tagRetreiver = new that.TagRetreiver(that);
+				that.addAutoCompleteBehaviour(input);
+				return hiddenInput;
+			},
+			replaceHTML : function(el) {
 				var attrs = {
 					id      : el.attr("id"),
 					name    : el.attr("name"),
@@ -35,7 +57,7 @@
 
 				el.replaceWith('<div class="taglist-widget" id="'+widgetId+'"><input type="hidden" id="'+attrs.id+'" name="'+attrs.name+'" value="'+attrs.value+'" /></div>');
 				hiddenInput = $("#"+widgetId+" input[type=hidden]");
-			
+		
 				hiddenInput.after('<input type="text" class="'+attrs.class+'"/>');
 				hiddenInput.before('<ul></ul>');
 
@@ -45,21 +67,12 @@
 				for (var i=0; i<tags.length; i++) {
 					ul.append('<li tag="'+tags[i]+'">'+tags[i]+'</li>');
 				}
-			}
-			
-			var extractExistingTags = function(el) {
+			},
+			extractExistingTags : function(el) {
 				var value = el.attr("value").trim();
 				return value ? value.split(/\s+/) : [];
-			};
-			
-			var init = function(el) {
-				tags = extractExistingTags(el);
-				replaceHTML(el);
-			}
-			
-			init(this);
-			
-			var parseApiResult = function(data) {
+			},
+			parseApiResult : function(data) {
 				// opening the envelope
 				// mapping data and value properties
 				var result = [];
@@ -69,56 +82,64 @@
 					result[i].value = result[i].tagName;
 				}
 				return result;
-			}
-			
-			var tagRetreiver = new (function() {
-				var completeResult = null;
-				
-				// assuming we're on the same domain, which is true for now
-				var baseUrl = document.location.href.match(/[^:]+:\/\/[^\/]+/)[0];
-				
-				$.getJSON(
-					baseUrl+"/api/tag.json",
-					function(data) {
-						completeResult = parseApiResult(data);
-					});
-				
-				this.getTags = function() {
-					if (!completeResult) {
-						return [];
+			},
+			addAutoCompleteBehaviour : function(input) {
+				input.autocomplete(
+					tagRetreiver.getTags,
+					{
+						minChars: 1,
+						autoFill: false,
+						mustMatch: false,
+						cacheLength: 0,
+						matchContains: true,
+						scrollHeight: 220,
+						formatItem: function(data, i, total, term) {
+							return "<span class='tag list'>"+data.tagName+"</span> "+
+								"<span class='tag cloud'>"+data.tagCloud.replace(data.tagName,'')+"</span>";
+						},
+						parse : this.parseApiResult
 					}
-					var filter = input.attr("value");
-					return $.grep(completeResult, function(entry) {
-						return entry.tagName.indexOf(filter)==0;
-					});
+				).result(function(event, data, formatted) {
+					// this is all kinda hacky; wheels will fall off this wagon
+					if ($.inArray(formatted, tags)==-1) {
+						tags.push(formatted);
+						hiddenInput.attr("value", tags.join(" "));
+						ul.append('<li tag="'+formatted+'">'+formatted+'</li>');
+					}
+					input.attr("value", "");
+				});				
+			},
+			filter : function() {
+				return input.attr("value");
+			},
+			TagRetreiver : function(tagLister) {
+					var completeResult = null;
+
+					// assuming we're on the same domain, which is true for now
+					var baseUrl = document.location.href.match(/[^:]+:\/\/[^\/]+/)[0];
+
+					$.getJSON(
+						baseUrl+"/api/tag.json",
+						function(data) {
+							completeResult = tagLister.parseApiResult(data);
+						}
+					);
+
+					this.getTags = function() {
+						if (!completeResult) {
+							return [];
+						}
+						var filter = tagLister.filter();
+						return $.grep(completeResult, function(entry) {
+							return entry.tagName.indexOf(filter)==0;
+						});
+					}
 				}
-			})();
-			
-			return input.autocomplete(
-				tagRetreiver.getTags,
-				{
-					minChars: 1,
-					autoFill: false,
-					mustMatch: false,
-					cacheLength: 0,
-					matchContains: true,
-					scrollHeight: 220,
-					formatItem: function(data, i, total, term) {
-						return "<span class='tag list'>"+data.tagName+"</span> "+
-							"<span class='tag cloud'>"+data.tagCloud.replace(data.tagName,'')+"</span>";
-					},
-					parse : parseApiResult
-				}
-			).result(function(event, data, formatted) {
-				// this is all kinda hacky; wheels will fall off this wagon
-				if ($.inArray(formatted, tags)==-1) {
-					tags.push(formatted);
-					hiddenInput.attr("value", tags.join(" "));
-					ul.append('<li tag="'+formatted+'">'+formatted+'</li>');
-				}
-				input.attr("value", "");
-			});
-		}
-	});
+			}
+		);	
+	})();
+	
+	
+	$.fn.extend({taglist: tagLister.init});
 
 })(jQuery);
