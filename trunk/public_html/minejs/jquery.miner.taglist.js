@@ -20,10 +20,11 @@
  * - feature: show separete cloud for "recently used tags" which can be selected
  * - feature: show separete cloud for "recommended tags" which can be selected; 
  *            these are tags which are frequently used in combination with the already added tags
- * - feature: color special syntax tags
- * - feature: color the input field when it matches special syntax tags
+ * - feature: color special syntax tags DONE
+ * - feature: color the input field when it matches special syntax tags DONE
  * - feature: validation of entered tags
- *  - should color the input field red and not allow creation of the tag
+ *  - should color the input field red and not allow creation of the tag DONE; but still allows you to create invalid tags
+ * - bug: if you type "win" and wine is an existing tag, RETURN adds "wine", you cannot create the tag "win"
  */
 ;(function($) {
 	
@@ -138,6 +139,8 @@
 			insertTagLi : function(name, implied) {
 				var className = that.hasTagSyntax(name);
 				var implyHtml = "";
+				name = name.replace('<', '&lt;');
+				
 				if (implied && implied.length) {
 					className = TAGSYNTAX.IMPLIES;
 					implyHtml = '<span> &lt; '+implied.join(' ')+'</span>';
