@@ -1,0 +1,15 @@
+{% extends 'base/page.html' %}
+
+{% block title %}pymine home{% endblock %}
+
+{% block content %}
+<h3>Welcome to pymine!</h3>
+
+<p>This is your pymine installation - if you are seeing this, then everything has probably worked.</p>
+
+<p>You probably want to upload some stuff.</p>
+
+{% include 'widget/create-item.html' %}
+{% endblock %} 
+
+{% block nav_home %}id=current{% endblock %}

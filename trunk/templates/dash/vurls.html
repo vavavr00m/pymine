@@ -1,0 +1,23 @@
+{% extends "base/page.html" %}
+
+{% block nav_vurls %}id="current"{% endblock %}
+
+{% block title %}pymine vurls{% endblock %}
+
+{% block heading %}vurls{% endblock %}
+
+{% block content %}
+<h3>browse recent vurls</h3>
+<a href="/ui/list/vurls.html"><button>list all</button></a><br/>
+{% include 'widget/browse-vurl.html' %}
+
+<h3>search vurls</h3>
+{% include 'widget/search-vurl.html' %}
+
+<h3>create an vurl</h3>
+{% include 'widget/create-vurl.html' %}
+{% endblock %}
+
+{% block context_sidebar %}
+{% include "sidebar/vurls.html" %}
+{% endblock %}

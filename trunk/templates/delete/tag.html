@@ -1,0 +1,15 @@
+{% extends 'base/page.html' %}
+{% block title %}delete tag{% endblock %}
+
+{% block content %}
+<h3>deleting tag {{tagId}}</h3>
+Please pick one of the following options:
+<P>
+<form method="post" action="/api/tag/{{tagId}}.rdr">
+<input type="hidden" name="redirect_success" value="/ui/list/tags.html">
+<input type="hidden" name="_method" value="DELETE">
+<A HREF="/ui/list/tags.html"><button>no! leave it alone!</button></A>
+<input type="submit" name="save" value="yes! delete tag {{tagId}}!" />
+</form>
+{% endblock %}
+{% block nav_tags %}id=current{% endblock %}
