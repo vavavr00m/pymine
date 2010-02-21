@@ -1,0 +1,14 @@
+{% extends "base/page.html" %}
+
+{% block title %}pymine search{% endblock %}
+
+{% block heading %}search{% endblock %}
+
+{% block content %}
+{% include 'widget/search-comment.html' %}
+{% include 'widget/search-item.html' %}
+{% include 'widget/search-feed.html' %}
+{% include 'widget/search-tag.html' %}
+{% include 'widget/search-vurl.html' %}
+{% endblock %}
+{% block nav_search %}id=current{% endblock %}

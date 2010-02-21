@@ -1,0 +1,23 @@
+{% extends "base/page.html" %}
+
+{% block nav_tags %}id="current"{% endblock %}
+
+{% block title %}pymine tags{% endblock %}
+
+{% block heading %}tags{% endblock %}
+
+{% block content %}
+<h3>browse recent tags</h3>
+<a href="/ui/list/tags.html"><button>list all</button></a><br/>
+{% include 'widget/browse-tag.html' %}
+
+<h3>search tags</h3>
+{% include 'widget/search-tag.html' %}
+
+<h3>create an tag</h3>
+{% include 'widget/create-tag.html' %}
+{% endblock %}
+
+{% block context_sidebar %}
+{% include "sidebar/tags.html" %}
+{% endblock %}

@@ -1,0 +1,23 @@
+{% extends "base/page.html" %}
+
+{% block nav_comments %}id="current"{% endblock %}
+
+{% block title %}pymine comments{% endblock %}
+
+{% block heading %}comments{% endblock %}
+
+{% block content %}
+<h3>browse recent comments</h3>
+<a href="/ui/list/comments.html"><button>list all</button></a><br/>
+{% include 'widget/browse-comment.html' %}
+
+<h3>search comments</h3>
+{% include 'widget/search-comment.html' %}
+
+<h3>create an comment</h3>
+{% include 'widget/create-comment.html' %}
+{% endblock %}
+
+{% block context_sidebar %}
+{% include "sidebar/comments.html" %}
+{% endblock %}
