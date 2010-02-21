@@ -18,9 +18,10 @@
  * - feature: hide already selected tags in tagpicker
  *  - basic version DONE; tagsyntax aware version TODO
  * - feature: should also load implied tags for the existing tags
- * - feature: show separete cloud for "recently used tags" which can be selected
- * - feature: show separete cloud for "recommended tags" which can be selected; 
+ * - feature: show separate cloud for "recently used tags" which can be selected
+ * - feature: show separate cloud for "recommended tags" which can be selected; 
  *            these are tags which are frequently used in combination with the already added tags
+ * - bug: in Opera when "shoes" is en existing tag typing "sh" RETURN adds two tags "sh" and "shoes"
  */
 ;(function($) {
 	
@@ -171,7 +172,7 @@
 			},
 			addKeyRemoveTagBehaviour : function(ul) {
 				ul.click(function(e) {
-					var el = $(e.originalTarget);
+					var el = $(e.target); 
 					if(el.hasClass("remove")) {
 						that.removeTag(el.closest("li").attr("tag"));
 					}
