@@ -17,8 +17,9 @@
  * - feature: delete tags
  * - feature: let the mine api do the filtering instead of the js
  * - feature: add new tag
- * - feature: show implied tags in tagcloud
+ * - feature: show implied tags in tagcloud DONE
  * - feature: hide already selected tags in tagpicker
+ *  - should also load implied tags for the existing tags
  */
 ;(function($) {
 	
@@ -65,12 +66,11 @@
 				ul = $("#"+widgetId+" ul");
 
 				for (var i=0; i<tags.length; i++) {
-					ul.append('<li tag="'+tags[i]+'">'+tags[i]+'</li>');
+					that.insertTagLi(tags[i]);
 				}
 			},
 			extractExistingTags : function(el) {
-				var value = el.attr("value").trim();
-				return value ? value.split(/\s+/) : [];
+				return that.splitTagString(el.attr("value"));
 			},
 			parseApiResult : function(data) {
 				// opening the envelope
@@ -78,8 +78,8 @@
 				var result = [];
 				for (var i=0; i<data.result.length; i++) {
 					result[i] = data.result[i].tag;
-					result[i].data = result[i].tagId;
-					result[i].value = result[i].tagName;
+					result[i].data = result[i].tagName;
+					result[i].value = that.splitTagString(result[i].tagImplies)
 				}
 				return result;
 			},
@@ -99,18 +99,29 @@
 						},
 						parse : this.parseApiResult
 					}
-				).result(function(event, data, formatted) {
+				).result(function(event, tag, implied) {
 					// this is all kinda hacky; wheels will fall off this wagon
-					if ($.inArray(formatted, tags)==-1) {
-						tags.push(formatted);
+					if ($.inArray(tag, tags)==-1) {
+						tags.push(tag);
 						hiddenInput.attr("value", tags.join(" "));
-						ul.append('<li tag="'+formatted+'">'+formatted+'</li>');
+						that.insertTagLi(tag, implied);
 					}
 					input.attr("value", "");
 				});				
 			},
+			insertTagLi : function(value, implied) {
+				console.log(implied)
+				if (implied && implied.length) {
+					ul.append('<li class="has-implied">'+value+' &lt; '+implied.join(' ')+'</li>')
+				} else {
+					ul.append('<li>'+value+'</li>')
+				}
+			},
 			filter : function() {
 				return input.attr("value");
+			},
+			splitTagString : function(string) {
+				return $.grep((string||"").split(/\s+/), function(s){return s!=""});
 			},
 			TagRetreiver : function(tagLister) {
 					var completeResult = null;
