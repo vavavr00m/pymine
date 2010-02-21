@@ -176,8 +176,6 @@ def list_comments(request, idz, **kwargs):
 	item = Item.get(id=iid)
 	qs = item.comment_set.filter(is_deleted=False)
 
-    qs = qs.filter(is_deleted=False)
-
     if 'query' in request.REQUEST:
 	qs = Comment.execute_search_query(request.REQUEST['query'], qs)
 

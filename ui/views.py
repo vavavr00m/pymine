@@ -45,9 +45,9 @@ def dash_comments(request, template, **kwargs):
     implements: GET /ui/dash/comments.html
     returns: ...
     """
-    iid = 0
-    s = api.list_comments(request, iid)
-    s['itemId'] = iid # HACK TO SUPPORT PAGE
+    idz = 0
+    s = api.list_comments(request, idz)
+    s['itemId'] = idz # HACK TO SUPPORT PAGE
     return render_to_response(template, s)
 
 ##################################################################
@@ -95,6 +95,8 @@ def list_comments(request, template, idz, **kwargs):
     """
     s = api.list_comments(request, idz)
     s['itemId'] = idz # NEEDED HACK TO SUPPORT PAGE
+    print s
+
     return render_to_response(template, s)
 
 ##################################################################
