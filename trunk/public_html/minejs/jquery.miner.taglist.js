@@ -16,15 +16,11 @@
  *  - like "your are not logged in"
  * - feature: let the mine api do the filtering instead of the js
  * - feature: hide already selected tags in tagpicker
- *  - should also load implied tags for the existing tags
+ *  - basic version DONE; tagsyntax aware version TODO
+ * - feature: should also load implied tags for the existing tags
  * - feature: show separete cloud for "recently used tags" which can be selected
  * - feature: show separete cloud for "recommended tags" which can be selected; 
  *            these are tags which are frequently used in combination with the already added tags
- * - feature: color special syntax tags DONE
- * - feature: color the input field when it matches special syntax tags DONE
- * - feature: validation of entered tags
- *  - should color the input field red and not allow creation of the tag DONE; but still allows you to create invalid tags
- * - bug: if you type "win" and wine is an existing tag, RETURN adds "wine", you cannot create the tag "win"
  */
 ;(function($) {
 	
@@ -55,7 +51,8 @@
 			NONE    : "",
 			FOR     : "for",
 			IMPLIES : "implies",
-			INVALID : "invalid"
+			INVALID : "invalid",
+			NEWTAG  : "$$newtag$$"
 		};
 		
 				
@@ -88,7 +85,7 @@
 				el.replaceWith('<div class="taglist-widget" id="'+widgetId+'"><input type="hidden" id="'+attrs.id+'" name="'+attrs.name+'" value="'+attrs.value+'" /></div>');
 				hiddenInput = $("#"+widgetId+" input[type=hidden]");
 		
-				hiddenInput.after('<input type="text" class="'+attrs.class+'" size="'+attrs.size+'"/>');
+				hiddenInput.after('<input type="text" class="'+attrs["class"]+'" size="'+attrs.size+'"/>');
 				hiddenInput.before('<ul></ul>');
 
 				input = $("#"+widgetId+" input[type=text]");
@@ -124,7 +121,7 @@
 						scrollHeight: 220,
 						formatItem: function(data, i, total, term) {
 							return "<span class='tag list'>"+data.tagName+"</span> "+
-								(data.tagImplies ? "<span class='tag cloud'> &lt; "+data.tagImplies+"</span>" : "");
+								(data.tagImplies && data.tagImplies!=TAGSYNTAX.NEWTAG ? "<span class='tag cloud'> &lt; "+data.tagImplies+"</span>" : "");
 						},
 						parse : this.parseApiResult
 					}
@@ -160,16 +157,16 @@
 							event.preventDefault();
 							
 							var filter = that.filter();
-							if(filter) {
+							if(filter && that.hasTagSyntax(filter)!=TAGSYNTAX.INVALID) {
 								that.addTag(filter);
 								that.clearInput();
 							}
 							return false;
 							break;
 					}
-				})
-				el.bind("keyup", function(event) {
+				}).bind("keyup", function(event) {
 					that.colorIfSpecialSyntax();
+					that.markCurrentTag();
 				})
 			},
 			addKeyRemoveTagBehaviour : function(ul) {
@@ -184,18 +181,38 @@
 				input.removeClass("for implies invalid");
 				input.addClass(that.hasTagSyntax(that.filter()));
 			},
+			markCurrentTag : function() {
+				if (that.currentTagMarked) {
+					ul.find("li.current").removeClass("current");
+					that.currentTagMarked = false;
+				}
+				
+				var filter = that.filter().replace(/\s+/, '');
+				if ($.inArray(filter, tags)!=-1) {
+					ul.find("li[tag="+filter+"]").addClass("current");
+					that.currentTagMarked = true;
+				}
+			},
 			hasTagSyntax : function (tag) {
-				if (tag.match(/^[a-zA-Z-0-9_]*$/)) {
+				if (tag.match(/^[a-zA-Z-0-9_]* *$/)) {
 					return TAGSYNTAX.NONE
-				} else if (tag.match(/^for:[a-zA-Z-0-9_]*$/)) {
+				} else if (tag.match(/^for *: *[a-zA-Z-0-9_]* *$/)) {
 					return TAGSYNTAX.FOR
-				} else if (tag.match(/^[a-zA-Z-0-9_]+<[a-zA-Z-0-9_]*$/)) {
+				} else if (tag.match(/^[a-zA-Z-0-9_]+ *< *[a-zA-Z-0-9_]* *$/)) {
 					return TAGSYNTAX.IMPLIES
 				} else {
 					return TAGSYNTAX.INVALID
 				}
 			},
 			addTag : function(name, implied) {
+				name = (name && name.replace(/\s+/, '')) || "";
+				
+				if (implied==TAGSYNTAX.NEWTAG) {
+					// auch this is ugly :'(
+					name = name.match(/"([^]+)"/)[1];
+					implied = null;
+				}
+				
 				if ($.inArray(name, tags)==-1) {
 					tags.push(name);
 					hiddenInput.attr("value", tags.join(" "));
@@ -221,13 +238,38 @@
 					);
 
 					this.getTags = function() {
-						if (!completeResult) {
-							return [];
-						}
+						var result = []
 						var filter = tagLister.filter();
-						return $.grep(completeResult, function(entry) {
-							return entry.tagName.indexOf(filter)==0;
-						});
+						var tagFound = false;
+						// filter all results, mineapi should do this in the future
+						if (completeResult) {
+							result = $.grep(completeResult, function(entry) {
+								if (entry.tagName == filter) {
+									tagFound = true;
+								}
+								// ignore if it doesn't match
+								if (entry.tagName.indexOf(filter)!=0) {
+									return false;
+								}
+								// ignore already selected tags
+								// console.log(tags, entry.tagName)
+								if ($.inArray(entry.tagName, tags)!=-1) {
+									return false;
+								}
+								return true;
+							});
+						}
+						// add 'create tag' entry at the bottom
+						filter = filter.replace(/\s+/, '');
+						if (!tagFound && $.inArray(filter, tags)==-1) {
+							result.push({
+								tagImplies : '$$newtag$$',
+								value      : '$$newtag$$',
+								tagName    : 'create tag "'+filter+'"',
+								data       : 'create tag "'+filter+'"'
+							})
+						}
+						return result;
 					}
 				}
 			}
