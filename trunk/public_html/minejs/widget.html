@@ -7,14 +7,41 @@
 		<script type="text/javascript" language="javascript" src="jquery.miner.taglist.js"></script>
 		<link rel="stylesheet" type="text/css" href="jquery.autocomplete.css"/>
 		<style>
-			html, body { margin:0, border:0, font-family:Arial,Helvetica,sans-serif }
-			.taglist { border:2px solid #ccc; width:300px }
-				.ac_results .tag.cloud { color:#999 }
+			html, body {
+				margin:0;
+				border:0;
+				font-family:Arial,Helvetica,sans-serif;
+			}
+			input.taglist,
+			.taglist-widget input.taglist {
+				border:2px solid #ccc;
+				width:300px;
+				background:#EEE;
+			}
+			.taglist-widget input.taglist {
+				clear:both;
+				display:block;
+			}
+			.taglist-widget ul,
+			.taglist-widget li {
+				margin:0;
+				padding:0;
+				display:block;
+			}
+			.taglist-widget li {
+				float:left;
+				border:solid 1px #CCC;
+				padding:0 4px;
+				margin:8px 8px 8px 0;
+			}
+			.ac_results .tag.cloud {
+				color:#999;
+			}
 		</style>
 		<script>
 			$(function($){
 				// pass in a reference to the function that provides the data (just a dummy so far)
-				$("input").taglist();
+				$("input.taglist").taglist();
 			});
 		</script>
 	</head>
@@ -23,8 +50,7 @@
 		<div style="width:400px; margin:20px auto; border:1px solid #ccc;padding:50px">
 			<h2>Widget</h2>
 			<div>Start typing</div>
-			<input type="text" class="taglist" outputid="sampleTagOutput"/>
-			<div id="sampleTagOutput"></div>
+			<input type="text" class="taglist" name="tags" value="booze" />
 		</div>
 		<div style="width:48%;float:left">
 			<h3>To Do: coding</h3>

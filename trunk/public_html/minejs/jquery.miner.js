@@ -6,6 +6,7 @@
 
 function getTagListData(  )
 {
+	window.console.log(arguments.callee.caller);
 	return [
 		{
 			"tagCloud": "animals", 
