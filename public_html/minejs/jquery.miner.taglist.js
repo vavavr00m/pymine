@@ -33,6 +33,19 @@
 		var tags;
 		var tagRetreiver;
 				
+				var KEY = {
+					UP: 38,
+					DOWN: 40,
+					DEL: 46,
+					TAB: 9,
+					RETURN: 13,
+					ESC: 27,
+					COMMA: 188,
+					PAGEUP: 33,
+					PAGEDOWN: 34,
+					BACKSPACE: 8
+				};
+				
 		$.extend(this, {
 			init : function() {
 				// "this" in this context is the element on which the tagLister is working
@@ -42,6 +55,7 @@
 				that.replaceHTML(el);
 				tagRetreiver = new that.TagRetreiver(that);
 				that.addAutoCompleteBehaviour(input);
+				that.addKeyDownBehaviour(input);
 				return hiddenInput;
 			},
 			replaceHTML : function(el) {
@@ -101,20 +115,18 @@
 						parse : this.parseApiResult
 					}
 				).result(function(event, tag, implied) {
-					// this is all kinda hacky; wheels will fall off this wagon
-					if ($.inArray(tag, tags)==-1) {
-						tags.push(tag);
-						hiddenInput.attr("value", tags.join(" "));
-						that.insertTagLi(tag, implied);
-					}
-					input.attr("value", "");
+					that.addTag(tag, implied);
+					that.clearInput();
 				});				
 			},
-			insertTagLi : function(value, implied) {
+			clearInput : function(){
+				input.attr("value", "");
+			},
+			insertTagLi : function(name, implied) {
 				if (implied && implied.length) {
-					ul.append('<li class="has-implied">'+value+' &lt; '+implied.join(' ')+'</li>')
+					ul.append('<li class="has-implied">'+name+' &lt; '+implied.join(' ')+'</li>')
 				} else {
-					ul.append('<li>'+value+'</li>')
+					ul.append('<li>'+name+'</li>')
 				}
 			},
 			filter : function() {
@@ -122,6 +134,31 @@
 			},
 			splitTagString : function(string) {
 				return $.grep((string||"").split(/\s+/), function(s){return s!=""});
+			},
+			addKeyDownBehaviour : function(el) {
+				el.bind("keydown", function(event) {
+					switch(event.keyCode) {
+						case KEY.RETURN:
+							event.preventDefault();
+							
+							var filter = that.filter();
+							if(filter) {
+								that.addTag(filter);
+								that.clearInput();
+							}
+							return false;
+							break;
+					}
+				})
+				
+				
+			},
+			addTag : function(name, implied) {
+				if ($.inArray(name, tags)==-1) {
+					tags.push(name);
+					hiddenInput.attr("value", tags.join(" "));
+					that.insertTagLi(name, implied);
+				}
 			},
 			TagRetreiver : function(tagLister) {
 					var completeResult = null;
