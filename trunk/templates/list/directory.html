@@ -1,0 +1,16 @@
+{% extends 'base/page.html' %}
+
+{% block title %}directory listing for {{name}}{% endblock %}
+
+{% block content %}
+<ul>
+<li class="odd"><a href="../"><tt>[parent directory]</tt></a></li>
+{% for item in list %}
+<li class="{% cycle 'even' 'odd' %}">
+<a href="{{item.link}}"><tt>{{item.name}}</tt></a>
+<tt>{{item.description}}</tt>
+</li>
+{% endfor %}
+</ul>
+{% endblock %}
+{% block nav_home %}id=current{% endblock %}

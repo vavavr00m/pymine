@@ -1,0 +1,10 @@
+{% extends 'base/page.html' %}
+
+{% block content %}{% include 'widget/create-comment.html' %}{% endblock %}
+
+{% block title %}create comment{% endblock %}
+
+{% block context_sidebar %}
+{% include "sidebar/comments.html" %}
+{% endblock %}
+{% block nav_comments %}id=current{% endblock %}

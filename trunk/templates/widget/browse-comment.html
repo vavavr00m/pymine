@@ -1,0 +1,21 @@
+<div class="widget">
+{% for individual in result|slice:":5" %}
+<ul>
+{% for type, hash in individual.items %}
+<li>
+<A HREF="/ui/update/feed/{{hash.commentFeedId}}.html">{{hash.commentFeedName}}</A>
+on
+<A HREF="/api/data/{{hash.commentItemId}}">{{hash.commentItemName|truncatewords:8}}</A>
+|
+<A HREF="/ui/read/item/{{hash.commentItemId}}.html">info</A>
+|
+<A HREF="/ui/update/item/{{hash.commentItemId}}.html">edit</A>
+<br/>
+<A HREF="/ui/update/comment/{{hash.commentId}}.html">
+{{hash.commentTitle}} | {{hash.commentBody|removetags:"a p"|truncatewords:10}}
+</A>
+</li>
+{% endfor %}
+</ul>
+{% endfor %}
+</div>
