@@ -95,7 +95,7 @@
 						scrollHeight: 220,
 						formatItem: function(data, i, total, term) {
 							return "<span class='tag list'>"+data.tagName+"</span> "+
-								"<span class='tag cloud'>"+data.tagCloud.replace(data.tagName,'')+"</span>";
+								"<span class='tag cloud'>"+(data.tagImplies||"")+"</span>";
 						},
 						parse : this.parseApiResult
 					}
@@ -110,7 +110,6 @@
 				});				
 			},
 			insertTagLi : function(value, implied) {
-				console.log(implied)
 				if (implied && implied.length) {
 					ul.append('<li class="has-implied">'+value+' &lt; '+implied.join(' ')+'</li>')
 				} else {
