@@ -14,12 +14,16 @@
  * TODO:
  * - bug: handle errors on ajax
  *  - like "your are not logged in"
- * - feature: delete tags
  * - feature: let the mine api do the filtering instead of the js
- * - feature: add new tag DONE
- * - feature: show implied tags in tagcloud DONE
  * - feature: hide already selected tags in tagpicker
  *  - should also load implied tags for the existing tags
+ * - feature: show separete cloud for "recently used tags" which can be selected
+ * - feature: show separete cloud for "recommended tags" which can be selected; 
+ *            these are tags which are frequently used in combination with the already added tags
+ * - feature: color special syntax tags
+ * - feature: color the input field when it matches special syntax tags
+ * - feature: validation of entered tags
+ *  - should color the input field red and not allow creation of the tag
  */
 ;(function($) {
 	
@@ -33,18 +37,26 @@
 		var tags;
 		var tagRetreiver;
 				
-				var KEY = {
-					UP: 38,
-					DOWN: 40,
-					DEL: 46,
-					TAB: 9,
-					RETURN: 13,
-					ESC: 27,
-					COMMA: 188,
-					PAGEUP: 33,
-					PAGEDOWN: 34,
-					BACKSPACE: 8
-				};
+		var KEY = {
+			UP: 38,
+			DOWN: 40,
+			DEL: 46,
+			TAB: 9,
+			RETURN: 13,
+			ESC: 27,
+			COMMA: 188,
+			PAGEUP: 33,
+			PAGEDOWN: 34,
+			BACKSPACE: 8
+		};
+		
+		var TAGSYNTAX = {
+			NONE    : "",
+			FOR     : "for",
+			IMPLIES : "implies",
+			INVALID : "invalid"
+		};
+		
 				
 		$.extend(this, {
 			init : function() {
@@ -111,7 +123,7 @@
 						scrollHeight: 220,
 						formatItem: function(data, i, total, term) {
 							return "<span class='tag list'>"+data.tagName+"</span> "+
-								"<span class='tag cloud'>"+(data.tagImplies||"")+"</span>";
+								(data.tagImplies ? "<span class='tag cloud'> &lt; "+data.tagImplies+"</span>" : "");
 						},
 						parse : this.parseApiResult
 					}
@@ -124,11 +136,13 @@
 				input.attr("value", "");
 			},
 			insertTagLi : function(name, implied) {
+				var className = that.hasTagSyntax(name);
+				var implyHtml = "";
 				if (implied && implied.length) {
-					ul.append('<li class="has-implied" tag="'+name+'">'+name+' &lt; '+implied.join(' ')+' <span class="remove" title="remove">X</span></li>')
-				} else {
-					ul.append('<li tag="'+name+'">'+name+' <span class="remove" title="remove">X</span></li>')
+					className = TAGSYNTAX.IMPLIES;
+					implyHtml = '<span> &lt; '+implied.join(' ')+'</span>';
 				}
+				ul.append('<li class="'+className+'" tag="'+name+'">'+name+implyHtml+' <span class="remove" title="remove">X</span></li>')
 			},
 			filter : function() {
 				return input.attr("value");
@@ -151,6 +165,9 @@
 							break;
 					}
 				})
+				el.bind("keyup", function(event) {
+					that.colorIfSpecialSyntax();
+				})
 			},
 			addKeyRemoveTagBehaviour : function(ul) {
 				ul.click(function(e) {
@@ -159,6 +176,21 @@
 						that.removeTag(el.closest("li").attr("tag"));
 					}
 				})
+			},
+			colorIfSpecialSyntax : function() {
+				input.removeClass("for implies invalid");
+				input.addClass(that.hasTagSyntax(that.filter()));
+			},
+			hasTagSyntax : function (tag) {
+				if (tag.match(/^[a-zA-Z-0-9_]*$/)) {
+					return TAGSYNTAX.NONE
+				} else if (tag.match(/^for:[a-zA-Z-0-9_]*$/)) {
+					return TAGSYNTAX.FOR
+				} else if (tag.match(/^[a-zA-Z-0-9_]+<[a-zA-Z-0-9_]*$/)) {
+					return TAGSYNTAX.IMPLIES
+				} else {
+					return TAGSYNTAX.INVALID
+				}
 			},
 			addTag : function(name, implied) {
 				if ($.inArray(name, tags)==-1) {
