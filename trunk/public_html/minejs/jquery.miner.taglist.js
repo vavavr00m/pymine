@@ -50,6 +50,7 @@
 					name    : el.attr("name"),
 					value   : tags.join(" "),
 					"class" : el.attr("class"),
+					size    : el.attr('size')
 				}
 
 				var i=1;
@@ -59,7 +60,7 @@
 				el.replaceWith('<div class="taglist-widget" id="'+widgetId+'"><input type="hidden" id="'+attrs.id+'" name="'+attrs.name+'" value="'+attrs.value+'" /></div>');
 				hiddenInput = $("#"+widgetId+" input[type=hidden]");
 		
-				hiddenInput.after('<input type="text" class="'+attrs.class+'"/>');
+				hiddenInput.after('<input type="text" class="'+attrs.class+'" size="'+attrs.size+'"/>');
 				hiddenInput.before('<ul></ul>');
 
 				input = $("#"+widgetId+" input[type=text]");
