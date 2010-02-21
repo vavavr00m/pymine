@@ -143,11 +143,22 @@ input.taglist,
 	border:solid 1px #CCC;
 	padding:0 4px;
 	margin:0 8px 8px 0;
-	background:#97F08F;
+	background:#EFFAE6;
 }
-.taglist-widget li.has-implied {
-	background:#EBE0AF;
+.taglist-widget .implies {
+	background:#CCF;
 }
+.taglist-widget .for {
+	background:#CFC;
+}
+.taglist-widget .invalid {
+	color:#F66;
+	background:#FCC;
+}
+.taglist-widget .implies span {
+	color:#999;
+}
+
 .ac_results .tag.cloud {
 	color:#999;
 }
