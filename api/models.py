@@ -1302,7 +1302,10 @@ class Comment(AbstractThing):
         f = self.from_feed
         if f:
             s['commentFromFeedId'] = f.id
-	return s
+        i = self.upon_item
+        if i:
+            s['commentUponItemName'] = i.name
+        return s
 
     def __unicode__(self):
 	"""return the title of this comment; comments lack a "name" field"""

@@ -1,7 +1,7 @@
 <div class="widget">
-{% for individual in result %}
-{% for type, hash in individual.items %}
-<a href="/ui/update/tag/{{hash.tagId}}.html">{{hash.tagName}}</a>,
+{% for wrapper_dict in result %}
+{% for object_type, object_values in wrapper_dict.items %}
+<a href="/ui/update/tag/{{object_values.tagId}}.html">{{object_values.tagName}}</a>,
 {% endfor %}
 {% endfor %}
 </div>

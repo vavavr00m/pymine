@@ -1,12 +1,12 @@
 <div class="widget">
-{% for individual in result|slice:":5" %}
+{% for wrapper_dict in result|slice:":5" %}
 <ul>
-{% for type, hash in individual.items %}
+{% for object_type, object_values in wrapper_dict.items %}
 <li>
-<A HREF="/ui/update/vurl/{{hash.vurlId}}.html">{{hash.vurlName}}</A>
+<A HREF="/ui/update/vurl/{{object_values.vurlId}}.html">{{object_values.vurlName}}</A>
 |
-<A HREF="{{hash.vurlLink}}">{{hash.vurlLink}}</A> |
-{% if hash.vurlIsTemporaryRedirect %}
+<A HREF="{{object_values.vurlLink}}">{{object_values.vurlLink}}</A> |
+{% if object_values.vurlIsTemporaryRedirect %}
 Temporary
 {% else %}
 Permanent

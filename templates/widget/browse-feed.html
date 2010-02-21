@@ -1,17 +1,17 @@
 <div class="widget">
-{% for individual in result %}
+{% for wrapper_dict in result %}
 <ul>
-{% for type, hash in individual.items %}
+{% for object_type, object_values in wrapper_dict.items %}
 <li>
-<a href="/ui/update/feed/{{hash.feedId}}.html">{{hash.feedName}}</a>
+<a href="/ui/update/feed/{{object_values.feedId}}.html">{{object_values.feedName}}</a>
 |
-<a href="{{hash.feedFeedUrl}}">feed</a>
+<a href="{{object_values.feedFeedUrl}}">feed</a>
 |
-<a href="/ui/read/feed/{{hash.feedId}}.html">info</a>
+<a href="/ui/read/feed/{{object_values.feedId}}.html">info</a>
 |
-<a href="/ui/update/feed/{{hash.feedId}}.html">edit</a>
+<a href="/ui/update/feed/{{object_values.feedId}}.html">edit</a>
 |
-<a href="/ui/delete/feed/{{hash.feedId}}.html">delete</a>
+<a href="/ui/delete/feed/{{object_values.feedId}}.html">delete</a>
 </li>
 {% endfor %}
 </ul>
