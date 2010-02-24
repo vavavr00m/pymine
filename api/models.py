@@ -17,16 +17,21 @@
 
 """docstring goes here""" # :-)
 
-#from django.http import HttpResponsePermanentRedirect, HttpResponseRedirect
-#from django.template.loader import render_to_string
-#from django.utils import feedgenerator
 from django.conf import settings
 from django.core.cache import cache
 from django.core.files.storage import FileSystemStorage
 from django.db import models, transaction
 from django.db.models import Q
+from django.http import HttpResponsePermanentRedirect, HttpResponseRedirect
+from django.template.loader import render_to_string
+from django.utils import feedgenerator
 from django.utils.encoding import iri_to_uri
 from django.utils.http import urlquote
+
+####
+# CHECK ALSO FOR IMPORT STATEMENT AT END OF THIS FILE WHICH RESOLVES
+# ANNOYING CIRCULAR DEPENDENCY ISSUE WITH minekey.py; ELEGANT KLUDGE
+####
 
 import base64
 import itertools
@@ -35,7 +40,7 @@ import os
 import re
 import string
 
-import util.base58 as base58
+import pymine.util.base58 as base58
 
 # TODO:
 # phrase tags
@@ -989,7 +994,7 @@ class Vurl(AbstractThing):
 
 	s = super(Vurl, self).save()
 
-    def to_structure(self):
+    def to_structure(self, request=None):
 	"""
 	Splices the virtual vurlKey/vurlPath sattrs into the Vurl
 	structure; since m2s_foo above only allows for a single mattr
@@ -1000,7 +1005,7 @@ class Vurl(AbstractThing):
 	information.
 	"""
 
-	s = super(Vurl, self).to_structure()
+	s = super(Vurl, self).to_structure(request)
 	vk = self.vurlkey()
 	s['vurlKey'] = vk
 	s['vurlPathShort'] = "/get/k/%s" % vk
@@ -1047,11 +1052,11 @@ class Feed(AbstractThing):
     permitted_networks = AbstractField.string(required=False)
     version = AbstractField.integer(1)
 
-    def to_structure(self):
+    def to_structure(self, request=None):
 	"""
 	"""
-	s = super(Feed, self).to_structure()
-	s['feedUrl'] = 'TBD'
+	s = super(Feed, self).to_structure(request)
+	s['feedUrl'] = MineKey.create_feedmk(request, self).permalink()
 	return s
 
 ##################################################################
@@ -1151,7 +1156,7 @@ class Item(AbstractThing):
 	    kw2.update(kwargs) # duplicate the master copy into it
 	    kw2[Item.backdoor_key] = f # overwrite the target cleanly
 	    m.update(request, **kw2)
-	    result.append( { m.thing_prefix : m.to_structure() } )
+	    result.append( { m.thing_prefix : m.to_structure(request) } )
 	return result
 
     def save_files_from(self, request, **kwargs):
@@ -1244,17 +1249,17 @@ class Item(AbstractThing):
     def get_icon_size(self):
 	"""
 	"""
-        return 0
+	return 0
 
     def get_icon_type(self):
 	"""
 	"""
-        return 'image/png'
+	return 'image/png'
 
-    def to_structure(self):
+    def to_structure(self, request=None):
 	"""
 	"""
-	s = super(Item, self).to_structure()
+	s = super(Item, self).to_structure(request)
 
 	s['itemDataSize'] = self.get_data_size()
 	s['itemIconSize'] = self.get_icon_size()
@@ -1263,6 +1268,75 @@ class Item(AbstractThing):
 	    s['itemHasFile'] = 1
 
 	return s
+
+    def feed_description(self):
+        """
+        if there is a data file, the description *is* HTML and is
+        returned, else if self.item_type() suggests HTML, the
+        description is returned, else a hardcoded default is returned
+        """
+
+        if self.data:
+            return self.description
+        elif self.item_data_type() == 'text/html': # if we think it's HTML
+            return self.description
+        else:
+            return 'pymine: no datafile is provided and the description content is not text/html, thus this placeholder is used instead'
+
+    def to_atom(self, feedmk):
+	"""
+	Creates the structure used in ATOM generation
+
+	See http://docs.djangoproject.com/en/dev/ref/contrib/syndication/#django.contrib.syndication.SyndicationFeed.add_item
+	and feedgen.py
+	"""
+
+	itemmk = feedmk.spawn_data(self.id)
+
+	item_info = {}
+
+	item_info['author_email'] = 'noreply-item@localhost'
+        item_info['link'] = itemmk.permalink()
+	item_info['pubdate'] = self.last_modified
+	item_info['title'] = self.name
+
+	item_info['author_name'] = item_info['author_email']
+
+	item_info['enclosure'] = feedgenerator.Enclosure(url=item_info['link'],
+                                                         length=str(self.get_data_size()),
+                                                         mime_type=self.get_data_type())
+
+	item_info['unique_id'] = "tag:%s,2009:%s" % (item_info['author_email'], itemmk.key())
+
+	item_info['author_link'] = None 
+	item_info['categories'] = None 
+	item_info['comments'] = None 
+	item_info['item_copyright'] = None 
+	item_info['ttl'] = None 
+
+        idesc_tmpl = {
+            'comment_url': itemmk.spawn_submit_self().permalink(),
+            'content_type': self.get_data_type(),
+            'description': self.feed_description(),
+            'has_file': 0,
+            'http_path': itemmk.http_path(),
+            'id': self.id,
+            'datalink': item_info['link'],
+            'iconlink': itemmk.spawn_icon_self().permalink(),
+            'size': self.get_data_size(),
+            'title': item_info['title'],
+            'type': self.get_data_type(),
+            }
+
+        if self.data:
+            idesc_tmpl['has_file'] = 1
+
+	# rewrite
+        idesc = render_to_string('feedgen/item-description.html', idesc_tmpl)
+	item_info['description'] = itemmk.rewrite_html(idesc)
+
+	# done
+	return item_info
 
 ##################################################################
 
@@ -1293,17 +1367,17 @@ class Comment(AbstractThing):
     title = AbstractField.string()
     upon_item = AbstractField.reference(Item, required=False)
 
-    def to_structure(self):
+    def to_structure(self, request=None):
 	"""
 	"""
-	s = super(Comment, self).to_structure()
-        f = self.from_feed
-        if f:
-            s['commentFromFeedId'] = f.id
-        i = self.upon_item
-        if i:
-            s['commentUponItemName'] = i.name
-        return s
+	s = super(Comment, self).to_structure(request)
+	f = self.from_feed
+	if f:
+	    s['commentFromFeedId'] = f.id
+	i = self.upon_item
+	if i:
+	    s['commentUponItemName'] = i.name
+	return s
 
     def __unicode__(self):
 	"""return the title of this comment; comments lack a "name" field"""
@@ -1341,7 +1415,7 @@ class Registry(AbstractModel): # not a Thing
 	""" """
 	return klass.set(key, base64.urlsafe_b64encode(value), overwrite_ok)
 
-    def to_structure(self):
+    def to_structure(self, request=None):
 	""" """
 	s = {}
 	s[self.key] = self.value # this is why it is not a Thing
@@ -1370,3 +1444,10 @@ class Event(AbstractModel): # not a Thing
     method = AbstractField.string(required=False)
     url = AbstractField.string(required=False)
 
+##################################################################
+
+# due to circular dependency, this import statement moved to here
+
+from minekey import MineKey
+
+##################################################################
