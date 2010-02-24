@@ -1067,7 +1067,6 @@ class Item(AbstractThing):
 	'data': dict(gc='file'),
 	'data_ciphertext_digest': dict(s2m='copy', m2s='copy'),
 	'data_encryption_key': dict(s2m='copy', m2s='copy'),
-	'data_remote_storage_url': dict(s2m='copy', m2s='copy'),
 	'data_type': dict(s2m='copy', m2s='copy'),
 	'description': dict(r2s='verbatim', s2m='copy', m2s='copy'),
 	'hide_after': dict(s2m='date', m2s='date'),
@@ -1087,7 +1086,6 @@ class Item(AbstractThing):
     data = AbstractField.file(storage=item_fss, upload_to=fss_yyyymmdd, required=False)
     data_ciphertext_digest = AbstractField.text(required=False)
     data_encryption_key = AbstractField.text(required=False)
-    data_remote_storage_url = AbstractField.url(required=False)
     data_type = AbstractField.string(required=False)
     description = AbstractField.text(required=False)
     for_feeds = AbstractField.reflist(Feed, pivot='items_explicitly_for', required=False) # augments 'tags'

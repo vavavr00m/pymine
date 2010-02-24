@@ -89,7 +89,6 @@ class ItemAdmin(admin.ModelAdmin):
 			     'icon_type',
 			     'icon',
 			     'links_to_items',
-			     'data_remote_storage_url',
 			     ]}),
 	('Tags', {'fields': ['tags', 'for_feeds', 'not_feeds']}),
 	('Advanced', {'fields': ['hide_before', 'hide_after']}),
