@@ -63,9 +63,9 @@ fss_yyyymmdd = '%Y-%m/%d'
 ##################################################################
 
 item_status_choices = (
-    ( '0', 'totally-inaccessible' ),
-    ( '1', 'exposed-via-citation' ),
-    ( '2', 'exposed-via-tagging' ),
+    ( 'I', 'totally-inaccessible' ),
+    ( 'C', 'available-via-citation-or-hyperlink' ),
+    ( 'S', 'available-via-tagging' ),
     # In all access, per-item "not:feedname" explicit tagging will be honoured.
     # In feed generation, additional per-feed "exclude:tag" explicit tagging will be honoured.
     )
@@ -78,13 +78,15 @@ for short, long in item_status_choices:
     status_lookup[long] = short
 
 status_aliases = {
-    'citable': '1',
-    'citeable': '1',
-    'inaccessable': '0',
-    'inaccessible': '0',
-    'sharable': '2',
-    'shareable': '2',
+    'citable': 'C',
+    'citeable': 'C',
+    'inaccessable': 'I',
+    'inaccessible': 'I',
+    'sharable': 'S',
+    'shareable': 'S',
 }
+
+# insert the aliases
 status_lookup.update(status_aliases)
 
 ##################################################################
