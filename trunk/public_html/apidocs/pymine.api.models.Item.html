@@ -23,7 +23,7 @@
     
     
     <div id="splitTables">
-      <table class="children sortable" id="id34">
+      <table class="children sortable" id="id35">
   
   
   
@@ -70,6 +70,18 @@
     <td>Method</td>
     <td><a href="pymine.api.models.Item.html#to_structure">to_structure</a></td>
     <td><span class="undocumented">Undocumented</span></td>
+  </tr><tr class="method">
+    
+    
+    <td>Method</td>
+    <td><a href="pymine.api.models.Item.html#feed_description">feed_description</a></td>
+    <td><span>if there is a data file, the description *is* HTML and is</span></td>
+  </tr><tr class="method">
+    
+    
+    <td>Method</td>
+    <td><a href="pymine.api.models.Item.html#to_feedxml">to_feedxml</a></td>
+    <td><span>Creates the structure used in FEEDXML generation</span></td>
   </tr>
   
 </table>
@@ -77,7 +89,7 @@
         <p>
           Inherited from <a href="pymine.api.models.AbstractThing.html">AbstractThing</a>:
         </p>
-        <table class="children sortable" id="id35">
+        <table class="children sortable" id="id36">
   
   
   
@@ -258,12 +270,41 @@ assume the description is HTML<table class="fieldTable"></table></div>
         <a name="to_structure"></a>
         <div class="functionHeader">
         
-        def to_structure(self):
+        def to_structure(self, request=None):
         
       </div>
         <div class="functionBody">
           <div class="interfaceinfo">overrides <a href="pymine.api.models.AbstractThing.html#to_structure">pymine.api.models.AbstractThing.to_structure</a></div>
           <div class="undocumented">Undocumented</div>
+        </div>
+      </div><div class="function">
+        <a name="pymine.api.models.Item.feed_description"></a>
+        <a name="feed_description"></a>
+        <div class="functionHeader">
+        
+        def feed_description(self):
+        
+      </div>
+        <div class="functionBody">
+          
+          <div>if there is a data file, the description *is* HTML and is returned, else
+if self.item_type() suggests HTML, the description is returned, else a 
+hardcoded default is returned<table class="fieldTable"></table></div>
+        </div>
+      </div><div class="function">
+        <a name="pymine.api.models.Item.to_feedxml"></a>
+        <a name="to_feedxml"></a>
+        <div class="functionHeader">
+        
+        def to_feedxml(self, feedmk):
+        
+      </div>
+        <div class="functionBody">
+          
+          <div>Creates the structure used in FEEDXML generation</p>
+<p>See 
+http://docs.djangoproject.com/en/dev/ref/contrib/syndication/#django.contrib.syndication.SyndicationFeed.add_item
+and feedgen.py<table class="fieldTable"></table></div>
         </div>
       </div>
     

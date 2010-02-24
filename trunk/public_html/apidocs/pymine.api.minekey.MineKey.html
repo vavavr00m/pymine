@@ -23,7 +23,7 @@
     
     
     <div id="splitTables">
-      <table class="children sortable" id="id7">
+      <table class="children sortable" id="id8">
   
   
   
@@ -38,7 +38,7 @@
     
     
     <td>Class Method</td>
-    <td><a href="pymine.api.minekey.MineKey.html#get_feed_minekey_for">get_feed_minekey_for</a></td>
+    <td><a href="pymine.api.minekey.MineKey.html#create_feedmk">create_feedmk</a></td>
     <td><span>assuming 'feed' is a valid Feed object instance, return a</span></td>
   </tr><tr class="method">
     
@@ -51,7 +51,7 @@ format:</span></td>
     
     
     <td>Method</td>
-    <td><a href="pymine.api.minekey.MineKey.html#EMSG">EMSG</a></td>
+    <td><a href="pymine.api.minekey.MineKey.html#mkerr">mkerr</a></td>
     <td><span>create a diag string to drop into an exception</span></td>
   </tr><tr class="method">
     
@@ -188,24 +188,24 @@ programmer to ENFORCE a hmac check, just in case something higher-up
 permits code to slide through that sets hmac=None/False/0<table class="fieldTable"></table></div>
         </div>
       </div><div class="function">
-        <a name="pymine.api.minekey.MineKey.get_feed_minekey_for"></a>
-        <a name="get_feed_minekey_for"></a>
+        <a name="pymine.api.minekey.MineKey.create_feedmk"></a>
+        <a name="create_feedmk"></a>
         <div class="functionHeader">
         @classmethod<br />
-        def get_feed_minekey_for(klass, request, feed):
+        def create_feedmk(klass, request, feed):
         
       </div>
         <div class="functionBody">
           
           <div>assuming 'feed' is a valid Feed object instance, return a minekey which 
-eventually will yield the ATOM feed for this Feed</p>
+eventually will yield the FEEDXML feed for this Feed</p>
 <p>There once was a time when Feed objects were called 'Relations' because 
-they held data pertinent to the Relationship between a mine user and one of
+they held data pertinent to the relationship between a mine user and one of
 his subscribers; this concept seemed to the programmer to be distinct from 
-(say) the ATOM feeds that would be generated.</p>
-<p>However this terminology was deemed &quot;confusing&quot; by the 
-designers and so instead we have Feed objects (one thing) which generate 
-ATOM feeds (another thing entirely) - obvious, n'est-ce pas?<table class="fieldTable"></table></div>
+(say) the feeds that would be generated.</p>
+<p>However this terminology was deemed &quot;confusing&quot; by the Mine 
+design team and so now we have Feed objects (one thing) which generate 
+feeds (another thing entirely) - obvious, n'est-ce pas?<table class="fieldTable"></table></div>
         </div>
       </div><div class="function">
         <a name="pymine.api.minekey.MineKey.__str__"></a>
@@ -222,11 +222,11 @@ format:</p>
 <p>fid/fversion/iid/depth/type<table class="fieldTable"></table></div>
         </div>
       </div><div class="function">
-        <a name="pymine.api.minekey.MineKey.EMSG"></a>
-        <a name="EMSG"></a>
+        <a name="pymine.api.minekey.MineKey.mkerr"></a>
+        <a name="mkerr"></a>
         <div class="functionHeader">
         
-        def EMSG(self, *args):
+        def mkerr(self, *args):
         
       </div>
         <div class="functionBody">
