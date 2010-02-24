@@ -16,9 +16,9 @@
 ##
 
 #from datetime import datetime
-from django.conf import settings
 #from django.core.urlresolvers import reverse
 #from django.db.models import Q
+from django.conf import settings
 from django.http import HttpResponse
 from django.template.loader import render_to_string
 from django.utils import feedgenerator
@@ -46,7 +46,7 @@ def create_feedqs(feedmk):
 
 def render_feedqs(feedmk, qs):
     """
-    take a feedmk and a (presumably pertinent) queryset, and generate ATOM for the former using the latter.
+    take a feedmk and a (presumably pertinent) queryset, and generate FEEDXML for the former using the latter.
     """
 
     feed = feedmk.get_feed()
@@ -80,10 +80,12 @@ def render_feedqs(feedmk, qs):
 
     feed_info['description'] = render_to_string('feedgen/feed-description.html', fdesc_tmpl)
 
-    fgen = feedgenerator.Atom1Feed(**feed_info)
+    #fgen = feedgenerator.Atom1Feed(**feed_info)
+    fgen = feedgenerator.Rss201rev2Feed(**feed_info)
 
     for i in qs:
-	item_info = i.to_atom(feedmk)
+	item_info = i.to_feedxml(feedmk)
 	fgen.add_item(**item_info)
 
-    return HttpResponse(fgen.writeString('UTF-8'), mimetype='application/atom+xml')
+    #return HttpResponse(fgen.writeString('UTF-8'), mimetype='application/atom+xml')
+    return HttpResponse(fgen.writeString('UTF-8'), mimetype='application/rss+xml')

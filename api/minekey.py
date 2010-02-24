@@ -24,14 +24,17 @@ from django.http import HttpResponse, HttpResponseForbidden, \
     HttpResponsePermanentRedirect, HttpResponseRedirect
 
 from models import Feed, Item
+from feedgen import generate_feed
+
+##################################################################
+
+from views import read_item_data, read_item_icon
 
 import base64
 import hashlib
 import hmac
 import re
 
-import pymine.api.views as api
-import pymine.api.feedgen as feedgen
 import pymine.util.mimestuff as mimestuff
 
 # minekey format:
@@ -90,19 +93,19 @@ class MineKey:
     def create_feedmk(klass, request, feed):
 	"""
 	assuming 'feed' is a valid Feed object instance, return a
-	minekey which eventually will yield the ATOM feed for this
+	minekey which eventually will yield the FEEDXML feed for this
 	Feed
 
 	There once was a time when Feed objects were called
 	'Relations' because they held data pertinent to the
 	relationship between a mine user and one of his subscribers;
 	this concept seemed to the programmer to be distinct from
-	(say) the ATOM feeds that would be generated.
+	(say) the feeds that would be generated.
 
 	However this terminology was deemed "confusing" by the Mine
 	design team and so now we have Feed objects (one thing) which
-	generate ATOM feeds (another thing entirely) - obvious,
-	n'est-ce pas?
+	generate feeds (another thing entirely) - obvious, n'est-ce
+	pas?
 	"""
 
 	return MineKey(request,
@@ -370,11 +373,11 @@ class MineKey:
 
         if self.__type == 'data':
             if self.__iid: # it's an item
-                return api.read_item_data(self.__request, self.__iid, None)
+                return read_item_data(self.__request, self.__iid, None)
             else: # it's a feed
-                return feedgen.generate_feed(self)
+                return generate_feed(self)
         elif self.__type == 'icon':
-                return api.read_item_icon(self.__request, self.__iid, None)            
+                return read_item_icon(self.__request, self.__iid, None)            
         elif self.__type == 'submit':
             pass
         else:
@@ -452,9 +455,7 @@ class MineKey:
 
 	return self.html_re.sub(rewrite_link, html)
 
-    ##################################################################
-    ##################################################################
-    ##################################################################
+##################################################################
 
 if __name__ == '__main__':
     foo = {

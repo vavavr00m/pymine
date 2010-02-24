@@ -1283,9 +1283,9 @@ class Item(AbstractThing):
         else:
             return 'pymine: no datafile is provided and the description content is not text/html, thus this placeholder is used instead'
 
-    def to_atom(self, feedmk):
+    def to_feedxml(self, feedmk):
 	"""
-	Creates the structure used in ATOM generation
+	Creates the structure used in FEEDXML generation
 
 	See http://docs.djangoproject.com/en/dev/ref/contrib/syndication/#django.contrib.syndication.SyndicationFeed.add_item
 	and feedgen.py
