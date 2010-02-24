@@ -157,7 +157,7 @@ def create_feedqs(feedmk):
     cloud_cache = {}
 
     for item in public_items.filter(is_deleted__exact=False):
-	#print "considering item %s" % item.name
+	#print "considering tagshared item %s" % item.name
 
 	for item_tag in item.tags.all():
 	    if item_tag in cloud_cache:

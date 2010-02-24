@@ -58,7 +58,7 @@ Minectl upload -t themineproject -s citable $SAMPLES/*.pdf # wasn't that easy?
 # highly verbose special cases for tag testing
 while read file tags
 do
-    Minectl upload -s citable -t "$tags" $SAMPLES/$file
+    Minectl upload -s shareable -t "$tags" $SAMPLES/$file
 done <<EOF
 adriana.jpg photos themineproject
 alecm.png photos themineproject
