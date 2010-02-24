@@ -33,10 +33,9 @@ from pymine.api.models import Item # Tag, Feed, Comment, Vurl
 class create_feedqs(request, feed):
     return Item.list()
 
-class render_feedqs_with_minekey(request, qs, mk):
-
+class render_feedqs(request, qs, mk):
     feed_info = {}
-    feed_info['author_email'] = 'nobody-feed@themineproject.org'
+    feed_info['author_email'] = 'noreply-feed@themineproject.org'
     feed_info['author_link'] = None
     feed_info['author_name'] = feed_info['author_email']
     feed_info['categories'] = None
