@@ -20,10 +20,10 @@
 from django.conf import settings
 from django.http import HttpResponse
 
-from envelope import Envelope
-from models import Comment, Item
+from pymine.api.envelope import Envelope
+from pymine.api.models import Comment, Item
 
-import util.httpserve as httpserve
+import pymine.util.httpserve as httpserve
 
 ##################################################################
 

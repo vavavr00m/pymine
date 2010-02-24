@@ -17,9 +17,9 @@
 
 """docstring goes here""" # :-)
 
-from models import Tag, Feed, Item, Comment, Vurl
-from models import TagXattr, FeedXattr, ItemXattr, CommentXattr, VurlXattr
-from models import Registry
+from pymine.api.models import Tag, Feed, Item, Comment, Vurl
+from pymine.api.models import TagXattr, FeedXattr, ItemXattr, CommentXattr, VurlXattr
+from pymine.api.models import Registry
 
 from django.contrib import admin
 

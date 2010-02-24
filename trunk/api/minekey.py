@@ -23,8 +23,8 @@ from django.http import HttpResponse, HttpResponseForbidden, \
     HttpResponseNotAllowed, HttpResponseNotFound, \
     HttpResponsePermanentRedirect, HttpResponseRedirect
 
-from models import Feed, Item
-from feedgen import generate_feed
+from pymine.api.models import Feed, Item
+from pymine.api.feedgen import generate_feed
 
 ##################################################################
 

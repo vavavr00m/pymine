@@ -20,8 +20,8 @@
 from django.conf.urls.defaults import *
 from django.contrib import admin
 
-import views as mine
-from views import HTTP_METHOD, HTTP_METHOD_NOAUTH
+import pymine.views as mine
+from pymine.views import HTTP_METHOD, HTTP_METHOD_NOAUTH
 
 admin.autodiscover()
 

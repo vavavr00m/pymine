@@ -25,14 +25,14 @@ from django.http import HttpResponse, HttpResponseForbidden, \
     HttpResponseNotAllowed, HttpResponseNotFound, \
     HttpResponsePermanentRedirect, HttpResponseRedirect
 
-from api.minekey import MineKey
-from api.models import Vurl
+from pymine.api.minekey import MineKey
+from pymine.api.models import Vurl
 
 import django.utils.simplejson as json
 import pickle
 
-import util.cheatxml as cheatxml
-import util.httpserve as httpserve
+import pymine.util.cheatxml as cheatxml
+import pymine.util.httpserve as httpserve
 
 def HTTP_METHOD_NOAUTH(request, *args, **kwargs):
     """

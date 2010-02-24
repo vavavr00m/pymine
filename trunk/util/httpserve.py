@@ -52,7 +52,7 @@ from django.shortcuts import render_to_response
 import os
 import re
 
-import mimestuff
+import pymine.util.mimestuff as mimestuff
 
 ##################################################################
 
