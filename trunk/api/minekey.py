@@ -19,11 +19,13 @@
 a minekey is the tuple of data necessary to access items in a mine
 """
 
+from django.core.cache import cache
+
 from django.http import HttpResponse, HttpResponseForbidden, \
     HttpResponseNotAllowed, HttpResponseNotFound, \
     HttpResponsePermanentRedirect, HttpResponseRedirect
 
-from pymine.api.models import Feed, Item
+from pymine.api.models import Feed, Item, Registry
 from pymine.api.feedgen import generate_feed
 
 ##################################################################
@@ -167,8 +169,19 @@ class MineKey:
 	thrown.
 	"""
 
-	hmac_key = '12345678901234567890123456789012'
-	hmac_pad = '________________________________'
+	key_token = '__MINE_HMAC_KEY__'
+	pad_token = '__MINE_HMAC_PAD__'
+
+	hmac_key = cache.get(key_token)
+	if not hmac_key:
+	    hmac_key = Registry.get_decoded(key_token)
+	    cache.add(key_token, hmac_key, 60)
+
+	hmac_pad = cache.get(pad_token)
+	if not hmac_pad:
+	    hmac_pad = Registry.get_decoded(pad_token)
+	    cache.add(pad_token, hmac_pad, 60)
+
 	h = hmac.new(hmac_key, str(self), hashlib.sha256)
 	h.update(hmac_pad)
 	hash = base64.urlsafe_b64encode(h.digest()).rstrip('=')
@@ -202,9 +215,9 @@ class MineKey:
 		return ".feed"
 	    else:
 		i = self.get_item()
-                ext = mimestuff.lookup.guess_extension(i.get_data_type()) or ".dat"
+		ext = mimestuff.lookup.guess_extension(i.get_data_type()) or ".dat"
 		#return "%d.%s" % (self.__iid, ext) # someday perhaps
-                return ext
+		return ext
 
 	elif self.__type == 'icon':
 	    if self.__iid == 0:
@@ -373,18 +386,17 @@ class MineKey:
 	"""returns the appropriate http response for this minekey"""
 	self.access_check() # abort if the access checks fail
 
-        if self.__type == 'data':
-            if self.__iid: # it's an item
-                return read_item_data(self.__request, self.__iid, None)
-            else: # it's a feed
-                return generate_feed(self)
-        elif self.__type == 'icon':
-                return read_item_icon(self.__request, self.__iid, None)            
-        elif self.__type == 'submit':
-            pass
-        else:
-            raise RuntimeError, "this can't happen: " + str(self)
-
+	if self.__type == 'data':
+	    if self.__iid: # it's an item
+		return read_item_data(self.__request, self.__iid, None)
+	    else: # it's a feed
+		return generate_feed(self)
+	elif self.__type == 'icon':
+		return read_item_icon(self.__request, self.__iid, None)
+	elif self.__type == 'submit':
+	    pass
+	else:
+	    raise RuntimeError, "this can't happen: " + str(self)
 
     ##################################################################
     ##################################################################

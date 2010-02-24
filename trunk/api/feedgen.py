@@ -84,9 +84,9 @@ def render_feedqs(feedmk, qs):
     fgen = feedgenerator.Rss201rev2Feed(**feed_info)
 
     if qs:
-        for i in qs:
-            item_info = i.to_feedxml(feedmk)
-            fgen.add_item(**item_info)
+	for i in qs:
+	    item_info = i.to_feedxml(feedmk)
+	    fgen.add_item(**item_info)
 
     #return HttpResponse(fgen.writeString('UTF-8'), mimetype='application/atom+xml')
     return HttpResponse(fgen.writeString('UTF-8'), mimetype='application/rss+xml')
@@ -244,7 +244,7 @@ def create_feedqs(feedmk):
 
     # the safety catch
     if feed.is_considered_public:
-        qs = qs.filter(is_considered_public=True)
+	qs = qs.filter(is_considered_public=True)
 
     # pagination goes here
     # foo

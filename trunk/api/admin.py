@@ -82,8 +82,8 @@ class ItemAdmin(admin.ModelAdmin):
     list_filter = ['created']
     date_hierarchy = 'created'
     fieldsets = [
-	(None, {'fields': ['name', 'is_deleted', 'status', 
-                           'is_considered_public', 'description']}),
+	(None, {'fields': ['name', 'is_deleted', 'status',
+			   'is_considered_public', 'description']}),
 	('Data', {'fields': ['data_type',
 			     'data',
 			     'icon_type',
@@ -113,8 +113,8 @@ admin.site.register(Comment, CommentAdmin)
 ##################################################################
 
 class VurlAdmin(admin.ModelAdmin):
-    list_display = ('name', 'link', 
-                    'use_temporary_redirect', 'last_modified', 'created')
+    list_display = ('name', 'link',
+		    'use_temporary_redirect', 'last_modified', 'created')
     search_fields = ['name']
     list_filter = ['created']
     date_hierarchy = 'created'
