@@ -1272,18 +1272,18 @@ class Item(AbstractThing):
 	return s
 
     def feed_description(self):
-        """
-        if there is a data file, the description *is* HTML and is
-        returned, else if self.item_type() suggests HTML, the
-        description is returned, else a hardcoded default is returned
-        """
+	"""
+	if there is a data file, the description *is* HTML and is
+	returned, else if self.item_type() suggests HTML, the
+	description is returned, else a hardcoded default is returned
+	"""
 
-        if self.data:
-            return self.description
-        elif self.item_data_type() == 'text/html': # if we think it's HTML
-            return self.description
-        else:
-            return 'pymine: no datafile is provided and the description content is not text/html, thus this placeholder is used instead'
+	if self.data:
+	    return self.description
+	elif self.item_data_type() == 'text/html': # if we think it's HTML
+	    return self.description
+	else:
+	    return 'pymine: no datafile is provided and the description content is not text/html, thus this placeholder is used instead'
 
     def to_feedxml(self, feedmk):
 	"""
@@ -1298,43 +1298,43 @@ class Item(AbstractThing):
 	item_info = {}
 
 	item_info['author_email'] = 'noreply-item@localhost'
-        item_info['link'] = itemmk.permalink()
+	item_info['link'] = itemmk.permalink()
 	item_info['pubdate'] = self.last_modified
 	item_info['title'] = self.name
 
 	item_info['author_name'] = item_info['author_email']
 
 	item_info['enclosure'] = feedgenerator.Enclosure(url=item_info['link'],
-                                                         length=str(self.get_data_size()),
-                                                         mime_type=self.get_data_type())
+							 length=str(self.get_data_size()),
+							 mime_type=self.get_data_type())
 
 	item_info['unique_id'] = "tag:%s,2009:%s" % (item_info['author_email'], itemmk.key())
 
-	item_info['author_link'] = None 
-	item_info['categories'] = None 
-	item_info['comments'] = None 
-	item_info['item_copyright'] = None 
-	item_info['ttl'] = None 
+	item_info['author_link'] = None
+	item_info['categories'] = None
+	item_info['comments'] = None
+	item_info['item_copyright'] = None
+	item_info['ttl'] = None
 
-        idesc_tmpl = {
-            'comment_url': itemmk.spawn_submit_self().permalink(),
-            'content_type': self.get_data_type(),
-            'description': self.feed_description(),
-            'has_file': 0,
-            'http_path': itemmk.http_path(),
-            'id': self.id,
-            'datalink': item_info['link'],
-            'iconlink': itemmk.spawn_icon_self().permalink(),
-            'size': self.get_data_size(),
-            'title': item_info['title'],
-            'type': self.get_data_type(),
-            }
+	idesc_tmpl = {
+	    'comment_url': itemmk.spawn_submit_self().permalink(),
+	    'content_type': self.get_data_type(),
+	    'description': self.feed_description(),
+	    'has_file': 0,
+	    'http_path': itemmk.http_path(),
+	    'id': self.id,
+	    'datalink': item_info['link'],
+	    'iconlink': itemmk.spawn_icon_self().permalink(),
+	    'size': self.get_data_size(),
+	    'title': item_info['title'],
+	    'type': self.get_data_type(),
+	    }
 
-        if self.data:
-            idesc_tmpl['has_file'] = 1
+	if self.data:
+	    idesc_tmpl['has_file'] = 1
 
 	# rewrite
-        idesc = render_to_string('feedgen/item-description.html', idesc_tmpl)
+	idesc = render_to_string('feedgen/item-description.html', idesc_tmpl)
 	item_info['description'] = itemmk.rewrite_html(idesc)
 
 	# done
@@ -1401,7 +1401,7 @@ class Registry(AbstractModel): # not a Thing
     @classmethod
     def get_decoded(klass, key):
 	""" """
-	return base64.urlsafe_b64decode(klass.get(key))
+	return base64.urlsafe_b64decode(klass.get(key).encode('utf-8'))
 
     @classmethod
     def set(klass, key, value, overwrite_ok):

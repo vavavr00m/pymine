@@ -163,15 +163,15 @@ def minekey_read(request, mk_hmac, mk_fid, mk_fversion, mk_iid, mk_depth, mk_typ
 	return HttpResponseNotFound('bad minekey method for GET')
 
     try:
-        mk = MineKey(request, 
-                     hmac=mk_hmac, 
-                     fid=mk_fid, 
-                     fversion=mk_fversion, 
-                     iid=mk_iid, 
-                     depth=mk_depth, 
-                     type=mk_type, 
-                     ext=mk_ext,
-                     enforce_hmac_check=True)
+	mk = MineKey(request,
+		     hmac=mk_hmac,
+		     fid=mk_fid,
+		     fversion=mk_fversion,
+		     iid=mk_iid,
+		     depth=mk_depth,
+		     type=mk_type,
+		     ext=mk_ext,
+		     enforce_hmac_check=True)
     except:
 	if settings.DEBUG: raise
 	return HttpResponseNotFound('bad minekey validation')
@@ -193,15 +193,15 @@ def minekey_submit(request, mk_hmac, mk_fid, mk_fversion, mk_iid, mk_depth, mk_t
 	return HttpResponseNotFound('bad minekey method for POST')
 
     try:
-        mk = MineKey(request, 
-                     hmac=mk_hmac, 
-                     fid=mk_fid, 
-                     fversion=mk_fversion, 
-                     iid=mk_iid, 
-                     depth=mk_depth, 
-                     type=mk_type, 
-                     ext=mk_ext,
-                     enforce_hmac_check=True)
+	mk = MineKey(request,
+		     hmac=mk_hmac,
+		     fid=mk_fid,
+		     fversion=mk_fversion,
+		     iid=mk_iid,
+		     depth=mk_depth,
+		     type=mk_type,
+		     ext=mk_ext,
+		     enforce_hmac_check=True)
     except:
 	if settings.DEBUG: raise
 	return HttpResponseNotFound('bad minekey validation')

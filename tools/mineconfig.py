@@ -28,8 +28,8 @@ from api.models import Registry
 
 def initialise_crypto():
     nbytes = 256/8
-    mine_hmac_key = base64.urlsafe_b64encode(os.urandom(nbytes))
-    mine_hmac_pad = base64.urlsafe_b64encode(os.urandom(nbytes))
+    mine_hmac_key = os.urandom(nbytes)
+    mine_hmac_pad = os.urandom(nbytes)
     Registry.set_encoded('__MINE_HMAC_KEY__', mine_hmac_key, False)
     Registry.set_encoded('__MINE_HMAC_PAD__', mine_hmac_pad, False)
 
