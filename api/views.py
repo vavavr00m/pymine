@@ -55,9 +55,9 @@ def create_thing(request, thyng, **kwargs):
 
     convert = getattr(m, 'to_structure', None)
 
-    if convert:
-	s = { m.thing_prefix : convert() }
-    else: # is a list or something that we assume to be sane
+    if convert: # its a single Thing
+	s = { m.thing_prefix : convert(request) }
+    else: # is a list of Thing, or something that we assume to be sane
 	s = m
 
     return Envelope(request, result=s)

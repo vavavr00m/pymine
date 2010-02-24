@@ -38,16 +38,16 @@
     
     
     <td>Function</td>
-    <td><a href="pymine.api.feedgen.html#create_feedqs">create_feedqs</a></td>
-    <td><span>create a queryset giving all the items pertinent to be served to 
-feedmk</span></td>
+    <td><a href="pymine.api.feedgen.html#render_feedqs">render_feedqs</a></td>
+    <td><span>take a feedmk and a (presumably pertinent) queryset, and generate 
+FEEDXML for the former using the latter.</span></td>
   </tr><tr class="function">
     
     
     <td>Function</td>
-    <td><a href="pymine.api.feedgen.html#render_feedqs">render_feedqs</a></td>
-    <td><span>take a feedmk and a (presumably pertinent) queryset, and generate 
-FEEDXML for the former using the latter.</span></td>
+    <td><a href="pymine.api.feedgen.html#create_feedqs">create_feedqs</a></td>
+    <td><span>create a queryset giving all the items pertinent to be served to 
+feedmk</span></td>
   </tr>
   
 </table>
@@ -70,19 +70,6 @@ FEEDXML for the former using the latter.</span></td>
           <div>wrapper for combined render_feedqs and create_feedqs<table class="fieldTable"></table></div>
         </div>
       </div><div class="function">
-        <a name="pymine.api.feedgen.create_feedqs"></a>
-        <a name="create_feedqs"></a>
-        <div class="functionHeader">
-        
-        def create_feedqs(feedmk):
-        
-      </div>
-        <div class="functionBody">
-          
-          <div>create a queryset giving all the items pertinent to be served to 
-feedmk<table class="fieldTable"></table></div>
-        </div>
-      </div><div class="function">
         <a name="pymine.api.feedgen.render_feedqs"></a>
         <a name="render_feedqs"></a>
         <div class="functionHeader">
@@ -94,6 +81,25 @@ feedmk<table class="fieldTable"></table></div>
           
           <div>take a feedmk and a (presumably pertinent) queryset, and generate 
 FEEDXML for the former using the latter.<table class="fieldTable"></table></div>
+        </div>
+      </div><div class="function">
+        <a name="pymine.api.feedgen.create_feedqs"></a>
+        <a name="create_feedqs"></a>
+        <div class="functionHeader">
+        
+        def create_feedqs(feedmk):
+        
+      </div>
+        <div class="functionBody">
+          
+          <div>create a queryset giving all the items pertinent to be served to 
+feedmk</p>
+<p>PRIORITIES: item.STATUS=PRIVATE trumps... item.HIDDEN_TIME trumps... 
+not:FEED trumps... [MINEKEY DIRECT ACCESS (PUBLIC|SHARED)&gt;] trumps... 
+[FEED] for:FEED(PUBLIC|SHARED) trumps... [FEED] exclude:TAG trumps... 
+[FEED] require:TAG trumps... ..(there could be an argument for moving 
+minekey here)... [FEED] intersection of ITEM(PUBLIC).EXPANDEDTAGCLOUD and 
+FEED.INTERESTS.<table class="fieldTable"></table></div>
         </div>
       </div>
     

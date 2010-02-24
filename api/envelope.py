@@ -30,3 +30,7 @@ class Envelope(dict):
 
         if settings.DEBUG:
             self['__mine_debug_enabled__'] = 1
+
+            # cascade a few more checks in here
+            if settings.TEMPLATE_STRING_IF_INVALID:
+                self['__mine_debug_empty_string__'] = settings.TEMPLATE_STRING_IF_INVALID
