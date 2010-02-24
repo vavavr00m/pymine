@@ -20,7 +20,7 @@
 from django.conf.urls.defaults import *
 from pymine.api.models import Tag, Item, Feed, Comment, Vurl
 from pymine.views import HTTP_METHOD, mine_redirect
-import views as ui
+import pymine.ui.views as ui
 
 urlpatterns = patterns('',
 		       )
