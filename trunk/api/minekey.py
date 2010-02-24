@@ -202,7 +202,9 @@ class MineKey:
 		return ".feed"
 	    else:
 		i = self.get_item()
-		return mimestuff.lookup.guess_extension(i.get_data_type()) or ".dat"
+                ext = mimestuff.lookup.guess_extension(i.get_data_type()) or ".dat"
+		#return "%d.%s" % (self.__iid, ext) # someday perhaps
+                return ext
 
 	elif self.__type == 'icon':
 	    if self.__iid == 0:
