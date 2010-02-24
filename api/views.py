@@ -36,7 +36,7 @@ def create_comment(request, idz, **kwargs):
     returns: an envelope containing the comment structure
     """
     m = Comment.create(request, commentUponItem=int(idz))
-    return Envelope(request, result={ m.thing_prefix : m.to_structure() })
+    return Envelope(request, result={ m.thing_prefix : m.to_structure(request) })
 
 ##################################################################
 
@@ -111,7 +111,7 @@ def delete_thing_attr(request, thyng, id, attr, **kwargs):
     """
     m = thyng.get(id=int(id))
     m.delete_attribute(attr)
-    return Envelope(request, result={ m.thing_prefix : m.to_structure() })
+    return Envelope(request, result={ m.thing_prefix : m.to_structure(request) })
 
 ##################################################################
 
@@ -154,7 +154,7 @@ def get_thing_attr(request, thyng, id, attr, **kwargs):
     returns: ...
     """
     m = thyng.get(id=int(id))
-    s = m.to_structure()
+    s = m.to_structure(request)
     return Envelope(request, result=s[attr]) # throw exception if not there
 
 ##################################################################
@@ -179,7 +179,7 @@ def list_comments(request, idz, **kwargs):
     if 'query' in request.REQUEST:
 	qs = Comment.execute_search_query(request.REQUEST['query'], qs)
 
-    result = [ { m.thing_prefix : m.to_structure() } for m in qs ]
+    result = [ { m.thing_prefix : m.to_structure(request) } for m in qs ]
     return Envelope(request, result=result)
 
 ##################################################################
@@ -193,7 +193,7 @@ def list_registry(request, **kwargs):
     returns: ...
     """
     qs = Registry.objects.all()
-    result = [ m.to_structure() for m in qs ]
+    result = [ m.to_structure(request) for m in qs ]
     return Envelope(request, result=result)
 
 ##################################################################
@@ -214,7 +214,7 @@ def list_things(request, thyng, **kwargs):
     if 'query' in request.REQUEST:
 	qs = thyng.execute_search_query(request.REQUEST['query'], qs)
 
-    result = [ { m.thing_prefix : m.to_structure() } for m in qs ]
+    result = [ { m.thing_prefix : m.to_structure(request) } for m in qs ]
     return Envelope(request, result=result)
 
 ##################################################################
@@ -267,7 +267,7 @@ def read_thing(request, thyng, id, **kwargs):
     returns: ...
     """
     m = thyng.get(id=int(id))
-    return Envelope(request, result={ m.thing_prefix : m.to_structure() })
+    return Envelope(request, result={ m.thing_prefix : m.to_structure(request) })
 
 ##################################################################
 
@@ -301,7 +301,7 @@ def update_registry_attr(request, rattr, **kwargs):
     if not created: # then it will need updating
 	m.value = v
 	m.save();
-    return Envelope(request, result=m.to_structure())
+    return Envelope(request, result=m.to_structure(request))
 
 ##################################################################
 
@@ -319,6 +319,6 @@ def update_thing(request, thyng, id, **kwargs):
     """
     m = thyng.get(id=int(id))
     m = m.update(request)
-    return Envelope(request, result={ m.thing_prefix : m.to_structure() })
+    return Envelope(request, result={ m.thing_prefix : m.to_structure(request) })
 
 ##################################################################
