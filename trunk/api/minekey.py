@@ -23,14 +23,16 @@ from django.http import HttpResponse, HttpResponseForbidden, \
     HttpResponseNotAllowed, HttpResponseNotFound, \
     HttpResponsePermanentRedirect, HttpResponseRedirect
 
-from api.models import Feed, Item
+from models import Feed, Item
 
 import base64
 import hashlib
 import hmac
 import re
 
-import util.mimestuff as mimestuff
+import pymine.api.views as api
+import pymine.api.feedgen as feedgen
+import pymine.util.mimestuff as mimestuff
 
 # minekey format:
 # hmac/fid/fversion/iid/depth/type.ext
@@ -85,7 +87,7 @@ class MineKey:
 	    self.get_hmac(True)
 
     @classmethod
-    def get_feed_minekey_for(klass, request, feed):
+    def create_feedmk(klass, request, feed):
 	"""
 	assuming 'feed' is a valid Feed object instance, return a
 	minekey which eventually will yield the ATOM feed for this
@@ -93,22 +95,22 @@ class MineKey:
 
 	There once was a time when Feed objects were called
 	'Relations' because they held data pertinent to the
-	Relationship between a mine user and one of his subscribers;
+	relationship between a mine user and one of his subscribers;
 	this concept seemed to the programmer to be distinct from
 	(say) the ATOM feeds that would be generated.
 
-	However this terminology was deemed "confusing" by the
-	designers and so instead we have Feed objects (one thing)
-	which generate ATOM feeds (another thing entirely) - obvious,
+	However this terminology was deemed "confusing" by the Mine
+	design team and so now we have Feed objects (one thing) which
+	generate ATOM feeds (another thing entirely) - obvious,
 	n'est-ce pas?
 	"""
 
 	return MineKey(request,
-		       type='data',
+		       depth=3,
 		       fid=feed.id,
 		       fversion=feed.version,
 		       iid=0,
-		       depth=3)
+		       type='data')
 
     def __str__(self):
 	"""
@@ -365,7 +367,19 @@ class MineKey:
     def response(self):
 	"""returns the appropriate http response for this minekey"""
 	self.access_check() # abort if the access checks fail
-	return HttpResponse( "woot!" )
+
+        if self.__type == 'data':
+            if self.__iid: # it's an item
+                return api.read_item_data(self.__request, self.__iid, None)
+            else: # it's a feed
+                return feedgen.generate_feed(self)
+        elif self.__type == 'icon':
+                return api.read_item_icon(self.__request, self.__iid, None)            
+        elif self.__type == 'submit':
+            pass
+        else:
+            raise RuntimeError, "this can't happen: " + str(self)
+
 
     ##################################################################
     ##################################################################
