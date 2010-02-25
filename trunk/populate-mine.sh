@@ -16,8 +16,8 @@
 ## permissions and limitations under the License.
 ##
 
-Minectl() {
-    ./miner.pl -xe "$@"
+MINER() {
+    ./miner.pl -xe "$@" # using the old one for the moment
 }
 
 SAMPLES=public_html/testdata
@@ -28,37 +28,37 @@ set -x
 ./mineauth.sh login
 
 # set up some very general tags
-Minectl new-tags themineproject literature photos
+MINER new-tags themineproject literature photos
 
 # set up tags and implied tags in one go; read from left to right
-Minectl new-tags animals cats:animals dogs:animals hippos:animals
+MINER new-tags animals cats:animals dogs:animals hippos:animals
 
 # a little more detailed
-Minectl new-tags food drink motorcycles
-Minectl new-tags shoes sneakers:shoes
-Minectl new-tags booze:drink juice:drink
-Minectl new-tags wine:booze beer:booze spirits:booze
-Minectl new-tags white-wine:wine red-wine:wine
-Minectl new-tags chardonnay:white-wine rioja:red-wine
-Minectl new-tags red-burgundy:red-wine white-burgundy:white-wine burgundy:red-wine,white-wine # latter->both
+MINER new-tags food drink motorcycles
+MINER new-tags shoes sneakers:shoes
+MINER new-tags booze:drink juice:drink
+MINER new-tags wine:booze beer:booze spirits:booze
+MINER new-tags white-wine:wine red-wine:wine
+MINER new-tags chardonnay:white-wine rioja:red-wine
+MINER new-tags red-burgundy:red-wine white-burgundy:white-wine burgundy:red-wine,white-wine # latter->both
 
 # set up some feeds
-Minectl new-feed alec 1 "Alec Muffett" food drink animals themineproject exclude:shoes
-Minectl new-feed adriana 1 "Adriana Lukas" food drink shoes cats motorcycles themineproject
-Minectl new-feed carrie 1 "Carrie Bishop" food drink sneakers themineproject
-Minectl new-feed ben 1 "Ben Laurie" food drink cats motorcycles
-Minectl new-feed perry 1 "Perry deHavilland" hippos require:booze
+MINER new-feed alec 1 "Alec Muffett" food drink animals themineproject exclude:shoes
+MINER new-feed adriana 1 "Adriana Lukas" food drink shoes cats motorcycles themineproject
+MINER new-feed carrie 1 "Carrie Bishop" food drink sneakers themineproject
+MINER new-feed ben 1 "Ben Laurie" food drink cats motorcycles
+MINER new-feed perry 1 "Perry deHavilland" hippos require:booze
 
 ###
 # upload a batch of objects without individual tagging
 
-Minectl upload -t themineproject -s citable $SAMPLES/*.pdf # wasn't that easy?
+MINER upload -t themineproject -s citable $SAMPLES/*.pdf # wasn't that easy?
 
 ###
 # highly verbose special cases for tag testing
 while read file tags
 do
-    Minectl upload -s shareable -t "$tags" $SAMPLES/$file
+    MINER upload -s shareable -t "$tags" $SAMPLES/$file
 done <<EOF
 adriana.jpg photos themineproject
 alecm.png photos themineproject
@@ -70,7 +70,7 @@ EOF
 # some dummy comments
 while read item who what body
 do
-    Minectl create-comment $item commentFromFeed=$who commentTitle=$what commentBody="$body"
+    MINER create-comment $item commentFromFeed=$who commentTitle=$what commentBody="$body"
 done <<EOF
 1  alec       comment-title-1  comment body  1
 1  adriana      comment-title-2  comment body  2
@@ -81,18 +81,18 @@ done <<EOF
 EOF
 
 # some vurls
-Minectl create-vurl vurlName=mine vurlLink=http://themineproject.org/
-Minectl create-vurl vurlName=alecm vurlLink=http://www.crypticide.com/dropsafe/
-Minectl create-vurl vurlName=adriana vurlLink=http://mediainfluencer.net/
-Minectl create-vurl vurlName=foo/bar vurlLink=http://www.google.com/
-Minectl create-vurl vurlLink=http://www.google.co.uk/ # autoname
+MINER create-vurl vurlName=mine vurlLink=http://themineproject.org/
+MINER create-vurl vurlName=alecm vurlLink=http://www.crypticide.com/dropsafe/
+MINER create-vurl vurlName=adriana vurlLink=http://mediainfluencer.net/
+MINER create-vurl vurlName=foo/bar vurlLink=http://www.google.com/
+MINER create-vurl vurlLink=http://www.google.co.uk/ # autoname
 
 # custom objects for feed testing
 
 file=public_html/testdata/austen.txt
 
 # audio
-Minectl upload -t themineproject -s citable $SAMPLES/*.mp3
+MINER upload -t themineproject -s citable $SAMPLES/*.mp3
 
 # done
 exit 0

@@ -662,7 +662,10 @@ if __name__ == "__main__":
 	password = getpass.getpass()
 
 
-    apiopts = dict(url_prefix=mine_root, username=username, verbose=verbose, password=password)
+    apiopts = dict(url_prefix=mine_root, 
+                   username=username, 
+                   verbose=verbose, 
+                   password=password)
 
     if xml:
         apiopts['output_format'] = 'xml'
