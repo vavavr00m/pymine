@@ -1,0 +1,4 @@
+#!/bin/sh
+# wrapper / typing shortcut / easy to swap
+exec python miner.py "$@"
+exit 1

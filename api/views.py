@@ -280,9 +280,11 @@ def read_version(request, **kwargs):
     returns: ...
     """
     vinfo = {
-	'softwareName': settings.MINE_SOFTWARE_NAME,
-	'softwareRevision': settings.MINE_SOFTWARE_VERSION,
 	'mineApiVersion': settings.MINE_API_VERSION,
+	'softwareName': settings.MINE_SW_NAME,
+	'softwareMajorVersion': settings.MINE_SW_MAJOR_VERSION,
+	'softwareMinorVersion': settings.MINE_SW_MINOR_VERSION,
+	'softwareStatus': settings.MINE_SW_STATUS,
 	}
     return Envelope(request, result=dict(version=vinfo))
 

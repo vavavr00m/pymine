@@ -26,7 +26,7 @@ import os
 # django settings
 DEBUG = True
 TEMPLATE_DEBUG = DEBUG
-TEMPLATE_STRING_IF_INVALID = '[empty string]'
+#TEMPLATE_STRING_IF_INVALID = '[empty string]'
 
 # where we are
 MINE_PATH = os.path.dirname(os.path.abspath(__file__))
@@ -55,9 +55,11 @@ MINE_DBDIR_COMMENTS = os.path.join(MINE_DBDIR, 'comments')
 MINE_DBDIR_FILES = os.path.join(MINE_DBDIR, 'files')
 MINE_DBDIR_ICONS = os.path.join(MINE_DBDIR, 'icons')
 
-MINE_SOFTWARE_NAME='pymine'
-MINE_SOFTWARE_VERSION='2.0'
-MINE_API_VERSION=10
+MINE_API_VERSION = '11'
+MINE_SW_NAME = 'pymine'
+MINE_SW_MAJOR_VERSION = '2'
+MINE_SW_MINOR_VERSION = '1'
+MINE_SW_STATUS = 'alpha'
 
 LOGIN_REDIRECT_URL='/'
 LOGIN_URL='/login.html'

@@ -20,7 +20,6 @@
 from django.conf import settings
 from django.contrib.auth.models import User
 import base64
-import getopt
 import os
 import sys
 
@@ -53,7 +52,9 @@ def main(argv):
 	'set': Registry.set,
 	'set-encoded': Registry.set_encoded,
 	}
-    fn = cmds.get(argv[0], usage)
+    fn = usage
+    if len(argv) > 0:
+        fn = cmds.get(argv[0], usage)
     fn(*argv[1:])
 
 if __name__ == "__main__":
