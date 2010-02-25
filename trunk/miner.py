@@ -47,7 +47,7 @@ class MineAPI:
 	"""
 	Initialise a MineAPI object; Recognised kwargs include:
 
-	api_format
+	output_format
 	url_prefix
 	username
 	password
@@ -56,7 +56,7 @@ class MineAPI:
 	Automatically calls login() if both username and password are given.
 	"""
 
-	self.api_format = kwargs.get('api_format', None)
+	self.output_format = kwargs.get('output_format', None)
 	self.url_prefix = kwargs.get('url_prefix', 'http://127.0.0.1:9862')
 	self.username = kwargs.get('username', None)
 	self.password = kwargs.get('password', None)
@@ -311,7 +311,7 @@ class MineAPI:
 	    }
 
 	if self.username and self.password:
-	    self.login()
+            self.login()
 
     ##################################################################
 
@@ -360,11 +360,11 @@ class MineAPI:
 	url = "%s/%s" % (self.url_prefix, url_suffix)
 	encoded_data = None
 
-	if self.api_format:
-	    url = re.sub(r'\.json$', r'.%s' % self.api_format, url)
+	if self.output_format:
+	    url = re.sub(r'\.json$', r'.%s' % self.output_format, url)
 
 	if self.verbose:
-	    print "****"
+            print "**** send"
 	    print "> %s %s %s" % (method, url, str(form_data))
 
 	if method == 'DELETE':
@@ -387,11 +387,10 @@ class MineAPI:
 	retval = response.read()
 
 	if self.verbose:
-	    print "****"
+	    print "**** receive"
 	    print response.geturl()
 	    print response.info()
-	    print
-	    print retval
+	    print "****"
 
 	return retval
 
@@ -530,7 +529,7 @@ class MineAPI:
 
     # PARSE AND EXECUTE
 
-    def execute_commandline(self, *cmdargs):
+    def execute_commandline(self, cmdargs):
 	"""
 	Takes an argument list, and executes it
 
@@ -593,24 +592,89 @@ class MineAPI:
 
 # miner.py [opts ...] command [args ...]
 # options:
+# -m / --mine http://site.domain:port
 # -u / --user username
 # -p / --password password
 # -v / --verbose
-# -m / --mine http://site.domain:port
 # TODO: GETOPT THIS
 
 if __name__ == "__main__":
 
-    root = os.environ['MINE_ROOT_URL']
-    u = os.environ['MINE_USER']
-    print '%s at %s' % (u, root)
-    p = getpass.getpass()
-    v = True
+    def usage():
+	print "usage: miner [options] command [cmdopts]"
+        print "options:"
+        print "\t-h, --help     # this message"
+        print "\t-u X, --user=X # sets mine username, default: pickaxe"
+        print "\t-p X, --pass=X # sets mine password, default: (user input)"
+        print "\t-m X, --mine=X # sets mine URL, default: http://127.0.0.1:9862"
+        print "\t-x, --xml      # sets XML output, default: JSON"
+        print "\t-v, --verbose  # verbose mode, default: off"
 
-    m = MineAPI(url_prefix=root, username=u, verbose=v, password=p)
+    shortopts = 'hu:p:m:xv'
+    longopts = [ 'help',
+                 'user=',
+                 'pass=',
+                 'username=',
+                 'password=',
+                 'mine=',
+                 'xml',
+                 'verbose',
+		 ]
 
     try:
-	m.execute_commandline(sys.argv[1:])
+	opts, args = getopt.getopt(sys.argv[1:], shortopts, longopts)
+    except getopt.GetoptError, err:
+	print str(err)
+	usage()
+	sys.exit(1)
+
+    # defaults
+    mine_root = os.environ.get('MINE_ROOT_URL', 'http://127.0.0.1:9862')
+    username = os.environ.get('MINE_USER', 'pickaxe')
+    password = None
+    verbose = False
+    xml = False
+
+    for o, a in opts:
+	if o in ('-h', '--help'):
+	    usage()
+            sys.exit(0)
+	elif o in ('-m', '--mine'):
+	    mine_root = a
+	elif o in ('-u', '--user', '--username'):
+	    username = a
+	elif o in ('-p', '--pass', '--password'):
+	    password = a
+	elif o in ('-v', '--verbose'):
+	    verbose = True
+	elif o in ('-x', '--xml'):
+	    xml = True
+	else:
+	    assert False, "unhandled option"
+
+    # anything to do?
+    if len(args) < 1:
+        usage()
+        sys.exit(1)
+
+    # last ditch
+    if not password:
+	password = getpass.getpass()
+
+
+    apiopts = dict(url_prefix=mine_root, username=username, verbose=verbose, password=password)
+
+    if xml:
+        apiopts['output_format'] = 'xml'
+
+    # what are we doing?
+    if verbose:
+	print '+ %s at %s' % (username, mine_root)
+
+    m = MineAPI(**apiopts)
+
+    try:
+	m.execute_commandline(args)
 	m.save_cookies() # probably pointless since session cookies are not marked persistent
 
     except HTTPError as e:

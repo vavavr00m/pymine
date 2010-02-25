@@ -36,6 +36,7 @@ perms:
 	chmod 755 `find . -name "*.py"`
 	chmod 755 `find . -name "*.pl"`
 	chmod 755 `find . -name "*.sh"`
+	chmod 755 miner
 
 setup:
 	sh tools/minesetup.sh
