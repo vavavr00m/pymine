@@ -16,17 +16,48 @@
 ## permissions and limitations under the License.
 ##
 
-# WORK IN PROGRESS - 18 DECEMBER 2009
-# - STILL HAVE TO SORT OUT HOW / WHETHER TO HACK MULTI-VALUE RESULTS.
-# - STILL HAVE TO SORT MULTIPART UPLOAD
-
 """
 Miner:
-provides the MineAPI class for client development,
-*and* the commandline uploader for pymine.
+
+Provides the MineAPI class for client development *and* the
+command_line uploader for pymine.  There are essentially two ways to
+use Miner; first you instantiate it:
+
+    m = MineAPI(**apiopts)
+
+...and then either you treat it like a client library:
+
+    foo = m.create_item(name="Something")
+    print foo
+    tags = m.list_tags()
+
+...or you treat it like the command_line interface:
+
+    foo = m.command_line("create-item", "name=Something")
+    print foo
+    tags = m.command_line("list-tags")
+
+If going down the latter route, don't mess around with the XML-output
+options otherwise nothing good will come of it.
+
+If going down the command_line route, the "delete-*" methods implement
+a "__FAKE_ITERATION_KLUDGE__" - in other words you can pass multiple
+thing IDs into the command_line and they will be serially deleted,
+even though the underlying library calls do not take multiple
+arguments.  This exists only for the beenfit of actual commandline
+(shell) users, and shouldn't be used programmatically since it makes a
+nonsense of exception handling.
 """
 
+# essential reading:
+# http://stackoverflow.com/questions/407468/python-urllib2-file-upload-problems
+
+from poster.encode import multipart_encode
+from poster.streaminghttp import register_openers
+from urllib2 import HTTPError
+
 import cookielib
+import django.utils.simplejson as simplejson
 import getopt
 import getpass
 import os
@@ -35,12 +66,14 @@ import sys
 import urllib
 import urllib2
 
-import django.utils.simplejson as simplejson
+# OM NOM NOM NOM NOM
+cookie_file = 'etc/cookies2.txt'
+cookie_jar = cookielib.LWPCookieJar(cookie_file)
+if (os.path.isfile(cookie_file)): cookie_jar.load()
+urllib2.install_opener(urllib2.build_opener(urllib2.HTTPCookieProcessor(cookie_jar)))
 
-from urllib2 import HTTPError
-
-# essential reading:
-# http://stackoverflow.com/questions/407468/python-urllib2-file-upload-problems
+# register streaming handlers for poster
+poster_opener = None # register_openers()
 
 class MineAPI:
     def __init__(self, **kwargs):
@@ -51,7 +84,6 @@ class MineAPI:
 	url_prefix
 	username
 	password
-	cookie_file
 
 	Automatically calls login() if both username and password are given.
 	"""
@@ -61,27 +93,18 @@ class MineAPI:
 	self.username = kwargs.get('username', None)
 	self.password = kwargs.get('password', None)
 	self.verbose = kwargs.get('verbose', False)
-	self.cookie_file = kwargs.get('cookie_file', 'etc/cookies2.txt')
-	self.cookie_jar = cookielib.LWPCookieJar(self.cookie_file)
 	self.lambda_cache = {}
-
-	if (os.path.isfile(self.cookie_file)):
-	    self.cookie_jar.load()
-
-	urllib2.install_opener(urllib2.build_opener(urllib2.HTTPCookieProcessor(self.cookie_jar)))
 
 	self.command_table = {
 	    'create-comment': {
 		'function': self.apply_sub1,
 		'method': 'POST',
 		'url_template': 'api/comment/item/{1}.json',
-		'multipart': True,
 		},
 	    'create-item': {
 		'function': self.apply,
 		'method': 'POST',
 		'url_template': 'api/item.json',
-		'multipart': True,
 		},
 	    'create-feed': {
 		'function': self.apply,
@@ -102,67 +125,67 @@ class MineAPI:
 		'function': self.apply_sub1,
 		'method': 'DELETE',
 		'url_template': 'api/comment/{1}.json',
-		'ITERATION_HACK': 1,
+		'__FAKE_ITERATION_KLUDGE__': 1,
 		},
 	    'delete-comment-key': {
 		'function': self.apply_sub1,
 		'method': 'DELETE',
 		'url_template': 'api/comment/{1}/{2}.json',
-		'ITERATION_HACK': 2,
+		'__FAKE_ITERATION_KLUDGE__': 2,
 		},
 	    'delete-item': {
 		'function': self.apply_sub1,
 		'method': 'DELETE',
 		'url_template': 'api/item/{1}.json',
-		'ITERATION_HACK': 1,
+		'__FAKE_ITERATION_KLUDGE__': 1,
 		},
 	    'delete-item-key': {
 		'function': self.apply_sub2,
 		'method': 'DELETE',
 		'url_template': 'api/item/{1}/{2}.json',
-		'ITERATION_HACK': 2,
+		'__FAKE_ITERATION_KLUDGE__': 2,
 		},
 	    'delete-registry-key': {
 		'function': self.apply_sub1,
 		'method': 'DELETE',
 		'url_template': 'api/registry/{1}.json',
-		'ITERATION_HACK': 1,
+		'__FAKE_ITERATION_KLUDGE__': 1,
 		},
 	    'delete-feed': {
 		'function': self.apply_sub1,
 		'method': 'DELETE',
 		'url_template': 'api/feed/{1}.json',
-		'ITERATION_HACK': 1,
+		'__FAKE_ITERATION_KLUDGE__': 1,
 		},
 	    'delete-feed-key': {
 		'function': self.apply_sub2,
 		'method': 'DELETE',
 		'url_template': 'api/feed/{1}/{2}.json',
-		'ITERATION_HACK': 2,
+		'__FAKE_ITERATION_KLUDGE__': 2,
 		},
 	    'delete-tag': {
 		'function': self.apply_sub1,
 		'method': 'DELETE',
 		'url_template': 'api/tag/{1}.json',
-		'ITERATION_HACK': 1,
+		'__FAKE_ITERATION_KLUDGE__': 1,
 		},
 	    'delete-tag-key': {
 		'function': self.apply_sub2,
 		'method': 'DELETE',
 		'url_template': 'api/tag/{1}/{2}.json',
-		'ITERATION_HACK': 2,
+		'__FAKE_ITERATION_KLUDGE__': 2,
 		},
 	    'delete-vurl': {
 		'function': self.apply_sub1,
 		'method': 'DELETE',
 		'url_template': 'api/vurl/{1}.json',
-		'ITERATION_HACK': 1,
+		'__FAKE_ITERATION_KLUDGE__': 1,
 		},
 	    'delete-vurl-key': {
 		'function': self.apply_sub2,
 		'method': 'DELETE',
 		'url_template': 'api/vurl/{1}/{2}.json',
-		'ITERATION_HACK': 2,
+		'__FAKE_ITERATION_KLUDGE__': 2,
 		},
 	    'list-comments': {
 		'function': self.apply,
@@ -311,7 +334,7 @@ class MineAPI:
 	    }
 
 	if self.username and self.password:
-            self.login()
+	    self.login()
 
     ##################################################################
 
@@ -323,12 +346,6 @@ class MineAPI:
 	not already provided to __init__()
 	"""
 	self.url_prefix = url_prefix
-
-    def save_cookies(self):
-	"""
-	saves any persistent session cookies to disk
-	"""
-	self.cookie_jar.save()
 
     def login(self, **kwargs):
 	"""
@@ -364,7 +381,7 @@ class MineAPI:
 	    url = re.sub(r'\.json$', r'.%s' % self.output_format, url)
 
 	if self.verbose:
-            print "**** send"
+	    print "**** send"
 	    print "> %s %s %s" % (method, url, str(form_data))
 
 	if method == 'DELETE':
@@ -375,9 +392,25 @@ class MineAPI:
 	elif method == 'POST':
 	    if '_method' in form_data:
 		raise RuntimeError, 'inexplicable use of _method in POST: %s' % form_data['_method']
-	    encoded_data = urllib.urlencode(form_data)
-	    request = urllib2.Request(url, encoded_data)
-	    response = urllib2.urlopen(request)
+
+	    print "1>", url
+	    print "2>", form_data
+
+	    if True: # hardcode the old method for the moment
+		encoded_data = urllib.urlencode(form_data)
+		print "3>", encoded_data
+		request = urllib2.Request(url, encoded_data)
+		print "4>", request
+                response = urllib2.urlopen(request)
+                print "5>", response
+	    else:
+		datagen, headers = multipart_encode(form_data)
+		print "3>", datagen, headers
+		request = urllib2.Request(url, datagen, headers)
+		print "4>", request
+                response = poster_opener.open(request)
+                print "5>", response
+
 	elif method == 'GET':
 	    request = urllib2.Request(url)
 	    response = urllib2.urlopen(request)
@@ -529,7 +562,7 @@ class MineAPI:
 
     # PARSE AND EXECUTE
 
-    def execute_commandline(self, cmdargs):
+    def command_line(self, cmdargs):
 	"""
 	Takes an argument list, and executes it
 
@@ -551,7 +584,7 @@ class MineAPI:
 
 	This routine also kludges a loop construct atop the api calls
 	for most/all of the deletion routines, for the benefit of
-	commandline users ONLY; programmers talking to the API are
+	command_line users ONLY; programmers talking to the API are
 	expected to use iteration.
 	"""
 
@@ -564,7 +597,7 @@ class MineAPI:
 	else:
 	    raise RuntimeError, 'unknown command: %s' % command
 
-	iteration_kludge = cmdopts.get('ITERATION_HACK', 0)
+	iteration_kludge = cmdopts.get('__FAKE_ITERATION_KLUDGE__', 0)
 
 	if iteration_kludge == 0:
 	    for x in cmdargs:
@@ -589,6 +622,8 @@ class MineAPI:
 ##################################################################
 ##################################################################
 ##################################################################
+##################################################################
+##################################################################
 
 # miner.py [opts ...] command [args ...]
 # options:
@@ -602,23 +637,23 @@ if __name__ == "__main__":
 
     def usage():
 	print "usage: miner [options] command [cmdopts]"
-        print "options:"
-        print "\t-h, --help     # this message"
-        print "\t-u X, --user=X # sets mine username, default: pickaxe"
-        print "\t-p X, --pass=X # sets mine password, default: (user input)"
-        print "\t-m X, --mine=X # sets mine URL, default: http://127.0.0.1:9862"
-        print "\t-x, --xml      # sets XML output, default: JSON"
-        print "\t-v, --verbose  # verbose mode, default: off"
+	print "options:"
+	print "\t-h, --help     # this message"
+	print "\t-u X, --user=X # sets mine username, default: pickaxe"
+	print "\t-p X, --pass=X # sets mine password, default: (user input)"
+	print "\t-m X, --mine=X # sets mine URL, default: http://127.0.0.1:9862"
+	print "\t-x, --xml      # sets XML output, default: JSON"
+	print "\t-v, --verbose  # verbose mode, default: off"
 
     shortopts = 'hu:p:m:xv'
     longopts = [ 'help',
-                 'user=',
-                 'pass=',
-                 'username=',
-                 'password=',
-                 'mine=',
-                 'xml',
-                 'verbose',
+		 'user=',
+		 'pass=',
+		 'username=',
+		 'password=',
+		 'mine=',
+		 'xml',
+		 'verbose',
 		 ]
 
     try:
@@ -638,7 +673,7 @@ if __name__ == "__main__":
     for o, a in opts:
 	if o in ('-h', '--help'):
 	    usage()
-            sys.exit(0)
+	    sys.exit(0)
 	elif o in ('-m', '--mine'):
 	    mine_root = a
 	elif o in ('-u', '--user', '--username'):
@@ -654,21 +689,20 @@ if __name__ == "__main__":
 
     # anything to do?
     if len(args) < 1:
-        usage()
-        sys.exit(1)
+	usage()
+	sys.exit(1)
 
     # last ditch
     if not password:
 	password = getpass.getpass()
 
-
-    apiopts = dict(url_prefix=mine_root, 
-                   username=username, 
-                   verbose=verbose, 
-                   password=password)
+    apiopts = dict(url_prefix=mine_root,
+		   username=username,
+		   verbose=verbose,
+		   password=password)
 
     if xml:
-        apiopts['output_format'] = 'xml'
+	apiopts['output_format'] = 'xml'
 
     # what are we doing?
     if verbose:
@@ -677,8 +711,7 @@ if __name__ == "__main__":
     m = MineAPI(**apiopts)
 
     try:
-	m.execute_commandline(args)
-	m.save_cookies() # probably pointless since session cookies are not marked persistent
+	m.command_line(args)
 
     except HTTPError as e:
 	print e
