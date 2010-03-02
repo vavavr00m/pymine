@@ -26,7 +26,7 @@ from django.http import HttpResponse, HttpResponseForbidden, \
     HttpResponsePermanentRedirect, HttpResponseRedirect
 
 from pymine.api.minekey import MineKey
-from pymine.api.models import Vurl
+from pymine.api.models import Vurl, Event
 
 import django.utils.simplejson as json
 import pickle
@@ -34,7 +34,7 @@ import pickle
 import pymine.util.cheatxml as cheatxml
 import pymine.util.httpserve as httpserve
 
-def HTTP_METHOD_NOAUTH(request, *args, **kwargs):
+def __HTTP_BACKEND(request, *args, **kwargs):
     """
     deal with a non-API HTTP request : GET and POST methods
     """
@@ -46,23 +46,42 @@ def HTTP_METHOD_NOAUTH(request, *args, **kwargs):
 
     # viewlist should now be [ method, defarg ... ]
     if not viewlist:
-	 return HttpResponseNotAllowed([ x for x in kwargs.keys() if x in ('GET', 'POST') ])
+        Event.alert(request, '__HTTP_BACKEND', diag='BADMETHOD HttpResponseNotAllowed')
+        return HttpResponseNotAllowed([ x for x in kwargs.keys() if x in ('GET', 'POST') ])
 
     # purposely drop *args on the floor - we don't know where it's been
     view = viewlist[0]
     viewargs = viewlist[1:]
-    return view(request, *viewargs, **kwargs)
+
+    # run it
+    try:
+        return view(request, *viewargs, **kwargs)
+    except Exception as e:
+        Event.alert(request, '__HTTP_BACKEND', diag=str(e))
+        raise
+
+def HTTP_NOAUTH(request, *args, **kwargs):
+    """
+    frontend to __HTTP_BACKEND and does not use the @login_required decorator
+    """
+    Event.log(request, 'HTTP_NOAUTH')
+    return __HTTP_BACKEND(request, *args, **kwargs)
 
 @login_required
-def HTTP_METHOD(request, *args, **kwargs):
-    """frontend to HTTP_METHOD_NOAUTH but uses the @login_required decorator"""
-    return HTTP_METHOD_NOAUTH(request, *args, **kwargs)
+def HTTP_AUTH(request, *args, **kwargs):
+    """
+    frontend to __HTTP_BACKEND but uses the @login_required decorator
+    """
+    Event.log(request, 'HTTP_AUTH')
+    return __HTTP_BACKEND(request, *args, **kwargs)
 
 @login_required
 def API_REST(request, *args, **kwargs):
     """
     deal with an API HTTP request : GET, POST and DELETE methods
     """
+
+    Event.log(request, 'API_REST')
 
     if ((request.method == 'DELETE') or
 	(request.method == 'POST' and request.POST.get('_method', None) == 'DELETE')):
@@ -75,13 +94,18 @@ def API_REST(request, *args, **kwargs):
     desired_format = kwargs.pop('fmt', None)
 
     if desired_format == 'rdr' and 'redirect_success' not in request.REQUEST:
-	return HttpResponseForbidden('redirection url used but "redirect_success" not set')
+        diag = 'redirection url used but "redirect_success" not set'
+        Event.alert(request, 'API_REST', diag=diag)
+	return HttpResponseForbidden(diag)
 
     if desired_format not in ('json', 'xml', 'rdr', 'txt'):
-	return HttpResponseForbidden('illegal output format')
+        diag = 'illegal output format'
+        Event.alert(request, 'API_REST', diag=diag)
+	return HttpResponseForbidden(diag)
 
     if not viewlist:
-	 return HttpResponseNotAllowed([ x for x in kwargs.keys() if x in ('GET', 'POST', 'DELETE') ])
+        Event.alert(request, 'API_REST', diag='BADMETHOD HttpResponseNotAllowed')
+        return HttpResponseNotAllowed([ x for x in kwargs.keys() if x in ('GET', 'POST', 'DELETE') ])
 
     # purposely drop *args on the floor - we don't know where it's been
     view = viewlist[0]
@@ -105,12 +129,18 @@ def API_REST(request, *args, **kwargs):
 	data = cheatxml.dumps(envelope) # same as XML, just text/plain content-type
     elif desired_format == 'rdr':
 	dest = request.REQUEST['redirect_success']
-	return HttpResponseRedirect(dest) # fast 302 redirect to page
+	return HttpResponseRedirect(dest) # no data, just issue a fast 302 redirect to the page
     else:
-	HttpResponseForbidden("this can't happen")
+        diag = "this can't happen"
+        Event.alert(request, 'API_REST', diag=diag)
+	HttpResponseForbidden(diag)
 
     # return the result
-    return HttpResponse(data, mimetype=mimetype)
+    try:
+        return HttpResponse(data, mimetype=mimetype)
+    except Exception as e:
+        Event.alert(request, 'API_REST', diag=str(e))
+        raise
 
 ##################################################################
 
@@ -160,7 +190,9 @@ def minekey_read(request, mk_hmac, mk_fid, mk_fversion, mk_iid, mk_depth, mk_typ
     """
 
     if mk_type not in ('data', 'icon'):
-	return HttpResponseNotFound('bad minekey method for GET')
+        diag = 'bad minekey method for GET'
+        Event.alert(request, 'minekey_read', diag=diag)
+        return HttpResponseNotFound(diag)
 
     try:
 	mk = MineKey(request,
@@ -173,10 +205,17 @@ def minekey_read(request, mk_hmac, mk_fid, mk_fversion, mk_iid, mk_depth, mk_typ
 		     ext=mk_ext,
 		     enforce_hmac_check=True)
     except:
-	if settings.DEBUG: raise
-	return HttpResponseNotFound('bad minekey validation')
+        diag = 'bad minekey validation'
+        Event.alert(request, 'minekey_read', diag=diag)
+        if settings.DEBUG: raise
+        return HttpResponseNotFound(diag)
 
-    return mk.response()
+    try:
+        Event.log(request, 'minekey_read', feed=mk.get_feed(), item=mk.get_item())
+        return mk.response()
+    except Exception as e:
+        Event.alert(request, 'minekey_read', diag=str(e))
+        raise
 
 ##################################################################
 
@@ -190,7 +229,9 @@ def minekey_submit(request, mk_hmac, mk_fid, mk_fversion, mk_iid, mk_depth, mk_t
     """
 
     if mk_type not in ('submit'):
-	return HttpResponseNotFound('bad minekey method for POST')
+        diag = 'bad minekey method for POST'
+        Event.alert(request, 'minekey_submit', diag=diag)
+	return HttpResponseNotFound(diag)
 
     try:
 	mk = MineKey(request,
@@ -203,10 +244,17 @@ def minekey_submit(request, mk_hmac, mk_fid, mk_fversion, mk_iid, mk_depth, mk_t
 		     ext=mk_ext,
 		     enforce_hmac_check=True)
     except:
+        diag = 'bad minekey validation'
+        Event.alert(request, 'minekey_submit', diag=diag)
 	if settings.DEBUG: raise
-	return HttpResponseNotFound('bad minekey validation')
+	return HttpResponseNotFound(diag)
 
-    return mk.response()
+    try:
+        Event.log(request, 'minekey_submit', feed=mk.get_feed(), item=mk.get_item())
+        return mk.response()
+    except Exception as e:
+        Event.alert(request, 'minekey_submit', diag=str(e))
+        raise
 
 ##################################################################
 
@@ -218,8 +266,14 @@ def vurl_read_by_key(request, vurlkey, **kwargs):
     implements: GET /vurl/(VURLKEY)
     returns: vurl.http_response()
     """
-    v = Vurl.get_with_vurlkey(vurlkey.encode('utf-8'))
-    return v.http_response()
+    try:
+        v = Vurl.get_with_vurlkey(vurlkey.encode('utf-8'))
+        return v.http_response()
+    except:
+        diag = 'vurl: bad key'
+        Event.alert(request, 'vurl_read_by_key', diag=diag)
+        if settings.DEBUG: raise
+        return HttpResponseNotFound(diag)
 
 ##################################################################
 
@@ -231,7 +285,13 @@ def vurl_read_by_name(request, suffix, **kwargs):
     implements: GET /page/(SUFFIX)
     returns: vurl.http_response()
     """
-    v = Vurl.objects.get(name=suffix)
-    return v.http_response()
+    try:
+        v = Vurl.objects.get(name=suffix)
+        return v.http_response()
+    except:
+        diag = 'vurl: bad name'
+        Event.alert(request, 'vurl_read_by_name', diag=diag)
+        if settings.DEBUG: raise
+        return HttpResponseNotFound(diag)
 
 ##################################################################

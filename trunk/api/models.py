@@ -162,7 +162,7 @@ class Space:
 
 	@staticmethod
 	def item_tags(r, s, sattr, m, mattr):
-	    """ """
+	    """parse the tags string and create the appropriate references"""
 	    m.tags.clear()
 	    m.for_feeds.clear()
 	    m.not_feeds.clear()
@@ -379,16 +379,18 @@ class Space:
 	thing_prefix = attr_map.pop('__thing_prefix__')
 	xattr_class = attr_map.pop('__xattr_class__')
 
+	###
 	# for an explanation of the weird closure default-arguments
 	# syntax, see: http://code.activestate.com/recipes/502271/
 	# regarding test2()
+	###
 
 	for mattr in attr_map.keys():
 	    table = attr_map[mattr]
 	    sattr = thing_prefix + "".join([ string.capitalize(x) for x in mattr.split("_") ])
 
-	    # print thing_prefix + "." + mattr, "->", sattr
-	    # print table
+	    #print thing_prefix + "." + mattr, "->", sattr
+	    #print table
 
 	    if 's2m' in table: # goes first, provides defaults
 		methud = getattr(Space.s2m_lib, table['s2m'])
@@ -714,7 +716,7 @@ class AbstractThing(AbstractModel):
 
 	# update shadow structure from request and kwargs
 	for sattr in self.r2s.keys():
-	    # print 'processing r2s', sattr
+	    #print 'processing r2s', sattr
 	    if sattr in kwargs:
 		s[sattr] = kwargs[sattr]
 	    elif request and sattr in request.POST:
@@ -729,7 +731,7 @@ class AbstractThing(AbstractModel):
 	for sattr in self.s2m.keys():
 	    defer, methud = self.s2m[sattr]
 	    if not defer:
-		# print 'processing s2m1', sattr, methud
+		#print 'processing s2m1', sattr, methud
 		methud(request, s, self)
 		i_changed_something = True
 
@@ -745,7 +747,7 @@ class AbstractThing(AbstractModel):
 	for sattr in self.s2m.keys():
 	    defer, methud = self.s2m[sattr]
 	    if defer:
-		# print 'processing s2m2', sattr, methud
+		#print 'processing s2m2', sattr, methud
 		methud(request, s, self)
 		i_changed_something = True
 
@@ -759,7 +761,7 @@ class AbstractThing(AbstractModel):
 	# stage 4: xattr saving
 	for x in request.POST:
 	    if re.match(r'^\$[_A-Za-z]\w{0,127}$', x): # match the url regexp constraint
-		# print 'processing xattr', xattr
+		#print 'processing xattr', xattr
 		key = x[1:]
 		xattr, created = self.xattr_class.objects.get_or_create(key=key, parent=self)
 		xattr.value = request.POST[x]
@@ -840,8 +842,15 @@ class Tag(AbstractThing):
     implies = AbstractField.reflist('self', symmetrical=False, pivot='implied_by', required=False)
     name = AbstractField.slug(unique=True)
 
+    class Meta:
+	ordering = ['name']
+
     def __update_cloud_field(self):
-	""" """
+	"""
+	update the tagcloud for each member of the dictionary, since it may
+	have been impacted by a change
+	"""
+
 	# wipe our cloud cache
 	self.cloud.clear()
 	# get us into the processing loop
@@ -977,13 +986,16 @@ class Vurl(AbstractThing):
     name = AbstractField.slug(unique=True)
     use_temporary_redirect = AbstractField.bool(False)
 
+    class Meta:
+	ordering = ['-id']
+
     @staticmethod
     def get_with_vurlkey(encoded):
-	""" """
+	"""return a vurl, indexed by its vurlkey, ie: a base58-encoded representation of the ID"""
 	return Vurl.get(id=base58.b58decode(encoded))
 
     def vurlkey(self):
-	""" """
+	"""return a vurl's vurlkey, ie: a base58-encoded representation of the ID"""
 	return base58.b58encode(self.id)
 
     def save(self):
@@ -1054,6 +1066,9 @@ class Feed(AbstractThing):
     permitted_networks = AbstractField.string(required=False)
     version = AbstractField.integer(1)
 
+    class Meta:
+	ordering = ['name']
+
     def to_structure(self, request=None):
 	"""
 	"""
@@ -1110,6 +1125,9 @@ class Item(AbstractThing):
     tags = AbstractField.reflist(Tag, pivot='items_tagged', required=False)
 
     backdoor_key = 'single uploaded file to do'
+
+    class Meta:
+	ordering = ['-last_modified']
 
     @classmethod
     def create(klass, request=None, **kwargs):
@@ -1369,6 +1387,9 @@ class Comment(AbstractThing):
     title = AbstractField.string()
     upon_item = AbstractField.reference(Item, required=False)
 
+    class Meta:
+	ordering = ['-id']
+
     def to_structure(self, request=None):
 	"""
 	"""
@@ -1393,19 +1414,28 @@ class Registry(AbstractModel): # not a Thing
     key = AbstractField.slug(unique=True)
     value = AbstractField.text()
 
+    class Meta:
+	ordering = ['key']
+	verbose_name = 'Register'
+	verbose_name_plural = 'Registry'
+
     @classmethod
     def get(klass, key):
-	""" """
+	"""return the registry item with the specified key"""
 	return Registry.objects.get(key=key).value
 
     @classmethod
     def get_decoded(klass, key):
-	""" """
+	"""
+	return the registry item with the specified key, after
+	decoding it with urlsafe_base64, most likely on the assumption
+	it was set via set_encoded()
+	"""
 	return base64.urlsafe_b64decode(klass.get(key).encode('utf-8'))
 
     @classmethod
     def set(klass, key, value, overwrite_ok):
-	""" """
+	"""set the registry item with the specified key, to value"""
 	r, created = Registry.objects.get_or_create(key=key, defaults={ 'value': value })
 	if not created and not int(overwrite_ok):
 	    raise RuntimeError, 'not allowed to overwrite existing Registry key: %s' % key
@@ -1414,21 +1444,16 @@ class Registry(AbstractModel): # not a Thing
 
     @classmethod
     def set_encoded(klass, key, value, overwrite_ok):
-	""" """
+	"""urlsafe_base64-encode value, and then set it as the registry item with the specified key"""
 	return klass.set(key, base64.urlsafe_b64encode(value), overwrite_ok)
 
     def to_structure(self, request=None):
-	""" """
+	"""render this registry entry as a simple structure, cf: AbstractThing"""
 	s = {}
 	s[self.key] = self.value # this is why it is not a Thing
 	s['keyCreated'] = self.created.isoformat()
 	s['keyLastModified'] = self.last_modified.isoformat()
 	return s
-
-    class Meta:
-	ordering = ['key']
-	verbose_name = 'Register'
-	verbose_name_plural = 'Registry'
 
     def __unicode__(self):
 	return self.key
@@ -1438,13 +1463,50 @@ class Registry(AbstractModel): # not a Thing
 class Event(AbstractModel): # not a Thing
     """audit trail for Mine"""
 
-    alert = AbstractField.bool(False)
-    feed = AbstractField.reference(Feed, required=False)
+    where = AbstractField.string()
+    happy = AbstractField.bool(False)
+
+    diag = AbstractField.string(required=False)
     ip_address = AbstractField.string(required=False)
+    path = AbstractField.string(required=False)
+
+    comment = AbstractField.reference(Comment, required=False)
+    feed = AbstractField.reference(Feed, required=False)
     item = AbstractField.reference(Item, required=False)
-    message = AbstractField.string()
-    method = AbstractField.string(required=False)
-    url = AbstractField.string(required=False)
+    tag = AbstractField.reference(Tag, required=False)
+    vurl = AbstractField.reference(Vurl, required=False)
+
+    @classmethod
+    def __store(klass, request, where, happy, **kwargs):
+	"""backend log entry generator"""
+
+	eargs = {}
+
+	for i in ('feed', 'item', 'tag', 'vurl', 'comment', 'diag'):
+	    if i in kwargs:
+		eargs[i] = kwargs[i]
+
+	if request:
+	    eargs['path'] = request.path
+	    if 'REMOTE_ADDR' in request.META:
+		eargs['ip_address'] = request.META['REMOTE_ADDR']
+
+	e = klass(where=where, happy=happy, **eargs)
+	e.save()
+
+    @classmethod
+    def log(klass, request, where, **kwargs):
+	"""
+	public method for a happy log where
+	"""
+	klass.__store(request, where, True, **kwargs)
+
+    @classmethod
+    def alert(klass, request, where, **kwargs):
+	"""
+	public method for an unhappy log where; arguments as-per log()
+	"""
+	klass.__store(request, where, False, **kwargs)
 
 ##################################################################
 

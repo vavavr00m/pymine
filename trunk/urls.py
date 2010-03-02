@@ -21,7 +21,7 @@ from django.conf.urls.defaults import *
 from django.contrib import admin
 
 import pymine.views as mine
-from pymine.views import HTTP_METHOD, HTTP_METHOD_NOAUTH
+from pymine.views import HTTP_AUTH, HTTP_NOAUTH
 
 admin.autodiscover()
 
@@ -40,18 +40,18 @@ urlpatterns = patterns('',
 
 urlpatterns += patterns('',
 			(r'^$',
-			 HTTP_METHOD, { 'GET' : [ mine.mine_redirect, 'ui/dash/home.html' ], }),
+			 HTTP_AUTH, { 'GET' : [ mine.mine_redirect, 'ui/dash/home.html' ], }),
 			(r'^favicon\.ico$',
-			 HTTP_METHOD_NOAUTH, { 'GET' : [ mine.get_favicon ], }),
+			 HTTP_NOAUTH, { 'GET' : [ mine.get_favicon ], }),
 			(r'^key/(?P<mk_hmac>[-\w]{43})/(?P<mk_fid>[1-9]\d*)/(?P<mk_fversion>[1-9]\d*)/(?P<mk_iid>\d+)/(?P<mk_depth>[1-9]\d*)/(?P<mk_type>(data|icon|submit))\.(?P<mk_ext>\w+)$',
-			 HTTP_METHOD_NOAUTH, { 'GET' : [ mine.minekey_read ],
+			 HTTP_NOAUTH, { 'GET' : [ mine.minekey_read ],
 					       'POST' : [ mine.minekey_submit ], }),
 			(r'^page/(?P<suffix>.*)$',
-			 HTTP_METHOD_NOAUTH, { 'GET' : [ mine.vurl_read_by_name ], }),
+			 HTTP_NOAUTH, { 'GET' : [ mine.vurl_read_by_name ], }),
 			(r'^pub(/(?P<suffix>.*))?$',
-			 HTTP_METHOD_NOAUTH, { 'GET' : [ mine.mine_public ], }),
+			 HTTP_NOAUTH, { 'GET' : [ mine.mine_public ], }),
 			(r'^vurl/(?P<vurlkey>[-\w]+)$',
-			 HTTP_METHOD_NOAUTH, { 'GET' : [ mine.vurl_read_by_key ], }),
+			 HTTP_NOAUTH, { 'GET' : [ mine.vurl_read_by_key ], }),
 			)
 
 ##################################################################

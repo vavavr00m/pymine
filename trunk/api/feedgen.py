@@ -22,7 +22,6 @@ from django.db.models import Q
 #from django.http import Http404, HttpResponse
 #from django.shortcuts import render_to_response, get_object_or_404
 #from django.template.loader import render_to_string
-#from django.utils import feedgenerator
 #from pymine.api.models import Tag, Item, Relation, Comment, Vurl, LogEvent, Minekey
 #from pymine.views import API_CALL
 #import django.utils.simplejson as json
@@ -80,16 +79,24 @@ def render_feedqs(feedmk, qs):
 
     feed_info['description'] = render_to_string('feedgen/feed-description.html', fdesc_tmpl)
 
-    #fgen = feedgenerator.Atom1Feed(**feed_info)
-    fgen = feedgenerator.Rss201rev2Feed(**feed_info)
+    if settings.MINE_FEED_FORMAT == 'rss201':
+	fgen = feedgenerator.Rss201rev2Feed(**feed_info)
+    elif settings.MINE_FEED_FORMAT == 'atom':
+	fgen = feedgenerator.Atom1Feed(**feed_info)
+    else:
+	raise RuntimeError, 'bad settings.MINE_FEED_FORMAT'
 
     if qs:
 	for i in qs:
 	    item_info = i.to_feedxml(feedmk)
 	    fgen.add_item(**item_info)
 
-    #return HttpResponse(fgen.writeString('UTF-8'), mimetype='application/atom+xml')
-    return HttpResponse(fgen.writeString('UTF-8'), mimetype='application/rss+xml')
+    if settings.MINE_FEED_FORMAT == 'rss201':
+	return HttpResponse(fgen.writeString('UTF-8'), mimetype='application/rss+xml')
+    elif settings.MINE_FEED_FORMAT == 'atom':
+	return HttpResponse(fgen.writeString('UTF-8'), mimetype='application/atom+xml')
+    else:
+	raise RuntimeError, 'bad settings.MINE_FEED_FORMAT'
 
 def create_feedqs(feedmk):
     """
