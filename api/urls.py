@@ -18,7 +18,7 @@
 """docstring goes here""" # :-)
 
 from django.conf.urls.defaults import *
-from pymine.views import API_REST, HTTP_METHOD
+from pymine.views import API_REST, HTTP_AUTH
 from pymine.api.models import Comment, Feed, Tag, Item, Vurl
 import pymine.api.views as api
 
@@ -41,7 +41,7 @@ urlpatterns += patterns('',
 			 API_REST, { 'GET' : [ api.list_comments ],
 				     'POST' : [ api.create_comment ], }),
 			(r'^data/(?P<id>[1-9]\d*)(/(?P<token>[\-\.\w]*))?$',
-			 HTTP_METHOD, { 'GET' : [ api.read_item_data ], }),
+			 HTTP_AUTH, { 'GET' : [ api.read_item_data ], }),
 			(r'^encode\.(?P<fmt>(json|xml|txt|rdr))$',
 			 API_REST, { 'POST' : [ api.encode_minekey ], }),
 			(r'^feed/(?P<id>[1-9]\d*)/(?P<attr>\$?[_A-Za-z]\w{0,127})\.(?P<fmt>(json|xml|txt|rdr))$',
@@ -55,7 +55,7 @@ urlpatterns += patterns('',
 			 API_REST, { 'GET' : [ api.list_things, Feed ],
 				     'POST' : [ api.create_thing, Feed ], }),
 			(r'^icon/(?P<id>[1-9]\d*)(/(?P<token>[\-\.\w]*))?$',
-			 HTTP_METHOD, { 'GET' : [ api.read_item_icon ], }),
+			 HTTP_AUTH, { 'GET' : [ api.read_item_icon ], }),
 			(r'^item/(?P<id>[1-9]\d*)/(?P<attr>\$?[_A-Za-z]\w{0,127})\.(?P<fmt>(json|xml|txt|rdr))$',
 			 API_REST, { 'DELETE' : [ api.delete_thing_attr, Item ],
 				     'GET' : [ api.get_thing_attr, Item ], }),

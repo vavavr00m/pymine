@@ -176,14 +176,14 @@ foreach $module (sort keys %urldispatch) {
 		$wrapper = 'API_REST';
 	    }
 	    else {
-		$wrapper = 'HTTP_METHOD';
+		$wrapper = 'HTTP_AUTH';
 	    }
 	}
 	elsif ($pattern =~ m!^/(favicon|key|page|pub|vurl)\b!) {
-	    $wrapper = 'HTTP_METHOD_NOAUTH';
+	    $wrapper = 'HTTP_NOAUTH';
 	}
 	else {
-	    $wrapper = 'HTTP_METHOD';
+	    $wrapper = 'HTTP_AUTH';
 	}
 
 	print $indent, "(", "r'^$p\$',\n$indent $wrapper, { ";

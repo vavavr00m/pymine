@@ -23,7 +23,7 @@
     
     
     <div id="splitTables">
-      <table class="children sortable" id="id54">
+      <table class="children sortable" id="id56">
   
   
   
@@ -32,15 +32,21 @@
     
     
     <td>Function</td>
-    <td><a href="pymine.views.html#HTTP_METHOD_NOAUTH">HTTP_METHOD_NOAUTH</a></td>
+    <td><a href="pymine.views.html#__HTTP_BACKEND">__HTTP_BACKEND</a></td>
     <td><span>deal with a non-API HTTP request : GET and POST methods</span></td>
   </tr><tr class="function">
     
     
     <td>Function</td>
-    <td><a href="pymine.views.html#HTTP_METHOD">HTTP_METHOD</a></td>
-    <td><span>frontend to HTTP_METHOD_NOAUTH but uses the @login_required 
+    <td><a href="pymine.views.html#HTTP_NOAUTH">HTTP_NOAUTH</a></td>
+    <td><span>frontend to __HTTP_BACKEND and does not use the @login_required 
 decorator</span></td>
+  </tr><tr class="function">
+    
+    
+    <td>Function</td>
+    <td><a href="pymine.views.html#HTTP_AUTH">HTTP_AUTH</a></td>
+    <td><span>frontend to __HTTP_BACKEND but uses the @login_required decorator</span></td>
   </tr><tr class="function">
     
     
@@ -101,11 +107,11 @@ mk_type, mk_ext, **kwargs</span></td>
     
     
     <div class="function">
-        <a name="pymine.views.HTTP_METHOD_NOAUTH"></a>
-        <a name="HTTP_METHOD_NOAUTH"></a>
+        <a name="pymine.views.__HTTP_BACKEND"></a>
+        <a name="__HTTP_BACKEND"></a>
         <div class="functionHeader">
         
-        def HTTP_METHOD_NOAUTH(request, *args, **kwargs):
+        def __HTTP_BACKEND(request, *args, **kwargs):
         
       </div>
         <div class="functionBody">
@@ -113,17 +119,29 @@ mk_type, mk_ext, **kwargs</span></td>
           <div>deal with a non-API HTTP request : GET and POST methods<table class="fieldTable"></table></div>
         </div>
       </div><div class="function">
-        <a name="pymine.views.HTTP_METHOD"></a>
-        <a name="HTTP_METHOD"></a>
+        <a name="pymine.views.HTTP_NOAUTH"></a>
+        <a name="HTTP_NOAUTH"></a>
         <div class="functionHeader">
-        @login_required<br />
-        def HTTP_METHOD(request, *args, **kwargs):
+        
+        def HTTP_NOAUTH(request, *args, **kwargs):
         
       </div>
         <div class="functionBody">
           
-          <div>frontend to HTTP_METHOD_NOAUTH but uses the @login_required 
+          <div>frontend to __HTTP_BACKEND and does not use the @login_required 
 decorator<table class="fieldTable"></table></div>
+        </div>
+      </div><div class="function">
+        <a name="pymine.views.HTTP_AUTH"></a>
+        <a name="HTTP_AUTH"></a>
+        <div class="functionHeader">
+        @login_required<br />
+        def HTTP_AUTH(request, *args, **kwargs):
+        
+      </div>
+        <div class="functionBody">
+          
+          <div>frontend to __HTTP_BACKEND but uses the @login_required decorator<table class="fieldTable"></table></div>
         </div>
       </div><div class="function">
         <a name="pymine.views.API_REST"></a>

@@ -19,7 +19,7 @@
 
 from pymine.api.models import Tag, Feed, Item, Comment, Vurl
 from pymine.api.models import TagXattr, FeedXattr, ItemXattr, CommentXattr, VurlXattr
-from pymine.api.models import Registry
+from pymine.api.models import Registry, Event
 
 from django.contrib import admin
 
@@ -178,6 +178,22 @@ class VurlXattrAdmin(admin.ModelAdmin):
     date_hierarchy = 'created'
 
 admin.site.register(VurlXattr, VurlXattrAdmin)
+
+##################################################################
+
+class EventAdmin(admin.ModelAdmin):
+    list_display = ('happy',
+		    'where',
+		    'path',
+		    'feed',
+		    'item',
+		    'last_modified',
+		    )
+    search_fields = ['message']
+    list_filter = ['created']
+    date_hierarchy = 'created'
+
+admin.site.register(Event, EventAdmin)
 
 ##################################################################
 ##################################################################

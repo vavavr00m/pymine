@@ -199,9 +199,10 @@ class MineKey:
 	return self.__feed_cached
 
     def get_item(self):
+	if not self.__iid:
+	    return None
 	if not self.__item_cached:
-	    if self.__iid:
-		self.__item_cached = Item.get(id=self.__iid)
+	    self.__item_cached = Item.get(id=self.__iid)
 	return self.__item_cached
 
     def get_ext(self):
@@ -211,7 +212,7 @@ class MineKey:
 	    return '.post'
 
 	elif self.__type == 'data':
-	    if self.__iid == 0:
+	    if not self.__iid:
 		return ".feed"
 	    else:
 		i = self.get_item()
@@ -220,7 +221,7 @@ class MineKey:
 		return ext
 
 	elif self.__type == 'icon':
-	    if self.__iid == 0:
+	    if not self.__iid:
 		return ".png"  # TBD: HAVE AN ICON FOR THE USER/MINE OWNER???
 	    else:
 		i = self.get_item()

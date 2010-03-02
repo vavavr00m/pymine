@@ -18,7 +18,7 @@
 """docstring goes here""" # :-)
 
 from django.conf.urls.defaults import *
-from pymine.views import HTTP_METHOD
+from pymine.views import HTTP_AUTH
 import views as dev
 
 urlpatterns = patterns('',
@@ -30,7 +30,7 @@ urlpatterns = patterns('',
 
 urlpatterns += patterns('',
 			(r'^home\.html$',
-			 HTTP_METHOD, { 'GET' : [ dev.render, 'dev/tbd.html' ], }),
+			 HTTP_AUTH, { 'GET' : [ dev.render, 'dev/tbd.html' ], }),
 			)
 
 ##################################################################
