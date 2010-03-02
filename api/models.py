@@ -784,12 +784,19 @@ class AbstractThing(AbstractModel):
 	"""convert this model m to a dictionary structure s (ie: s-space)"""
 	s = {}
 
+	if request and request.is_secure():
+	    insecure = False
+	else:
+	    insecure = True
+
 	for mattr in self.m2s.keys():
+	    # if insecure and mattr.startswith('__'): continue # there are no secret fields yet
 	    self.m2s[mattr](request, self, s)
 
 	for xattr in self.xattr_class.objects.all(): # trust in the uniqueness constraint
+	    if insecure and xattr.key.startswith('__'):
+		continue # skip, rather than redact
 	    s['$' + xattr.key] = xattr.value
-
 	return s
 
     def get_absolute_url(self):
@@ -1449,8 +1456,18 @@ class Registry(AbstractModel): # not a Thing
 
     def to_structure(self, request=None):
 	"""render this registry entry as a simple structure, cf: AbstractThing"""
+
 	s = {}
-	s[self.key] = self.value # this is why it is not a Thing
+
+        # yes the code is verbose but it is clearer
+	if self.key.startswith('__'):
+	    if request and request.is_secure():
+		s[self.key] = self.value
+	    else:
+		s[self.key] = settings.MINE_REDACTION_STRING
+	else:
+	    s[self.key] = self.value
+
 	s['keyCreated'] = self.created.isoformat()
 	s['keyLastModified'] = self.last_modified.isoformat()
 	return s
