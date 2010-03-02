@@ -21,7 +21,7 @@ from django.conf import settings
 from django.http import HttpResponse
 
 from pymine.api.envelope import Envelope
-from pymine.api.models import Comment, Item
+from pymine.api.models import Comment, Item, Registry
 
 import pymine.util.httpserve as httpserve
 
