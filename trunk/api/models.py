@@ -1466,9 +1466,10 @@ class Event(AbstractModel): # not a Thing
     where = AbstractField.string()
     happy = AbstractField.bool(False)
 
-    diag = AbstractField.string(required=False)
-    ip_address = AbstractField.string(required=False)
+    diag = AbstractField.text(required=False)
+
     path = AbstractField.string(required=False)
+    ip_address = AbstractField.string(required=False)
 
     comment = AbstractField.reference(Comment, required=False)
     feed = AbstractField.reference(Feed, required=False)
