@@ -70,10 +70,11 @@ import urllib2
 cookie_file = 'etc/cookies2.txt'
 cookie_jar = cookielib.LWPCookieJar(cookie_file)
 if (os.path.isfile(cookie_file)): cookie_jar.load()
-urllib2.install_opener(urllib2.build_opener(urllib2.HTTPCookieProcessor(cookie_jar)))
+#urllib2.install_opener(urllib2.build_opener(urllib2.HTTPCookieProcessor(cookie_jar)))
 
 # register streaming handlers for poster
-poster_opener = None # register_openers()
+poster_opener = register_openers()
+poster_opener.add_handler(urllib2.HTTPCookieProcessor(cookie_jar))
 
 class MineAPI:
     def __init__(self, **kwargs):
@@ -393,23 +394,14 @@ class MineAPI:
 	    if '_method' in form_data:
 		raise RuntimeError, 'inexplicable use of _method in POST: %s' % form_data['_method']
 
-	    print "1>", url
-	    print "2>", form_data
-
-	    if True: # hardcode the old method for the moment
-		encoded_data = urllib.urlencode(form_data)
-		print "3>", encoded_data
-		request = urllib2.Request(url, encoded_data)
-		print "4>", request
-                response = urllib2.urlopen(request)
-                print "5>", response
-	    else:
-		datagen, headers = multipart_encode(form_data)
-		print "3>", datagen, headers
-		request = urllib2.Request(url, datagen, headers)
-		print "4>", request
-                response = poster_opener.open(request)
-                print "5>", response
+	    #print "1>", url
+	    #print "2>", form_data
+            datagen, headers = multipart_encode(form_data)
+            #print "3>", datagen, headers
+            request = urllib2.Request(url, datagen, headers)
+            #print "4>", request
+            response = poster_opener.open(request)
+            #print "5>", response
 
 	elif method == 'GET':
 	    request = urllib2.Request(url)
