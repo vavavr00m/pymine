@@ -17,36 +17,8 @@
 ##
 
 """
-Miner:
-
 Provides the MineAPI class for client development *and* the
-command_line uploader for pymine.  There are essentially two ways to
-use Miner; first you instantiate it:
-
-    m = MineAPI(**apiopts)
-
-...and then either you treat it like a client library:
-
-    foo = m.create_item(name="Something")
-    print foo
-    tags = m.list_tags()
-
-...or you treat it like the command_line interface:
-
-    foo = m.command_line("create-item", "name=Something")
-    print foo
-    tags = m.command_line("list-tags")
-
-If going down the latter route, don't mess around with the XML-output
-options otherwise nothing good will come of it.
-
-If going down the command_line route, the "delete-*" methods implement
-a "__FAKE_ITERATION_KLUDGE__" - in other words you can pass multiple
-thing IDs into the command_line and they will be serially deleted,
-even though the underlying library calls do not take multiple
-arguments.  This exists only for the beenfit of actual commandline
-(shell) users, and shouldn't be used programmatically since it makes a
-nonsense of exception handling.
+command_line uploader for pymine.
 """
 
 # essential reading:
@@ -66,17 +38,48 @@ import sys
 import urllib
 import urllib2
 
-# OM NOM NOM NOM NOM
-cookie_file = 'etc/cookies2.txt'
-cookie_jar = cookielib.LWPCookieJar(cookie_file)
-if (os.path.isfile(cookie_file)): cookie_jar.load()
-#urllib2.install_opener(urllib2.build_opener(urllib2.HTTPCookieProcessor(cookie_jar)))
-
-# register streaming handlers for poster
-poster_opener = register_openers()
-poster_opener.add_handler(urllib2.HTTPCookieProcessor(cookie_jar))
-
+# the API module
 class MineAPI:
+    """
+    There are essentially two ways to use Miner; first you instantiate it:
+
+    m = MineAPI(**apiopts)
+
+    ...and then either you treat it like a client library:
+
+    foo = m.create_item(name="Something")
+    print foo
+    tags = m.list_tags()
+
+    ...or you treat it like the command_line interface:
+
+    foo = m.command_line("create-item", "name=Something")
+    print foo
+    tags = m.command_line("list-tags")
+
+    If going down the latter route, don't mess around with the XML-output
+    options otherwise nothing good will come of it.
+
+    If going down the command_line route, the "delete-*" methods implement
+    a "__FAKE_ITERATION_KLUDGE__" - in other words you can pass multiple
+    thing IDs into the command_line and they will be serially deleted,
+    even though the underlying library calls do not take multiple
+    arguments.  This exists only for the beenfit of actual commandline
+    (shell) users, and shouldn't be used programmatically since it makes a
+    nonsense of exception handling.
+
+    """
+
+    # openers
+    cookie_file = 'etc/cookies2.txt' # OM NOM NOM NOM NOM
+    cookie_jar = cookielib.LWPCookieJar(cookie_file)
+
+    if (os.path.isfile(cookie_file)):
+	cookie_jar.load()
+
+    poster_opener = register_openers()
+    poster_opener.add_handler(urllib2.HTTPCookieProcessor(cookie_jar))
+
     def __init__(self, **kwargs):
 	"""
 	Initialise a MineAPI object; Recognised kwargs include:
@@ -394,15 +397,17 @@ class MineAPI:
 	    if '_method' in form_data:
 		raise RuntimeError, 'inexplicable use of _method in POST: %s' % form_data['_method']
 
-	    #print "1>", url
-	    #print "2>", form_data
-            datagen, headers = multipart_encode(form_data)
-            #print "3>", datagen, headers
-            request = urllib2.Request(url, datagen, headers)
-            #print "4>", request
-            response = poster_opener.open(request)
-            #print "5>", response
+	    for field in ('itemData', 'itemIcon', 'commentResponse'):
+		if field in form_data:
+		    filename = form_data[field]
+		    if self.verbose:
+			print "+ opening and promoting", filename, "for", field
+		    fd = open(form_data[field], "rb")
+		    form_data[field] = fd
 
+	    datagen, headers = multipart_encode(form_data)
+	    request = urllib2.Request(url, datagen, headers)
+	    response = self.poster_opener.open(request)
 	elif method == 'GET':
 	    request = urllib2.Request(url)
 	    response = urllib2.urlopen(request)
