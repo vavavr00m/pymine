@@ -1310,8 +1310,10 @@ class Item(AbstractThing):
 
 	if self.data:
 	    return self.description
-	elif self.item_data_type() == 'text/html': # if we think it's HTML
-	    return self.description
+	elif self.get_data_type() == 'text/html': # if we think it's HTML
+            d = self.description
+            if not d: d = ''
+	    return d
 	else:
 	    return 'pymine: no datafile is provided and the description content is not text/html, thus this placeholder is used instead'
 
