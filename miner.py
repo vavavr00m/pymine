@@ -34,6 +34,7 @@ import getopt
 import getpass
 import os
 import re
+import shlex
 import sys
 import urllib
 import urllib2
@@ -514,18 +515,18 @@ class MineAPI:
 	this getattr overrides the default and via a clever and
 	slightly evil kludge implements the following virtual methods:
 
-	create_comment() create_item() create_feed() create_tag()
-	create_vurl() delete_comment() delete_comment_key()
-	delete_item() delete_item_key() delete_registry_key()
-	delete_feed() delete_feed_key() delete_tag() delete_tag_key()
-	delete_vurl() delete_vurl_key() list_comments() list_items()
-	list_registry() list_feeds() list_tags() list_vurls()
-	read_comment() read_comment_key() read_data() read_icon()
-	read_item() read_item_key() read_registry_key() read_feed()
-	read_feed_key() read_tag() read_tag_key() read_vurl()
-	read_vurl_key() update_comment() update_item()
-	update_registry_key() update_feed() update_tag() update_vurl()
-	version()
+        create_comment() create_feed() create_item() create_tag()
+        create_vurl() delete_comment() delete_comment_key()
+        delete_feed() delete_feed_key() delete_item()
+        delete_item_key() delete_registry_key() delete_tag()
+        delete_tag_key() delete_vurl() delete_vurl_key()
+        list_comments() list_feeds() list_items() list_registry()
+        list_tags() list_vurls() read_comment() read_comment_key()
+        read_data() read_feed() read_feed_key() read_icon()
+        read_item() read_item_key() read_registry_key() read_tag()
+        read_tag_key() read_vurl() read_vurl_key() update_comment()
+        update_feed() update_item() update_registry_key() update_tag()
+        update_vurl() version()
 
 	so you can do stuff like:
 
@@ -644,7 +645,14 @@ if __name__ == "__main__":
 	print "\t-x, --xml      # sets XML output, default: JSON"
 	print "\t-v, --verbose  # verbose mode, default: off"
 
-    shortopts = 'hu:p:m:xv'
+    def do_batch(mineapi, *files):
+        for file in files:
+            fd = open(file, "r")
+            for line in fd:
+                cmdline = shlex.split(line)
+                mineapi.command_line(cmdline)
+
+    shortopts = 'hu:p:m:xvb'
     longopts = [ 'help',
 		 'user=',
 		 'pass=',
@@ -653,6 +661,7 @@ if __name__ == "__main__":
 		 'mine=',
 		 'xml',
 		 'verbose',
+		 'batch',
 		 ]
 
     try:
@@ -668,6 +677,7 @@ if __name__ == "__main__":
     password = None
     verbose = False
     xml = False
+    batch = False
 
     for o, a in opts:
 	if o in ('-h', '--help'):
@@ -683,6 +693,8 @@ if __name__ == "__main__":
 	    verbose = True
 	elif o in ('-x', '--xml'):
 	    xml = True
+	elif o in ('-b', '--batch'):
+	    batch = True
 	else:
 	    assert False, "unhandled option"
 
@@ -710,7 +722,10 @@ if __name__ == "__main__":
     m = MineAPI(**apiopts)
 
     try:
-	m.command_line(args)
+        if batch:
+            do_batch(m, *args)
+        else:
+            m.command_line(args)
 
     except HTTPError as e:
 	print e
