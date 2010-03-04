@@ -233,14 +233,14 @@ class MineAPI:
 		},
 
 	    'read-data': {
-		'function': None,
+		'function': self.apply_sub1,
 		'method': 'GET',
-		'url_template': 'api/data/IID',
+		'url_template': 'api/data/{1}',
 		},
 	    'read-icon': {
-		'function': None,
+		'function': self.apply_sub1,
 		'method': 'GET',
-		'url_template': 'api/icon/IID',
+		'url_template': 'api/icon/{1}',
 		},
 
 	    'read-item': {
@@ -373,10 +373,9 @@ class MineAPI:
 
     ##################################################################
 
-    # STUFF WHICH TALKS TO THE MINE VIA THE REST API
-
     def url_call(self, method, url_suffix, form_data):
 	"""
+        talks to the mine via the API, returns a response object from urllib2
 	"""
 	url = "%s/%s" % (self.url_prefix, url_suffix)
 	encoded_data = None
@@ -414,15 +413,13 @@ class MineAPI:
 	else:
 	    raise RuntimeError, 'unknown method: %s' % method
 
-	retval = response.read()
-
 	if self.verbose:
 	    print "**** receive"
 	    print response.geturl()
 	    print response.info()
 	    print "****"
 
-	return retval
+	return response
 
     ##################################################################
 
@@ -434,7 +431,7 @@ class MineAPI:
 	appropriate.  Completely ignores args.
 	"""
 	url_suffix = url_template
-	return self.url_call(method, url_suffix, kwargs)
+	return self.url_call(method, url_suffix, kwargs).read()
 
     def apply_sub1(self, method, url_template, *args, **kwargs):
 	"""
@@ -442,7 +439,7 @@ class MineAPI:
 	url with method using kwargs as POST data if appropriate.
 	"""
 	url_suffix = url_template.replace('{1}', str(args[0]))
-	return self.url_call(method, url_suffix, kwargs)
+	return self.url_call(method, url_suffix, kwargs).read()
 
     def apply_sub1_regkey(self, method, url_template, *args, **kwargs):
 	"""
@@ -454,10 +451,9 @@ class MineAPI:
 	...because this syntax is used to populate individual keys in
 	the registry (applying E{lb} 'foo':42 E{rb} to /api/registry/foo.json)
 	"""
-
 	url_suffix = url_template.replace('{1}', args[0])
 	kwargs = { args[0] : args[1] }
-	return self.url_call(method, url_suffix, kwargs)
+	return self.url_call(method, url_suffix, kwargs).read()
 
     def apply_sub2(self, method, url_template, *args, **kwargs):
 	"""
@@ -466,7 +462,7 @@ class MineAPI:
 	using kwargs as POST data if appropriate.
 	"""
 	url_suffix = url_template.replace('{1}', str(args[0])).replace('{2}', str(args[1]))
-	return self.url_call(method, url_suffix, kwargs)
+	return self.url_call(method, url_suffix, kwargs).read()
 
     ##################################################################
 
@@ -504,6 +500,8 @@ class MineAPI:
 	implying json) if you are using this or any of the virtual
 	methods that are provided by __getattr__()
 	"""
+        if self.output_format and self.output_format != 'json':
+            raise RuntimeError, "output_format must be 'json' for this to work"
 	return simplejson.loads(self.call(command, *args, **kwargs))
 
     ##################################################################
@@ -519,15 +517,15 @@ class MineAPI:
 	create_comment() create_item() create_feed() create_tag()
 	create_vurl() delete_comment() delete_comment_key()
 	delete_item() delete_item_key() delete_registry_key()
-	delete_feed() delete_feed_key() delete_tag()
-	delete_tag_key() delete_vurl() delete_vurl_key()
-	list_comments() list_items() list_registry() list_feeds()
-	list_tags() list_vurls() read_comment() read_comment_key()
-	read_data() read_item() read_item_key() read_registry_key()
-	read_feed() read_feed_key() read_tag() read_tag_key()
-	read_vurl() read_vurl_key() update_comment() update_item()
-	update_registry_key() update_feed() update_tag()
-	update_vurl() version()
+	delete_feed() delete_feed_key() delete_tag() delete_tag_key()
+	delete_vurl() delete_vurl_key() list_comments() list_items()
+	list_registry() list_feeds() list_tags() list_vurls()
+	read_comment() read_comment_key() read_data() read_icon()
+	read_item() read_item_key() read_registry_key() read_feed()
+	read_feed_key() read_tag() read_tag_key() read_vurl()
+	read_vurl_key() update_comment() update_item()
+	update_registry_key() update_feed() update_tag() update_vurl()
+	version()
 
 	so you can do stuff like:
 
@@ -550,7 +548,11 @@ class MineAPI:
 	    return self.lambda_cache[command]
 
 	if command in self.command_table: # is valid
-	    self.lambda_cache[command] = lambda *args, **kwargs: self.call_py(command, *args, **kwargs)
+            if command in ('read-data', 'read-icon'):
+                x = lambda *args, **kwargs: self.call_py(command, *args, **kwargs)
+            else:
+                x = lambda *args, **kwargs: self.call_py(command, *args, **kwargs)
+            self.lambda_cache[command] = x
 	    return self.lambda_cache[command]
 
 	raise AttributeError, 'unknown attribute %s (command %s)' % (attr, command)
@@ -605,16 +607,16 @@ class MineAPI:
 		    kwargs[k] = v
 		except ValueError:
 		    args.append(x)
-	    print self.call(command, *args, **kwargs)
+	    print self.call(command, *args, **kwargs), # TRAILING COMMA REQ'D
 	elif iteration_kludge == 1:
 	    for x in cmdargs:
 		args[0] = x
-		print self.call(command, *args, **kwargs)
+		print self.call(command, *args, **kwargs) # ALLOW KLUDGE NEWLINE
 	elif iteration_kludge == 2:
 	    args[0] = cmdargs.pop(0)
 	    for x in cmdargs:
 		args[1] = x
-		print self.call(command, *args, **kwargs)
+		print self.call(command, *args, **kwargs) # ALLOW KLUDGE NEWLINE
 
 ##################################################################
 ##################################################################
