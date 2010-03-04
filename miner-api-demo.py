@@ -20,17 +20,29 @@
 import miner
 import getpass
 
-url = 'http://site.domain:9862'
-u = 'pymine'
+url = 'http://localhost:9862'
+u = 'pickaxe'
 p = getpass.getpass()
 
+print "connecting to mine..."
 api = miner.MineAPI(username=u, password=p, url_prefix=url)
+print
+
+print "version..."
 print api.version()
+print
+
+print "list items..."
 print api.list_items()
+print
 
-x = api.create_item(itemName='api test demo', itemStatus='public')
+print "create an item..."
+x = api.create_item(itemName='api test demo', itemStatus='shareable')
 print x
+print
 
-iid = x['result']['itemId']
-y = api.update_item(iid, itemStatus='private')
+print "update an item..."
+iid = x['result']['item']['itemId']
+y = api.update_item(iid, itemStatus='secret')
 print y
+print

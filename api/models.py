@@ -80,6 +80,7 @@ for short, long in item_status_choices:
 status_aliases = {
     'citable': 'C',
     'citeable': 'C',
+    'secret': 'I',
     'inaccessable': 'I',
     'inaccessible': 'I',
     'sharable': 'S',
@@ -1186,6 +1187,10 @@ class Item(AbstractThing):
 	    result.append( { m.thing_prefix : m.to_structure(request) } )
 	return result
 
+    def save(self):
+	"""override save method to perform sanity checks"""
+	return super(Item, self).save()
+
     def save_files_from(self, request, **kwargs):
 	"""
 	save per-item files for this instance
@@ -1459,7 +1464,7 @@ class Registry(AbstractModel): # not a Thing
 
 	s = {}
 
-        # yes the code is verbose but it is clearer
+	# yes the code is verbose but it is clearer
 	if self.key.startswith('__'):
 	    if request and request.is_secure():
 		s[self.key] = self.value
