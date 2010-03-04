@@ -236,7 +236,9 @@ def read_item_data(request, id, token, **kwargs):
 	response = HttpResponse(f, content_type=ct)
 	response['Content-Length'] = m.data.size
     else:
-	response = None
+        d = m.feed_description()
+	response = HttpResponse(d)
+	response['Content-Length'] = len(d)
 
     return response
 
