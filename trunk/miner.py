@@ -375,7 +375,7 @@ class MineAPI:
 
     def url_call(self, method, url_suffix, form_data):
 	"""
-        talks to the mine via the API, returns a response object from urllib2
+	talks to the mine via the API, returns a response object from urllib2
 	"""
 	url = "%s/%s" % (self.url_prefix, url_suffix)
 	encoded_data = None
@@ -500,8 +500,8 @@ class MineAPI:
 	implying json) if you are using this or any of the virtual
 	methods that are provided by __getattr__()
 	"""
-        if self.output_format and self.output_format != 'json':
-            raise RuntimeError, "output_format must be 'json' for this to work"
+	if self.output_format and self.output_format != 'json':
+	    raise RuntimeError, "output_format must be 'json' for this to work"
 	return simplejson.loads(self.call(command, *args, **kwargs))
 
     ##################################################################
@@ -548,11 +548,11 @@ class MineAPI:
 	    return self.lambda_cache[command]
 
 	if command in self.command_table: # is valid
-            if command in ('read-data', 'read-icon'):
-                x = lambda *args, **kwargs: self.call_py(command, *args, **kwargs)
-            else:
-                x = lambda *args, **kwargs: self.call_py(command, *args, **kwargs)
-            self.lambda_cache[command] = x
+	    if command in ('read-data', 'read-icon'):
+		x = lambda *args, **kwargs: self.call(command, *args, **kwargs)
+	    else:
+		x = lambda *args, **kwargs: self.call_py(command, *args, **kwargs)
+	    self.lambda_cache[command] = x
 	    return self.lambda_cache[command]
 
 	raise AttributeError, 'unknown attribute %s (command %s)' % (attr, command)
