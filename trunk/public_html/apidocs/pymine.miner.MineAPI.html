@@ -19,11 +19,29 @@
     <div>
       
     </div>
-    <div class="undocumented">No class docstring</div>
+    <div>There are essentially two ways to use Miner; first you instantiate 
+it:</p>
+<p>m = MineAPI(**apiopts)</p>
+<p>...and then either you treat it like a client library:</p>
+<p>foo = m.create_item(name=&quot;Something&quot;) print foo tags = 
+m.list_tags()</p>
+<p>...or you treat it like the command_line interface:</p>
+<p>foo = m.command_line(&quot;create-item&quot;, 
+&quot;name=Something&quot;) print foo tags = 
+m.command_line(&quot;list-tags&quot;)</p>
+<p>If going down the latter route, don't mess around with the XML-output 
+options otherwise nothing good will come of it.</p>
+<p>If going down the command_line route, the &quot;delete-*&quot; methods 
+implement a &quot;__FAKE_ITERATION_KLUDGE__&quot; - in other words you can 
+pass multiple thing IDs into the command_line and they will be serially 
+deleted, even though the underlying library calls do not take multiple 
+arguments.  This exists only for the beenfit of actual commandline (shell) 
+users, and shouldn't be used programmatically since it makes a nonsense of 
+exception handling.<table class="fieldTable"></table></div>
     
     
     <div id="splitTables">
-      <table class="children sortable" id="id44">
+      <table class="children sortable" id="id138">
   
   
   
@@ -44,12 +62,6 @@
     
     
     <td>Method</td>
-    <td><a href="pymine.miner.MineAPI.html#save_cookies">save_cookies</a></td>
-    <td><span>saves any persistent session cookies to disk</span></td>
-  </tr><tr class="method">
-    
-    
-    <td>Method</td>
     <td><a href="pymine.miner.MineAPI.html#login">login</a></td>
     <td><span>Establish session cookies.  Accepts 'username' and 'password'</span></td>
   </tr><tr class="method">
@@ -63,7 +75,8 @@
     
     <td>Method</td>
     <td><a href="pymine.miner.MineAPI.html#url_call">url_call</a></td>
-    <td><span class="undocumented">Undocumented</span></td>
+    <td><span>talks to the mine via the API, returns a response object from 
+urllib2</span></td>
   </tr><tr class="method">
     
     
@@ -110,7 +123,7 @@
     
     
     <td>Method</td>
-    <td><a href="pymine.miner.MineAPI.html#execute_commandline">execute_commandline</a></td>
+    <td><a href="pymine.miner.MineAPI.html#command_line">command_line</a></td>
     <td><span>Takes an argument list, and executes it</span></td>
   </tr>
   
@@ -132,7 +145,7 @@
         <div class="functionBody">
           
           <div>Initialise a MineAPI object; Recognised kwargs include:</p>
-<p>output_format url_prefix username password cookie_file</p>
+<p>output_format url_prefix username password</p>
 <p>Automatically calls login() if both username and password are given.<table class="fieldTable"></table></div>
         </div>
       </div><div class="function">
@@ -147,18 +160,6 @@
           
           <div>Define the 'http://site.domain:port' to access your mine, if not already
 provided to __init__()<table class="fieldTable"></table></div>
-        </div>
-      </div><div class="function">
-        <a name="pymine.miner.MineAPI.save_cookies"></a>
-        <a name="save_cookies"></a>
-        <div class="functionHeader">
-        
-        def save_cookies(self):
-        
-      </div>
-        <div class="functionBody">
-          
-          <div>saves any persistent session cookies to disk<table class="fieldTable"></table></div>
         </div>
       </div><div class="function">
         <a name="pymine.miner.MineAPI.login"></a>
@@ -195,7 +196,8 @@ overriding any provided in __init__()<table class="fieldTable"></table></div>
       </div>
         <div class="functionBody">
           
-          <div class="undocumented">Undocumented</div>
+          <div>talks to the mine via the API, returns a response object from 
+urllib2<table class="fieldTable"></table></div>
         </div>
       </div><div class="function">
         <a name="pymine.miner.MineAPI.apply"></a>
@@ -296,15 +298,15 @@ by __getattr__()<table class="fieldTable"></table></div>
           
           <div>this getattr overrides the default and via a clever and slightly evil 
 kludge implements the following virtual methods:</p>
-<p>create_comment() create_item() create_feed() create_tag() create_vurl() 
-delete_comment() delete_comment_key() delete_item() delete_item_key() 
-delete_registry_key() delete_feed() delete_feed_key() delete_tag() 
+<p>create_comment() create_feed() create_item() create_tag() create_vurl() 
+delete_comment() delete_comment_key() delete_feed() delete_feed_key() 
+delete_item() delete_item_key() delete_registry_key() delete_tag() 
 delete_tag_key() delete_vurl() delete_vurl_key() list_comments() 
-list_items() list_registry() list_feeds() list_tags() list_vurls() 
-read_comment() read_comment_key() read_data() read_item() read_item_key() 
-read_registry_key() read_feed() read_feed_key() read_tag() read_tag_key() 
-read_vurl() read_vurl_key() update_comment() update_item() 
-update_registry_key() update_feed() update_tag() update_vurl() 
+list_feeds() list_items() list_registry() list_tags() list_vurls() 
+read_comment() read_comment_key() read_data() read_feed() read_feed_key() 
+read_icon() read_item() read_item_key() read_registry_key() read_tag() 
+read_tag_key() read_vurl() read_vurl_key() update_comment() update_feed() 
+update_item() update_registry_key() update_tag() update_vurl() 
 version()</p>
 <p>so you can do stuff like:</p>
 <p>m = MineAPI(username='fred, ...') tags = m.list_tags()</p>
@@ -316,11 +318,11 @@ call_py() with the properly 'command' inserted.</p>
 api.foo_bar() yielding python structures.<table class="fieldTable"></table></div>
         </div>
       </div><div class="function">
-        <a name="pymine.miner.MineAPI.execute_commandline"></a>
-        <a name="execute_commandline"></a>
+        <a name="pymine.miner.MineAPI.command_line"></a>
+        <a name="command_line"></a>
         <div class="functionHeader">
         
-        def execute_commandline(self, cmdargs):
+        def command_line(self, cmdargs):
         
       </div>
         <div class="functionBody">
@@ -339,13 +341,13 @@ something useful.</p>
 <p>These concepts probably can mix-and-match, but it'd be deeply advanced 
 for anyone to try doing so at the moment.</p>
 <p>This routine also kludges a loop construct atop the api calls for 
-most/all of the deletion routines, for the benefit of commandline users 
+most/all of the deletion routines, for the benefit of command_line users 
 ONLY; programmers talking to the API are expected to use iteration.<table class="fieldTable"></table></div>
         </div>
       </div>
     
     <address>
-      <a href="index.html">API Documentation</a> for pymine, generated by <a href="http://codespeak.net/~mwh/pydoctor/">pydoctor</a> at (date elided).
+      <a href="index.html">API Documentation</a> for pymine, generated by <a href="http://codespeak.net/~mwh/pydoctor/">pydoctor</a> at 2010-03-04 19:54:02.
     </address>
   </body>
 </html>
