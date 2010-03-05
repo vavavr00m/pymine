@@ -1,0 +1,217 @@
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+  "DTD/xhtml1-strict.dtd">
+<html>
+  <head>
+    <title>API docs for &ldquo;pymine.poster.encode.MultipartParam&rdquo;</title>
+    <meta content="text/html;charset=utf-8" http-equiv="Content-Type" />
+    <link href="apidocs.css" type="text/css" rel="stylesheet" />
+    
+    
+  </head>
+  <body>
+    <h1 class="class">Class p.p.e.MultipartParam(<span title="object">object</span>):</h1>
+    <p>
+      <span id="part">Part of <a href="pymine.html">pymine</a>.<a href="pymine.poster.html">poster</a>.<a href="pymine.poster.encode.html">encode</a></span>
+      
+      <a href="classIndex.html#pymine.poster.encode.MultipartParam">View In Hierarchy</a>
+    </p>
+    <div>
+      
+    </div>
+    <div>Represents a single parameter in a multipart/form-data request</p>
+<p>``name`` is the name of this parameter.</p>
+<p>If ``value`` is set, it must be a string or unicode object to use as the
+data for this parameter.</p>
+<p>If ``filename`` is set, it is what to say that this parameter's filename
+is.  Note that this does not have to be the actual filename any local 
+file.</p>
+<p>If ``filetype`` is set, it is used as the Content-Type for this 
+parameter. If unset it defaults to &quot;text/plain; charset=utf8&quot;</p>
+<p>If ``filesize`` is set, it specifies the length of the file 
+``fileobj``</p>
+<p>If ``fileobj`` is set, it must be a file-like object that supports 
+.read().</p>
+<p>Both ``value`` and ``fileobj`` must not be set, doing so will raise a 
+ValueError assertion.</p>
+<p>If ``fileobj`` is set, and ``filesize`` is not specified, then the 
+file's size will be determined first by stat'ing ``fileobj``'s file 
+descriptor, and if that fails, by seeking to the end of the file, recording
+the current position as the size, and then by seeking back to the beginning
+of the file.<table class="fieldTable"></table></div>
+    
+    
+    <div id="splitTables">
+      <table class="children sortable" id="id141">
+  
+  
+  
+  
+  <tr class="method">
+    
+    
+    <td>Method</td>
+    <td><a href="pymine.poster.encode.MultipartParam.html#__init__">__init__</a></td>
+    <td><span class="undocumented">Undocumented</span></td>
+  </tr><tr class="method">
+    
+    
+    <td>Method</td>
+    <td><a href="pymine.poster.encode.MultipartParam.html#__cmp__">__cmp__</a></td>
+    <td><span class="undocumented">Undocumented</span></td>
+  </tr><tr class="classmethod">
+    
+    
+    <td>Class Method</td>
+    <td><a href="pymine.poster.encode.MultipartParam.html#from_file">from_file</a></td>
+    <td><span>Returns a new MultipartParam object constructed from the local</span></td>
+  </tr><tr class="classmethod">
+    
+    
+    <td>Class Method</td>
+    <td><a href="pymine.poster.encode.MultipartParam.html#from_params">from_params</a></td>
+    <td><span>Returns a list of MultipartParam objects from a sequence of</span></td>
+  </tr><tr class="method">
+    
+    
+    <td>Method</td>
+    <td><a href="pymine.poster.encode.MultipartParam.html#encode_hdr">encode_hdr</a></td>
+    <td><span>Returns the header of the encoding of this parameter</span></td>
+  </tr><tr class="method">
+    
+    
+    <td>Method</td>
+    <td><a href="pymine.poster.encode.MultipartParam.html#encode">encode</a></td>
+    <td><span>Returns the string encoding of this parameter</span></td>
+  </tr><tr class="method">
+    
+    
+    <td>Method</td>
+    <td><a href="pymine.poster.encode.MultipartParam.html#iter_encode">iter_encode</a></td>
+    <td><span>Yields the encoding of this parameter</span></td>
+  </tr><tr class="method">
+    
+    
+    <td>Method</td>
+    <td><a href="pymine.poster.encode.MultipartParam.html#get_size">get_size</a></td>
+    <td><span>Returns the size in bytes that this param will be when encoded</span></td>
+  </tr>
+  
+</table>
+      
+      
+    </div>
+    
+    
+    
+    <div class="function">
+        <a name="pymine.poster.encode.MultipartParam.__init__"></a>
+        <a name="__init__"></a>
+        <div class="functionHeader">
+        
+        def __init__(self, name, value=None, filename=None, filetype=None, filesize=None, fileobj=None):
+        
+      </div>
+        <div class="functionBody">
+          
+          <div class="undocumented">Undocumented</div>
+        </div>
+      </div><div class="function">
+        <a name="pymine.poster.encode.MultipartParam.__cmp__"></a>
+        <a name="__cmp__"></a>
+        <div class="functionHeader">
+        
+        def __cmp__(self, o):
+        
+      </div>
+        <div class="functionBody">
+          
+          <div class="undocumented">Undocumented</div>
+        </div>
+      </div><div class="function">
+        <a name="pymine.poster.encode.MultipartParam.from_file"></a>
+        <a name="from_file"></a>
+        <div class="functionHeader">
+        @classmethod<br />
+        def from_file(cls, paramname, filename):
+        
+      </div>
+        <div class="functionBody">
+          
+          <div>Returns a new MultipartParam object constructed from the local file at 
+``filename``.</p>
+<p>``filesize`` is determined by os.path.getsize(``filename``)</p>
+<p>``filetype`` is determined by mimetypes.guess_type(``filename``)[0]</p>
+<p>``filename`` is set to os.path.basename(``filename``)<table class="fieldTable"></table></div>
+        </div>
+      </div><div class="function">
+        <a name="pymine.poster.encode.MultipartParam.from_params"></a>
+        <a name="from_params"></a>
+        <div class="functionHeader">
+        @classmethod<br />
+        def from_params(cls, params):
+        
+      </div>
+        <div class="functionBody">
+          
+          <div>Returns a list of MultipartParam objects from a sequence of name, value 
+pairs, MultipartParam instances, or from a mapping of names to values</p>
+<p>The values may be strings or file objects.<table class="fieldTable"></table></div>
+        </div>
+      </div><div class="function">
+        <a name="pymine.poster.encode.MultipartParam.encode_hdr"></a>
+        <a name="encode_hdr"></a>
+        <div class="functionHeader">
+        
+        def encode_hdr(self, boundary):
+        
+      </div>
+        <div class="functionBody">
+          
+          <div>Returns the header of the encoding of this parameter<table class="fieldTable"></table></div>
+        </div>
+      </div><div class="function">
+        <a name="pymine.poster.encode.MultipartParam.encode"></a>
+        <a name="encode"></a>
+        <div class="functionHeader">
+        
+        def encode(self, boundary):
+        
+      </div>
+        <div class="functionBody">
+          
+          <div>Returns the string encoding of this parameter<table class="fieldTable"></table></div>
+        </div>
+      </div><div class="function">
+        <a name="pymine.poster.encode.MultipartParam.iter_encode"></a>
+        <a name="iter_encode"></a>
+        <div class="functionHeader">
+        
+        def iter_encode(self, boundary, blocksize=4096):
+        
+      </div>
+        <div class="functionBody">
+          
+          <div>Yields the encoding of this parameter If self.fileobj is set, then 
+blocks of ``blocksize`` bytes are read and yielded.<table class="fieldTable"></table></div>
+        </div>
+      </div><div class="function">
+        <a name="pymine.poster.encode.MultipartParam.get_size"></a>
+        <a name="get_size"></a>
+        <div class="functionHeader">
+        
+        def get_size(self, boundary):
+        
+      </div>
+        <div class="functionBody">
+          
+          <div>Returns the size in bytes that this param will be when encoded with the 
+given boundary.<table class="fieldTable"></table></div>
+        </div>
+      </div>
+    
+    <address>
+      <a href="index.html">API Documentation</a> for pymine, generated by <a href="http://codespeak.net/~mwh/pydoctor/">pydoctor</a> at 2010-03-04 19:54:02.
+    </address>
+  </body>
+</html>

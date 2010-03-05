@@ -1,0 +1,229 @@
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+  "DTD/xhtml1-strict.dtd">
+<html>
+  <head>
+    <title>API docs for &ldquo;pymine.poster.encode&rdquo;</title>
+    <meta content="text/html;charset=utf-8" http-equiv="Content-Type" />
+    <link href="apidocs.css" type="text/css" rel="stylesheet" />
+    
+    
+  </head>
+  <body>
+    <h1 class="module">Module p.p.encode</h1>
+    <p>
+      <span id="part">Part of <a href="pymine.html">pymine</a>.<a href="pymine.poster.html">poster</a></span>
+      
+      
+    </p>
+    <div>
+      
+    </div>
+    <div>multipart/form-data encoding module</p>
+<p>This module provides functions that faciliate encoding name/value pairs 
+as multipart/form-data suitable for a HTTP POST or PUT request.</p>
+<p>multipart/form-data is the standard way to upload files over HTTP<table class="fieldTable"></table></div>
+    
+    
+    <div id="splitTables">
+      <table class="children sortable" id="id140">
+  
+  
+  
+  
+  <tr class="function">
+    
+    
+    <td>Function</td>
+    <td><a href="pymine.poster.encode.html#gen_boundary%200">gen_boundary 0</a></td>
+    <td><span>Returns a random string to use as the boundary for a message</span></td>
+  </tr><tr class="function">
+    
+    
+    <td>Function</td>
+    <td><a href="pymine.poster.encode.html#gen_boundary">gen_boundary</a></td>
+    <td><span>Returns a random string to use as the boundary for a message</span></td>
+  </tr><tr class="function">
+    
+    
+    <td>Function</td>
+    <td><a href="pymine.poster.encode.html#encode_and_quote">encode_and_quote</a></td>
+    <td><span>If ``data`` is unicode, return 
+urllib.quote_plus(data.encode(&quot;utf-8&quot;))</span></td>
+  </tr><tr class="class">
+    
+    
+    <td>Class</td>
+    <td><a href="pymine.poster.encode.MultipartParam.html">MultipartParam</a></td>
+    <td><span>Represents a single parameter in a multipart/form-data request</span></td>
+  </tr><tr class="function">
+    
+    
+    <td>Function</td>
+    <td><a href="pymine.poster.encode.html#encode_string">encode_string</a></td>
+    <td><span>Returns ``name`` and ``value`` encoded as a multipart/form-data</span></td>
+  </tr><tr class="function">
+    
+    
+    <td>Function</td>
+    <td><a href="pymine.poster.encode.html#encode_file_header">encode_file_header</a></td>
+    <td><span>Returns the leading data for a multipart/form-data field that 
+contains</span></td>
+  </tr><tr class="function">
+    
+    
+    <td>Function</td>
+    <td><a href="pymine.poster.encode.html#get_body_size">get_body_size</a></td>
+    <td><span>Returns the number of bytes that the multipart/form-data encoding</span></td>
+  </tr><tr class="function">
+    
+    
+    <td>Function</td>
+    <td><a href="pymine.poster.encode.html#get_headers">get_headers</a></td>
+    <td><span>Returns a dictionary with Content-Type and Content-Length headers</span></td>
+  </tr><tr class="function">
+    
+    
+    <td>Function</td>
+    <td><a href="pymine.poster.encode.html#multipart_encode">multipart_encode</a></td>
+    <td><span>Encode ``params`` as multipart/form-data.</span></td>
+  </tr>
+  
+</table>
+      
+      
+    </div>
+    
+    
+    
+    <div class="function">
+        <a name="pymine.poster.encode.gen_boundary 0"></a>
+        <a name="gen_boundary 0"></a>
+        <div class="functionHeader">
+        
+        def gen_boundary 0():
+        
+      </div>
+        <div class="functionBody">
+          
+          <div>Returns a random string to use as the boundary for a message<table class="fieldTable"></table></div>
+        </div>
+      </div><div class="function">
+        <a name="pymine.poster.encode.gen_boundary"></a>
+        <a name="gen_boundary"></a>
+        <div class="functionHeader">
+        
+        def gen_boundary():
+        
+      </div>
+        <div class="functionBody">
+          
+          <div>Returns a random string to use as the boundary for a message<table class="fieldTable"></table></div>
+        </div>
+      </div><div class="function">
+        <a name="pymine.poster.encode.encode_and_quote"></a>
+        <a name="encode_and_quote"></a>
+        <div class="functionHeader">
+        
+        def encode_and_quote(data):
+        
+      </div>
+        <div class="functionBody">
+          
+          <div>If ``data`` is unicode, return 
+urllib.quote_plus(data.encode(&quot;utf-8&quot;)) otherwise return 
+urllib.quote_plus(data)<table class="fieldTable"></table></div>
+        </div>
+      </div><div class="function">
+        <a name="pymine.poster.encode.encode_string"></a>
+        <a name="encode_string"></a>
+        <div class="functionHeader">
+        
+        def encode_string(boundary, name, value):
+        
+      </div>
+        <div class="functionBody">
+          
+          <div>Returns ``name`` and ``value`` encoded as a multipart/form-data 
+variable.  ``boundary`` is the boundary string used throughout a single 
+request to separate variables.<table class="fieldTable"></table></div>
+        </div>
+      </div><div class="function">
+        <a name="pymine.poster.encode.encode_file_header"></a>
+        <a name="encode_file_header"></a>
+        <div class="functionHeader">
+        
+        def encode_file_header(boundary, paramname, filesize, filename=None, filetype=None):
+        
+      </div>
+        <div class="functionBody">
+          
+          <div>Returns the leading data for a multipart/form-data field that contains 
+file data.</p>
+<p>``boundary`` is the boundary string used throughout a single request to 
+separate variables.</p>
+<p>``paramname`` is the name of the variable in this request.</p>
+<p>``filesize`` is the size of the file data.</p>
+<p>``filename`` if specified is the filename to give to this field.  This 
+field is only useful to the server for determining the original 
+filename.</p>
+<p>``filetype`` if specified is the MIME type of this file.</p>
+<p>The actual file data should be sent after this header has been sent.<table class="fieldTable"></table></div>
+        </div>
+      </div><div class="function">
+        <a name="pymine.poster.encode.get_body_size"></a>
+        <a name="get_body_size"></a>
+        <div class="functionHeader">
+        
+        def get_body_size(params, boundary):
+        
+      </div>
+        <div class="functionBody">
+          
+          <div>Returns the number of bytes that the multipart/form-data encoding of 
+``params`` will be.<table class="fieldTable"></table></div>
+        </div>
+      </div><div class="function">
+        <a name="pymine.poster.encode.get_headers"></a>
+        <a name="get_headers"></a>
+        <div class="functionHeader">
+        
+        def get_headers(params, boundary):
+        
+      </div>
+        <div class="functionBody">
+          
+          <div>Returns a dictionary with Content-Type and Content-Length headers for 
+the multipart/form-data encoding of ``params``.<table class="fieldTable"></table></div>
+        </div>
+      </div><div class="function">
+        <a name="pymine.poster.encode.multipart_encode"></a>
+        <a name="multipart_encode"></a>
+        <div class="functionHeader">
+        
+        def multipart_encode(params, boundary=None):
+        
+      </div>
+        <div class="functionBody">
+          
+          <div>Encode ``params`` as multipart/form-data.</p>
+<p>``params`` should be a dictionary where the keys represent parameter 
+names, and the values are either parameter values, or file-like objects to 
+use as the parameter value.  The file-like objects must support .read() and
+either .fileno() or both .seek() and .tell().</p>
+<p>If ``boundary`` is set, then it as used as the MIME boundary.  Otherwise
+a randomly generated boundary will be used.  In either case, if the 
+boundary string appears in the parameter values a ValueError will be 
+raised.</p>
+<p>Returns a tuple of `datagen`, `headers`, where `datagen` is a generator 
+that will yield blocks of data that make up the encoded parameters, and 
+`headers` is a dictionary with the assoicated Content-Type and 
+Content-Length headers.<table class="fieldTable"></table></div>
+        </div>
+      </div>
+    
+    <address>
+      <a href="index.html">API Documentation</a> for pymine, generated by <a href="http://codespeak.net/~mwh/pydoctor/">pydoctor</a> at 2010-03-04 19:54:02.
+    </address>
+  </body>
+</html>

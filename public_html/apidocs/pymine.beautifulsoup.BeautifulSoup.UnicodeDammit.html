@@ -1,0 +1,193 @@
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+  "DTD/xhtml1-strict.dtd">
+<html>
+  <head>
+    <title>API docs for &ldquo;pymine.beautifulsoup.BeautifulSoup.UnicodeDammit&rdquo;</title>
+    <meta content="text/html;charset=utf-8" http-equiv="Content-Type" />
+    <link href="apidocs.css" type="text/css" rel="stylesheet" />
+    
+    
+  </head>
+  <body>
+    <h1 class="class">Class p.b.B.UnicodeDammit:</h1>
+    <p>
+      <span id="part">Part of <a href="pymine.html">pymine</a>.<a href="pymine.beautifulsoup.html">beautifulsoup</a>.<a href="pymine.beautifulsoup.BeautifulSoup.html">BeautifulSoup</a></span>
+      
+      <a href="classIndex.html#pymine.beautifulsoup.BeautifulSoup.UnicodeDammit">View In Hierarchy</a>
+    </p>
+    <div>
+      
+    </div>
+    <div>A class for detecting the encoding of a *ML document and converting it 
+to a Unicode string. If the source encoding is windows-1252, can replace MS
+smart quotes with their HTML or XML equivalents.<table class="fieldTable"></table></div>
+    
+    
+    <div id="splitTables">
+      <table class="children sortable" id="id95">
+  
+  
+  
+  
+  <tr class="method">
+    
+    
+    <td>Method</td>
+    <td><a href="pymine.beautifulsoup.BeautifulSoup.UnicodeDammit.html#__init__">__init__</a></td>
+    <td><span class="undocumented">Undocumented</span></td>
+  </tr><tr class="method">
+    
+    
+    <td>Method</td>
+    <td><a href="pymine.beautifulsoup.BeautifulSoup.UnicodeDammit.html#_subMSChar">_subMSChar</a></td>
+    <td><span>Changes a MS smart quote character to an XML or HTML</span></td>
+  </tr><tr class="method">
+    
+    
+    <td>Method</td>
+    <td><a href="pymine.beautifulsoup.BeautifulSoup.UnicodeDammit.html#_convertFrom">_convertFrom</a></td>
+    <td><span class="undocumented">Undocumented</span></td>
+  </tr><tr class="method">
+    
+    
+    <td>Method</td>
+    <td><a href="pymine.beautifulsoup.BeautifulSoup.UnicodeDammit.html#_toUnicode">_toUnicode</a></td>
+    <td><span>Given a string and its encoding, decodes the string into Unicode.</span></td>
+  </tr><tr class="method">
+    
+    
+    <td>Method</td>
+    <td><a href="pymine.beautifulsoup.BeautifulSoup.UnicodeDammit.html#_detectEncoding">_detectEncoding</a></td>
+    <td><span>Given a document, tries to detect its XML encoding.</span></td>
+  </tr><tr class="method">
+    
+    
+    <td>Method</td>
+    <td><a href="pymine.beautifulsoup.BeautifulSoup.UnicodeDammit.html#find_codec">find_codec</a></td>
+    <td><span class="undocumented">Undocumented</span></td>
+  </tr><tr class="method">
+    
+    
+    <td>Method</td>
+    <td><a href="pymine.beautifulsoup.BeautifulSoup.UnicodeDammit.html#_codec">_codec</a></td>
+    <td><span class="undocumented">Undocumented</span></td>
+  </tr><tr class="method">
+    
+    
+    <td>Method</td>
+    <td><a href="pymine.beautifulsoup.BeautifulSoup.UnicodeDammit.html#_ebcdic_to_ascii">_ebcdic_to_ascii</a></td>
+    <td><span class="undocumented">Undocumented</span></td>
+  </tr>
+  
+</table>
+      
+      
+    </div>
+    
+    
+    
+    <div class="function">
+        <a name="pymine.beautifulsoup.BeautifulSoup.UnicodeDammit.__init__"></a>
+        <a name="__init__"></a>
+        <div class="functionHeader">
+        
+        def __init__(self, markup, overrideEncodings=, smartQuotesTo='xml', isHTML=False):
+        
+      </div>
+        <div class="functionBody">
+          
+          <div class="undocumented">Undocumented</div>
+        </div>
+      </div><div class="function">
+        <a name="pymine.beautifulsoup.BeautifulSoup.UnicodeDammit._subMSChar"></a>
+        <a name="_subMSChar"></a>
+        <div class="functionHeader">
+        
+        def _subMSChar(self, orig):
+        
+      </div>
+        <div class="functionBody">
+          
+          <div>Changes a MS smart quote character to an XML or HTML entity.<table class="fieldTable"></table></div>
+        </div>
+      </div><div class="function">
+        <a name="pymine.beautifulsoup.BeautifulSoup.UnicodeDammit._convertFrom"></a>
+        <a name="_convertFrom"></a>
+        <div class="functionHeader">
+        
+        def _convertFrom(self, proposed):
+        
+      </div>
+        <div class="functionBody">
+          
+          <div class="undocumented">Undocumented</div>
+        </div>
+      </div><div class="function">
+        <a name="pymine.beautifulsoup.BeautifulSoup.UnicodeDammit._toUnicode"></a>
+        <a name="_toUnicode"></a>
+        <div class="functionHeader">
+        
+        def _toUnicode(self, data, encoding):
+        
+      </div>
+        <div class="functionBody">
+          
+          <div>Given a string and its encoding, decodes the string into Unicode. 
+%encoding is a string recognized by encodings.aliases<table class="fieldTable"></table></div>
+        </div>
+      </div><div class="function">
+        <a name="pymine.beautifulsoup.BeautifulSoup.UnicodeDammit._detectEncoding"></a>
+        <a name="_detectEncoding"></a>
+        <div class="functionHeader">
+        
+        def _detectEncoding(self, xml_data, isHTML=False):
+        
+      </div>
+        <div class="functionBody">
+          
+          <div>Given a document, tries to detect its XML encoding.<table class="fieldTable"></table></div>
+        </div>
+      </div><div class="function">
+        <a name="pymine.beautifulsoup.BeautifulSoup.UnicodeDammit.find_codec"></a>
+        <a name="find_codec"></a>
+        <div class="functionHeader">
+        
+        def find_codec(self, charset):
+        
+      </div>
+        <div class="functionBody">
+          
+          <div class="undocumented">Undocumented</div>
+        </div>
+      </div><div class="function">
+        <a name="pymine.beautifulsoup.BeautifulSoup.UnicodeDammit._codec"></a>
+        <a name="_codec"></a>
+        <div class="functionHeader">
+        
+        def _codec(self, charset):
+        
+      </div>
+        <div class="functionBody">
+          
+          <div class="undocumented">Undocumented</div>
+        </div>
+      </div><div class="function">
+        <a name="pymine.beautifulsoup.BeautifulSoup.UnicodeDammit._ebcdic_to_ascii"></a>
+        <a name="_ebcdic_to_ascii"></a>
+        <div class="functionHeader">
+        
+        def _ebcdic_to_ascii(self, s):
+        
+      </div>
+        <div class="functionBody">
+          
+          <div class="undocumented">Undocumented</div>
+        </div>
+      </div>
+    
+    <address>
+      <a href="index.html">API Documentation</a> for pymine, generated by <a href="http://codespeak.net/~mwh/pydoctor/">pydoctor</a> at 2010-03-04 19:54:02.
+    </address>
+  </body>
+</html>

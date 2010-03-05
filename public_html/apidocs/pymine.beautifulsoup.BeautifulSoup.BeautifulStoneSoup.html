@@ -1,0 +1,861 @@
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+  "DTD/xhtml1-strict.dtd">
+<html>
+  <head>
+    <title>API docs for &ldquo;pymine.beautifulsoup.BeautifulSoup.BeautifulStoneSoup&rdquo;</title>
+    <meta content="text/html;charset=utf-8" http-equiv="Content-Type" />
+    <link href="apidocs.css" type="text/css" rel="stylesheet" />
+    
+    
+  </head>
+  <body>
+    <h1 class="class">Class p.b.B.BeautifulStoneSoup(<a href="pymine.beautifulsoup.BeautifulSoup.Tag.html">Tag</a>, <span title="sgmllib.SGMLParser">SGMLParser</span>):</h1>
+    <p>
+      <span id="part">Part of <a href="pymine.html">pymine</a>.<a href="pymine.beautifulsoup.html">beautifulsoup</a>.<a href="pymine.beautifulsoup.BeautifulSoup.html">BeautifulSoup</a></span>
+      
+      <a href="classIndex.html#pymine.beautifulsoup.BeautifulSoup.BeautifulStoneSoup">View In Hierarchy</a>
+    </p>
+    <div>
+      <p>Known subclasses: <a href="pymine.beautifulsoup.BeautifulSoup.BeautifulSOAP.html">pymine.beautifulsoup.BeautifulSoup.BeautifulSOAP</a>, <a href="pymine.beautifulsoup.BeautifulSoup.BeautifulSoup.html">pymine.beautifulsoup.BeautifulSoup.BeautifulSoup</a>, <a href="pymine.beautifulsoup.BeautifulSoup.RobustXMLParser.html">pymine.beautifulsoup.BeautifulSoup.RobustXMLParser</a></p>
+    </div>
+    <pre>This class contains the basic parser and search code. It defines
+a parser that knows nothing about tag behavior except for the
+following:
+
+  You can't close a tag without closing all the tags it encloses.
+  That is, "&lt;foo&gt;&lt;bar&gt;&lt;/foo&gt;" actually means
+  "&lt;foo&gt;&lt;bar&gt;&lt;/bar&gt;&lt;/foo&gt;".
+
+[Another possible explanation is "&lt;foo&gt;&lt;bar /&gt;&lt;/foo&gt;", but since
+this class defines no SELF_CLOSING_TAGS, it will never use that
+explanation.]
+
+This class is useful for parsing XML or made-up markup languages,
+or when BeautifulSoup makes an assumption counter to what you were
+expecting.</pre>
+    
+    
+    <div id="splitTables">
+      <table class="children sortable" id="id64">
+  
+  
+  
+  
+  <tr class="method">
+    
+    
+    <td>Method</td>
+    <td><a href="pymine.beautifulsoup.BeautifulSoup.BeautifulStoneSoup.html#__init__">__init__</a></td>
+    <td><span>The Soup object is initialized as the 'root tag', and the</span></td>
+  </tr><tr class="method">
+    
+    
+    <td>Method</td>
+    <td><a href="pymine.beautifulsoup.BeautifulSoup.BeautifulStoneSoup.html#convert_charref">convert_charref</a></td>
+    <td><span>This method fixes a bug in Python's SGMLParser.</span></td>
+  </tr><tr class="method">
+    
+    
+    <td>Method</td>
+    <td><a href="pymine.beautifulsoup.BeautifulSoup.BeautifulStoneSoup.html#_feed">_feed</a></td>
+    <td><span class="undocumented">Undocumented</span></td>
+  </tr><tr class="method">
+    
+    
+    <td>Method</td>
+    <td><a href="pymine.beautifulsoup.BeautifulSoup.BeautifulStoneSoup.html#__getattr__">__getattr__</a></td>
+    <td><span>This method routes method call requests to either the SGMLParser</span></td>
+  </tr><tr class="method">
+    
+    
+    <td>Method</td>
+    <td><a href="pymine.beautifulsoup.BeautifulSoup.BeautifulStoneSoup.html#isSelfClosingTag">isSelfClosingTag</a></td>
+    <td><span>Returns true iff the given string is the name of a</span></td>
+  </tr><tr class="method">
+    
+    
+    <td>Method</td>
+    <td><a href="pymine.beautifulsoup.BeautifulSoup.BeautifulStoneSoup.html#reset">reset</a></td>
+    <td><span class="undocumented">Undocumented</span></td>
+  </tr><tr class="method">
+    
+    
+    <td>Method</td>
+    <td><a href="pymine.beautifulsoup.BeautifulSoup.BeautifulStoneSoup.html#popTag">popTag</a></td>
+    <td><span class="undocumented">Undocumented</span></td>
+  </tr><tr class="method">
+    
+    
+    <td>Method</td>
+    <td><a href="pymine.beautifulsoup.BeautifulSoup.BeautifulStoneSoup.html#pushTag">pushTag</a></td>
+    <td><span class="undocumented">Undocumented</span></td>
+  </tr><tr class="method">
+    
+    
+    <td>Method</td>
+    <td><a href="pymine.beautifulsoup.BeautifulSoup.BeautifulStoneSoup.html#endData">endData</a></td>
+    <td><span class="undocumented">Undocumented</span></td>
+  </tr><tr class="method">
+    
+    
+    <td>Method</td>
+    <td><a href="pymine.beautifulsoup.BeautifulSoup.BeautifulStoneSoup.html#_popToTag">_popToTag</a></td>
+    <td><span>Pops the tag stack up to and including the most recent</span></td>
+  </tr><tr class="method">
+    
+    
+    <td>Method</td>
+    <td><a href="pymine.beautifulsoup.BeautifulSoup.BeautifulStoneSoup.html#_smartPop">_smartPop</a></td>
+    <td><span>We need to pop up to the previous tag of this type, unless</span></td>
+  </tr><tr class="method">
+    
+    
+    <td>Method</td>
+    <td><a href="pymine.beautifulsoup.BeautifulSoup.BeautifulStoneSoup.html#unknown_starttag">unknown_starttag</a></td>
+    <td><span class="undocumented">Undocumented</span></td>
+  </tr><tr class="method">
+    
+    
+    <td>Method</td>
+    <td><a href="pymine.beautifulsoup.BeautifulSoup.BeautifulStoneSoup.html#unknown_endtag">unknown_endtag</a></td>
+    <td><span class="undocumented">Undocumented</span></td>
+  </tr><tr class="method">
+    
+    
+    <td>Method</td>
+    <td><a href="pymine.beautifulsoup.BeautifulSoup.BeautifulStoneSoup.html#handle_data">handle_data</a></td>
+    <td><span class="undocumented">Undocumented</span></td>
+  </tr><tr class="method">
+    
+    
+    <td>Method</td>
+    <td><a href="pymine.beautifulsoup.BeautifulSoup.BeautifulStoneSoup.html#_toStringSubclass">_toStringSubclass</a></td>
+    <td><span>Adds a certain piece of text to the tree as a NavigableString</span></td>
+  </tr><tr class="method">
+    
+    
+    <td>Method</td>
+    <td><a href="pymine.beautifulsoup.BeautifulSoup.BeautifulStoneSoup.html#handle_pi">handle_pi</a></td>
+    <td><span>Handle a processing instruction as a ProcessingInstruction</span></td>
+  </tr><tr class="method">
+    
+    
+    <td>Method</td>
+    <td><a href="pymine.beautifulsoup.BeautifulSoup.BeautifulStoneSoup.html#handle_comment">handle_comment</a></td>
+    <td><span>Handle comments as Comment objects.</span></td>
+  </tr><tr class="method">
+    
+    
+    <td>Method</td>
+    <td><a href="pymine.beautifulsoup.BeautifulSoup.BeautifulStoneSoup.html#handle_charref">handle_charref</a></td>
+    <td><span>Handle character references as data.</span></td>
+  </tr><tr class="method">
+    
+    
+    <td>Method</td>
+    <td><a href="pymine.beautifulsoup.BeautifulSoup.BeautifulStoneSoup.html#handle_entityref">handle_entityref</a></td>
+    <td><span>Handle entity references as data, possibly converting known</span></td>
+  </tr><tr class="method">
+    
+    
+    <td>Method</td>
+    <td><a href="pymine.beautifulsoup.BeautifulSoup.BeautifulStoneSoup.html#handle_decl">handle_decl</a></td>
+    <td><span>Handle DOCTYPEs and the like as Declaration objects.</span></td>
+  </tr><tr class="method">
+    
+    
+    <td>Method</td>
+    <td><a href="pymine.beautifulsoup.BeautifulSoup.BeautifulStoneSoup.html#parse_declaration">parse_declaration</a></td>
+    <td><span>Treat a bogus SGML declaration as raw data. Treat a CDATA</span></td>
+  </tr>
+  
+</table>
+      
+        <p>
+          Inherited from <a href="pymine.beautifulsoup.BeautifulSoup.Tag.html">Tag</a>:
+        </p>
+        <table class="children sortable" id="id65">
+  
+  
+  
+  
+  <tr class="basemethod">
+    
+    
+    <td>Method</td>
+    <td><a href="pymine.beautifulsoup.BeautifulSoup.Tag.html#_invert">_invert</a></td>
+    <td><span>Cheap function to invert a hash.</span></td>
+  </tr><tr class="basemethod">
+    
+    
+    <td>Method</td>
+    <td><a href="pymine.beautifulsoup.BeautifulSoup.Tag.html#_convertEntities">_convertEntities</a></td>
+    <td><span>Used in a call to re.sub to replace HTML, XML, and numeric</span></td>
+  </tr><tr class="basemethod">
+    
+    
+    <td>Method</td>
+    <td><a href="pymine.beautifulsoup.BeautifulSoup.Tag.html#getString">getString</a></td>
+    <td><span class="undocumented">Undocumented</span></td>
+  </tr><tr class="basemethod">
+    
+    
+    <td>Method</td>
+    <td><a href="pymine.beautifulsoup.BeautifulSoup.Tag.html#setString">setString</a></td>
+    <td><span>Replace the contents of the tag with a string</span></td>
+  </tr><tr class="basemethod">
+    
+    
+    <td>Method</td>
+    <td><a href="pymine.beautifulsoup.BeautifulSoup.Tag.html#getText">getText</a></td>
+    <td><span class="undocumented">Undocumented</span></td>
+  </tr><tr class="basemethod">
+    
+    
+    <td>Method</td>
+    <td><a href="pymine.beautifulsoup.BeautifulSoup.Tag.html#get">get</a></td>
+    <td><span>Returns the value of the 'key' attribute for the tag, or</span></td>
+  </tr><tr class="basemethod">
+    
+    
+    <td>Method</td>
+    <td><a href="pymine.beautifulsoup.BeautifulSoup.Tag.html#clear">clear</a></td>
+    <td><span>Extract all children.</span></td>
+  </tr><tr class="basemethod">
+    
+    
+    <td>Method</td>
+    <td><a href="pymine.beautifulsoup.BeautifulSoup.Tag.html#index">index</a></td>
+    <td><span class="undocumented">Undocumented</span></td>
+  </tr><tr class="basemethod">
+    
+    
+    <td>Method</td>
+    <td><a href="pymine.beautifulsoup.BeautifulSoup.Tag.html#has_key">has_key</a></td>
+    <td><span class="undocumented">Undocumented</span></td>
+  </tr><tr class="basemethod">
+    
+    
+    <td>Method</td>
+    <td><a href="pymine.beautifulsoup.BeautifulSoup.Tag.html#__getitem__">__getitem__</a></td>
+    <td><span>tag[key] returns the value of the 'key' attribute for the tag,</span></td>
+  </tr><tr class="basemethod">
+    
+    
+    <td>Method</td>
+    <td><a href="pymine.beautifulsoup.BeautifulSoup.Tag.html#__iter__">__iter__</a></td>
+    <td><span>Iterating over a tag iterates over its contents.</span></td>
+  </tr><tr class="basemethod">
+    
+    
+    <td>Method</td>
+    <td><a href="pymine.beautifulsoup.BeautifulSoup.Tag.html#__len__">__len__</a></td>
+    <td><span>The length of a tag is the length of its list of contents.</span></td>
+  </tr><tr class="basemethod">
+    
+    
+    <td>Method</td>
+    <td><a href="pymine.beautifulsoup.BeautifulSoup.Tag.html#__contains__">__contains__</a></td>
+    <td><span class="undocumented">Undocumented</span></td>
+  </tr><tr class="basemethod">
+    
+    
+    <td>Method</td>
+    <td><a href="pymine.beautifulsoup.BeautifulSoup.Tag.html#__nonzero__">__nonzero__</a></td>
+    <td><span>A tag is non-None even if it has no contents.</span></td>
+  </tr><tr class="basemethod">
+    
+    
+    <td>Method</td>
+    <td><a href="pymine.beautifulsoup.BeautifulSoup.Tag.html#__setitem__">__setitem__</a></td>
+    <td><span>Setting tag[key] sets the value of the 'key' attribute for the</span></td>
+  </tr><tr class="basemethod">
+    
+    
+    <td>Method</td>
+    <td><a href="pymine.beautifulsoup.BeautifulSoup.Tag.html#__delitem__">__delitem__</a></td>
+    <td><span>Deleting tag[key] deletes all 'key' attributes for the tag.</span></td>
+  </tr><tr class="basemethod">
+    
+    
+    <td>Method</td>
+    <td><a href="pymine.beautifulsoup.BeautifulSoup.Tag.html#__call__">__call__</a></td>
+    <td><span>Calling a tag like a function is the same as calling its</span></td>
+  </tr><tr class="basemethod">
+    
+    
+    <td>Method</td>
+    <td><a href="pymine.beautifulsoup.BeautifulSoup.Tag.html#__eq__">__eq__</a></td>
+    <td><span>Returns true iff this tag has the same name, the same attributes,</span></td>
+  </tr><tr class="basemethod">
+    
+    
+    <td>Method</td>
+    <td><a href="pymine.beautifulsoup.BeautifulSoup.Tag.html#__ne__">__ne__</a></td>
+    <td><span>Returns true iff this tag is not identical to the other tag,</span></td>
+  </tr><tr class="basemethod">
+    
+    
+    <td>Method</td>
+    <td><a href="pymine.beautifulsoup.BeautifulSoup.Tag.html#__repr__">__repr__</a></td>
+    <td><span>Renders this tag as a string.</span></td>
+  </tr><tr class="basemethod">
+    
+    
+    <td>Method</td>
+    <td><a href="pymine.beautifulsoup.BeautifulSoup.Tag.html#__unicode__">__unicode__</a></td>
+    <td><span class="undocumented">Undocumented</span></td>
+  </tr><tr class="basemethod">
+    
+    
+    <td>Method</td>
+    <td><a href="pymine.beautifulsoup.BeautifulSoup.Tag.html#_sub_entity">_sub_entity</a></td>
+    <td><span>Used with a regular expression to substitute the</span></td>
+  </tr><tr class="basemethod">
+    
+    
+    <td>Method</td>
+    <td><a href="pymine.beautifulsoup.BeautifulSoup.Tag.html#__str__">__str__</a></td>
+    <td><span>Returns a string or Unicode representation of this tag and</span></td>
+  </tr><tr class="basemethod">
+    
+    
+    <td>Method</td>
+    <td><a href="pymine.beautifulsoup.BeautifulSoup.Tag.html#decompose">decompose</a></td>
+    <td><span>Recursively destroys the contents of this tree.</span></td>
+  </tr><tr class="basemethod">
+    
+    
+    <td>Method</td>
+    <td><a href="pymine.beautifulsoup.BeautifulSoup.Tag.html#prettify">prettify</a></td>
+    <td><span class="undocumented">Undocumented</span></td>
+  </tr><tr class="basemethod">
+    
+    
+    <td>Method</td>
+    <td><a href="pymine.beautifulsoup.BeautifulSoup.Tag.html#renderContents">renderContents</a></td>
+    <td><span>Renders the contents of this tag as a string in the given</span></td>
+  </tr><tr class="basemethod">
+    
+    
+    <td>Method</td>
+    <td><a href="pymine.beautifulsoup.BeautifulSoup.Tag.html#find">find</a></td>
+    <td><span>Return only the first child of this Tag matching the given</span></td>
+  </tr><tr class="basemethod">
+    
+    
+    <td>Method</td>
+    <td><a href="pymine.beautifulsoup.BeautifulSoup.Tag.html#findAll">findAll</a></td>
+    <td><span>Extracts a list of Tag objects that match the given</span></td>
+  </tr><tr class="basemethod">
+    
+    
+    <td>Method</td>
+    <td><a href="pymine.beautifulsoup.BeautifulSoup.Tag.html#fetchText">fetchText</a></td>
+    <td><span class="undocumented">Undocumented</span></td>
+  </tr><tr class="basemethod">
+    
+    
+    <td>Method</td>
+    <td><a href="pymine.beautifulsoup.BeautifulSoup.Tag.html#firstText">firstText</a></td>
+    <td><span class="undocumented">Undocumented</span></td>
+  </tr><tr class="basemethod">
+    
+    
+    <td>Method</td>
+    <td><a href="pymine.beautifulsoup.BeautifulSoup.Tag.html#_getAttrMap">_getAttrMap</a></td>
+    <td><span>Initializes a map representation of this tag's attributes,</span></td>
+  </tr><tr class="basemethod">
+    
+    
+    <td>Method</td>
+    <td><a href="pymine.beautifulsoup.BeautifulSoup.Tag.html#childGenerator">childGenerator</a></td>
+    <td><span class="undocumented">Undocumented</span></td>
+  </tr><tr class="basemethod">
+    
+    
+    <td>Method</td>
+    <td><a href="pymine.beautifulsoup.BeautifulSoup.Tag.html#recursiveChildGenerator">recursiveChildGenerator</a></td>
+    <td><span class="undocumented">Undocumented</span></td>
+  </tr>
+  
+</table>
+      
+        <p>
+          Inherited from <a href="pymine.beautifulsoup.BeautifulSoup.PageElement.html">PageElement</a> (via <a href="pymine.beautifulsoup.BeautifulSoup.Tag.html">Tag</a>):
+        </p>
+        <table class="children sortable" id="id66">
+  
+  
+  
+  
+  <tr class="basemethod">
+    
+    
+    <td>Method</td>
+    <td><a href="pymine.beautifulsoup.BeautifulSoup.PageElement.html#setup">setup</a></td>
+    <td><span>Sets up the initial relations between this element and</span></td>
+  </tr><tr class="basemethod">
+    
+    
+    <td>Method</td>
+    <td><a href="pymine.beautifulsoup.BeautifulSoup.PageElement.html#replaceWith">replaceWith</a></td>
+    <td><span class="undocumented">Undocumented</span></td>
+  </tr><tr class="basemethod">
+    
+    
+    <td>Method</td>
+    <td><a href="pymine.beautifulsoup.BeautifulSoup.PageElement.html#replaceWithChildren">replaceWithChildren</a></td>
+    <td><span class="undocumented">Undocumented</span></td>
+  </tr><tr class="basemethod">
+    
+    
+    <td>Method</td>
+    <td><a href="pymine.beautifulsoup.BeautifulSoup.PageElement.html#extract">extract</a></td>
+    <td><span>Destructively rips this element out of the tree.</span></td>
+  </tr><tr class="basemethod">
+    
+    
+    <td>Method</td>
+    <td><a href="pymine.beautifulsoup.BeautifulSoup.PageElement.html#_lastRecursiveChild">_lastRecursiveChild</a></td>
+    <td><span>Finds the last element beneath this object to be parsed.</span></td>
+  </tr><tr class="basemethod">
+    
+    
+    <td>Method</td>
+    <td><a href="pymine.beautifulsoup.BeautifulSoup.PageElement.html#insert">insert</a></td>
+    <td><span class="undocumented">Undocumented</span></td>
+  </tr><tr class="basemethod">
+    
+    
+    <td>Method</td>
+    <td><a href="pymine.beautifulsoup.BeautifulSoup.PageElement.html#append">append</a></td>
+    <td><span>Appends the given tag to the contents of this tag.</span></td>
+  </tr><tr class="basemethod">
+    
+    
+    <td>Method</td>
+    <td><a href="pymine.beautifulsoup.BeautifulSoup.PageElement.html#findNext">findNext</a></td>
+    <td><span>Returns the first item that matches the given criteria and</span></td>
+  </tr><tr class="basemethod">
+    
+    
+    <td>Method</td>
+    <td><a href="pymine.beautifulsoup.BeautifulSoup.PageElement.html#findAllNext">findAllNext</a></td>
+    <td><span>Returns all items that match the given criteria and appear</span></td>
+  </tr><tr class="basemethod">
+    
+    
+    <td>Method</td>
+    <td><a href="pymine.beautifulsoup.BeautifulSoup.PageElement.html#findNextSibling">findNextSibling</a></td>
+    <td><span>Returns the closest sibling to this Tag that matches the</span></td>
+  </tr><tr class="basemethod">
+    
+    
+    <td>Method</td>
+    <td><a href="pymine.beautifulsoup.BeautifulSoup.PageElement.html#findNextSiblings">findNextSiblings</a></td>
+    <td><span>Returns the siblings of this Tag that match the given</span></td>
+  </tr><tr class="basemethod">
+    
+    
+    <td>Method</td>
+    <td><a href="pymine.beautifulsoup.BeautifulSoup.PageElement.html#findPrevious">findPrevious</a></td>
+    <td><span>Returns the first item that matches the given criteria and</span></td>
+  </tr><tr class="basemethod">
+    
+    
+    <td>Method</td>
+    <td><a href="pymine.beautifulsoup.BeautifulSoup.PageElement.html#findAllPrevious">findAllPrevious</a></td>
+    <td><span>Returns all items that match the given criteria and appear</span></td>
+  </tr><tr class="basemethod">
+    
+    
+    <td>Method</td>
+    <td><a href="pymine.beautifulsoup.BeautifulSoup.PageElement.html#findPreviousSibling">findPreviousSibling</a></td>
+    <td><span>Returns the closest sibling to this Tag that matches the</span></td>
+  </tr><tr class="basemethod">
+    
+    
+    <td>Method</td>
+    <td><a href="pymine.beautifulsoup.BeautifulSoup.PageElement.html#findPreviousSiblings">findPreviousSiblings</a></td>
+    <td><span>Returns the siblings of this Tag that match the given</span></td>
+  </tr><tr class="basemethod">
+    
+    
+    <td>Method</td>
+    <td><a href="pymine.beautifulsoup.BeautifulSoup.PageElement.html#findParent">findParent</a></td>
+    <td><span>Returns the closest parent of this Tag that matches the given</span></td>
+  </tr><tr class="basemethod">
+    
+    
+    <td>Method</td>
+    <td><a href="pymine.beautifulsoup.BeautifulSoup.PageElement.html#findParents">findParents</a></td>
+    <td><span>Returns the parents of this Tag that match the given</span></td>
+  </tr><tr class="basemethod">
+    
+    
+    <td>Method</td>
+    <td><a href="pymine.beautifulsoup.BeautifulSoup.PageElement.html#_findOne">_findOne</a></td>
+    <td><span class="undocumented">Undocumented</span></td>
+  </tr><tr class="basemethod">
+    
+    
+    <td>Method</td>
+    <td><a href="pymine.beautifulsoup.BeautifulSoup.PageElement.html#_findAll">_findAll</a></td>
+    <td><span>Iterates over a generator looking for things that match.</span></td>
+  </tr><tr class="basemethod">
+    
+    
+    <td>Method</td>
+    <td><a href="pymine.beautifulsoup.BeautifulSoup.PageElement.html#nextGenerator">nextGenerator</a></td>
+    <td><span class="undocumented">Undocumented</span></td>
+  </tr><tr class="basemethod">
+    
+    
+    <td>Method</td>
+    <td><a href="pymine.beautifulsoup.BeautifulSoup.PageElement.html#nextSiblingGenerator">nextSiblingGenerator</a></td>
+    <td><span class="undocumented">Undocumented</span></td>
+  </tr><tr class="basemethod">
+    
+    
+    <td>Method</td>
+    <td><a href="pymine.beautifulsoup.BeautifulSoup.PageElement.html#previousGenerator">previousGenerator</a></td>
+    <td><span class="undocumented">Undocumented</span></td>
+  </tr><tr class="basemethod">
+    
+    
+    <td>Method</td>
+    <td><a href="pymine.beautifulsoup.BeautifulSoup.PageElement.html#previousSiblingGenerator">previousSiblingGenerator</a></td>
+    <td><span class="undocumented">Undocumented</span></td>
+  </tr><tr class="basemethod">
+    
+    
+    <td>Method</td>
+    <td><a href="pymine.beautifulsoup.BeautifulSoup.PageElement.html#parentGenerator">parentGenerator</a></td>
+    <td><span class="undocumented">Undocumented</span></td>
+  </tr><tr class="basemethod">
+    
+    
+    <td>Method</td>
+    <td><a href="pymine.beautifulsoup.BeautifulSoup.PageElement.html#substituteEncoding">substituteEncoding</a></td>
+    <td><span class="undocumented">Undocumented</span></td>
+  </tr><tr class="basemethod">
+    
+    
+    <td>Method</td>
+    <td><a href="pymine.beautifulsoup.BeautifulSoup.PageElement.html#toEncoding">toEncoding</a></td>
+    <td><span>Encodes an object to a string in some encoding, or to Unicode.</span></td>
+  </tr>
+  
+</table>
+      
+      
+    </div>
+    
+    
+    
+    <div class="function">
+        <a name="pymine.beautifulsoup.BeautifulSoup.BeautifulStoneSoup.__init__"></a>
+        <a name="__init__"></a>
+        <div class="functionHeader">
+        
+        def __init__(self, markup='', parseOnlyThese=None, fromEncoding=None, markupMassage=True, smartQuotesTo=XML_ENTITIES, convertEntities=None, selfClosingTags=None, isHTML=False):
+        
+      </div>
+        <div class="functionBody">
+          <div class="interfaceinfo">overrides <a href="pymine.beautifulsoup.BeautifulSoup.Tag.html#__init__">pymine.beautifulsoup.BeautifulSoup.Tag.__init__</a></div><div class="interfaceinfo">overridden in <a href="pymine.beautifulsoup.BeautifulSoup.BeautifulSoup.html">pymine.beautifulsoup.BeautifulSoup.BeautifulSoup</a></div>
+          <pre>The Soup object is initialized as the 'root tag', and the
+provided markup (which can be a string or a file-like object)
+is fed into the underlying parser.
+
+sgmllib will process most bad HTML, and the BeautifulSoup
+class has some tricks for dealing with some HTML that kills
+sgmllib, but Beautiful Soup can nonetheless choke or lose data
+if your data uses self-closing tags or declarations
+incorrectly.
+
+By default, Beautiful Soup uses regexes to sanitize input,
+avoiding the vast majority of these problems. If the problems
+don't apply to you, pass in False for markupMassage, and
+you'll get better performance.
+
+The default parser massage techniques fix the two most common
+instances of invalid HTML that choke sgmllib:
+
+ &lt;br/&gt; (No space between name of closing tag and tag close)
+ &lt;! --Comment--&gt; (Extraneous whitespace in declaration)
+
+You can pass in a custom list of (RE object, replace method)
+tuples to get Beautiful Soup to scrub your input the way you
+want.</pre>
+        </div>
+      </div><div class="function">
+        <a name="pymine.beautifulsoup.BeautifulSoup.BeautifulStoneSoup.convert_charref"></a>
+        <a name="convert_charref"></a>
+        <div class="functionHeader">
+        
+        def convert_charref(self, name):
+        
+      </div>
+        <div class="functionBody">
+          
+          <div>This method fixes a bug in Python's SGMLParser.<table class="fieldTable"></table></div>
+        </div>
+      </div><div class="function">
+        <a name="pymine.beautifulsoup.BeautifulSoup.BeautifulStoneSoup._feed"></a>
+        <a name="_feed"></a>
+        <div class="functionHeader">
+        
+        def _feed(self, inDocumentEncoding=None, isHTML=False):
+        
+      </div>
+        <div class="functionBody">
+          
+          <div class="undocumented">Undocumented</div>
+        </div>
+      </div><div class="function">
+        <a name="pymine.beautifulsoup.BeautifulSoup.BeautifulStoneSoup.__getattr__"></a>
+        <a name="__getattr__"></a>
+        <div class="functionHeader">
+        
+        def __getattr__(self, methodName):
+        
+      </div>
+        <div class="functionBody">
+          <div class="interfaceinfo">overrides <a href="pymine.beautifulsoup.BeautifulSoup.Tag.html#__getattr__">pymine.beautifulsoup.BeautifulSoup.Tag.__getattr__</a></div>
+          <div>This method routes method call requests to either the SGMLParser 
+superclass or the Tag superclass, depending on the method name.<table class="fieldTable"></table></div>
+        </div>
+      </div><div class="function">
+        <a name="pymine.beautifulsoup.BeautifulSoup.BeautifulStoneSoup.isSelfClosingTag"></a>
+        <a name="isSelfClosingTag"></a>
+        <div class="functionHeader">
+        
+        def isSelfClosingTag(self, name):
+        
+      </div>
+        <div class="functionBody">
+          
+          <div>Returns true iff the given string is the name of a self-closing tag 
+according to this parser.<table class="fieldTable"></table></div>
+        </div>
+      </div><div class="function">
+        <a name="pymine.beautifulsoup.BeautifulSoup.BeautifulStoneSoup.reset"></a>
+        <a name="reset"></a>
+        <div class="functionHeader">
+        
+        def reset(self):
+        
+      </div>
+        <div class="functionBody">
+          
+          <div class="undocumented">Undocumented</div>
+        </div>
+      </div><div class="function">
+        <a name="pymine.beautifulsoup.BeautifulSoup.BeautifulStoneSoup.popTag"></a>
+        <a name="popTag"></a>
+        <div class="functionHeader">
+        
+        def popTag(self):
+        
+      </div>
+        <div class="functionBody">
+          <div class="interfaceinfo">overridden in <a href="pymine.beautifulsoup.BeautifulSoup.BeautifulSOAP.html">pymine.beautifulsoup.BeautifulSoup.BeautifulSOAP</a></div>
+          <div class="undocumented">Undocumented</div>
+        </div>
+      </div><div class="function">
+        <a name="pymine.beautifulsoup.BeautifulSoup.BeautifulStoneSoup.pushTag"></a>
+        <a name="pushTag"></a>
+        <div class="functionHeader">
+        
+        def pushTag(self, tag):
+        
+      </div>
+        <div class="functionBody">
+          
+          <div class="undocumented">Undocumented</div>
+        </div>
+      </div><div class="function">
+        <a name="pymine.beautifulsoup.BeautifulSoup.BeautifulStoneSoup.endData"></a>
+        <a name="endData"></a>
+        <div class="functionHeader">
+        
+        def endData(self, containerClass=NavigableString):
+        
+      </div>
+        <div class="functionBody">
+          
+          <div class="undocumented">Undocumented</div>
+        </div>
+      </div><div class="function">
+        <a name="pymine.beautifulsoup.BeautifulSoup.BeautifulStoneSoup._popToTag"></a>
+        <a name="_popToTag"></a>
+        <div class="functionHeader">
+        
+        def _popToTag(self, name, inclusivePop=True):
+        
+      </div>
+        <div class="functionBody">
+          
+          <div>Pops the tag stack up to and including the most recent instance of the 
+given tag. If inclusivePop is false, pops the tag stack up to but *not* 
+including the most recent instqance of the given tag.<table class="fieldTable"></table></div>
+        </div>
+      </div><div class="function">
+        <a name="pymine.beautifulsoup.BeautifulSoup.BeautifulStoneSoup._smartPop"></a>
+        <a name="_smartPop"></a>
+        <div class="functionHeader">
+        
+        def _smartPop(self, name):
+        
+      </div>
+        <div class="functionBody">
+          
+          <pre>We need to pop up to the previous tag of this type, unless
+one of this tag's nesting reset triggers comes between this
+tag and the previous tag of this type, OR unless this tag is a
+generic nesting trigger and another generic nesting trigger
+comes between this tag and the previous tag of this type.
+
+Examples:
+ &lt;p&gt;Foo&lt;b&gt;Bar *&lt;p&gt;* should pop to 'p', not 'b'.
+ &lt;p&gt;Foo&lt;table&gt;Bar *&lt;p&gt;* should pop to 'table', not 'p'.
+ &lt;p&gt;Foo&lt;table&gt;&lt;tr&gt;Bar *&lt;p&gt;* should pop to 'tr', not 'p'.
+
+ &lt;li&gt;&lt;ul&gt;&lt;li&gt; *&lt;li&gt;* should pop to 'ul', not the first 'li'.
+ &lt;tr&gt;&lt;table&gt;&lt;tr&gt; *&lt;tr&gt;* should pop to 'table', not the first 'tr'
+ &lt;td&gt;&lt;tr&gt;&lt;td&gt; *&lt;td&gt;* should pop to 'tr', not the first 'td'</pre>
+        </div>
+      </div><div class="function">
+        <a name="pymine.beautifulsoup.BeautifulSoup.BeautifulStoneSoup.unknown_starttag"></a>
+        <a name="unknown_starttag"></a>
+        <div class="functionHeader">
+        
+        def unknown_starttag(self, name, attrs, selfClosing=0):
+        
+      </div>
+        <div class="functionBody">
+          
+          <div class="undocumented">Undocumented</div>
+        </div>
+      </div><div class="function">
+        <a name="pymine.beautifulsoup.BeautifulSoup.BeautifulStoneSoup.unknown_endtag"></a>
+        <a name="unknown_endtag"></a>
+        <div class="functionHeader">
+        
+        def unknown_endtag(self, name):
+        
+      </div>
+        <div class="functionBody">
+          
+          <div class="undocumented">Undocumented</div>
+        </div>
+      </div><div class="function">
+        <a name="pymine.beautifulsoup.BeautifulSoup.BeautifulStoneSoup.handle_data"></a>
+        <a name="handle_data"></a>
+        <div class="functionHeader">
+        
+        def handle_data(self, data):
+        
+      </div>
+        <div class="functionBody">
+          
+          <div class="undocumented">Undocumented</div>
+        </div>
+      </div><div class="function">
+        <a name="pymine.beautifulsoup.BeautifulSoup.BeautifulStoneSoup._toStringSubclass"></a>
+        <a name="_toStringSubclass"></a>
+        <div class="functionHeader">
+        
+        def _toStringSubclass(self, text, subclass):
+        
+      </div>
+        <div class="functionBody">
+          
+          <div>Adds a certain piece of text to the tree as a NavigableString 
+subclass.<table class="fieldTable"></table></div>
+        </div>
+      </div><div class="function">
+        <a name="pymine.beautifulsoup.BeautifulSoup.BeautifulStoneSoup.handle_pi"></a>
+        <a name="handle_pi"></a>
+        <div class="functionHeader">
+        
+        def handle_pi(self, text):
+        
+      </div>
+        <div class="functionBody">
+          
+          <div>Handle a processing instruction as a ProcessingInstruction object, 
+possibly one with a %SOUP-ENCODING% slot into which an encoding will be 
+plugged later.<table class="fieldTable"></table></div>
+        </div>
+      </div><div class="function">
+        <a name="pymine.beautifulsoup.BeautifulSoup.BeautifulStoneSoup.handle_comment"></a>
+        <a name="handle_comment"></a>
+        <div class="functionHeader">
+        
+        def handle_comment(self, text):
+        
+      </div>
+        <div class="functionBody">
+          
+          <div>Handle comments as Comment objects.<table class="fieldTable"></table></div>
+        </div>
+      </div><div class="function">
+        <a name="pymine.beautifulsoup.BeautifulSoup.BeautifulStoneSoup.handle_charref"></a>
+        <a name="handle_charref"></a>
+        <div class="functionHeader">
+        
+        def handle_charref(self, ref):
+        
+      </div>
+        <div class="functionBody">
+          
+          <div>Handle character references as data.<table class="fieldTable"></table></div>
+        </div>
+      </div><div class="function">
+        <a name="pymine.beautifulsoup.BeautifulSoup.BeautifulStoneSoup.handle_entityref"></a>
+        <a name="handle_entityref"></a>
+        <div class="functionHeader">
+        
+        def handle_entityref(self, ref):
+        
+      </div>
+        <div class="functionBody">
+          
+          <div>Handle entity references as data, possibly converting known HTML and/or 
+XML entity references to the corresponding Unicode characters.<table class="fieldTable"></table></div>
+        </div>
+      </div><div class="function">
+        <a name="pymine.beautifulsoup.BeautifulSoup.BeautifulStoneSoup.handle_decl"></a>
+        <a name="handle_decl"></a>
+        <div class="functionHeader">
+        
+        def handle_decl(self, data):
+        
+      </div>
+        <div class="functionBody">
+          
+          <div>Handle DOCTYPEs and the like as Declaration objects.<table class="fieldTable"></table></div>
+        </div>
+      </div><div class="function">
+        <a name="pymine.beautifulsoup.BeautifulSoup.BeautifulStoneSoup.parse_declaration"></a>
+        <a name="parse_declaration"></a>
+        <div class="functionHeader">
+        
+        def parse_declaration(self, i):
+        
+      </div>
+        <div class="functionBody">
+          
+          <div>Treat a bogus SGML declaration as raw data. Treat a CDATA declaration as
+a CData object.<table class="fieldTable"></table></div>
+        </div>
+      </div>
+    
+    <address>
+      <a href="index.html">API Documentation</a> for pymine, generated by <a href="http://codespeak.net/~mwh/pydoctor/">pydoctor</a> at 2010-03-04 19:54:02.
+    </address>
+  </body>
+</html>
