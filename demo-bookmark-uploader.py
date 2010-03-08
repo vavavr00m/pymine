@@ -112,15 +112,22 @@ for bookmark in bookmarks:
 
     iargs['itemStatus'] = 'inaccessible' if bookmark['private'] else 'citable'
     iargs['auto_tag'] = 1
+
+    if bookmark['tags']:
+        iargs['itemTags'] = " ".join(bookmark['tags']).encode('utf-8')
  
     print "uploading:"
+    print iargs
+
     try:
         item = api.create_item(**iargs)
         if not item:
             print "unexpected null value"
             break
+        print '----------'
         print item
-        print 
+        print
+        print '=========='
     except Exception, e:
         print e
         print e.read()
