@@ -114,12 +114,12 @@ class Space:
 	@staticmethod # THIS IS THE DEFAULT HARDCODED R2S_LIB METHOD
 	def strip(r, s, sattr):
 	    """copy a string from a request, to a string in a structure, stripping leading and trailing spaces"""
-	    s[sattr] = str(r.POST[sattr]).strip()
+	    s[sattr] = r.POST[sattr].strip() # try avoid doing str() to avoid unicode-conversion errors
 
 	@staticmethod
 	def verbatim(r, s, sattr):
 	    """copy a string from a request, to a string in a structure, verbatim"""
-	    s[sattr] = str(r.POST[sattr])
+	    s[sattr] = r.POST[sattr]  # try avoid doing str() to avoid unicode-conversion errors
 
     class s2m_lib:
 	@staticmethod
