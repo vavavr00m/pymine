@@ -397,17 +397,24 @@ class MineAPI:
 	    if '_method' in form_data:
 		raise RuntimeError, 'inexplicable use of _method in POST: %s' % form_data['_method']
 
-	    for field in ('itemData', 'itemIcon', 'commentResponse'):
-		if field in form_data:
-		    filename = form_data[field]
-		    if self.verbose:
-			print "+ opening and promoting", filename, "for", field
-		    fd = open(form_data[field], "rb")
-		    form_data[field] = fd
+            filename_fields = ('itemData', 'itemIcon', 'commentResponse')
 
-	    datagen, headers = multipart_encode(form_data)
-	    request = urllib2.Request(url, datagen, headers)
-	    response = self.poster_opener.open(request)
+            if filename_fields in form_data:
+                for field in filename_fields:
+                    if field in form_data:
+                        filename = form_data[field]
+                        if self.verbose:
+                            print "+ opening and promoting", filename, "for", field
+                        fd = open(form_data[field], "rb")
+                        form_data[field] = fd
+                datagen, headers = multipart_encode(form_data)
+                request = urllib2.Request(url, datagen, headers)
+                response = self.poster_opener.open(request)
+            else:
+                encoded_data = urllib.urlencode(form_data)
+                request = urllib2.Request(url, encoded_data)
+                response = urllib2.urlopen(request)
+
 	elif method == 'GET':
 	    request = urllib2.Request(url)
 	    response = urllib2.urlopen(request)
