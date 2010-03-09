@@ -21,115 +21,138 @@ Delicious bookmark file as independent Mine items
 """
 
 from beautifulsoup.BeautifulSoup import BeautifulSoup
+
 import getpass
 import miner
 import re
+import sys
 
-url = 'http://localhost:9862'
-u = 'pickaxe'
-p = getpass.getpass()
+##################################################################
 
-# where we store the work in progress
-bookmarks = []
+def parse_bookmarks(filename):
+    bookmarks = []
+    feeds = {}
 
-# assume an input is in test.html; suck it up
-file = open("test.html", "rb")
-doc = file.read()
-file.close()
+    fd = open(filename, "rb")
+    doc = fd.read()
+    fd.close()
 
-# and make soup
-soup = BeautifulSoup(doc)
+    soup = BeautifulSoup(doc)
 
-# rip out the definition list
-dl = soup.dl
+    # rip out the definition list
 
-# and actually extract it for tidyness (strictly not needed but it is
-# interesting to see what gets left behind
-dl.extract()
+    dl = soup.dl
 
-# hack through the list of DTs and assume that the DD is the sigling
-# immediately following
-for dt in dl.findAll('dt'):
-    dd = dt.nextSibling
+    # extract it for tidyness (strictly not needed but it is
+    # interesting to see what gets left behind
 
-    title = None
-    link = None
-    tags = None
-    private = False
-    description = None
+    dl.extract()
 
-    for a in dt.findAll():
-	link = a['href']
-	datestr = a['add_date']
+    # hack through the list of DTs and assume that the DD is the
+    # sibling immediately following
 
-        if a.string:
-            title = a.string
+    for dt in dl.findAll('dt'):
+	dd = dt.nextSibling
 
-	if a['private']:
-	    if int(a['private']):
-		private = True
+	title = None
+	link = None
+	tags = None
+	private = False
+	description = None
 
-	if a['tags']:
-	    tags = a['tags']
-	    tags = [ re.sub(r'\W+', '_', x) for x in tags.split(',') ]
-	    tags.sort()
+	for a in dt.findAll(): # should only be one
+	    link = a['href']
+	    datestr = a['add_date']
 
-    if dd and dd.string:
-	description = " ".join(dd.string.split())
-        description = description
+	    if a.string:
+		title = a.string
 
-    bookmarks.append(dict(title=title,
-			  link=link,
-			  tags=tags,
-			  private=private,
-			  description=description,
-			  datestr=datestr))
+	    if a['private']:
+		if int(a['private']):
+		    private = True
 
+	    if a['tags']:
+		tags = []
+		for tag in a['tags'].split(','):
+		    if tag.startswith('for:') or tag.startswith('not:'):
+                        feed = re.sub(r'\W+', '_', tag[4:]).lower()
+                        feeds[feed] = feeds.get(feed, 0) + 1
+			tags.append(tag)
+		    else:
+			tags.append(re.sub(r'\W+', '_', tag).lower())
+		tags.sort()
 
-print "connecting to mine..."
-api = miner.MineAPI(username=u, password=p, url_prefix=url)
-print
+	    if dd and dd.string:
+		description = " ".join(dd.string.split())
+		description = description
 
-print "print version to check connection..."
-print api.version()
-print
+	bookmarks.append(dict(title=title,
+			link=link,
+			tags=tags,
+			private=private,
+			description=description,
+			datestr=datestr))
 
-print "uploading %d bookmarks..." % len(bookmarks)
+    return bookmarks, feeds
 
-for bookmark in bookmarks:
-    # come up with some boring description template
-    d = '<a href="%s" rel="link">%s</a><br/>%s' % (bookmark['link'], bookmark['title'], bookmark['description'])
+##################################################################
 
-    iargs = {}
+def upload_bookmarks(mine, bookmarks):
+    print "uploading %d bookmarks..." % len(bookmarks)
 
-    for s,d in (('title', 'itemName'), 
-                ('description', 'itemDescription'),                
-                ('link', '$bookmark_url'),
-                ('datestr', '$bookmark_date'),
-                ):
-        if bookmark[s]:
-            iargs[d] = bookmark[s].encode('utf-8')
+    for bookmark in bookmarks:
+	d = '<a href="%s" rel="link">%s</a><br/>%s' % (bookmark['link'], bookmark['title'], bookmark['description'])
 
-    iargs['itemStatus'] = 'inaccessible' if bookmark['private'] else 'citable'
-    iargs['auto_tag'] = 1
+	iargs = {}
 
-    if bookmark['tags']:
-        iargs['itemTags'] = " ".join(bookmark['tags']).encode('utf-8')
- 
-    print "uploading:"
-    print iargs
+	for s,d in (('title', 'itemName'),
+		    ('description', 'itemDescription'),
+		    ('link', '$bookmark_url'),
+		    ('datestr', '$bookmark_date'),
+		    ):
+	    if bookmark[s]:
+		iargs[d] = bookmark[s].encode('utf-8')
 
-    try:
-        item = api.create_item(**iargs)
-        if not item:
-            print "unexpected null value"
-            break
-        print '----------'
-        print item
-        print
-        print '=========='
-    except Exception, e:
-        print e
-        print e.read()
-        print iargs
-        break
+		iargs['itemStatus'] = 'inaccessible' if bookmark['private'] else 'citable'
+		iargs['auto_tag'] = 1
+
+		if bookmark['tags']:
+		    iargs['itemTags'] = " ".join(bookmark['tags']).encode('utf-8')
+
+	print "uploading:", iargs
+
+	try:
+	    item = mine.create_item(**iargs)
+	    if not item:
+		print "unexpected null value"
+		break
+	except Exception, e:
+	    print iargs
+	    print e
+	    print e.read()
+	    break
+
+##################################################################
+
+if __name__ == '__main__':
+    bookmarks = []
+
+    for filename in sys.argv[1:]:
+        bms, feeds = parse_bookmarks(filename)
+        bookmarks.extend(bms)
+        print "items:", filename, len(bms)
+        print "feeds:", filename, feeds
+
+    u = 'pickaxe'
+    p = getpass.getpass()
+    url = 'http://localhost:9862'
+
+    print "connecting to mine %s as %s" % (u, p)
+    mine = miner.MineAPI(username=u, password=p, url_prefix=url)
+
+    print "printing version to check connection..."
+    print mine.version()
+
+    print "uploading..."
+    print mine.version()
+
