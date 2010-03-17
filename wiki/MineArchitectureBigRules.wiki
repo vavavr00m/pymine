@@ -1,0 +1,25 @@
+#summary Big Rules For Mine Development Software Architecture
+#labels Featured,Phase-Design
+
+= Overall =
+  * if it's not yours, it's not a mine
+     * only you get to decide what "yours" means
+  * the subscriber gets what you choose to give them, and nothing more
+    * subscribers do not "take", they are "given"
+
+= Architecture=
+  # invent nothing
+  # content neutral
+  # platform neutral
+  # no magical protocols
+  # no magical data formats
+  # no external service dependencies
+  # "transport secrecy" is out of scope
+  # "transport authentication" is out of scope
+  # "discovery" is not merely out of scope, it is antithetical
+
+= Development =
+  # no premature optimisation
+    * ...includes "not solving problems before you have them"
+  # no burden on the subscriber that cannot be addressed by vanilla firefox
+    * ...by which we do not include "use a plugin"
