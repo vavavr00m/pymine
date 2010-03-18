@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/env python
 
 ##
 ## Copyright 2009-10 Adriana Lukas & Alec Muffett
