@@ -454,7 +454,10 @@ class AbstractField:
     """
     superclass to frontend model fields and ease porting between GAE and Django
 
-    todo: merge the garbage collection config into the options for each field
+    todo: 
+
+    1) merge the garbage collection config into the options for each field
+    2) pass in an argument dict that can be auto-populated with gc (etc) information, and then compiled.
     """
 
     STRING_SHORT = 256 # bytes
@@ -1058,6 +1061,9 @@ class Feed(AbstractThing):
 	'is_considered_public': dict(gc='falsify', r2s='bool', s2m='bool', m2s='bool'),
 	'name': dict(gc='munge', s2m='copy', m2s='copy'),
 	'permitted_networks': dict(s2m='copy', m2s='copy'),
+	'suppress_comments': dict(gc='falsify', r2s='bool', s2m='bool', m2s='bool'),
+	'suppress_enclosures': dict(gc='falsify', r2s='bool', s2m='bool', m2s='bool'),
+	'syndication_format': dict(s2m='copy', m2s='copy'),
 	'version': dict(gc='zeroify', r2s='integer', s2m='copy', m2s='copy'),
 	}
     (xattr_class, thing_prefix, r2s, s2m, m2s, gc) = Space.compile(attr_map)
@@ -1072,6 +1078,9 @@ class Feed(AbstractThing):
     is_considered_public = AbstractField.bool(False)
     name = AbstractField.slug(unique=True)
     permitted_networks = AbstractField.string(required=False)
+    suppress_comments = AbstractField.bool(False)
+    suppress_enclosures = AbstractField.bool(False)
+    syndication_format = AbstractField.string(required=False)
     version = AbstractField.integer(1)
 
     class Meta:
@@ -1094,6 +1103,7 @@ class Item(AbstractThing):
 	'created': dict(gc='skip', s2m='date', m2s='date'),
 	'last_modified': dict(gc='skip', s2m='date', m2s='date'),
 
+	'alternate_permalink_url': dict(s2m='copy', m2s='copy'),
 	'data': dict(gc='file'),
 	'data_ciphertext_digest': dict(s2m='copy', m2s='copy'),
 	'data_encryption_key': dict(s2m='copy', m2s='copy'),
@@ -1113,6 +1123,8 @@ class Item(AbstractThing):
 	}
     (xattr_class, thing_prefix, r2s, s2m, m2s, gc) = Space.compile(attr_map)
 
+    alternate_permalink_url = AbstractField.string(required=False)
+    alternate_storage_url = AbstractField.string(required=False)
     data = AbstractField.file(storage=item_fss, upload_to=fss_yyyymmdd, required=False)
     data_ciphertext_digest = AbstractField.text(required=False)
     data_encryption_key = AbstractField.text(required=False)
@@ -1132,7 +1144,7 @@ class Item(AbstractThing):
     status = AbstractField.choice(item_status_choices)
     tags = AbstractField.reflist(Tag, pivot='items_tagged', required=False)
 
-    backdoor_key = 'single uploaded file to do'
+    backdoor_key = '<a single uploaded file is being done>'
 
     class Meta:
 	ordering = ['-last_modified']
