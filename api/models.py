@@ -28,11 +28,6 @@ from django.utils import feedgenerator
 from django.utils.encoding import iri_to_uri
 from django.utils.http import urlquote
 
-####
-# CHECK ALSO FOR IMPORT STATEMENT AT END OF THIS FILE WHICH RESOLVES
-# ANNOYING CIRCULAR DEPENDENCY ISSUE WITH minekey.py; ELEGANT KLUDGE
-####
-
 import base64
 import itertools
 import mimetypes
@@ -41,6 +36,7 @@ import re
 import string
 
 import pymine.util.base58 as base58
+
 
 # TODO:
 # phrase tags
@@ -1086,13 +1082,6 @@ class Feed(AbstractThing):
     class Meta:
 	ordering = ['name']
 
-    def to_structure(self, request=None):
-	"""
-	"""
-	s = super(Feed, self).to_structure(request)
-	s['feedUrl'] = MineKey.create_feedmk(request, self).permalink()
-	return s
-
 ##################################################################
 
 class Item(AbstractThing):
@@ -1545,10 +1534,3 @@ class Event(AbstractModel): # not a Thing
 	"""
 	klass.__store(request, where, False, **kwargs)
 
-##################################################################
-
-# due to circular dependency, this import statement moved to here
-
-from minekey import MineKey
-
-##################################################################
