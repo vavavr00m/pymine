@@ -35,7 +35,7 @@ clean:
 	-rm etc/cookies2.txt
 
 clobber: clean
-	test -f $(SAFELOCK) && exit 1
+	if [ -f $(SAFELOCK) ] ; then exit 1 ; fi
 	-rm settings.py
 	-rm -r database/*
 	-rm `find . -name "*.pyc"`
@@ -50,12 +50,12 @@ perms:
 	chmod 755 miner
 
 setup:
-	test -f $(SAFELOCK) && exit 1
+	if [ -f $(SAFELOCK) ] ; then exit 1 ; fi
 	sh tools/minesetup.sh
 	make perms
 
 hard-reset: clobber # brute-force rebuild from scratch
-	test -f $(SAFELOCK) && exit 1
+	if [ -f $(SAFELOCK) ] ; then exit 1 ; fi
 	env MINE_USER_EMAIL=$(MY_EMAIL) make setup
 	make server
 
