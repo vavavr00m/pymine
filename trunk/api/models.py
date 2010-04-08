@@ -1029,8 +1029,8 @@ class Vurl(AbstractThing):
 	s = super(Vurl, self).to_structure(request)
 	vk = self.vurlkey()
 	s['vurlKey'] = vk
-	s['vurlPathShort'] = "/get/k/%s" % vk
-	s['vurlPathLong'] =  "/get/n/%s" % self.name
+	s['vurlPathShort'] = "/vurl/%s" % vk
+	s['vurlPathLong'] =  "/page/%s" % self.name
 	return s
 
     def http_response(self):
