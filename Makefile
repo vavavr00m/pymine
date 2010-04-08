@@ -5,6 +5,9 @@ IP_ADDRESS_AND_PORT=127.0.0.1:9862
 # external code
 PYDOC=pydoc
 
+# production lockfile
+SAFELOCK=".this_mine_is_being_used"
+
 ##################################################################
 
 all:
@@ -18,16 +21,24 @@ all:
 	@echo make hard-reset - automated nuke-and-rebuild for developers
 	@echo ""
 
+safe:
+	date > $(SAFELOCK)
+	chmod 400 $(SAFELOCK)
+
+unsafe:
+	-@test -f $(SAFELOCK) && echo to make unsafe, remove file: $(SAFELOCK)
+
 clean:
 	-rm `find . -name "*~"`
-	-rm `find . -name "*.pyc"`
 	-rm `find . -name "*.tmp"`
-
-clobber: clean
-	-rm -r database/*
 	-rm etc/cookies.txt
 	-rm etc/cookies2.txt
+
+clobber: clean
+	test -f $(SAFELOCK) && exit 1
 	-rm settings.py
+	-rm -r database/*
+	-rm `find . -name "*.pyc"`
 
 perms:
 	chmod 755 `find . -type d`
@@ -39,10 +50,12 @@ perms:
 	chmod 755 miner
 
 setup:
+	test -f $(SAFELOCK) && exit 1
 	sh tools/minesetup.sh
 	make perms
 
 hard-reset: clobber # brute-force rebuild from scratch
+	test -f $(SAFELOCK) && exit 1
 	env MINE_USER_EMAIL=$(MY_EMAIL) make setup
 	make server
 

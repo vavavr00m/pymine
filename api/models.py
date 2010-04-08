@@ -1053,6 +1053,7 @@ class Feed(AbstractThing):
 	'description': dict(r2s='verbatim', s2m='copy', m2s='copy'),
 	'embargo_after': dict(s2m='date', m2s='date'),
 	'embargo_before': dict(s2m='date', m2s='date'),
+	'format': dict(s2m='copy', m2s='copy'),
 	'interests': dict(gc='reflist_interests3', s2m='feed_interests', m2s='feed_interests'),
 	'is_considered_public': dict(gc='falsify', r2s='bool', s2m='bool', m2s='bool'),
 	'name': dict(gc='munge', s2m='copy', m2s='copy'),
@@ -1068,6 +1069,7 @@ class Feed(AbstractThing):
     description = AbstractField.text(required=False)
     embargo_after = AbstractField.datetime(required=False)
     embargo_before = AbstractField.datetime(required=False)
+    format = AbstractField.string(required=False)
     interests = AbstractField.reflist(Tag, pivot='feeds_with_tag', required=False)
     interests_exclude = AbstractField.reflist(Tag, pivot='feeds_excluding', required=False) # augments 'interests'
     interests_require = AbstractField.reflist(Tag, pivot='feeds_requiring', required=False) # augments 'interests'
